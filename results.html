@@ -198,6 +198,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
 document.getElementById("downloadPdfBtn").addEventListener("click", function () {
 
@@ -210,11 +212,22 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
     const fileName =
         studentName.replace(/[^a-z0-9]/gi, "-") + "-Result.pdf";
 
-    /* Hide buttons before creating PDF */
+    /* Hide buttons */
     actions.style.display = "none";
 
+    /* Save original styles */
+    const originalWidth = result.style.width;
+    const originalMargin = result.style.margin;
+    const originalBoxSizing = result.style.boxSizing;
+
+    /* A4 content area */
+    result.style.width = "190mm";
+    result.style.margin = "0 auto";
+    result.style.boxSizing = "border-box";
+
     const options = {
-        margin: [8, 8, 8, 8],
+
+        margin: [10, 10, 10, 10],
 
         filename: fileName,
 
@@ -238,7 +251,10 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
 
         pagebreak: {
             mode: ["css", "legacy"],
-            avoid: ["tr", ".overall-result"]
+            avoid: [
+                "tr",
+                ".overall-result"
+            ]
         }
     };
 
@@ -248,13 +264,20 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
         .save()
         .then(function () {
 
-            /* Show buttons again after PDF is created */
+            /* Restore website layout */
+            result.style.width = originalWidth;
+            result.style.margin = originalMargin;
+            result.style.boxSizing = originalBoxSizing;
+
             actions.style.display = "";
 
         })
         .catch(function (error) {
 
-            /* Show buttons again if something goes wrong */
+            result.style.width = originalWidth;
+            result.style.margin = originalMargin;
+            result.style.boxSizing = originalBoxSizing;
+
             actions.style.display = "";
 
             console.error("PDF error:", error);

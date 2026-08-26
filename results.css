@@ -9,7 +9,7 @@
   --bg:#f4f2ee;
   --white:#fff;
   --text:#1d2430;
-  --muted:#6c7480;
+  --muted:#1d2430;
   --border:#ddd8d2;
 }
 
@@ -503,5 +503,17 @@ footer{
 
   footer{
     display:none !important;
+  }
+}
+/* =========================
+   A4 PDF CENTERING
+========================= */
+
+@media print {
+  .results-card {
+    width: 190mm !important;
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
   }
 }

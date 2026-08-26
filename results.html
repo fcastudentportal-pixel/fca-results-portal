@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FCA | Student Results</title>
+
+  <link rel="stylesheet" href="results.css">
+</head>
+
+<body>
+
+
+<main class="container">
+
+  <!-- STUDENT DETAILS -->
+  <section class="card results-card">
+
+    <div class="results-title">
+
+  <div class="results-title-text">
+    <div class="eyebrow">ACADEMIC PERFORMANCE</div>
+    <h2>Student Results</h2>
+  </div>
+
+  <div class="results-logo">
+    <img src="fca-logo.png" alt="FCA Logo">
+  </div>
+
+</div>
+
+    <div class="student-details">
+
+      <div>
+        <span>Full Name</span>
+        <strong id="studentName">Alex Meja</strong>
+      </div>
+
+      <div>
+        <span>Student ID</span>
+        <strong id="studentId">FCA-2026-ME-001</strong>
+      </div>
+
+      <div>
+        <span>Class</span>
+        <strong id="studentClass">Form 4</strong>
+      </div>
+
+    </div>
+
+
+    <!-- RESULTS TABLE -->
+    <div class="table-wrap">
+
+      <table id="resultsTable">
+
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Subject</th>
+            <th>Marks</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>1</td>
+            <td>Agriculture</td>
+            <td>79</td>
+            <td>strong Credit</td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td>Bible Knowledge</td>
+            <td>50</td>
+            <td>pass</td>
+          </tr>
+
+          <tr>
+            <td>3</td>
+            <td>Biology</td>
+            <td>80</td>
+            <td>Distinction</td>
+          </tr>
+
+          <tr>
+            <td>4</td>
+            <td>Chemistry</td>
+            <td>75</td>
+            <td>strong Credit</td>
+          </tr>
+
+          <tr>
+            <td>5</td>
+            <td>Chichewa</td>
+            <td>60</td>
+            <td>Credit</td>
+          </tr>
+
+          <tr>
+            <td>6</td>
+            <td>English</td>
+            <td>55</td>
+            <td>pass</td>
+          </tr>
+
+          <tr>
+            <td>7</td>
+            <td>Geography</td>
+            <td>70</td>
+            <td>strong Credit</td>
+          </tr>
+
+          <tr>
+            <td>8</td>
+            <td>History</td>
+            <td>59</td>
+            <td>pass</td>
+          </tr>
+
+          <tr>
+            <td>9</td>
+            <td>Life Skills</td>
+            <td>62</td>
+            <td>Credit</td>
+          </tr>
+
+          <tr>
+            <td>10</td>
+            <td>Mathematics</td>
+            <td>98</td>
+            <td>Distinction</td>
+          </tr>
+
+          <tr>
+            <td>11</td>
+            <td>Physics</td>
+            <td>91</td>
+            <td>Distinction</td>
+          </tr>
+
+          <tr>
+            <td>12</td>
+            <td>Social Studies</td>
+            <td>49</td>
+            <td>Fail</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- OVERALL RESULT -->
+    <div class="overall-result">
+
+      <span>OVERALL RESULT</span>
+
+      <strong id="overallResult">PASS</strong>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+    <div class="results-actions">
+
+      <button id="downloadPdfBtn" class="primary" type="button" onclick="downloadResult()">
+  Download Results PDF
+</button>
+
+      <button class="secondary" type="button"  
+    onclick="window.location.href='index.html'">  
+    Back to Portal  
+  </button>  
+
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+  © First Class Academy
+</footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+
+    const element = document.querySelector(".results-card");
+
+    const studentName =
+        document.getElementById("studentName").textContent.trim();
+
+    const fileName =
+        studentName.replace(/[^a-z0-9]/gi, "-") + "-Result.pdf";
+
+    const options = {
+        margin: 10,
+        filename: fileName,
+        image: {
+            type: "jpeg",
+            quality: 0.98
+        },
+        html2canvas: {
+            scale: 2,
+            useCORS: true
+        },
+        jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait"
+        }
+    };
+
+    html2pdf()
+        .set(options)
+        .from(element)
+        .save();
+
+});
+</script>
+
+</body>
+</html>

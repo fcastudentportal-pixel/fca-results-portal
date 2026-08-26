@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>First Class Academy | Student Portal</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="topbar">
+  <a class="admin-logo" href="admin-login.html"><img src="fca-logo.png" alt="FCA Admin"></a><div><div class="eyebrow">OFFICIAL STUDENT PORTAL</div><h1>FIRST CLASS ACADEMY</h1><p>SKILLS KNOWLEDGE INNOVATION</p></div>
+</header>
+<main class="container">
+<section id="loginView" class="card login-card">
+<h2>Search Student Results</h2><p class="muted">Enter the Student ID and Access Password.</p>
+<form id="studentLoginForm">
+<label>Student ID<input id="studentId" placeholder="FCA-2026-ME-101" required></label>
+<label>Access Password<input id="studentPassword" inputmode="word" maxlength="8" placeholder="fca@hfh000" required></label>
+<button class="primary" type="button" onclick="window.location.href='results.html'">
+  View Results
+</button></form></section>
+
+<section id="portalView" class="hidden">
+<div class="portal-head card"><div><div class="eyebrow">ACADEMIC PERFORMANCE</div><h2 id="studentName"></h2><p id="studentInfo" class="muted"></p></div>
+<div class="actions"><button id="printBtn" class="primary">Print Report Card</button><button id="emailBtn" class="secondary">Email Summary</button><button id="logoutBtn" class="secondary">Log out</button></div></div>
+<div class="grid-2">
+<section class="card"><h3>Current Term Results</h3><div class="table-wrap"><table id="resultsTable"><thead><tr><th>Subject</th><th>Assessment</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody></tbody></table></div></section>
+<aside class="card"><h3>Announcements</h3><div id="announcementList"></div></aside>
+</div>
+<section class="card"><h3>Academic Calendar</h3><p class="muted">Star an event to bookmark it. Starred events within 7 days show an alert.</p><div id="calendarList"></div><div id="calendarAlert" class="alert hidden"></div></section>
+</section></main><footer>© First Class Academy</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js"></script>
+</body></html>

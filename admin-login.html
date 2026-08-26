@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FCA Admin Login</title>
+<link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+<div class="login-container">
+  <div class="login-card">
+    <img src="fca-logo.png" class="fca-logo" alt="First Class Academy">
+    <div class="eyebrow">ADMINISTRATION</div>
+    <h1>First Class Academy</h1>
+    <p class="subtitle">Administrator Login</p>
+    <form id="adminLoginForm" action="admin.html">
+      <label>Email Address<input type="email" id="adminEmail" placeholder="fca.admin@gmail.com" required></label>
+      <label>Password<input type="password" id="adminPassword" placeholder="Enter password" required></label>
+      <button type="submit" class="login-btn">Login</button>
+      <p id="loginMessage" class="message"></p>
+    </form>
+    <a href="index.html" class="back-link">← Back to Student Portal</a>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="admin-login.js"></script>
+</body>
+</html>

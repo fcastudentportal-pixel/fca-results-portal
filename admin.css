@@ -507,3 +507,19 @@ textarea:focus{
   }
 
 }
+a.nav{
+  text-decoration:none;
+  color:#fff;
+}
+
+a.nav:hover{
+  background:var(--maroon);
+}
+a.nav{
+  text-decoration:none;
+  color:#fff;
+}
+
+a.nav:hover{
+  background:var(--maroon);
+}

@@ -18,1135 +18,396 @@
 <div class="shell">
 
 
-<!-- SIDEBAR -->
+<!-- =========================
+     SIDEBAR
+========================= -->
 
 <aside class="sidebar">
 
+
+  <!-- BRAND -->
+
   <div class="brand">
 
-    <a class="brand-mark" href="index.html">
-  <img src="fca-logo.png" alt="First Class Academy">
-</a>
+    <a
+      class="brand-mark"
+      href="index.html"
+    >
+
+      <img
+        src="fca-logo.png"
+        alt="First Class Academy"
+      >
+
+    </a>
+
 
     <div>
-      <b>FCA Portal</b>
-      <small>Administration</small>
+
+      <b>
+        FCA Portal
+      </b>
+
+      <small>
+        Administration
+      </small>
+
     </div>
 
   </div>
 
 
+  <!-- NAVIGATION -->
+
   <nav>
 
-    <button class="nav active" data-view="overview">
+
+    <!-- DASHBOARD -->
+
+    <button
+      class="nav active"
+      data-view="overview"
+      type="button"
+    >
+
       Dashboard
+
     </button>
 
-    <button class="nav" data-view="teachers">
+
+    <!-- TEACHERS -->
+
+    <a
+      class="nav"
+      href="teachers.html"
+    >
+
       Teachers
-    </button>
 
-    <button class="nav" data-view="classes">
+    </a>
+
+
+    <!-- CLASSES -->
+
+    <a
+      class="nav"
+      href="classes.html"
+    >
+
       Classes
-    </button>
 
-    <button class="nav" data-view="students">
+    </a>
+
+
+    <!-- STUDENTS -->
+
+    <a
+      class="nav"
+      href="students.html"
+    >
+
       Students
-    </button>
 
-    <button class="nav" data-view="subjects">
+    </a>
+
+
+    <!-- SUBJECTS -->
+
+    <a
+      class="nav"
+      href="subjects.html"
+    >
+
       Subjects
-    </button>
 
-    <button class="nav" data-view="results">
+    </a>
+
+
+    <!-- RESULTS -->
+
+    <a
+      class="nav"
+      href="results.html"
+    >
+
       Results
-    </button>
 
-    <button class="nav" data-view="announcements">
+    </a>
+
+
+    <!-- ANNOUNCEMENTS -->
+
+    <a
+      class="nav"
+      href="announcements.html"
+    >
+
       Announcements
-    </button>
 
-    <button class="nav" data-view="calendar">
+    </a>
+
+
+    <!-- CALENDAR -->
+
+    <a
+      class="nav"
+      href="calendar.html"
+    >
+
       Academic Calendar
-    </button>
+
+    </a>
+
 
   </nav>
 
 
-  <button class="logout">
+  <!-- LOGOUT -->
+
+  <button
+    class="logout"
+    type="button"
+  >
+
     Log out
+
   </button>
+
 
 </aside>
 
 
-<!-- MAIN -->
+
+<!-- =========================
+     MAIN
+========================= -->
 
 <main class="main">
 
 
-<header>
+  <!-- HEADER -->
 
-  <div>
-
-    <small>ADMINISTRATION</small>
-
-    <h1 id="pageTitle">
-      Dashboard
-    </h1>
-
-  </div>
-
-  <div class="pill">
-    Administrator
-  </div>
-
-</header>
+  <header>
 
 
-<!-- DASHBOARD -->
+    <div>
 
-<section id="overview" class="view active">
-
-  <div class="hero">
-
-    <h2>
-      FCA Administration Dashboard
-    </h2>
-
-    <p>
-      Manage students, teachers, classes, results,
-      announcements and academic information.
-    </p>
-
-  </div>
+      <small>
+        ADMINISTRATION
+      </small>
 
 
-  <div class="cards">
-
-    <div class="stat">
-      <span>0</span>
-      <small>Teachers</small>
-    </div>
-
-    <div class="stat">
-      <span>0</span>
-      <small>Classes</small>
-    </div>
-
-    <div class="stat">
-      <span>0</span>
-      <small>Students</small>
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- TEACHERS -->
-
-<section id="teachers" class="view">
-
-  <div class="panel">
-
-    <h2>Teachers</h2>
-
-    <p class="muted">
-      Add and manage teachers who will manage their classes.
-    </p>
-
-    <button class="primary">
-      Add Teacher
-    </button>
-
-  </div>
-
-
-  <div class="panel">
-
-    <h2>Teacher List</h2>
-
-    <div class="list">
-
-      <div class="row">
-        <b>No teachers added yet</b>
-        <span>Teachers will appear here.</span>
-      </div>
+      <h1>
+        Dashboard
+      </h1>
 
     </div>
 
-  </div>
 
-</section>
+    <div class="pill">
 
+      Administrator
 
-<!-- CLASSES -->
-
-<section id="classes" class="view">
-
-  <!-- CREATE CLASS -->
-  <div class="panel">
-
-    <h2>Create Class</h2>
-
-    <p class="muted">
-      Create a class and select the academic year and class teacher.
-    </p>
-
-    <form id="createClassForm">
-
-      <div class="grid">
-
-        <label>
-          Class
-
-          <select id="className" required>
-            <option value="">Select Class</option>
-            <option value="Form 1">Form 1</option>
-            <option value="Form 2">Form 2</option>
-            <option value="Form 3">Form 3</option>
-            <option value="Form 4">Form 4</option>
-          </select>
-
-        </label>
+    </div>
 
 
-        <label>
-          Academic Year
-
-          <input
-            id="academicYear"
-            type="number"
-            value="2026"
-            min="2026"
-            required
-          >
-
-        </label>
+  </header>
 
 
-        <label>
-          Class Teacher
 
-          <select id="classTeacher">
+  <!-- =========================
+       DASHBOARD
+  ========================= -->
 
-            <option value="">
-              Select Teacher
-            </option>
+  <section
+    id="overview"
+    class="view active"
+  >
 
-            <option value="unassigned">
-              Unassigned
-            </option>
 
-          </select>
+    <!-- HERO -->
 
-        </label>
+    <div class="hero">
+
+      <h2>
+        FCA Administration Dashboard
+      </h2>
+
+
+      <p>
+        Manage students, teachers, classes,
+        results, announcements and academic
+        information.
+      </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         STATISTICS
+    ========================= -->
+
+    <div class="cards">
+
+
+      <!-- TEACHERS -->
+
+      <div class="stat">
+
+        <span
+          id="dashboardTeacherCount"
+        >
+          0
+        </span>
+
+
+        <small>
+          Teachers
+        </small>
 
       </div>
 
 
-      <button
-        type="submit"
-        class="primary"
-      >
-        Create Class
-      </button>
 
-    </form>
+      <!-- CLASSES -->
 
-  </div>
+      <div class="stat">
 
-
-  <!-- ADD STUDENT -->
-  <div class="panel">
-
-    <h2>Add Student</h2>
-
-    <p class="muted">
-      Add a student to the selected class and choose the
-      subjects taken by that student.
-    </p>
+        <span
+          id="dashboardClassCount"
+        >
+          0
+        </span>
 
 
-    <form id="addStudentForm">
-
-      <div class="grid">
-
-        <label>
-          Full Name
-
-          <input
-            id="studentFullName"
-            type="text"
-            placeholder="e.g. Alex Meja"
-            required
-          >
-
-        </label>
-
-
-        <label>
-          Age
-
-          <input
-            id="studentAge"
-            type="number"
-            min="10"
-            max="30"
-            placeholder="e.g. 16"
-            required
-          >
-
-        </label>
-
-
-        <label>
-          Class
-
-          <select id="studentClass" required>
-
-            <option value="">
-              Select Class
-            </option>
-
-            <option value="Form 1">
-              Form 1
-            </option>
-
-            <option value="Form 2">
-              Form 2
-            </option>
-
-            <option value="Form 3">
-              Form 3
-            </option>
-
-            <option value="Form 4">
-              Form 4
-            </option>
-
-          </select>
-
-        </label>
+        <small>
+          Classes
+        </small>
 
       </div>
 
 
-      <!-- SUBJECTS -->
 
-      <h3>Subjects</h3>
+      <!-- STUDENTS -->
+
+      <div class="stat">
+
+        <span
+          id="dashboardStudentCount"
+        >
+          0
+        </span>
+
+
+        <small>
+          Students
+        </small>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         QUICK ACCESS
+    ========================= -->
+
+    <div class="panel">
+
+
+      <h2>
+        Quick Access
+      </h2>
+
 
       <p class="muted">
-        Select the subjects taken by this student.
+
+        Use the navigation menu to manage
+        the FCA portal.
+
       </p>
 
 
-      <div class="subject-grid">
+      <div class="cards">
 
-        <label class="subject-option">
-          <input type="checkbox" value="Agriculture">
-          Agriculture
-        </label>
 
-
-        <label class="subject-option">
-          <input type="checkbox" value="Bible Knowledge">
-          Bible Knowledge
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Biology">
-          Biology
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Chemistry">
-          Chemistry
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Chichewa">
-          Chichewa
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="English">
-          English
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Geography">
-          Geography
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="History">
-          History
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Life Skills">
-          Life Skills
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Mathematics">
-          Mathematics
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Physics">
-          Physics
-        </label>
-
-
-        <label class="subject-option">
-          <input type="checkbox" value="Social Studies">
-          Social Studies
-        </label>
-
-      </div>
-
-
-      <button
-        type="submit"
-        class="primary"
-      >
-        Save Student
-      </button>
-
-      <p id="studentMessage" class="msg"></p>
-
-    </form>
-
-  </div>
-
-
-  <!-- GENERATED STUDENT ACCOUNT -->
-
-  <div class="panel">
-
-    <div class="toolbar">
-
-      <div>
-        <h2>Student Account</h2>
-
-        <p class="muted">
-          Student ID and access password will be generated
-          automatically after saving the student.
-        </p>
-      </div>
-
-    </div>
-
-
-    <div id="studentAccount" class="list">
-
-      <div class="row">
-
-        <b>No student account generated yet</b>
-
-        <span>
-          Saved student accounts will appear here.
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- CLASSES LIST -->
-
-  <div class="panel">
-
-    <h2>Classes</h2>
-
-    <div id="classList" class="list">
-
-      <div class="row">
-
-        <b>No classes created yet</b>
-
-        <span>
-          Created classes will appear here.
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- STUDENTS -->
-
-<section id="students" class="view">
-
-  <div class="panel">
-
-    <h2>Students</h2>
-
-    <p>
-      Teachers will add students to their assigned classes.
-      The system will later generate the Student ID and
-      Access Password automatically.
-    </p>
-
-  </div>
-
-
-  <div class="panel">
-
-    <h2>Student Accounts</h2>
-
-    <div class="list">
-
-      <div class="row">
-
-        <b>No students added yet</b>
-
-        <span>
-          Student accounts will appear here.
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- SUBJECTS -->
-
-<section id="subjects" class="view">
-
-  <div class="panel">
-
-    <h2>Subjects</h2>
-
-    <p>
-      Manage the subjects offered by First Class Academy.
-    </p>
-
-    <form>
-
-      <label>
-        Subject Name
-
-        <input
-          type="text"
-          placeholder="Mathematics"
+        <a
+          href="teachers.html"
+          class="stat"
+          style="text-decoration:none;"
         >
 
-      </label>
+          <span>
+            👨‍🏫
+          </span>
 
-      <button class="primary">
-        Add Subject
-      </button>
+          <small>
+            Manage Teachers
+          </small>
 
-    </form>
+        </a>
 
-  </div>
 
-</section>
+        <a
+          href="classes.html"
+          class="stat"
+          style="text-decoration:none;"
+        >
 
+          <span>
+            🏫
+          </span>
 
-<!-- RESULTS -->
+          <small>
+            Manage Classes
+          </small>
 
-<section id="results" class="view">
+        </a>
 
-  <!-- UPLOAD RESULTS -->
 
-  <div class="panel">
+        <a
+          href="students.html"
+          class="stat"
+          style="text-decoration:none;"
+        >
 
-    <h2>Upload Results</h2>
+          <span>
+            👨‍🎓
+          </span>
 
-    <p class="muted">
-      Select a class and student, then enter the marks for each subject.
-      Remarks will be calculated automatically.
-    </p>
+          <small>
+            Manage Students
+          </small>
 
+        </a>
 
-    <form id="resultsForm">
 
-      <div class="grid">
+        <a
+          href="results.html"
+          class="stat"
+          style="text-decoration:none;"
+        >
 
-        <!-- CLASS -->
+          <span>
+            📊
+          </span>
 
-        <label>
-          Class
+          <small>
+            Manage Results
+          </small>
 
-          <select id="resultClass" required>
+        </a>
 
-            <option value="">
-              Select Class
-            </option>
-
-            <option value="Form 1">
-              Form 1
-            </option>
-
-            <option value="Form 2">
-              Form 2
-            </option>
-
-            <option value="Form 3">
-              Form 3
-            </option>
-
-            <option value="Form 4">
-              Form 4
-            </option>
-
-          </select>
-
-        </label>
-
-
-        <!-- STUDENT -->
-
-        <label>
-          Student Name
-
-          <select id="resultStudent" required>
-
-            <option value="">
-              Select Student
-            </option>
-
-          </select>
-
-        </label>
-
-
-        <!-- STUDENT ID -->
-
-        <label>
-          Student ID
-
-          <input
-            id="resultStudentId"
-            type="text"
-            placeholder="FCA-2026-ME-001"
-            readonly
-          >
-
-        </label>
-
-      </div>
-
-
-      <!-- SUBJECT RESULTS -->
-
-      <h3>Subject Results</h3>
-
-      <p class="muted">
-        Enter the mark for each subject. The remark will be
-        generated automatically from the mark.
-      </p>
-
-
-      <div class="results-table-wrap">
-
-        <table class="admin-results-table">
-
-          <thead>
-
-            <tr>
-
-              <th>#</th>
-
-              <th>Subject</th>
-
-              <th>Mark</th>
-
-              <th>Remark</th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody>
-
-
-            <tr>
-
-              <td>1</td>
-
-              <td>Agriculture</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>2</td>
-
-              <td>Bible Knowledge</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>3</td>
-
-              <td>Biology</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>4</td>
-
-              <td>Chemistry</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>5</td>
-
-              <td>Chichewa</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>6</td>
-
-              <td>English</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>7</td>
-
-              <td>Geography</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>8</td>
-
-              <td>History</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>9</td>
-
-              <td>Life Skills</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>10</td>
-
-              <td>Mathematics</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>11</td>
-
-              <td>Physics</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>12</td>
-
-              <td>Social Studies</td>
-
-              <td>
-                <input
-                  class="mark-input"
-                  type="number"
-                  min="0"
-                  max="100"
-                  placeholder="0-100"
-                >
-              </td>
-
-              <td>
-                <span class="remark">
-                  —
-                </span>
-              </td>
-
-            </tr>
-
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-
-      <!-- OVERALL RESULT -->
-
-      <div class="overall-result">
-
-        <span>
-          OVERALL RESULT
-        </span>
-
-        <strong id="overallResult">
-          —
-        </strong>
-
-      </div>
-
-
-      <br>
-
-
-      <button
-        type="submit"
-        class="primary"
-      >
-        Save Results
-      </button>
-
-      <p id="resultsMessage" class="msg"></p>
-
-    </form>
-
-  </div>
-
-
-  <!-- SAVED RESULTS -->
-
-  <div class="panel">
-
-    <h2>Saved Results</h2>
-
-    <div id="savedResults" class="list">
-
-      <div class="row">
-
-        <b>No results available</b>
-
-        <span>
-          Student results will appear here after they are saved.
-        </span>
 
       </div>
 
     </div>
 
-  </div>
 
-</section>
-
-
-<!-- ANNOUNCEMENTS -->
-
-<section id="announcements" class="view">
-
-  <div class="panel">
-
-    <h2>Announcements</h2>
-
-    <form>
-
-      <label>
-        Announcement Title
-
-        <input
-          type="text"
-          placeholder="Parent Meeting"
-        >
-
-      </label>
-
-
-      <label>
-        Message
-
-        <textarea
-          placeholder="Write announcement..."
-        ></textarea>
-
-      </label>
-
-
-      <button class="primary">
-        Publish Announcement
-      </button>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- CALENDAR -->
-
-<section id="calendar" class="view">
-
-  <div class="panel">
-
-    <h2>Academic Calendar</h2>
-
-    <form>
-
-      <label>
-        Event Name
-
-        <input
-          type="text"
-          placeholder="Mathematics Examination"
-        >
-
-      </label>
-
-
-      <label>
-        Date
-
-        <input type="date">
-
-      </label>
-
-
-      <button class="primary">
-        Add Calendar Event
-      </button>
-
-    </form>
-
-  </div>
-
-
-  <div class="panel">
-
-    <h2>Upcoming Events</h2>
-
-    <div class="row">
-
-      <b>No events added yet</b>
-
-      <span>
-        Calendar events will appear here.
-      </span>
-
-    </div>
-
-  </div>
-
-</section>
+  </section>
 
 
 </main>
@@ -1154,51 +415,200 @@
 </div>
 
 
-<!-- SIMPLE PAGE NAVIGATION -->
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
 
 <script>
 
-const buttons = document.querySelectorAll(".nav");
 
-const views = document.querySelectorAll(".view");
+/* =========================
+   SAFE LOCAL STORAGE
+========================= */
 
-const title = document.getElementById("pageTitle");
+function getFCAData(key){
+
+  try{
+
+    const data =
+      localStorage.getItem(key);
 
 
-buttons.forEach(button => {
+    if(!data){
 
-  button.addEventListener("click", () => {
+      return [];
 
-    buttons.forEach(b =>
-      b.classList.remove("active")
+    }
+
+
+    const parsed =
+      JSON.parse(data);
+
+
+    return Array.isArray(parsed)
+      ? parsed
+      : [];
+
+  }
+
+  catch(error){
+
+    console.error(
+      "FCA data error:",
+      key,
+      error
     );
 
-    views.forEach(v =>
-      v.classList.remove("active")
+
+    return [];
+
+  }
+
+}
+
+
+
+/* =========================
+   DASHBOARD STATISTICS
+========================= */
+
+function updateDashboardStats(){
+
+
+  /* TEACHERS */
+
+  const teachers =
+    getFCAData(
+      "fcaTeachers"
     );
 
-    button.classList.add("active");
 
-    const view =
-      document.getElementById(button.dataset.view);
+  /* CLASSES */
 
-    view.classList.add("active");
-
-    title.textContent =
-      button.textContent.trim();
-
-  });
-
-});
+  const classes =
+    getFCAData(
+      "fcaClasses"
+    );
 
 
-document.querySelector(".logout").addEventListener("click", () => {
+  /* STUDENTS */
 
-  window.location.href = "admin-login.html";
+  const students =
+    getFCAData(
+      "fcaStudents"
+    );
 
-});
+
+
+  /* TEACHER COUNT */
+
+  const teacherCount =
+    document.getElementById(
+      "dashboardTeacherCount"
+    );
+
+
+  if(teacherCount){
+
+    teacherCount.textContent =
+      teachers.length;
+
+  }
+
+
+
+  /* CLASS COUNT */
+
+  const classCount =
+    document.getElementById(
+      "dashboardClassCount"
+    );
+
+
+  if(classCount){
+
+    classCount.textContent =
+      classes.length;
+
+  }
+
+
+
+  /* STUDENT COUNT */
+
+  const studentCount =
+    document.getElementById(
+      "dashboardStudentCount"
+    );
+
+
+  if(studentCount){
+
+    studentCount.textContent =
+      students.length;
+
+  }
+
+}
+
+
+
+/* =========================
+   UPDATE DASHBOARD
+========================= */
+
+updateDashboardStats();
+
+
+
+/* =========================
+   REFRESH WHEN RETURNING
+   TO DASHBOARD
+========================= */
+
+window.addEventListener(
+  "storage",
+  updateDashboardStats
+);
+
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+const logout =
+  document.querySelector(
+    ".logout"
+  );
+
+
+if(logout){
+
+  logout.addEventListener(
+    "click",
+    function(){
+
+      /*
+       * Do not delete teacher,
+       * student or class data.
+       *
+       * This only returns the
+       * administrator to login.
+       */
+
+      window.location.href =
+        "admin-login.html";
+
+    }
+  );
+
+}
+
 
 </script>
 
 </body>
+
 </html>

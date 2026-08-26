@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FCA | Students</title>
+
+<link rel="stylesheet" href="students.css">
+
+</head>
+
+<body>
+
+<div class="students-page">
+
+<!-- =========================
+     TOP BAR
+========================= -->
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <a href="admin.html" class="logo-link">
+      <img src="fca-logo.png" alt="First Class Academy">
+    </a>
+
+    <div>
+      <strong>FCA Portal</strong>
+      <span>Administration</span>
+    </div>
+
+  </div>
+
+
+  <div class="top-actions">
+
+    <span>Administrator</span>
+
+    <a href="admin.html">
+      Dashboard
+    </a>
+
+  </div>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="content">
+
+
+<!-- =========================
+     PAGE HEADER
+========================= -->
+
+<section class="page-heading">
+
+  <div>
+
+    <span class="eyebrow">
+      STUDENTS
+    </span>
+
+    <h1>Students</h1>
+
+    <p>
+      Select a class to view registered students and their results.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     CLASS SELECTOR
+========================= -->
+
+<section id="classSection" class="panel">
+
+  <div class="panel-heading">
+
+    <div>
+
+      <h2>Select Class</h2>
+
+      <p>
+        Choose a class to view its students.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="class-grid">
+
+    <button
+      class="class-card"
+      onclick="openClass('Form 1')"
+    >
+
+      <span class="class-number">
+        01
+      </span>
+
+      <strong>
+        Form 1
+      </strong>
+
+      <small>
+        View Students
+      </small>
+
+    </button>
+
+
+    <button
+      class="class-card"
+      onclick="openClass('Form 2')"
+    >
+
+      <span class="class-number">
+        02
+      </span>
+
+      <strong>
+        Form 2
+      </strong>
+
+      <small>
+        View Students
+      </small>
+
+    </button>
+
+
+    <button
+      class="class-card"
+      onclick="openClass('Form 3')"
+    >
+
+      <span class="class-number">
+        03
+      </span>
+
+      <strong>
+        Form 3
+      </strong>
+
+      <small>
+        View Students
+      </small>
+
+    </button>
+
+
+    <button
+      class="class-card"
+      onclick="openClass('Form 4')"
+    >
+
+      <span class="class-number">
+        04
+      </span>
+
+      <strong>
+        Form 4
+      </strong>
+
+      <small>
+        View Students
+      </small>
+
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     STUDENT LIST
+========================= -->
+
+<section
+  id="studentSection"
+  class="panel hidden"
+>
+
+  <div class="panel-heading">
+
+    <div>
+
+      <span class="eyebrow">
+        CLASS STUDENTS
+      </span>
+
+      <h2 id="selectedClassTitle">
+        Form 1
+      </h2>
+
+      <p>
+        Students registered in this class.
+      </p>
+
+    </div>
+
+
+    <button
+      class="secondary-btn"
+      onclick="showClasses()"
+    >
+      ← Back to Classes
+    </button>
+
+  </div>
+
+
+  <div
+    id="studentList"
+    class="student-list"
+  ></div>
+
+</section>
+
+
+<!-- =========================
+     STUDENT DETAILS
+========================= -->
+
+<section
+  id="studentDetails"
+  class="hidden"
+>
+
+
+  <button
+    class="back-btn"
+    onclick="showStudents()"
+  >
+    ← Back to Students
+  </button>
+
+
+  <div class="student-profile panel">
+
+    <div class="profile-avatar" id="profileAvatar">
+      S
+    </div>
+
+
+    <div class="profile-info">
+
+      <span class="eyebrow">
+        STUDENT PROFILE
+      </span>
+
+      <h2 id="profileName">
+        Student Name
+      </h2>
+
+      <div class="profile-details">
+
+        <div>
+          <small>Student ID</small>
+          <strong id="profileId">—</strong>
+        </div>
+
+        <div>
+          <small>Password</small>
+          <strong id="profilePassword">—</strong>
+        </div>
+
+        <div>
+          <small>Class</small>
+          <strong id="profileClass">—</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       RESULTS
+  ========================= -->
+
+  <div class="panel">
+
+    <div class="panel-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          ACADEMIC RESULTS
+        </span>
+
+        <h2>Student Results</h2>
+
+        <p>
+          Results entered for this student.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="studentResults"
+      class="results-container"
+    ></div>
+
+  </div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let students =
+  JSON.parse(
+    localStorage.getItem("fcaStudents")
+  ) || [];
+
+
+let results =
+  JSON.parse(
+    localStorage.getItem("fcaResults")
+  ) || [];
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const classSection =
+  document.getElementById("classSection");
+
+const studentSection =
+  document.getElementById("studentSection");
+
+const studentDetails =
+  document.getElementById("studentDetails");
+
+const studentList =
+  document.getElementById("studentList");
+
+const selectedClassTitle =
+  document.getElementById(
+    "selectedClassTitle"
+  );
+
+
+/* =========================
+   CURRENT CLASS
+========================= */
+
+let currentClass = "";
+
+
+/* =========================
+   OPEN CLASS
+========================= */
+
+function openClass(className){
+
+  currentClass = className;
+
+  classSection.classList.add("hidden");
+
+  studentDetails.classList.add("hidden");
+
+  studentSection.classList.remove("hidden");
+
+  selectedClassTitle.textContent =
+    className;
+
+  displayStudents(className);
+
+}
+
+
+/* =========================
+   DISPLAY STUDENTS
+========================= */
+
+function displayStudents(className){
+
+  const classStudents =
+    students.filter(student => {
+
+      return (
+        student.className === className ||
+        student.class === className
+      );
+
+    });
+
+
+  if(classStudents.length === 0){
+
+    studentList.innerHTML = `
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          S
+        </div>
+
+        <strong>
+          No Students Yet
+        </strong>
+
+        <p>
+          No students have been registered
+          in ${className}.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  studentList.innerHTML =
+    classStudents.map(student => {
+
+      const fullName =
+        student.fullName ||
+        `${student.firstName || ""} ${student.lastName || ""}`.trim();
+
+
+      const studentId =
+        student.studentId ||
+        student.id ||
+        "—";
+
+
+      const password =
+        student.password ||
+        student.accessPassword ||
+        "—";
+
+
+      const initial =
+        fullName.charAt(0).toUpperCase();
+
+
+      return `
+
+        <button
+          class="student-card"
+          onclick="openStudent('${escapeValue(studentId)}')"
+        >
+
+          <div class="student-avatar">
+            ${initial}
+          </div>
+
+
+          <div class="student-main">
+
+            <strong>
+              ${escapeHtml(fullName)}
+            </strong>
+
+            <span>
+              ID: ${escapeHtml(studentId)}
+            </span>
+
+          </div>
+
+
+          <div class="student-password">
+
+            <small>
+              Access Password
+            </small>
+
+            <strong>
+              ${escapeHtml(password)}
+            </strong>
+
+          </div>
+
+
+          <div class="student-arrow">
+            →
+          </div>
+
+        </button>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   OPEN STUDENT
+========================= */
+
+function openStudent(studentId){
+
+  const student =
+    students.find(item => {
+
+      return (
+        item.studentId === studentId ||
+        item.id === studentId
+      );
+
+    });
+
+
+  if(!student){
+    return;
+  }
+
+
+  classSection.classList.add("hidden");
+
+  studentSection.classList.add("hidden");
+
+  studentDetails.classList.remove("hidden");
+
+
+  const fullName =
+    student.fullName ||
+    `${student.firstName || ""} ${student.lastName || ""}`.trim();
+
+
+  const password =
+    student.password ||
+    student.accessPassword ||
+    "—";
+
+
+  const actualId =
+    student.studentId ||
+    student.id ||
+    "—";
+
+
+  const studentClass =
+    student.className ||
+    student.class ||
+    "—";
+
+
+  document.getElementById(
+    "profileAvatar"
+  ).textContent =
+    fullName.charAt(0).toUpperCase();
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    fullName;
+
+
+  document.getElementById(
+    "profileId"
+  ).textContent =
+    actualId;
+
+
+  document.getElementById(
+    "profilePassword"
+  ).textContent =
+    password;
+
+
+  document.getElementById(
+    "profileClass"
+  ).textContent =
+    studentClass;
+
+
+  displayResults(student);
+
+}
+
+
+/* =========================
+   DISPLAY RESULTS
+========================= */
+
+function displayResults(student){
+
+  const container =
+    document.getElementById(
+      "studentResults"
+    );
+
+
+  const studentId =
+    student.studentId ||
+    student.id;
+
+
+  const studentResults =
+    results.filter(result => {
+
+      return (
+        result.studentId === studentId ||
+        result.studentID === studentId
+      );
+
+    });
+
+
+  if(studentResults.length === 0){
+
+    container.innerHTML = `
+
+      <div class="no-results">
+
+        <div class="no-results-icon">
+          —
+        </div>
+
+        <h3>
+          Results Not Added Yet
+        </h3>
+
+        <p>
+          No academic results have been
+          entered for this student.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  /*
+    Support both:
+    - one result object containing subjects
+    - separate result objects
+  */
+
+  let subjectResults = [];
+
+
+  studentResults.forEach(result => {
+
+    if(Array.isArray(result.subjects)){
+
+      result.subjects.forEach(subject => {
+
+        subjectResults.push({
+
+          subject:
+            subject.subject ||
+            subject.name,
+
+          mark:
+            subject.mark,
+
+          remark:
+            subject.remark ||
+            getRemark(subject.mark)
+
+        });
+
+      });
+
+    }
+
+    else if(result.subject){
+
+      subjectResults.push({
+
+        subject:
+          result.subject,
+
+        mark:
+          result.mark,
+
+        remark:
+          result.remark ||
+          getRemark(result.mark)
+
+      });
+
+    }
+
+  });
+
+
+  if(subjectResults.length === 0){
+
+    container.innerHTML = `
+
+      <div class="no-results">
+
+        <h3>
+          Results Not Added Yet
+        </h3>
+
+        <p>
+          No subject results have been entered.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  let total = 0;
+
+  let count = 0;
+
+
+  subjectResults.forEach(item => {
+
+    const mark =
+      Number(item.mark);
+
+
+    if(!isNaN(mark)){
+
+      total += mark;
+
+      count++;
+
+    }
+
+  });
+
+
+  const average =
+    count > 0
+      ? (total / count).toFixed(1)
+      : "—";
+
+
+  container.innerHTML = `
+
+    <div class="results-summary">
+
+      <div>
+
+        <small>
+          SUBJECTS
+        </small>
+
+        <strong>
+          ${subjectResults.length}
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <small>
+          AVERAGE
+        </small>
+
+        <strong>
+          ${average}
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <small>
+          TOTAL
+        </small>
+
+        <strong>
+          ${count > 0 ? total : "—"}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="results-table-wrapper">
+
+      <table class="results-table">
+
+        <thead>
+
+          <tr>
+
+            <th>#</th>
+
+            <th>Subject</th>
+
+            <th>Mark</th>
+
+            <th>Remark</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          ${subjectResults.map(
+            (item,index) => `
+
+            <tr>
+
+              <td>
+                ${index + 1}
+              </td>
+
+              <td>
+                <strong>
+                  ${escapeHtml(
+                    item.subject || "—"
+                  )}
+                </strong>
+              </td>
+
+              <td class="mark">
+                ${
+                  item.mark !== undefined &&
+                  item.mark !== ""
+                    ? item.mark
+                    : "—"
+                }
+              </td>
+
+              <td>
+
+                <span class="remark">
+                  ${escapeHtml(
+                    item.remark || "—"
+                  )}
+                </span>
+
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   REMARK
+========================= */
+
+function getRemark(mark){
+
+  const value =
+    Number(mark);
+
+
+  if(isNaN(value)){
+    return "—";
+  }
+
+
+  if(value >= 80){
+    return "Excellent";
+  }
+
+
+  if(value >= 70){
+    return "Very Good";
+  }
+
+
+  if(value >= 60){
+    return "Good";
+  }
+
+
+  if(value >= 50){
+    return "Satisfactory";
+  }
+
+
+  if(value >= 40){
+    return "Pass";
+  }
+
+
+  return "Needs Improvement";
+
+}
+
+
+/* =========================
+   BACK TO CLASSES
+========================= */
+
+function showClasses(){
+
+  classSection.classList.remove("hidden");
+
+  studentSection.classList.add("hidden");
+
+  studentDetails.classList.add("hidden");
+
+}
+
+
+/* =========================
+   BACK TO STUDENTS
+========================= */
+
+function showStudents(){
+
+  studentSection.classList.remove("hidden");
+
+  studentDetails.classList.add("hidden");
+
+  displayStudents(currentClass);
+
+}
+
+
+/* =========================
+   HTML SAFETY
+========================= */
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeValue(value){
+
+  return String(value)
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'\\"');
+
+}
+
+</script>
+
+</body>
+</html>

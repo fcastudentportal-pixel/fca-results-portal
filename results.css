@@ -339,35 +339,47 @@ footer{
 
   html,
   body{
-    width:210mm;
-    min-height:297mm;
+    width:100%;
+    min-height:100%;
+    margin:0;
+    padding:0;
     background:#fff !important;
   }
 
   body{
-    margin:0;
-    padding:0;
     font-size:10px;
   }
 
   .container{
     width:100%;
     margin:0;
+    padding:0;
   }
 
   .results-card{
     width:100%;
     margin:0;
     padding:12px;
+
+    background:#fff;
+
     border:1px solid #ccc;
     border-radius:0;
     box-shadow:none;
 
-    break-inside:avoid;
-    page-break-inside:avoid;
+    /* IMPORTANT:
+       Allow the result to continue to another page */
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+
+    break-inside:auto !important;
+    page-break-inside:auto !important;
   }
 
-  /* TITLE */
+  /* =========================
+     TITLE
+  ========================= */
 
   .results-title{
     margin-bottom:9px;
@@ -385,15 +397,15 @@ footer{
     letter-spacing:2px;
   }
 
-  /* PRINT LOGO */
-
   .results-title .results-logo{
     width:50px;
     height:50px;
     border-width:1px;
   }
 
-  /* STUDENT DETAILS */
+  /* =========================
+     STUDENT DETAILS
+  ========================= */
 
   .student-details{
     grid-template-columns:repeat(3,1fr);
@@ -415,7 +427,34 @@ footer{
     font-size:10px;
   }
 
-  /* TABLE */
+  /* =========================
+     TABLE
+  ========================= */
+
+  .table-wrap{
+    overflow:visible !important;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+
+    break-inside:auto !important;
+    page-break-inside:auto !important;
+  }
+
+  thead{
+    display:table-header-group;
+  }
+
+  tbody{
+    display:table-row-group;
+  }
+
+  tr{
+    break-inside:avoid !important;
+    page-break-inside:avoid !important;
+  }
 
   th,
   td{
@@ -434,12 +473,16 @@ footer{
     background:transparent;
   }
 
-  /* OVERALL */
+  /* =========================
+     OVERALL RESULT
+  ========================= */
 
   .overall-result{
     margin-top:9px;
     padding:7px 9px;
-    border-left-width:3px;
+
+    break-inside:avoid !important;
+    page-break-inside:avoid !important;
   }
 
   .overall-result span{
@@ -450,43 +493,15 @@ footer{
     font-size:15px;
   }
 
-  /* HIDE BUTTONS AND FOOTER */
+  /* =========================
+     HIDE WEBSITE BUTTONS
+  ========================= */
 
-  .results-actions,
-  footer{
+  .results-actions{
     display:none !important;
   }
 
-  table{
-    page-break-inside:avoid;
+  footer{
+    display:none !important;
   }
-
-  tr{
-    page-break-inside:avoid;
-  }
-}
-/* PDF / PRINT */
-@media print {
-  .results-actions,
-  footer {
-    display: none !important;
-  }
-
-  .results-card {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  .container {
-    height: auto !important;
-    overflow: visible !important;
-  }
-}
-
-/* Make sure the result is never clipped */
-.results-card {
-  overflow: visible;
-  height: auto;
-  max-height: none;
 }

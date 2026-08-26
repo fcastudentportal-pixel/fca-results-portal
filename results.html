@@ -194,10 +194,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
 document.getElementById("downloadPdfBtn").addEventListener("click", function () {
 
-    const element = document.querySelector(".results-card");
+    const result = document.querySelector(".results-card");
 
     const studentName =
         document.getElementById("studentName").textContent.trim();
@@ -206,26 +208,43 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
         studentName.replace(/[^a-z0-9]/gi, "-") + "-Result.pdf";
 
     const options = {
-        margin: 10,
+        margin: [8, 8, 8, 8],
+
         filename: fileName,
+
         image: {
             type: "jpeg",
             quality: 0.98
         },
+
         html2canvas: {
             scale: 2,
-            useCORS: true
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: document.documentElement.scrollWidth,
+            windowHeight: document.documentElement.scrollHeight
         },
+
         jsPDF: {
             unit: "mm",
             format: "a4",
             orientation: "portrait"
+        },
+
+        pagebreak: {
+            mode: ["css", "legacy"],
+            avoid: [
+                ".student-details",
+                ".overall-result",
+                "tr"
+            ]
         }
     };
 
     html2pdf()
         .set(options)
-        .from(element)
+        .from(result)
         .save();
 
 });

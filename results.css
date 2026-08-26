@@ -465,3 +465,28 @@ footer{
     page-break-inside:avoid;
   }
 }
+/* PDF / PRINT */
+@media print {
+  .results-actions,
+  footer {
+    display: none !important;
+  }
+
+  .results-card {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+/* Make sure the result is never clipped */
+.results-card {
+  overflow: visible;
+  height: auto;
+  max-height: none;
+}

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/fca-rounded-logo.png" alt="FCA Logo" width="120">
+  <img src="fca-logo.png" alt="FCA Logo" width="120" style="border-radius: 50%;">
 </p>
 
 <h1 align="center">First Class Academy Results Portal</h1>

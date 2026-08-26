@@ -196,16 +196,22 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
 document.getElementById("downloadPdfBtn").addEventListener("click", function () {
 
     const result = document.querySelector(".results-card");
+    const actions = document.querySelector(".results-actions");
 
     const studentName =
         document.getElementById("studentName").textContent.trim();
 
     const fileName =
         studentName.replace(/[^a-z0-9]/gi, "-") + "-Result.pdf";
+
+    /* Hide buttons before creating PDF */
+    actions.style.display = "none";
 
     const options = {
         margin: [8, 8, 8, 8],
@@ -221,9 +227,7 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
             scale: 2,
             useCORS: true,
             scrollX: 0,
-            scrollY: 0,
-            windowWidth: document.documentElement.scrollWidth,
-            windowHeight: document.documentElement.scrollHeight
+            scrollY: 0
         },
 
         jsPDF: {
@@ -234,18 +238,27 @@ document.getElementById("downloadPdfBtn").addEventListener("click", function () 
 
         pagebreak: {
             mode: ["css", "legacy"],
-            avoid: [
-                ".student-details",
-                ".overall-result",
-                "tr"
-            ]
+            avoid: ["tr", ".overall-result"]
         }
     };
 
     html2pdf()
         .set(options)
         .from(result)
-        .save();
+        .save()
+        .then(function () {
+
+            /* Show buttons again after PDF is created */
+            actions.style.display = "";
+
+        })
+        .catch(function (error) {
+
+            /* Show buttons again if something goes wrong */
+            actions.style.display = "";
+
+            console.error("PDF error:", error);
+        });
 
 });
 </script>

@@ -5,15 +5,23 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
 
 <title>FCA Admin Dashboard</title>
 
-<link rel="stylesheet" href="admin.css">
+<link
+  rel="stylesheet"
+  href="admin.css"
+>
 
 </head>
 
+
 <body>
+
 
 <div class="shell">
 
@@ -57,6 +65,7 @@
   </div>
 
 
+
   <!-- NAVIGATION -->
 
   <nav>
@@ -69,9 +78,7 @@
       data-view="overview"
       type="button"
     >
-
       Dashboard
-
     </button>
 
 
@@ -81,9 +88,7 @@
       class="nav"
       href="teachers.html"
     >
-
       Teachers
-
     </a>
 
 
@@ -93,9 +98,7 @@
       class="nav"
       href="classes.html"
     >
-
       Classes
-
     </a>
 
 
@@ -105,9 +108,7 @@
       class="nav"
       href="students.html"
     >
-
       Students
-
     </a>
 
 
@@ -117,9 +118,7 @@
       class="nav"
       href="subjects.html"
     >
-
       Subjects
-
     </a>
 
 
@@ -129,9 +128,7 @@
       class="nav"
       href="results.html"
     >
-
       Results
-
     </a>
 
 
@@ -141,9 +138,7 @@
       class="nav"
       href="announcements.html"
     >
-
       Announcements
-
     </a>
 
 
@@ -153,13 +148,12 @@
       class="nav"
       href="calendar.html"
     >
-
       Academic Calendar
-
     </a>
 
 
   </nav>
+
 
 
   <!-- LOGOUT -->
@@ -168,9 +162,7 @@
     class="logout"
     type="button"
   >
-
     Log out
-
   </button>
 
 
@@ -185,7 +177,9 @@
 <main class="main">
 
 
-  <!-- HEADER -->
+  <!-- =========================
+       HEADER
+  ========================= -->
 
   <header>
 
@@ -205,9 +199,7 @@
 
 
     <div class="pill">
-
       Administrator
-
     </div>
 
 
@@ -239,6 +231,28 @@
         results, announcements and academic
         information.
       </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         DATABASE STATUS
+    ========================= -->
+
+    <div
+      id="databaseStatus"
+      style="
+        margin:20px 0;
+        padding:14px 18px;
+        border-radius:10px;
+        background:#f4f2ee;
+        color:#6c7480;
+        font-size:14px;
+      "
+    >
+
+      Connecting to FCA database...
 
     </div>
 
@@ -310,158 +324,116 @@
     </div>
 
 
-
-    <!-- =========================
-         QUICK ACCESS
-    ========================= -->
-
-    <div class="panel">
-
-
-      <h2>
-        Quick Access
-      </h2>
-
-
-      <p class="muted">
-
-        Use the navigation menu to manage
-        the FCA portal.
-
-      </p>
-
-
-      <div class="cards">
-
-
-        <a
-          href="teachers.html"
-          class="stat"
-          style="text-decoration:none;"
-        >
-
-          <span>
-            👨‍🏫
-          </span>
-
-          <small>
-            Manage Teachers
-          </small>
-
-        </a>
-
-
-        <a
-          href="classes.html"
-          class="stat"
-          style="text-decoration:none;"
-        >
-
-          <span>
-            🏫
-          </span>
-
-          <small>
-            Manage Classes
-          </small>
-
-        </a>
-
-
-        <a
-          href="students.html"
-          class="stat"
-          style="text-decoration:none;"
-        >
-
-          <span>
-            👨‍🎓
-          </span>
-
-          <small>
-            Manage Students
-          </small>
-
-        </a>
-
-
-        <a
-          href="results.html"
-          class="stat"
-          style="text-decoration:none;"
-        >
-
-          <span>
-            📊
-          </span>
-
-          <small>
-            Manage Results
-          </small>
-
-        </a>
-
-
-      </div>
-
-    </div>
-
-
   </section>
 
 
 </main>
 
-</div>
+
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="config.js"></script>
 
 
 
-<!-- =========================
-     JAVASCRIPT
-========================= -->
+<!-- =====================================================
+     FCA ADMIN DASHBOARD JAVASCRIPT
+===================================================== -->
 
 <script>
 
 
-/* =========================
-   SAFE LOCAL STORAGE
-========================= */
+/* =====================================================
+   FCA DATABASE API
+===================================================== */
 
-function getFCAData(key){
+const FCA_API =
+  "http://127.0.0.1:5000/api";
+
+
+
+/* =====================================================
+   ADMIN AUTHORIZATION
+===================================================== */
+
+async function checkAdminAuthorization(){
 
   try{
 
-    const data =
-      localStorage.getItem(key);
+    const {
+      data,
+      error
+    } =
+      await supabase.auth.getSession();
 
 
-    if(!data){
+    if(
+      error ||
+      !data ||
+      !data.session ||
+      !data.session.user
+    ){
 
-      return [];
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
 
     }
 
 
-    const parsed =
-      JSON.parse(data);
+    const email =
+      data.session.user.email
+        ?.toLowerCase();
 
 
-    return Array.isArray(parsed)
-      ? parsed
-      : [];
+    /*
+     * Only the official FCA
+     * administrator account can
+     * access this dashboard.
+     */
+
+    if(
+      email !==
+      "fca.admin@gmail.com"
+    ){
+
+      await supabase.auth.signOut();
+
+
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
+
+    }
+
+
+    return true;
 
   }
 
   catch(error){
 
     console.error(
-      "FCA data error:",
-      key,
+      "Authorization error:",
       error
     );
 
 
-    return [];
+    window.location.replace(
+      "admin-login.html"
+    );
+
+
+    return false;
 
   }
 
@@ -469,84 +441,86 @@ function getFCAData(key){
 
 
 
-/* =========================
-   DASHBOARD STATISTICS
-========================= */
+/* =====================================================
+   FCA API REQUEST
+===================================================== */
 
-function updateDashboardStats(){
+async function fcaAPI(
+  endpoint
+){
 
-
-  /* TEACHERS */
-
-  const teachers =
-    getFCAData(
-      "fcaTeachers"
+  const response =
+    await fetch(
+      FCA_API + endpoint
     );
 
 
-  /* CLASSES */
+  if(!response.ok){
 
-  const classes =
-    getFCAData(
-      "fcaClasses"
+    throw new Error(
+      "API request failed: " +
+      response.status
     );
-
-
-  /* STUDENTS */
-
-  const students =
-    getFCAData(
-      "fcaStudents"
-    );
-
-
-
-  /* TEACHER COUNT */
-
-  const teacherCount =
-    document.getElementById(
-      "dashboardTeacherCount"
-    );
-
-
-  if(teacherCount){
-
-    teacherCount.textContent =
-      teachers.length;
 
   }
 
 
+  return await response.json();
 
-  /* CLASS COUNT */
+}
 
-  const classCount =
+
+
+/* =====================================================
+   DATABASE STATUS
+===================================================== */
+
+function updateDatabaseStatus(
+  connected,
+  message
+){
+
+  const status =
     document.getElementById(
-      "dashboardClassCount"
+      "databaseStatus"
     );
 
 
-  if(classCount){
+  if(!status){
 
-    classCount.textContent =
-      classes.length;
+    return;
 
   }
 
 
+  if(connected){
 
-  /* STUDENT COUNT */
-
-  const studentCount =
-    document.getElementById(
-      "dashboardStudentCount"
-    );
+    status.textContent =
+      "● FCA database connected";
 
 
-  if(studentCount){
+    status.style.background =
+      "#e8f5ee";
 
-    studentCount.textContent =
-      students.length;
+
+    status.style.color =
+      "#18794e";
+
+  }
+
+  else{
+
+    status.textContent =
+      "● FCA database offline — " +
+      message;
+
+
+    status.style.background =
+      "#fff1f0";
+
+
+    status.style.color =
+      "#b42318";
 
   }
 
@@ -554,29 +528,163 @@ function updateDashboardStats(){
 
 
 
-/* =========================
-   UPDATE DASHBOARD
-========================= */
+/* =====================================================
+   LOAD DASHBOARD STATISTICS
+===================================================== */
 
-updateDashboardStats();
+async function updateDashboardStats(){
 
+  try{
 
-
-/* =========================
-   REFRESH WHEN RETURNING
-   TO DASHBOARD
-========================= */
-
-window.addEventListener(
-  "storage",
-  updateDashboardStats
-);
+    const data =
+      await fcaAPI(
+        "/status"
+      );
 
 
+    /* -------------------------
+       TEACHERS
+    ------------------------- */
 
-/* =========================
+    const teacherCount =
+      document.getElementById(
+        "dashboardTeacherCount"
+      );
+
+
+    if(teacherCount){
+
+      teacherCount.textContent =
+        data.teachers ?? 0;
+
+    }
+
+
+
+    /* -------------------------
+       CLASSES
+    ------------------------- */
+
+    const classCount =
+      document.getElementById(
+        "dashboardClassCount"
+      );
+
+
+    if(classCount){
+
+      classCount.textContent =
+        data.classes ?? 0;
+
+    }
+
+
+
+    /* -------------------------
+       STUDENTS
+    ------------------------- */
+
+    const studentCount =
+      document.getElementById(
+        "dashboardStudentCount"
+      );
+
+
+    if(studentCount){
+
+      studentCount.textContent =
+        data.students ?? 0;
+
+    }
+
+
+
+    /* -------------------------
+       DATABASE CONNECTED
+    ------------------------- */
+
+    updateDatabaseStatus(
+      true,
+      ""
+    );
+
+
+    console.log(
+      "FCA database:",
+      data
+    );
+
+  }
+
+
+  catch(error){
+
+    console.error(
+      "FCA database error:",
+      error
+    );
+
+
+    /* -------------------------
+       DATABASE OFFLINE
+    ------------------------- */
+
+    const teacherCount =
+      document.getElementById(
+        "dashboardTeacherCount"
+      );
+
+
+    const classCount =
+      document.getElementById(
+        "dashboardClassCount"
+      );
+
+
+    const studentCount =
+      document.getElementById(
+        "dashboardStudentCount"
+      );
+
+
+    if(teacherCount){
+
+      teacherCount.textContent =
+        "—";
+
+    }
+
+
+    if(classCount){
+
+      classCount.textContent =
+        "—";
+
+    }
+
+
+    if(studentCount){
+
+      studentCount.textContent =
+        "—";
+
+    }
+
+
+    updateDatabaseStatus(
+      false,
+      "Start the FCA API in Termux"
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
 const logout =
   document.querySelector(
@@ -588,18 +696,27 @@ if(logout){
 
   logout.addEventListener(
     "click",
-    function(){
+    async function(){
 
-      /*
-       * Do not delete teacher,
-       * student or class data.
-       *
-       * This only returns the
-       * administrator to login.
-       */
+      try{
 
-      window.location.href =
-        "admin-login.html";
+        await supabase.auth.signOut();
+
+      }
+
+      catch(error){
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
+
+
+      window.location.replace(
+        "admin-login.html"
+      );
 
     }
   );
@@ -607,7 +724,65 @@ if(logout){
 }
 
 
+
+/* =====================================================
+   REFRESH WHEN PAGE BECOMES
+   VISIBLE AGAIN
+===================================================== */
+
+document.addEventListener(
+  "visibilitychange",
+  async function(){
+
+    if(
+      document.visibilityState ===
+      "visible"
+    ){
+
+      const authorized =
+        await checkAdminAuthorization();
+
+
+      if(authorized){
+
+        updateDashboardStats();
+
+      }
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   INITIALIZE DASHBOARD
+===================================================== */
+
+async function initializeDashboard(){
+
+  const authorized =
+    await checkAdminAuthorization();
+
+
+  if(!authorized){
+
+    return;
+
+  }
+
+
+  await updateDashboardStats();
+
+}
+
+
+initializeDashboard();
+
+
 </script>
+
 
 </body>
 

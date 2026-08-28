@@ -1,29 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
 <title>FCA Admin Login</title>
-<link rel="stylesheet" href="admin-login.css">
+
+<link
+  rel="stylesheet"
+  href="admin-login.css"
+>
+
+<style>
+
+.password-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.password-wrapper input{
+  width:100%;
+  padding-right:50px;
+}
+
+.password-toggle{
+  position:absolute;
+
+  right:10px;
+  top:50%;
+
+  transform:translateY(-50%);
+
+  width:36px;
+  height:36px;
+
+  border:0;
+  background:transparent;
+
+  padding:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  font-size:19px;
+
+  color:#650d22;
+}
+
+.password-toggle:focus{
+  outline:none;
+}
+
+</style>
+
 </head>
+
+
 <body>
+
+
 <div class="login-container">
+
+
   <div class="login-card">
-    <img src="fca-logo.png" class="fca-logo" alt="First Class Academy">
-    <div class="eyebrow">ADMINISTRATION</div>
-    <h1>First Class Academy</h1>
-    <p class="subtitle">Administrator Login</p>
-    <form id="adminLoginForm" action="admin.html">
-      <label>Email Address<input type="email" id="adminEmail" placeholder="fca.admin@gmail.com" required></label>
-      <label>Password<input type="password" id="adminPassword" placeholder="Enter password" required></label>
-      <button type="submit" class="login-btn">Login</button>
-      <p id="loginMessage" class="message"></p>
+
+
+    <!-- FCA LOGO -->
+
+    <img
+      src="fca-logo.png"
+      class="fca-logo"
+      alt="First Class Academy"
+    >
+
+
+
+    <!-- HEADER -->
+
+    <div class="eyebrow">
+      ADMINISTRATION
+    </div>
+
+
+    <h1>
+      First Class Academy
+    </h1>
+
+
+    <p class="subtitle">
+      Administrator Login
+    </p>
+
+
+
+    <!-- LOGIN FORM -->
+
+    <form
+      id="adminLoginForm"
+      novalidate
+    >
+
+
+      <!-- EMAIL -->
+
+      <label>
+
+        Email Address
+
+        <input
+          type="email"
+          id="adminEmail"
+          placeholder="fca.admin@gmail.com"
+          autocomplete="username"
+          required
+        >
+
+      </label>
+
+
+
+      <!-- PASSWORD -->
+
+      <label>
+
+        Password
+
+        <div class="password-wrapper">
+
+          <input
+            type="password"
+            id="adminPassword"
+            placeholder="Enter password"
+            autocomplete="current-password"
+            required
+          >
+
+
+          <button
+            type="button"
+            class="password-toggle"
+            id="passwordToggle"
+            aria-label="Show password"
+            title="Show password"
+          >
+            👁️
+          </button>
+
+        </div>
+
+      </label>
+
+
+
+      <!-- LOGIN BUTTON -->
+
+      <button
+        type="submit"
+        class="login-btn"
+        id="loginButton"
+      >
+        Login
+      </button>
+
+
+
+      <!-- MESSAGE -->
+
+      <p
+        id="loginMessage"
+        class="message"
+      ></p>
+
+
     </form>
-    <a href="index.html" class="back-link">← Back to Student Portal</a>
+
+
+
+    <!-- BACK TO PORTAL -->
+
+    <a
+      href="index.html"
+      class="back-link"
+    >
+      ← Back to Student Portal
+    </a>
+
+
   </div>
+
 </div>
+
+
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="config.js"></script>
+
 <script src="admin-login.js"></script>
+
+
 </body>
+
 </html>

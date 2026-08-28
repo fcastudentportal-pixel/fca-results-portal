@@ -17,6 +17,11 @@ body{
   color:var(--text);
 }
 
+
+/* =========================
+   LOGIN CONTAINER
+========================= */
+
 .login-container{
   min-height:100vh;
   display:flex;
@@ -24,6 +29,11 @@ body{
   justify-content:center;
   padding:25px;
 }
+
+
+/* =========================
+   LOGIN CARD
+========================= */
 
 .login-card{
   width:min(430px,100%);
@@ -35,6 +45,11 @@ body{
   border:1px solid #ddd8d2;
 }
 
+
+/* =========================
+   FCA LOGO
+========================= */
+
 .fca-logo{
   width:100px;
   height:100px;
@@ -42,6 +57,11 @@ body{
   display:block;
   margin:0 auto 18px;
 }
+
+
+/* =========================
+   HEADER
+========================= */
 
 .eyebrow{
   color:var(--maroon);
@@ -61,12 +81,22 @@ h1{
   margin-bottom:28px;
 }
 
+
+/* =========================
+   LABELS
+========================= */
+
 label{
   display:block;
   text-align:left;
   font-weight:bold;
   margin:16px 0;
 }
+
+
+/* =========================
+   INPUT
+========================= */
 
 input{
   width:100%;
@@ -82,6 +112,130 @@ input:focus{
   outline:none;
   border-color:var(--maroon);
 }
+
+
+/* =========================
+   PASSWORD WRAPPER
+========================= */
+
+.password-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.password-wrapper input{
+  width:100%;
+  padding-right:52px;
+}
+
+
+/* =========================
+   PASSWORD EYE BUTTON
+========================= */
+
+.password-toggle{
+  position:absolute;
+
+  right:8px;
+  top:50%;
+
+  transform:translateY(-50%);
+
+  width:40px;
+  height:40px;
+
+  border:0;
+  background:transparent;
+
+  padding:0;
+  margin:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  color:var(--muted);
+
+  z-index:5;
+}
+
+
+/* =========================
+   EYE ICON
+========================= */
+
+.password-toggle::before{
+
+  content:"";
+
+  width:18px;
+  height:12px;
+
+  border:2px solid currentColor;
+
+  border-radius:75% 15% 75% 15%;
+
+  transform:rotate(45deg);
+
+  display:block;
+
+  position:relative;
+
+}
+
+
+/* =========================
+   EYE PUPIL
+========================= */
+
+.password-toggle::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:currentColor;
+
+  left:17px;
+  top:17px;
+
+}
+
+
+/* =========================
+   EYE HOVER
+========================= */
+
+.password-toggle:hover{
+  color:var(--maroon);
+}
+
+
+/* =========================
+   EYE FOCUS
+========================= */
+
+.password-toggle:focus{
+  outline:none;
+}
+
+.password-toggle:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+  border-radius:6px;
+}
+
+
+/* =========================
+   LOGIN BUTTON
+========================= */
 
 .login-btn{
   width:100%;
@@ -100,11 +254,35 @@ input:focus{
   opacity:.9;
 }
 
+.login-btn:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
 .message{
   min-height:20px;
   color:#a40020;
   font-size:14px;
 }
+
+
+/* =========================
+   SUCCESS MESSAGE
+========================= */
+
+.message.success{
+  color:#18794e;
+}
+
+
+/* =========================
+   BACK LINK
+========================= */
 
 .back-link{
   display:inline-block;
@@ -113,6 +291,15 @@ input:focus{
   text-decoration:none;
   font-weight:bold;
 }
+
+.back-link:hover{
+  text-decoration:underline;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:500px){
 
@@ -128,4 +315,5 @@ input:focus{
     width:85px;
     height:85px;
   }
+
 }

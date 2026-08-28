@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FCA | Teachers</title>
+
+<link rel="stylesheet" href="teachers.css">
+
+</head>
+
+<body>
+
+<div class="teachers-page">
+
+  <!-- TOP BAR -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <a href="admin.html" class="logo-link">
+        <img src="fca-logo.png" alt="First Class Academy">
+      </a>
+
+      <div>
+        <strong>FCA Portal</strong>
+        <span>Administration</span>
+      </div>
+
+    </div>
+
+
+    <div class="admin-info">
+
+      <span>Administrator</span>
+
+      <a href="admin.html">
+        Dashboard
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main class="content">
+
+
+    <!-- PAGE HEADING -->
+
+    <section class="page-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          ADMINISTRATION
+        </span>
+
+        <h1>Teachers</h1>
+
+        <p>
+          Add teachers and assign the subjects and classes
+          they are responsible for.
+        </p>
+
+      </div>
+
+
+      <a
+        href="#addTeacher"
+        class="add-btn"
+      >
+        + Add Teacher
+      </a>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+
+    <section class="teacher-stats">
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          T
+        </div>
+
+        <div>
+
+          <strong id="teacherCount">
+            0
+          </strong>
+
+          <span>
+            Total Teachers
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          S
+        </div>
+
+        <div>
+
+          <strong id="subjectCount">
+            0
+          </strong>
+
+          <span>
+            Subjects Assigned
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          C
+        </div>
+
+        <div>
+
+          <strong id="classCount">
+            0
+          </strong>
+
+          <span>
+            Class Assignments
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TEACHER LIST -->
+
+    <section class="panel">
+
+      <div class="panel-heading">
+
+        <div>
+
+          <span class="eyebrow">
+            STAFF
+          </span>
+
+          <h2>Teacher List</h2>
+
+          <p>
+            Teachers registered in the FCA administration system.
+          </p>
+
+        </div>
+
+
+        <a
+          href="#addTeacher"
+          class="secondary-btn"
+        >
+          + Add Teacher
+        </a>
+
+      </div>
+
+
+      <div
+        id="teacherList"
+        class="teacher-list"
+      >
+
+        <!-- Javascript will load teachers here -->
+
+      </div>
+
+    </section>
+
+
+    <!-- ADD / EDIT TEACHER -->
+
+    <section
+      id="addTeacher"
+      class="panel form-panel"
+    >
+
+      <div class="panel-heading">
+
+        <div>
+
+          <span class="eyebrow">
+            TEACHER ACCOUNT
+          </span>
+
+          <h2 id="formTitle">
+            Add Teacher
+          </h2>
+
+          <p>
+            Create a teacher account and assign subjects
+            and classes.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <form id="teacherForm">
+
+
+        <!-- PERSONAL INFORMATION -->
+
+        <div class="section-title">
+
+          <h3>
+            Personal Information
+          </h3>
+
+          <p>
+            Enter the teacher's basic information.
+          </p>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <label>
+
+            First Name
+
+            <input
+              type="text"
+              id="firstName"
+              placeholder="e.g. John"
+              required
+            >
+
+          </label>
+
+
+          <label>
+
+            Last Name
+
+            <input
+              type="text"
+              id="lastName"
+              placeholder="e.g. Banda"
+              required
+            >
+
+          </label>
+
+
+          <label>
+
+            Username
+
+            <input
+              type="text"
+              id="username"
+              placeholder="e.g. john.banda"
+              required
+            >
+
+          </label>
+
+
+          <label>
+
+            Password
+
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              required
+            >
+
+          </label>
+
+
+        </div>
+
+
+        <!-- SUBJECTS -->
+
+        <div class="section-title subject-title">
+
+          <h3>
+            Subjects Taught
+          </h3>
+
+          <p>
+            Select all subjects this teacher teaches.
+          </p>
+
+        </div>
+
+
+        <div class="select-actions">
+
+          <button
+            type="button"
+            class="small-btn"
+            onclick="selectAllSubjects()"
+          >
+            Select All
+          </button>
+
+          <button
+            type="button"
+            class="small-btn light"
+            onclick="clearSubjects()"
+          >
+            Clear
+          </button>
+
+        </div>
+
+
+        <div class="checkbox-grid">
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Agriculture"
+            >
+
+            <span>Agriculture</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Bible Knowledge"
+            >
+
+            <span>Bible Knowledge</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Biology"
+            >
+
+            <span>Biology</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Chemistry"
+            >
+
+            <span>Chemistry</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Chichewa"
+            >
+
+            <span>Chichewa</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="English"
+            >
+
+            <span>English</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Geography"
+            >
+
+            <span>Geography</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="History"
+            >
+
+            <span>History</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Life Skills"
+            >
+
+            <span>Life Skills</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Mathematics"
+            >
+
+            <span>Mathematics</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Physics"
+            >
+
+            <span>Physics</span>
+
+          </label>
+
+
+          <label class="check-option">
+
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Social Studies"
+            >
+
+            <span>Social Studies</span>
+
+          </label>
+
+
+        </div>
+
+
+        <!-- CLASSES -->
+
+        <div class="section-title class-title">
+
+          <h3>
+            Classes Assigned
+          </h3>
+
+          <p>
+            Select all classes this teacher can manage.
+          </p>
+
+        </div>
+
+
+        <div class="select-actions">
+
+          <button
+            type="button"
+            class="small-btn"
+            onclick="selectAllClasses()"
+          >
+            Select All
+          </button>
+
+          <button
+            type="button"
+            class="small-btn light"
+            onclick="clearClasses()"
+          >
+            Clear
+          </button>
+
+        </div>
+
+
+        <div class="class-checkboxes">
+
+
+          <label class="class-option">
+
+            <input
+              type="checkbox"
+              name="classes"
+              value="Form 1"
+            >
+
+            <div>
+
+              <strong>
+                Form 1
+              </strong>
+
+              <span>
+                First Year
+              </span>
+
+            </div>
+
+          </label>
+
+
+          <label class="class-option">
+
+            <input
+              type="checkbox"
+              name="classes"
+              value="Form 2"
+            >
+
+            <div>
+
+              <strong>
+                Form 2
+              </strong>
+
+              <span>
+                Second Year
+              </span>
+
+            </div>
+
+          </label>
+
+
+          <label class="class-option">
+
+            <input
+              type="checkbox"
+              name="classes"
+              value="Form 3"
+            >
+
+            <div>
+
+              <strong>
+                Form 3
+              </strong>
+
+              <span>
+                Third Year
+              </span>
+
+            </div>
+
+          </label>
+
+
+          <label class="class-option">
+
+            <input
+              type="checkbox"
+              name="classes"
+              value="Form 4"
+            >
+
+            <div>
+
+              <strong>
+                Form 4
+              </strong>
+
+              <span>
+                Fourth Year
+              </span>
+
+            </div>
+
+          </label>
+
+
+        </div>
+
+
+        <!-- FORM ACTIONS -->
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="resetForm()"
+          >
+            Cancel
+          </button>
+
+
+          <button
+            type="submit"
+            class="save-btn"
+          >
+            Save Teacher
+          </button>
+
+        </div>
+
+
+        <p
+          id="teacherMessage"
+          class="message"
+        ></p>
+
+
+      </form>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let teachers =
+  JSON.parse(
+    localStorage.getItem("fcaTeachers")
+  ) || [];
+
+
+let editingIndex = -1;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const teacherForm =
+  document.getElementById("teacherForm");
+
+const teacherList =
+  document.getElementById("teacherList");
+
+const teacherCount =
+  document.getElementById("teacherCount");
+
+const subjectCount =
+  document.getElementById("subjectCount");
+
+const classCount =
+  document.getElementById("classCount");
+
+const teacherMessage =
+  document.getElementById("teacherMessage");
+
+const formTitle =
+  document.getElementById("formTitle");
+
+
+/* =========================
+   GENERATE TEACHER ID
+========================= */
+
+function generateTeacherId(){
+
+  let number =
+    teachers.length + 1;
+
+  let id =
+    `FCA-T-${String(number).padStart(3,"0")}`;
+
+
+  /* Make sure ID is unique */
+
+  while(
+    teachers.some(
+      teacher =>
+        teacher.teacherId === id
+    )
+  ){
+
+    number++;
+
+    id =
+      `FCA-T-${String(number).padStart(3,"0")}`;
+
+  }
+
+
+  return id;
+
+}
+
+
+/* =========================
+   SAVE DATA
+========================= */
+
+function saveTeachers(){
+
+  localStorage.setItem(
+    "fcaTeachers",
+    JSON.stringify(teachers)
+  );
+
+}
+
+
+/* =========================
+   DISPLAY TEACHERS
+========================= */
+
+function displayTeachers(){
+
+  teacherCount.textContent =
+    teachers.length;
+
+
+  let subjectsTotal = 0;
+  let classesTotal = 0;
+
+
+  teachers.forEach(teacher => {
+
+    subjectsTotal +=
+      Array.isArray(teacher.subjects)
+      ? teacher.subjects.length
+      : 0;
+
+
+    classesTotal +=
+      Array.isArray(teacher.classes)
+      ? teacher.classes.length
+      : 0;
+
+  });
+
+
+  subjectCount.textContent =
+    subjectsTotal;
+
+
+  classCount.textContent =
+    classesTotal;
+
+
+  if(teachers.length === 0){
+
+    teacherList.innerHTML = `
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          T
+        </div>
+
+        <strong>
+          No teachers added yet
+        </strong>
+
+        <p>
+          Add your first teacher to begin
+          managing classes and results.
+        </p>
+
+        <a
+          href="#addTeacher"
+          class="add-btn"
+        >
+          + Add Teacher
+        </a>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  teacherList.innerHTML =
+    teachers.map((teacher,index) => {
+
+      const subjects =
+        Array.isArray(teacher.subjects)
+        ? teacher.subjects
+        : [];
+
+
+      const classes =
+        Array.isArray(teacher.classes)
+        ? teacher.classes
+        : [];
+
+
+      return `
+
+        <div class="teacher-card">
+
+
+          <div class="teacher-main">
+
+
+            <div class="teacher-avatar">
+
+              ${
+                teacher.firstName
+                .charAt(0)
+                .toUpperCase()
+              }
+
+            </div>
+
+
+            <div class="teacher-info">
+
+              <div class="teacher-name-row">
+
+                <h3>
+
+                  ${teacher.firstName}
+                  ${teacher.lastName}
+
+                </h3>
+
+                <span class="teacher-id">
+
+                  ${teacher.teacherId}
+
+                </span>
+
+              </div>
+
+
+              <p class="username">
+
+                @${teacher.username}
+
+              </p>
+
+
+              <div class="assignment-block">
+
+                <strong>
+                  Subjects
+                </strong>
+
+
+                <div class="tags">
+
+                  ${
+                    subjects.length
+                    ? subjects.map(subject => `
+                      
+                      <span class="tag subject-tag">
+                        ${subject}
+                      </span>
+
+                    `).join("")
+                    : `
+                      <span class="none">
+                        No subjects assigned
+                      </span>
+                    `
+                  }
+
+                </div>
+
+              </div>
+
+
+              <div class="assignment-block">
+
+                <strong>
+                  Classes
+                </strong>
+
+
+                <div class="tags">
+
+                  ${
+                    classes.length
+                    ? classes.map(className => `
+                      
+                      <span class="tag class-tag">
+                        ${className}
+                      </span>
+
+                    `).join("")
+                    : `
+                      <span class="none">
+                        No classes assigned
+                      </span>
+                    `
+                  }
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+
+          <div class="teacher-actions">
+
+            <button
+              class="edit-btn"
+              onclick="editTeacher(${index})"
+            >
+              Edit
+            </button>
+
+
+            <button
+              class="delete-btn"
+              onclick="deleteTeacher(${index})"
+            >
+              Delete
+            </button>
+
+          </div>
+
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   GET SELECTED SUBJECTS
+========================= */
+
+function getSelectedSubjects(){
+
+  return Array.from(
+    document.querySelectorAll(
+      'input[name="subjects"]:checked'
+    )
+  ).map(
+    checkbox =>
+      checkbox.value
+  );
+
+}
+
+
+/* =========================
+   GET SELECTED CLASSES
+========================= */
+
+function getSelectedClasses(){
+
+  return Array.from(
+    document.querySelectorAll(
+      'input[name="classes"]:checked'
+    )
+  ).map(
+    checkbox =>
+      checkbox.value
+  );
+
+}
+
+
+/* =========================
+   SELECT ALL SUBJECTS
+========================= */
+
+function selectAllSubjects(){
+
+  document
+    .querySelectorAll(
+      'input[name="subjects"]'
+    )
+    .forEach(
+      checkbox =>
+        checkbox.checked = true
+    );
+
+}
+
+
+/* =========================
+   CLEAR SUBJECTS
+========================= */
+
+function clearSubjects(){
+
+  document
+    .querySelectorAll(
+      'input[name="subjects"]'
+    )
+    .forEach(
+      checkbox =>
+        checkbox.checked = false
+    );
+
+}
+
+
+/* =========================
+   SELECT ALL CLASSES
+========================= */
+
+function selectAllClasses(){
+
+  document
+    .querySelectorAll(
+      'input[name="classes"]'
+    )
+    .forEach(
+      checkbox =>
+        checkbox.checked = true
+    );
+
+}
+
+
+/* =========================
+   CLEAR CLASSES
+========================= */
+
+function clearClasses(){
+
+  document
+    .querySelectorAll(
+      'input[name="classes"]'
+    )
+    .forEach(
+      checkbox =>
+        checkbox.checked = false
+    );
+
+}
+
+
+/* =========================
+   SUBMIT FORM
+========================= */
+
+teacherForm.addEventListener(
+  "submit",
+  function(event){
+
+    event.preventDefault();
+
+
+    const firstName =
+      document.getElementById(
+        "firstName"
+      ).value.trim();
+
+
+    const lastName =
+      document.getElementById(
+        "lastName"
+      ).value.trim();
+
+
+    const username =
+      document.getElementById(
+        "username"
+      ).value.trim();
+
+
+    const password =
+      document.getElementById(
+        "password"
+      ).value;
+
+
+    const subjects =
+      getSelectedSubjects();
+
+
+    const classes =
+      getSelectedClasses();
+
+
+    /* Validation */
+
+    if(subjects.length === 0){
+
+      teacherMessage.textContent =
+        "Please select at least one subject.";
+
+      return;
+
+    }
+
+
+    if(classes.length === 0){
+
+      teacherMessage.textContent =
+        "Please assign the teacher to at least one class.";
+
+      return;
+
+    }
+
+
+    /* Check duplicate username */
+
+    const duplicateUsername =
+      teachers.some(
+        (teacher,index) =>
+          teacher.username.toLowerCase() ===
+          username.toLowerCase() &&
+          index !== editingIndex
+      );
+
+
+    if(duplicateUsername){
+
+      teacherMessage.textContent =
+        "That username is already being used.";
+
+      return;
+
+    }
+
+
+    /* EDIT */
+
+    if(editingIndex !== -1){
+
+      teachers[editingIndex] = {
+
+        ...teachers[editingIndex],
+
+        firstName,
+        lastName,
+        username,
+        password,
+        subjects,
+        classes
+
+      };
+
+
+      teacherMessage.textContent =
+        "Teacher updated successfully.";
+
+    }
+
+
+    /* NEW TEACHER */
+
+    else{
+
+      const newTeacher = {
+
+        teacherId:
+          generateTeacherId(),
+
+        firstName,
+
+        lastName,
+
+        username,
+
+        password,
+
+        subjects,
+
+        classes,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+
+      teachers.push(
+        newTeacher
+      );
+
+
+      teacherMessage.textContent =
+        "Teacher added successfully.";
+
+    }
+
+
+    saveTeachers();
+
+    displayTeachers();
+
+
+    setTimeout(() => {
+
+      resetForm();
+
+    },800);
+
+  }
+);
+
+
+/* =========================
+   EDIT TEACHER
+========================= */
+
+function editTeacher(index){
+
+  const teacher =
+    teachers[index];
+
+
+  editingIndex =
+    index;
+
+
+  formTitle.textContent =
+    "Edit Teacher";
+
+
+  document.getElementById(
+    "firstName"
+  ).value =
+    teacher.firstName;
+
+
+  document.getElementById(
+    "lastName"
+  ).value =
+    teacher.lastName;
+
+
+  document.getElementById(
+    "username"
+  ).value =
+    teacher.username;
+
+
+  document.getElementById(
+    "password"
+  ).value =
+    teacher.password;
+
+
+  clearSubjects();
+
+  clearClasses();
+
+
+  const subjects =
+    Array.isArray(teacher.subjects)
+    ? teacher.subjects
+    : [];
+
+
+  const classes =
+    Array.isArray(teacher.classes)
+    ? teacher.classes
+    : [];
+
+
+  subjects.forEach(subject => {
+
+    const checkbox =
+      document.querySelector(
+        `input[name="subjects"][value="${subject}"]`
+      );
+
+
+    if(checkbox){
+
+      checkbox.checked = true;
+
+    }
+
+  });
+
+
+  classes.forEach(className => {
+
+    const checkbox =
+      document.querySelector(
+        `input[name="classes"][value="${className}"]`
+      );
+
+
+    if(checkbox){
+
+      checkbox.checked = true;
+
+    }
+
+  });
+
+
+  document
+    .getElementById("addTeacher")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
+
+}
+
+
+/* =========================
+   DELETE TEACHER
+========================= */
+
+function deleteTeacher(index){
+
+  const teacher =
+    teachers[index];
+
+
+  const confirmed =
+    confirm(
+      `Delete ${teacher.firstName} ${teacher.lastName}?\n\nThis will remove the teacher from the teacher list.`
+    );
+
+
+  if(!confirmed){
+
+    return;
+
+  }
+
+
+  teachers.splice(
+    index,
+    1
+  );
+
+
+  saveTeachers();
+
+  displayTeachers();
+
+
+  if(editingIndex === index){
+
+    resetForm();
+
+  }
+
+}
+
+
+/* =========================
+   RESET FORM
+========================= */
+
+function resetForm(){
+
+  teacherForm.reset();
+
+
+  editingIndex =
+    -1;
+
+
+  formTitle.textContent =
+    "Add Teacher";
+
+
+  teacherMessage.textContent =
+    "";
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+displayTeachers();
+
+</script>
+
+</body>
+</html>

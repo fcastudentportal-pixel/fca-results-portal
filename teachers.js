@@ -1,1224 +1,1448 @@
 /* ============================================================
-FCA TEACHERS
-Frontend -> Termux Flask API -> SQLite
+   FCA TEACHERS MANAGEMENT
+   Flask + SQLite API
 ============================================================ */
 
-/* ============================================================
-API
-============================================================ */
-
-const FCA_API = "http://127.0.0.1:5000/api";
-
-/* ============================================================
-STATE
-============================================================ */
+const API_BASE = "http://127.0.0.1:5000/api";
 
 let teachers = [];
+let editingTeacherId = null;
 
-let editingId = null;
 
 /* ============================================================
-ELEMENTS
+   ELEMENTS
 ============================================================ */
 
-const teacherForm =
-document.getElementById("teacherForm");
+const teacherForm = document.getElementById("teacherForm");
+const teacherList = document.getElementById("teacherList");
 
-const teacherList =
-document.getElementById("teacherList");
+const teacherCount = document.getElementById("teacherCount");
+const subjectCount = document.getElementById("subjectCount");
+const classCount = document.getElementById("classCount");
 
-const teacherCount =
-document.getElementById("teacherCount");
+const teacherMessage = document.getElementById("teacherMessage");
+const formTitle = document.getElementById("formTitle");
 
-const subjectCount =
-document.getElementById("subjectCount");
+const firstNameInput = document.getElementById("firstName");
+const lastNameInput = document.getElementById("lastName");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-const classCount =
-document.getElementById("classCount");
-
-const teacherMessage =
-document.getElementById("teacherMessage");
-
-const formTitle =
-document.getElementById("formTitle");
-
-const firstName =
-document.getElementById("firstName");
-
-const lastName =
-document.getElementById("lastName");
-
-const username =
-document.getElementById("username");
-
-const password =
-document.getElementById("password");
-
-const cancelBtn =
-document.getElementById("cancelBtn");
+const cancelBtn = document.getElementById("cancelBtn");
 
 const selectAllSubjectsBtn =
-document.getElementById("selectAllSubjectsBtn");
+    document.getElementById("selectAllSubjectsBtn");
 
 const clearSubjectsBtn =
-document.getElementById("clearSubjectsBtn");
+    document.getElementById("clearSubjectsBtn");
 
 const selectAllClassesBtn =
-document.getElementById("selectAllClassesBtn");
+    document.getElementById("selectAllClassesBtn");
 
 const clearClassesBtn =
-document.getElementById("clearClassesBtn");
+    document.getElementById("clearClassesBtn");
+
+const passwordToggle =
+    document.getElementById("passwordToggle");
+
 
 /* ============================================================
-API REQUEST
+   API REQUEST
 ============================================================ */
 
-async function fcaAPI(endpoint, options = {}) {
+async function apiRequest(endpoint, options = {}) {
 
-const response = await fetch(
-FCA_API + endpoint,
-{
-headers: {
-"Content-Type": "application/json"
-},
-...options
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+        controller.abort();
+    }, 10000);
+
+    try {
+
+        const response = await fetch(
+            API_BASE + endpoint,
+            {
+                ...options,
+
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(options.headers || {})
+                },
+
+                signal: controller.signal
+            }
+        );
+
+        clearTimeout(timeout);
+
+        let data;
+
+        try {
+
+            data = await response.json();
+
+        } catch {
+
+            throw new Error(
+                "The FCA API returned an invalid response."
+            );
+
+        }
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                `API request failed (${response.status})`
+            );
+
+        }
+
+        return data;
+
+    } catch (error) {
+
+        clearTimeout(timeout);
+
+        if (error.name === "AbortError") {
+
+            throw new Error(
+                "Connection timed out. Make sure the FCA Flask server is running."
+            );
+
+        }
+
+        if (
+            error instanceof TypeError ||
+            error.message.includes("Failed to fetch")
+        ) {
+
+            throw new Error(
+                "Cannot connect to FCA API at " +
+                API_BASE +
+                ". Start the Flask server in Termux."
+            );
+
+        }
+
+        throw error;
+
+    }
+
 }
-);
 
-let data;
-
-try {
-
-data = await response.json();
-
-}
-
-catch(error) {
-
-throw new Error(
-  "The FCA server returned an invalid response."
-);
-
-}
-
-if(!response.ok) {
-
-throw new Error(
-  data.message ||
-  `API request failed: ${response.status}`
-);
-
-}
-
-return data;
-
-}
 
 /* ============================================================
-LOAD TEACHERS
+   NORMALIZE SUBJECT
+============================================================ */
+
+function getSubjectName(subject) {
+
+    if (typeof subject === "string") {
+        return subject;
+    }
+
+    if (!subject || typeof subject !== "object") {
+        return "";
+    }
+
+    return (
+        subject.subject_name ||
+        subject.name ||
+        subject.subject ||
+        subject.title ||
+        ""
+    );
+
+}
+
+
+/* ============================================================
+   NORMALIZE CLASS
+============================================================ */
+
+function getClassName(classItem) {
+
+    if (typeof classItem === "string") {
+        return classItem;
+    }
+
+    if (!classItem || typeof classItem !== "object") {
+        return "";
+    }
+
+    return (
+        classItem.class_name ||
+        classItem.name ||
+        classItem.class ||
+        classItem.title ||
+        ""
+    );
+
+}
+
+
+/* ============================================================
+   NORMALIZE SUBJECTS
+============================================================ */
+
+function normalizeSubjects(value) {
+
+    if (!value) {
+        return [];
+    }
+
+    if (Array.isArray(value)) {
+
+        return value
+            .map(getSubjectName)
+            .filter(Boolean);
+
+    }
+
+    if (typeof value === "string") {
+
+        try {
+
+            const parsed = JSON.parse(value);
+
+            if (Array.isArray(parsed)) {
+
+                return parsed
+                    .map(getSubjectName)
+                    .filter(Boolean);
+
+            }
+
+        } catch {
+
+            return value.trim()
+                ? [value.trim()]
+                : [];
+
+        }
+
+    }
+
+    return [];
+
+}
+
+
+/* ============================================================
+   NORMALIZE CLASSES
+============================================================ */
+
+function normalizeClasses(value) {
+
+    if (!value) {
+        return [];
+    }
+
+    if (Array.isArray(value)) {
+
+        return value
+            .map(getClassName)
+            .filter(Boolean);
+
+    }
+
+    if (typeof value === "string") {
+
+        try {
+
+            const parsed = JSON.parse(value);
+
+            if (Array.isArray(parsed)) {
+
+                return parsed
+                    .map(getClassName)
+                    .filter(Boolean);
+
+            }
+
+        } catch {
+
+            return value.trim()
+                ? [value.trim()]
+                : [];
+
+        }
+
+    }
+
+    return [];
+
+}
+
+
+/* ============================================================
+   LOAD TEACHERS
 ============================================================ */
 
 async function loadTeachers() {
 
-teacherList.innerHTML = `
+    if (!teacherList) {
+        return;
+    }
 
-<div class="empty-state">
+    teacherList.innerHTML = `
 
-  <div class="empty-icon">
-    T
-  </div>
+        <div class="empty-state">
 
-  <strong>
-    Loading teachers...
-  </strong>
+            <div class="empty-icon">
+                T
+            </div>
 
-  <p>
-    Connecting to FCA database.
-  </p>
+            <strong>
+                Loading teachers...
+            </strong>
 
-</div>
+            <p>
+                Connecting to the FCA database.
+            </p>
 
-`;
+        </div>
 
-try {
+    `;
 
-const data =
-  await fcaAPI("/teachers");
+    try {
 
+        const data =
+            await apiRequest("/teachers");
 
-teachers =
-  Array.isArray(data.teachers)
-  ? data.teachers
-  : [];
+        if (!data.success) {
 
+            throw new Error(
+                data.message ||
+                "Unable to load teachers."
+            );
 
-displayTeachers();
+        }
 
-}
+        teachers =
+            Array.isArray(data.teachers)
+                ? data.teachers
+                : [];
 
-catch(error) {
+        displayTeachers();
 
-console.error(
-  "Teacher loading error:",
-  error
-);
+    } catch (error) {
 
+        console.error(
+            "FCA Teachers API Error:",
+            error
+        );
 
-teacherList.innerHTML = `
+        teacherList.innerHTML = `
 
-  <div class="empty-state">
+            <div class="empty-state">
 
-    <div class="empty-icon">
-      !
-    </div>
+                <div class="empty-icon">
+                    !
+                </div>
 
-    <strong>
-      Unable to connect to FCA database
-    </strong>
+                <strong>
+                    Unable to connect to FCA database
+                </strong>
 
-    <p>
-      ${escapeHTML(error.message)}
-    </p>
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
 
-    <button
-      type="button"
-      class="add-btn"
-      id="retryTeachersBtn"
-    >
-      Try Again
-    </button>
+                <button
+                    class="add-btn"
+                    type="button"
+                    onclick="loadTeachers()"
+                >
+                    Retry Connection
+                </button>
 
-  </div>
+            </div>
 
-`;
+        `;
 
-
-const retry =
-  document.getElementById(
-    "retryTeachersBtn"
-  );
-
-
-if(retry) {
-
-  retry.addEventListener(
-    "click",
-    loadTeachers
-  );
+    }
 
 }
 
-}
-
-}
 
 /* ============================================================
-DISPLAY TEACHERS
+   DISPLAY TEACHERS
 ============================================================ */
 
 function displayTeachers() {
 
-teacherCount.textContent =
-teachers.length;
+    teacherCount.textContent =
+        teachers.length;
 
-let subjectsTotal = 0;
-
-let classesTotal = 0;
-
-teachers.forEach(
-teacher => {
-
-  subjectsTotal +=
-    Array.isArray(teacher.subjects)
-    ? teacher.subjects.length
-    : 0;
+    let subjectsTotal = 0;
+    let classesTotal = 0;
 
 
-  classesTotal +=
-    Array.isArray(teacher.classes)
-    ? teacher.classes.length
-    : 0;
+    teachers.forEach(teacher => {
 
-}
+        const subjects =
+            normalizeSubjects(
+                teacher.subjects
+            );
 
-);
+        const classes =
+            normalizeClasses(
+                teacher.classes
+            );
 
-subjectCount.textContent =
-subjectsTotal;
+        subjectsTotal +=
+            subjects.length;
 
-classCount.textContent =
-classesTotal;
+        classesTotal +=
+            classes.length;
 
-if(teachers.length === 0) {
-
-teacherList.innerHTML = `
-
-  <div class="empty-state">
-
-    <div class="empty-icon">
-      T
-    </div>
-
-    <strong>
-      No teachers added yet
-    </strong>
-
-    <p>
-      Add your first teacher to begin
-      managing classes and results.
-    </p>
-
-    <a
-      href="#addTeacher"
-      class="add-btn"
-    >
-      + Add Teacher
-    </a>
-
-  </div>
-
-`;
-
-return;
-
-}
-
-teacherList.innerHTML =
-teachers.map(
-teacher => {
-
-    const subjects =
-      Array.isArray(teacher.subjects)
-      ? teacher.subjects
-      : [];
+    });
 
 
-    const classes =
-      Array.isArray(teacher.classes)
-      ? teacher.classes
-      : [];
+    subjectCount.textContent =
+        subjectsTotal;
+
+    classCount.textContent =
+        classesTotal;
 
 
-    const teacherNumber =
-      teacher.teacher_number ||
-      `FCA-T-${String(teacher.id).padStart(3,"0")}`;
+    if (teachers.length === 0) {
 
+        teacherList.innerHTML = `
 
-    const displayUsername =
-      teacher.username ||
-      teacher.email ||
-      "";
+            <div class="empty-state">
 
+                <div class="empty-icon">
+                    T
+                </div>
 
-    return `
+                <strong>
+                    No teachers added yet
+                </strong>
 
-      <div class="teacher-card">
+                <p>
+                    Add your first teacher to begin
+                    managing classes and results.
+                </p>
 
-        <div class="teacher-main">
-
-          <div class="teacher-avatar">
-
-            ${
-              escapeHTML(
-                (teacher.first_name || "T")
-                  .charAt(0)
-                  .toUpperCase()
-              )
-            }
-
-          </div>
-
-
-          <div class="teacher-info">
-
-            <div class="teacher-name-row">
-
-              <h3>
-
-                ${escapeHTML(
-                  teacher.first_name || ""
-                )}
-
-                ${escapeHTML(
-                  teacher.last_name || ""
-                )}
-
-              </h3>
-
-
-              <span class="teacher-id">
-
-                ${escapeHTML(
-                  teacherNumber
-                )}
-
-              </span>
+                <a
+                    href="#addTeacher"
+                    class="add-btn"
+                >
+                    + Add Teacher
+                </a>
 
             </div>
 
+        `;
 
-            <p class="username">
+        return;
 
-              ${
-                displayUsername
-                ? "@" +
-                  escapeHTML(
-                    displayUsername
-                  )
-                : ""
-              }
-
-            </p>
+    }
 
 
-            <div class="assignment-block">
+    teacherList.innerHTML =
+        teachers.map(teacher => {
 
-              <strong>
-                Subjects
-              </strong>
+            const subjects =
+                normalizeSubjects(
+                    teacher.subjects
+                );
 
-
-              <div class="tags">
-
-                ${
-                  subjects.length
-
-                  ?
-
-                  subjects.map(
-                    subject => `
-
-                      <span
-                        class="tag subject-tag"
-                      >
-                        ${escapeHTML(subject)}
-                      </span>
-
-                    `
-                  ).join("")
-
-                  :
-
-                  `
-                    <span class="none">
-                      No subjects assigned
-                    </span>
-                  `
-                }
-
-              </div>
-
-            </div>
+            const classes =
+                normalizeClasses(
+                    teacher.classes
+                );
 
 
-            <div class="assignment-block">
-
-              <strong>
-                Classes
-              </strong>
+            const fullName =
+                `${teacher.first_name || ""} ${teacher.last_name || ""}`
+                .trim();
 
 
-              <div class="tags">
-
-                ${
-                  classes.length
-
-                  ?
-
-                  classes.map(
-                    className => `
-
-                      <span
-                        class="tag class-tag"
-                      >
-                        ${escapeHTML(className)}
-                      </span>
-
-                    `
-                  ).join("")
-
-                  :
-
-                  `
-                    <span class="none">
-                      No classes assigned
-                    </span>
-                  `
-                }
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+            const initials =
+                (
+                    (teacher.first_name || "").charAt(0) +
+                    (teacher.last_name || "").charAt(0)
+                ).toUpperCase();
 
 
-        <div class="teacher-actions">
+            return `
 
-          <button
-            type="button"
-            class="edit-btn"
-            data-action="edit"
-            data-id="${teacher.id}"
-          >
-            Edit
-          </button>
+                <div class="teacher-card">
+
+                    <div class="teacher-main">
+
+                        <div class="teacher-avatar">
+                            ${escapeHtml(initials)}
+                        </div>
 
 
-          <button
-            type="button"
-            class="delete-btn"
-            data-action="delete"
-            data-id="${teacher.id}"
-          >
-            Delete
-          </button>
+                        <div class="teacher-info">
 
-        </div>
+                            <div class="teacher-name-row">
 
-      </div>
+                                <h3>
+                                    ${escapeHtml(fullName)}
+                                </h3>
 
-    `;
+                                <span class="teacher-id">
 
-  }
-).join("");
+                                    ${escapeHtml(
+                                        teacher.teacher_number ||
+                                        "No ID"
+                                    )}
 
-attachTeacherActions();
+                                </span>
 
-}
+                            </div>
 
-/* ============================================================
-ESCAPE HTML
-============================================================ */
 
-function escapeHTML(value) {
+                            <p class="username">
 
-return String(value ?? "")
-.replace(/&/g, "&")
-.replace(/</g, "<")
-.replace(/>/g, ">")
-.replace(/"/g, """)
-.replace(/'/g, "'");
+                                @${escapeHtml(
+                                    teacher.username ||
+                                    "No username"
+                                )}
 
-}
+                            </p>
 
-/* ============================================================
-TEACHER BUTTON ACTIONS
-============================================================ */
 
-function attachTeacherActions() {
+                            <div class="assignment-block">
 
-document
-.querySelectorAll(
-'[data-action="edit"]'
-)
-.forEach(
-button => {
+                                <strong>
+                                    Subjects
+                                </strong>
 
-    button.addEventListener(
-      "click",
-      () => {
+                                <div class="tags">
 
-        editTeacher(
-          Number(button.dataset.id)
-        );
+                                    ${
+                                        subjects.length
 
-      }
-    );
+                                        ? subjects.map(subject => `
 
-  }
-);
+                                            <span
+                                                class="tag subject-tag"
+                                            >
+                                                ${escapeHtml(subject)}
+                                            </span>
 
-document
-.querySelectorAll(
-'[data-action="delete"]'
-)
-.forEach(
-button => {
+                                        `).join("")
 
-    button.addEventListener(
-      "click",
-      () => {
+                                        : `
 
-        deleteTeacher(
-          Number(button.dataset.id)
-        );
+                                            <span class="none">
+                                                No subjects assigned
+                                            </span>
 
-      }
-    );
+                                        `
+                                    }
 
-  }
-);
+                                </div>
+
+                            </div>
+
+
+                            <div class="assignment-block">
+
+                                <strong>
+                                    Classes
+                                </strong>
+
+                                <div class="tags">
+
+                                    ${
+                                        classes.length
+
+                                        ? classes.map(className => `
+
+                                            <span
+                                                class="tag class-tag"
+                                            >
+                                                ${escapeHtml(className)}
+                                            </span>
+
+                                        `).join("")
+
+                                        : `
+
+                                            <span class="none">
+                                                No classes assigned
+                                            </span>
+
+                                        `
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-actions">
+
+                        <button
+                            class="edit-btn"
+                            type="button"
+                            onclick="editTeacher(${teacher.id})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            type="button"
+                            onclick="deleteTeacher(${teacher.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
 
 }
 
+
 /* ============================================================
-SELECT SUBJECTS
+   GET SELECTED SUBJECTS
 ============================================================ */
 
 function getSelectedSubjects() {
 
-return Array.from(
-document.querySelectorAll(
-'input[name="subjects"]:checked'
-)
-).map(
-checkbox =>
-checkbox.value
-);
+    return Array.from(
+        document.querySelectorAll(
+            'input[name="subjects"]:checked'
+        )
+    ).map(
+        checkbox => checkbox.value
+    );
 
 }
 
+
 /* ============================================================
-SELECT CLASSES
+   GET SELECTED CLASSES
 ============================================================ */
 
 function getSelectedClasses() {
 
-return Array.from(
-document.querySelectorAll(
-'input[name="classes"]:checked'
-)
-).map(
-checkbox =>
-checkbox.value
-);
+    return Array.from(
+        document.querySelectorAll(
+            'input[name="classes"]:checked'
+        )
+    ).map(
+        checkbox => checkbox.value
+    );
 
 }
 
+
 /* ============================================================
-SELECT ALL SUBJECTS
+   SELECT ALL SUBJECTS
 ============================================================ */
 
 function selectAllSubjects() {
 
-document
-.querySelectorAll(
-'input[name="subjects"]'
-)
-.forEach(
-checkbox => {
+    document
+        .querySelectorAll(
+            'input[name="subjects"]'
+        )
+        .forEach(checkbox => {
 
-    checkbox.checked = true;
+            checkbox.checked = true;
 
-  }
-);
+        });
 
 }
 
+
 /* ============================================================
-CLEAR SUBJECTS
+   CLEAR SUBJECTS
 ============================================================ */
 
 function clearSubjects() {
 
-document
-.querySelectorAll(
-'input[name="subjects"]'
-)
-.forEach(
-checkbox => {
+    document
+        .querySelectorAll(
+            'input[name="subjects"]'
+        )
+        .forEach(checkbox => {
 
-    checkbox.checked = false;
+            checkbox.checked = false;
 
-  }
-);
+        });
 
 }
 
+
 /* ============================================================
-SELECT ALL CLASSES
+   SELECT ALL CLASSES
 ============================================================ */
 
 function selectAllClasses() {
 
-document
-.querySelectorAll(
-'input[name="classes"]'
-)
-.forEach(
-checkbox => {
+    document
+        .querySelectorAll(
+            'input[name="classes"]'
+        )
+        .forEach(checkbox => {
 
-    checkbox.checked = true;
+            checkbox.checked = true;
 
-  }
-);
+        });
 
 }
 
+
 /* ============================================================
-CLEAR CLASSES
+   CLEAR CLASSES
 ============================================================ */
 
 function clearClasses() {
 
-document
-.querySelectorAll(
-'input[name="classes"]'
-)
-.forEach(
-checkbox => {
+    document
+        .querySelectorAll(
+            'input[name="classes"]'
+        )
+        .forEach(checkbox => {
 
-    checkbox.checked = false;
+            checkbox.checked = false;
 
-  }
-);
+        });
 
 }
 
+
 /* ============================================================
-SHOW MESSAGE
+   BUTTON LISTENERS
 ============================================================ */
 
-function showMessage(
-message,
-type = "success"
-) {
+if (selectAllSubjectsBtn) {
 
-teacherMessage.textContent =
-message;
-
-teacherMessage.dataset.type =
-type;
+    selectAllSubjectsBtn.addEventListener(
+        "click",
+        selectAllSubjects
+    );
 
 }
 
+
+if (clearSubjectsBtn) {
+
+    clearSubjectsBtn.addEventListener(
+        "click",
+        clearSubjects
+    );
+
+}
+
+
+if (selectAllClassesBtn) {
+
+    selectAllClassesBtn.addEventListener(
+        "click",
+        selectAllClasses
+    );
+
+}
+
+
+if (clearClassesBtn) {
+
+    clearClassesBtn.addEventListener(
+        "click",
+        clearClasses
+    );
+
+}
+
+
 /* ============================================================
-SAVE TEACHER
+   PASSWORD SHOW / HIDE
 ============================================================ */
 
-teacherForm.addEventListener(
-"submit",
-async function(event) {
+if (passwordToggle && passwordInput) {
 
-event.preventDefault();
+    passwordToggle.addEventListener(
+        "click",
+        function() {
 
+            if (
+                passwordInput.type === "password"
+            ) {
 
-showMessage(
-  "",
-  ""
-);
+                passwordInput.type =
+                    "text";
 
+                passwordToggle.textContent =
+                    "🙈";
 
-const first =
-  firstName.value.trim();
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
 
+            } else {
 
-const last =
-  lastName.value.trim();
+                passwordInput.type =
+                    "password";
 
+                passwordToggle.textContent =
+                    "👁";
 
-const user =
-  username.value.trim();
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
 
-
-const pass =
-  password.value;
-
-
-const subjects =
-  getSelectedSubjects();
-
-
-const classes =
-  getSelectedClasses();
-
-
-if(!first || !last) {
-
-  showMessage(
-    "First name and last name are required.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-if(!user) {
-
-  showMessage(
-    "Username is required.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-if(!pass && editingId === null) {
-
-  showMessage(
-    "Password is required.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-if(subjects.length === 0) {
-
-  showMessage(
-    "Please select at least one subject.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-if(classes.length === 0) {
-
-  showMessage(
-    "Please assign the teacher to at least one class.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-const duplicate =
-  teachers.some(
-    teacher => {
-
-      const existingUsername =
-        String(
-          teacher.username ||
-          ""
-        ).toLowerCase();
-
-
-      return (
-        existingUsername ===
-        user.toLowerCase()
-        &&
-        Number(teacher.id) !==
-        Number(editingId)
-      );
-
-    }
-  );
-
-
-if(duplicate) {
-
-  showMessage(
-    "That username is already being used.",
-    "error"
-  );
-
-  return;
-
-}
-
-
-const saveButton =
-  teacherForm.querySelector(
-    ".save-btn"
-  );
-
-
-if(saveButton) {
-
-  saveButton.disabled =
-    true;
-
-  saveButton.textContent =
-    editingId === null
-    ? "Saving..."
-    : "Updating...";
-
-}
-
-
-try {
-
-  let data;
-
-
-  /* ======================================================
-     NEW TEACHER
-  ====================================================== */
-
-  if(editingId === null) {
-
-    data =
-      await fcaAPI(
-        "/teachers",
-        {
-          method: "POST",
-
-          body: JSON.stringify({
-
-            first_name: first,
-
-            last_name: last,
-
-            username: user,
-
-            password: pass,
-
-            subjects: subjects,
-
-            classes: classes
-
-          })
+            }
 
         }
-      );
-
-  }
-
-
-  /* ======================================================
-     EDIT TEACHER
-  ====================================================== */
-
-  else {
-
-    data =
-      await fcaAPI(
-        `/teachers/${editingId}`,
-        {
-          method: "PUT",
-
-          body: JSON.stringify({
-
-            first_name: first,
-
-            last_name: last,
-
-            username: user,
-
-            password: pass,
-
-            subjects: subjects,
-
-            classes: classes
-
-          })
-
-        }
-      );
-
-  }
-
-
-  showMessage(
-    data.message ||
-    "Teacher saved successfully.",
-    "success"
-  );
-
-
-  await loadTeachers();
-
-
-  setTimeout(
-    resetForm,
-    800
-  );
-
+    );
 
 }
 
-catch(error) {
-
-  console.error(
-    "Save teacher error:",
-    error
-  );
-
-
-  showMessage(
-    error.message ||
-    "Unable to save teacher.",
-    "error"
-  );
-
-}
-
-
-finally {
-
-  if(saveButton) {
-
-    saveButton.disabled =
-      false;
-
-    saveButton.textContent =
-      "Save Teacher";
-
-  }
-
-}
-
-}
-);
 
 /* ============================================================
-EDIT TEACHER
+   SAVE / UPDATE TEACHER
+============================================================ */
+
+if (teacherForm) {
+
+    teacherForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const firstName =
+                firstNameInput.value.trim();
+
+            const lastName =
+                lastNameInput.value.trim();
+
+            const username =
+                usernameInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+            const subjects =
+                getSelectedSubjects();
+
+            const classes =
+                getSelectedClasses();
+
+
+            /* ====================================================
+               BASIC VALIDATION
+            ==================================================== */
+
+            if (!firstName || !lastName) {
+
+                showMessage(
+                    "First name and last name are required.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!username) {
+
+                showMessage(
+                    "Username is required.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            /* ====================================================
+               PASSWORD VALIDATION
+            ==================================================== */
+
+            if (!password) {
+
+                if (editingTeacherId !== null) {
+
+                    showMessage(
+                        "Enter the current teacher password to confirm the edit.",
+                        "error"
+                    );
+
+                } else {
+
+                    showMessage(
+                        "Password is required when adding a teacher.",
+                        "error"
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            if (subjects.length === 0) {
+
+                showMessage(
+                    "Please select at least one subject.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (classes.length === 0) {
+
+                showMessage(
+                    "Please assign at least one class.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                let data;
+
+
+                /* =================================================
+                   UPDATE EXISTING TEACHER
+                   
+                   IMPORTANT:
+                   The password entered here is the CURRENT
+                   password and is sent to Flask for verification.
+                   
+                   We do NOT send a new password.
+                ================================================= */
+
+                if (editingTeacherId !== null) {
+
+                    data =
+                        await apiRequest(
+                            `/teachers/${editingTeacherId}`,
+                            {
+                                method: "PUT",
+
+                                body:
+                                    JSON.stringify({
+
+                                        first_name:
+                                            firstName,
+
+                                        last_name:
+                                            lastName,
+
+                                        username:
+                                            username,
+
+                                        subjects:
+                                            subjects,
+
+                                        classes:
+                                            classes,
+
+                                        current_password:
+                                            password
+
+                                    })
+                            }
+                        );
+
+                }
+
+
+                /* =================================================
+                   CREATE NEW TEACHER
+                ================================================= */
+
+                else {
+
+                    data =
+                        await apiRequest(
+                            "/teachers",
+                            {
+                                method: "POST",
+
+                                body:
+                                    JSON.stringify({
+
+                                        first_name:
+                                            firstName,
+
+                                        last_name:
+                                            lastName,
+
+                                        username:
+                                            username,
+
+                                        password:
+                                            password,
+
+                                        subjects:
+                                            subjects,
+
+                                        classes:
+                                            classes
+
+                                    })
+                            }
+                        );
+
+                }
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "Teacher could not be saved."
+                    );
+
+                }
+
+
+                showMessage(
+                    editingTeacherId !== null
+                        ? "Teacher updated successfully."
+                        : "Teacher added successfully.",
+                    "success"
+                );
+
+
+                resetForm();
+
+                await loadTeachers();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Save teacher error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   EDIT TEACHER
 ============================================================ */
 
 function editTeacher(id) {
 
-const teacher =
-teachers.find(
-item =>
-Number(item.id) ===
-Number(id)
-);
+    const teacher =
+        teachers.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
 
-if(!teacher) {
 
-showMessage(
-  "Teacher could not be found.",
-  "error"
-);
+    if (!teacher) {
 
-return;
+        alert("Teacher not found.");
 
-}
+        return;
 
-editingId =
-Number(teacher.id);
+    }
 
-formTitle.textContent =
-"Edit Teacher";
 
-firstName.value =
-teacher.first_name || "";
+    editingTeacherId =
+        teacher.id;
 
-lastName.value =
-teacher.last_name || "";
 
-username.value =
-teacher.username || "";
+    formTitle.textContent =
+        "Edit Teacher";
 
-password.value =
-teacher.password || "";
 
-clearSubjects();
+    firstNameInput.value =
+        teacher.first_name || "";
 
-clearClasses();
 
-const subjects =
-Array.isArray(teacher.subjects)
-? teacher.subjects
-: [];
+    lastNameInput.value =
+        teacher.last_name || "";
 
-const classes =
-Array.isArray(teacher.classes)
-? teacher.classes
-: [];
 
-subjects.forEach(
-subject => {
+    usernameInput.value =
+        teacher.username || "";
 
-  const checkbox =
-    Array.from(
-      document.querySelectorAll(
-        'input[name="subjects"]'
-      )
-    ).find(
-      item =>
-        item.value === subject
+
+    /*
+       IMPORTANT:
+
+       Never load the existing password into
+       the browser.
+
+       The administrator must manually enter
+       the CURRENT password when saving changes.
+    */
+
+    passwordInput.value = "";
+
+    passwordInput.placeholder =
+        "Enter current password to confirm";
+
+
+    clearSubjects();
+
+    clearClasses();
+
+
+    const subjects =
+        normalizeSubjects(
+            teacher.subjects
+        );
+
+
+    const classes =
+        normalizeClasses(
+            teacher.classes
+        );
+
+
+    /* ========================================================
+       SELECT SUBJECTS
+    ======================================================== */
+
+    subjects.forEach(subject => {
+
+        document
+            .querySelectorAll(
+                'input[name="subjects"]'
+            )
+            .forEach(checkbox => {
+
+                if (
+                    checkbox.value
+                        .trim()
+                        .toLowerCase() ===
+                    subject
+                        .trim()
+                        .toLowerCase()
+                ) {
+
+                    checkbox.checked =
+                        true;
+
+                }
+
+            });
+
+    });
+
+
+    /* ========================================================
+       SELECT CLASSES
+    ======================================================== */
+
+    classes.forEach(className => {
+
+        document
+            .querySelectorAll(
+                'input[name="classes"]'
+            )
+            .forEach(checkbox => {
+
+                if (
+                    checkbox.value
+                        .trim()
+                        .toLowerCase() ===
+                    className
+                        .trim()
+                        .toLowerCase()
+                ) {
+
+                    checkbox.checked =
+                        true;
+
+                }
+
+            });
+
+    });
+
+
+    const saveButton =
+        teacherForm.querySelector(
+            ".save-btn"
+        );
+
+
+    if (saveButton) {
+
+        saveButton.textContent =
+            "Update Teacher";
+
+    }
+
+
+    document
+        .getElementById("addTeacher")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+    showMessage(
+        "Enter the current teacher password to confirm the edit.",
+        "info"
     );
 
-
-  if(checkbox) {
-
-    checkbox.checked =
-      true;
-
-  }
-
 }
 
-);
-
-classes.forEach(
-className => {
-
-  const checkbox =
-    Array.from(
-      document.querySelectorAll(
-        'input[name="classes"]'
-      )
-    ).find(
-      item =>
-        item.value === className
-    );
-
-
-  if(checkbox) {
-
-    checkbox.checked =
-      true;
-
-  }
-
-}
-
-);
-
-document
-.getElementById("addTeacher")
-.scrollIntoView({
-behavior: "smooth"
-});
-
-}
 
 /* ============================================================
-DELETE TEACHER
+   DELETE TEACHER
 ============================================================ */
 
 async function deleteTeacher(id) {
 
-const teacher =
-teachers.find(
-item =>
-Number(item.id) ===
-Number(id)
-);
+    const teacher =
+        teachers.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
 
-if(!teacher) {
 
-return;
+    if (!teacher) {
+
+        return;
+
+    }
+
+
+    const name =
+        `${teacher.first_name || ""} ${teacher.last_name || ""}`
+        .trim();
+
+
+    const confirmed =
+        confirm(
+            `Delete ${name}?\n\nThis will permanently remove the teacher and their subject/class assignments.`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const data =
+            await apiRequest(
+                `/teachers/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message ||
+                "Teacher could not be deleted."
+            );
+
+        }
+
+
+        showMessage(
+            "Teacher deleted successfully.",
+            "success"
+        );
+
+
+        await loadTeachers();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete teacher error:",
+            error
+        );
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
 
 }
 
-const fullName =
-"${teacher.first_name || ""} ${teacher.last_name || ""}"
-.trim();
-
-const confirmed =
-confirm(
-"Delete ${fullName}?\n\nThis will permanently remove the teacher from the FCA database."
-);
-
-if(!confirmed) {
-
-return;
-
-}
-
-try {
-
-await fcaAPI(
-  `/teachers/${id}`,
-  {
-    method: "DELETE"
-  }
-);
-
-
-showMessage(
-  "Teacher deleted successfully.",
-  "success"
-);
-
-
-await loadTeachers();
-
-
-if(
-  editingId !== null &&
-  Number(editingId) ===
-  Number(id)
-) {
-
-  resetForm();
-
-}
-
-}
-
-catch(error) {
-
-console.error(
-  "Delete teacher error:",
-  error
-);
-
-
-showMessage(
-  error.message ||
-  "Unable to delete teacher.",
-  "error"
-);
-
-}
-
-}
 
 /* ============================================================
-RESET FORM
+   RESET FORM
 ============================================================ */
 
 function resetForm() {
 
-teacherForm.reset();
+    if (teacherForm) {
 
-editingId =
-null;
+        teacherForm.reset();
 
-formTitle.textContent =
-"Add Teacher";
+    }
 
-teacherMessage.textContent =
-"";
 
-teacherMessage.dataset.type =
-"";
+    editingTeacherId =
+        null;
 
-clearSubjects();
 
-clearClasses();
+    formTitle.textContent =
+        "Add Teacher";
+
+
+    if (teacherMessage) {
+
+        teacherMessage.textContent =
+            "";
+
+        teacherMessage.className =
+            "message";
+
+    }
+
+
+    if (passwordInput) {
+
+        passwordInput.type =
+            "password";
+
+        passwordInput.placeholder =
+            "Enter password";
+
+    }
+
+
+    const saveButton =
+        teacherForm
+            ? teacherForm.querySelector(".save-btn")
+            : null;
+
+
+    if (saveButton) {
+
+        saveButton.textContent =
+            "Save Teacher";
+
+    }
+
+
+    if (passwordToggle) {
+
+        passwordToggle.textContent =
+            "👁";
+
+        passwordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+    }
 
 }
 
+
 /* ============================================================
-BUTTON EVENTS
+   CANCEL
 ============================================================ */
 
-selectAllSubjectsBtn.addEventListener(
-"click",
-selectAllSubjects
-);
+if (cancelBtn) {
 
-clearSubjectsBtn.addEventListener(
-"click",
-clearSubjects
-);
+    cancelBtn.addEventListener(
+        "click",
+        function() {
 
-selectAllClassesBtn.addEventListener(
-"click",
-selectAllClasses
-);
+            resetForm();
 
-clearClassesBtn.addEventListener(
-"click",
-clearClasses
-);
+        }
+    );
 
-cancelBtn.addEventListener(
-"click",
-resetForm
-);
+}
+
 
 /* ============================================================
-START
+   MESSAGE
+============================================================ */
+
+function showMessage(message, type) {
+
+    if (!teacherMessage) {
+        return;
+    }
+
+    teacherMessage.textContent =
+        message;
+
+    teacherMessage.className =
+        "message " + type;
+
+}
+
+
+/* ============================================================
+   HTML ESCAPE
+============================================================ */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* ============================================================
+   INITIALIZE
 ============================================================ */
 
 loadTeachers();

@@ -1417,3 +1417,45 @@ input:focus{
   }
 
 }
+/* =========================
+   PASSWORD FIELD
+========================= */
+
+.password-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.password-wrapper input{
+  width:100%;
+  padding-right:48px;
+}
+
+.password-toggle{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+
+  width:36px;
+  height:36px;
+
+  border:none;
+  background:transparent;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+  color:#6c7480;
+
+  border-radius:8px;
+}
+
+.password-toggle:hover{
+  background:#f4f2ee;
+  color:#650d22;
+}

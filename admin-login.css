@@ -6,14 +6,22 @@
   --maroon:#650d22;
   --gold:#d5b15a;
   --bg:#f4f2ee;
+  --white:#ffffff;
   --text:#1d2430;
   --muted:#6c7480;
+  --border:#cfd4db;
 }
 
 body{
   margin:0;
-  font-family:Arial,sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   background:var(--bg);
+
   color:var(--text);
 }
 
@@ -23,10 +31,15 @@ body{
 ========================= */
 
 .login-container{
+
   min-height:100vh;
+
   display:flex;
+
   align-items:center;
+
   justify-content:center;
+
   padding:25px;
 }
 
@@ -36,13 +49,21 @@ body{
 ========================= */
 
 .login-card{
+
   width:min(430px,100%);
-  background:#fff;
+
+  background:var(--white);
+
   padding:35px;
+
   border-radius:18px;
+
   text-align:center;
-  box-shadow:0 10px 35px #00000012;
+
   border:1px solid #ddd8d2;
+
+  box-shadow:
+    0 10px 35px #00000012;
 }
 
 
@@ -51,46 +72,79 @@ body{
 ========================= */
 
 .fca-logo{
+
   width:100px;
+
   height:100px;
+
   object-fit:contain;
+
   display:block;
+
   margin:0 auto 18px;
 }
 
 
 /* =========================
-   HEADER
+   EYEBROW
 ========================= */
 
 .eyebrow{
+
   color:var(--maroon);
+
   font-size:11px;
+
   letter-spacing:4px;
+
   font-weight:bold;
-}
-
-h1{
-  font:30px Georgia,serif;
-  color:var(--maroon);
-  margin:8px 0;
-}
-
-.subtitle{
-  color:var(--muted);
-  margin-bottom:28px;
 }
 
 
 /* =========================
-   LABELS
+   TITLE
+========================= */
+
+h1{
+
+  font:
+    30px Georgia,
+    "Times New Roman",
+    serif;
+
+  color:var(--maroon);
+
+  margin:8px 0;
+}
+
+
+/* =========================
+   SUBTITLE
+========================= */
+
+.subtitle{
+
+  color:var(--muted);
+
+  margin:
+    0 0 28px;
+}
+
+
+/* =========================
+   LABEL
 ========================= */
 
 label{
+
   display:block;
+
   text-align:left;
+
   font-weight:bold;
-  margin:16px 0;
+
+  margin:
+    16px 0 7px;
 }
 
 
@@ -99,18 +153,42 @@ label{
 ========================= */
 
 input{
+
   width:100%;
+
   display:block;
-  margin-top:7px;
+
   padding:13px;
-  border:1px solid #cfd4db;
+
+  border:
+    1px solid var(--border);
+
   border-radius:9px;
+
   font-size:16px;
+
+  font-family:Arial,Helvetica,sans-serif;
+
+  background:#fff;
+
+  color:var(--text);
 }
 
+
+input::placeholder{
+
+  color:#9aa1aa;
+}
+
+
 input:focus{
+
   outline:none;
+
   border-color:var(--maroon);
+
+  box-shadow:
+    0 0 0 2px #650d2215;
 }
 
 
@@ -119,117 +197,90 @@ input:focus{
 ========================= */
 
 .password-wrapper{
+
   position:relative;
+
   width:100%;
 }
 
+
 .password-wrapper input{
-  width:100%;
+
   padding-right:52px;
 }
 
 
 /* =========================
-   PASSWORD EYE BUTTON
+   PASSWORD TOGGLE
 ========================= */
 
 .password-toggle{
+
   position:absolute;
 
-  right:8px;
+  right:7px;
+
   top:50%;
 
-  transform:translateY(-50%);
+  transform:
+    translateY(-50%);
 
   width:40px;
+
   height:40px;
 
   border:0;
+
   background:transparent;
 
   padding:0;
+
   margin:0;
 
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
   cursor:pointer;
 
+  font-size:20px;
+
   color:var(--muted);
 
-  z-index:5;
+  border-radius:7px;
 }
 
-
-/* =========================
-   EYE ICON
-========================= */
-
-.password-toggle::before{
-
-  content:"";
-
-  width:18px;
-  height:12px;
-
-  border:2px solid currentColor;
-
-  border-radius:75% 15% 75% 15%;
-
-  transform:rotate(45deg);
-
-  display:block;
-
-  position:relative;
-
-}
-
-
-/* =========================
-   EYE PUPIL
-========================= */
-
-.password-toggle::after{
-
-  content:"";
-
-  position:absolute;
-
-  width:6px;
-  height:6px;
-
-  border-radius:50%;
-
-  background:currentColor;
-
-  left:17px;
-  top:17px;
-
-}
-
-
-/* =========================
-   EYE HOVER
-========================= */
 
 .password-toggle:hover{
+
   color:var(--maroon);
+
+  background:#650d2208;
 }
 
 
-/* =========================
-   EYE FOCUS
-========================= */
+.password-toggle:active{
+
+  transform:
+    translateY(-50%)
+    scale(.95);
+}
+
 
 .password-toggle:focus{
+
   outline:none;
 }
 
+
 .password-toggle:focus-visible{
-  outline:2px solid var(--gold);
+
+  outline:
+    2px solid var(--gold);
+
   outline-offset:2px;
-  border-radius:6px;
 }
 
 
@@ -238,24 +289,47 @@ input:focus{
 ========================= */
 
 .login-btn{
+
   width:100%;
+
   border:0;
+
   border-radius:9px;
+
   padding:14px;
+
   background:var(--maroon);
+
   color:#fff;
+
   font-size:16px;
+
   font-weight:bold;
+
+  font-family:Arial,Helvetica,sans-serif;
+
   cursor:pointer;
-  margin-top:8px;
+
+  margin-top:20px;
 }
 
+
 .login-btn:hover{
+
   opacity:.9;
 }
 
+
+.login-btn:active{
+
+  transform:scale(.99);
+}
+
+
 .login-btn:disabled{
+
   opacity:.7;
+
   cursor:not-allowed;
 }
 
@@ -265,17 +339,22 @@ input:focus{
 ========================= */
 
 .message{
+
   min-height:20px;
+
   color:#a40020;
+
   font-size:14px;
+
+  line-height:1.4;
+
+  margin:
+    14px 0 0;
 }
 
 
-/* =========================
-   SUCCESS MESSAGE
-========================= */
-
 .message.success{
+
   color:#18794e;
 }
 
@@ -285,14 +364,21 @@ input:focus{
 ========================= */
 
 .back-link{
+
   display:inline-block;
+
   margin-top:20px;
+
   color:var(--maroon);
+
   text-decoration:none;
+
   font-weight:bold;
 }
 
+
 .back-link:hover{
+
   text-decoration:underline;
 }
 
@@ -303,16 +389,29 @@ input:focus{
 
 @media(max-width:500px){
 
-  .login-card{
-    padding:25px 20px;
+  .login-container{
+
+    padding:18px;
   }
 
+
+  .login-card{
+
+    padding:
+      28px 20px;
+  }
+
+
   h1{
+
     font-size:25px;
   }
 
+
   .fca-logo{
+
     width:85px;
+
     height:85px;
   }
 

@@ -1,19 +1,19 @@
 /* =========================================================
-   FCA ADMIN LOGIN
+   FIRST CLASS ACADEMY
+   ADMINISTRATOR LOGIN
 ========================================================= */
 
 
 /* =========================================================
-   OFFICIAL FCA ADMIN
+   OFFICIAL ADMIN EMAIL
 ========================================================= */
 
 const FCA_ADMIN_EMAIL =
   "fca.admin@gmail.com";
 
 
-
 /* =========================================================
-   ELEMENTS
+   GET HTML ELEMENTS
 ========================================================= */
 
 const loginForm =
@@ -21,24 +21,25 @@ const loginForm =
     "adminLoginForm"
   );
 
-
 const emailInput =
   document.getElementById(
     "adminEmail"
   );
-
 
 const passwordInput =
   document.getElementById(
     "adminPassword"
   );
 
+const passwordToggle =
+  document.getElementById(
+    "passwordToggle"
+  );
 
 const loginButton =
   document.getElementById(
     "loginButton"
   );
-
 
 const loginMessage =
   document.getElementById(
@@ -46,86 +47,8 @@ const loginMessage =
   );
 
 
-const passwordToggle =
-  document.getElementById(
-    "passwordToggle"
-  );
-
-
-
 /* =========================================================
-   PASSWORD SHOW / HIDE
-========================================================= */
-
-if(
-  passwordInput &&
-  passwordToggle
-){
-
-  passwordToggle.addEventListener(
-    "click",
-    function(){
-
-      const hidden =
-        passwordInput.type ===
-        "password";
-
-
-      if(hidden){
-
-        passwordInput.type =
-          "text";
-
-
-        passwordToggle.textContent =
-          "🙈";
-
-
-        passwordToggle.setAttribute(
-          "aria-label",
-          "Hide password"
-        );
-
-
-        passwordToggle.setAttribute(
-          "title",
-          "Hide password"
-        );
-
-      }
-
-      else{
-
-        passwordInput.type =
-          "password";
-
-
-        passwordToggle.textContent =
-          "👁️";
-
-
-        passwordToggle.setAttribute(
-          "aria-label",
-          "Show password"
-        );
-
-
-        passwordToggle.setAttribute(
-          "title",
-          "Show password"
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-
-/* =========================================================
-   MESSAGE
+   SHOW MESSAGE
 ========================================================= */
 
 function showMessage(
@@ -150,77 +73,87 @@ function showMessage(
 }
 
 
-
 /* =========================================================
-   CHECK EXISTING SESSION
+   PASSWORD SHOW / HIDE
 ========================================================= */
 
-async function checkExistingSession(){
+if(
+  passwordToggle &&
+  passwordInput
+){
 
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await supabase.auth.getSession();
-
-
-    if(error){
-
-      console.error(
-        "Session error:",
-        error
-      );
-
-      return;
-
-    }
-
-
-    if(
-      data &&
-      data.session &&
-      data.session.user
-    ){
-
-      const email =
-        data.session.user.email
-          ?.toLowerCase();
-
+  passwordToggle.addEventListener(
+    "click",
+    function(){
 
       if(
-        email ===
-        FCA_ADMIN_EMAIL.toLowerCase()
+        passwordInput.type ===
+        "password"
       ){
 
-        window.location.replace(
-          "admin.html"
+        passwordInput.type =
+          "text";
+
+
+        passwordToggle.textContent =
+          "👁";
+
+
+        passwordToggle.setAttribute(
+          "aria-label",
+          "Hide password"
+        );
+
+
+        passwordToggle.setAttribute(
+          "title",
+          "Hide password"
         );
 
       }
 
       else{
 
-        await supabase.auth.signOut();
+        passwordInput.type =
+          "password";
+
+
+        passwordToggle.textContent =
+          "👁";
+
+
+        passwordToggle.setAttribute(
+          "aria-label",
+          "Show password"
+        );
+
+
+        passwordToggle.setAttribute(
+          "title",
+          "Show password"
+        );
 
       }
 
     }
-
-  }
-
-  catch(error){
-
-    console.error(
-      "Authentication error:",
-      error
-    );
-
-  }
+  );
 
 }
 
+
+/* =========================================================
+   CHECK SUPABASE CLIENT
+========================================================= */
+
+if(
+  !window.fcaSupabase
+){
+
+  console.error(
+    "FCA Supabase client was not created."
+  );
+
+}
 
 
 /* =========================================================
@@ -236,6 +169,10 @@ if(loginForm){
       event.preventDefault();
 
 
+      /* -------------------------
+         READ VALUES
+      ------------------------- */
+
       const email =
         emailInput.value
           .trim()
@@ -246,7 +183,6 @@ if(loginForm){
         passwordInput.value;
 
 
-
       /* -------------------------
          VALIDATION
       ------------------------- */
@@ -254,7 +190,7 @@ if(loginForm){
       if(!email){
 
         showMessage(
-          "Enter the administrator email."
+          "Please enter the administrator email."
         );
 
         return;
@@ -265,7 +201,7 @@ if(loginForm){
       if(!password){
 
         showMessage(
-          "Enter the administrator password."
+          "Please enter the administrator password."
         );
 
         return;
@@ -273,14 +209,13 @@ if(loginForm){
       }
 
 
-
       /* -------------------------
-         EMAIL AUTHORIZATION
+         OFFICIAL EMAIL ONLY
       ------------------------- */
 
       if(
         email !==
-        FCA_ADMIN_EMAIL.toLowerCase()
+        FCA_ADMIN_EMAIL
       ){
 
         showMessage(
@@ -291,6 +226,22 @@ if(loginForm){
 
       }
 
+
+      /* -------------------------
+         SUPABASE CHECK
+      ------------------------- */
+
+      if(
+        !window.fcaSupabase
+      ){
+
+        showMessage(
+          "Supabase is not configured correctly."
+        );
+
+        return;
+
+      }
 
 
       /* -------------------------
@@ -305,48 +256,47 @@ if(loginForm){
         "Signing in...";
 
 
-      showMessage(
-        ""
-      );
-
+      showMessage("");
 
 
       try{
 
 
-        /* -------------------------
-           SUPABASE LOGIN
-        ------------------------- */
+        /* =================================================
+           SUPABASE EMAIL/PASSWORD LOGIN
+        ================================================= */
 
         const {
           data,
           error
         } =
-          await supabase.auth.signInWithPassword({
+          await window.fcaSupabase
+            .auth
+            .signInWithPassword({
 
-            email:
-              email,
+              email:
+                email,
 
-            password:
-              password
+              password:
+                password
 
-          });
-
+            });
 
 
         /* -------------------------
-           LOGIN FAILED
+           SUPABASE ERROR
         ------------------------- */
 
         if(error){
 
           console.error(
-            "Login error:",
+            "FCA Supabase login error:",
             error
           );
 
 
           showMessage(
+            error.message ||
             "Invalid administrator email or password."
           );
 
@@ -364,7 +314,6 @@ if(loginForm){
         }
 
 
-
         /* -------------------------
            USER CHECK
         ------------------------- */
@@ -375,7 +324,7 @@ if(loginForm){
         ){
 
           showMessage(
-            "Administrator authentication failed."
+            "Authentication failed."
           );
 
 
@@ -392,18 +341,24 @@ if(loginForm){
         }
 
 
-
         /* -------------------------
-           FINAL AUTHORIZATION
+           FINAL EMAIL CHECK
         ------------------------- */
 
-        if(
+        const authenticatedEmail =
           data.user.email
-            ?.toLowerCase() !==
-          FCA_ADMIN_EMAIL.toLowerCase()
+            ?.trim()
+            .toLowerCase();
+
+
+        if(
+          authenticatedEmail !==
+          FCA_ADMIN_EMAIL
         ){
 
-          await supabase.auth.signOut();
+          await window.fcaSupabase
+            .auth
+            .signOut();
 
 
           showMessage(
@@ -424,7 +379,6 @@ if(loginForm){
         }
 
 
-
         /* -------------------------
            SUCCESS
         ------------------------- */
@@ -435,23 +389,39 @@ if(loginForm){
         );
 
 
-        window.location.replace(
-          "admin.html"
+        /* -------------------------
+           OPEN ADMIN DASHBOARD
+        ------------------------- */
+
+        setTimeout(
+          function(){
+
+            window.location.replace(
+              "admin.html"
+            );
+
+          },
+          300
         );
 
 
       }
 
+
       catch(error){
 
         console.error(
-          "Login error:",
+          "FCA authentication error:",
           error
         );
 
 
         showMessage(
-          "Unable to connect to the authentication service."
+          "Authentication error: " +
+          (
+            error.message ||
+            "Unknown error"
+          )
         );
 
 
@@ -468,11 +438,3 @@ if(loginForm){
   );
 
 }
-
-
-
-/* =========================================================
-   START
-========================================================= */
-
-checkExistingSession();

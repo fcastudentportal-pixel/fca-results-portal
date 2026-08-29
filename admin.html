@@ -348,12 +348,8 @@
 
 
 /* =====================================================
-   FCA DATABASE API
+   FCA SUPABASE ADMIN DASHBOARD
 ===================================================== */
-
-const FCA_API =
-  "http://127.0.0.1:5000/api";
-
 
 
 /* =====================================================
@@ -364,21 +360,15 @@ const FCA_ADMIN_EMAIL =
   "fca.admin@gmail.com";
 
 
-
 /* =====================================================
-   ADMIN AUTHORIZATION
+   SUPABASE CLIENT CHECK
 ===================================================== */
 
 async function checkAdminAuthorization(){
 
   try{
 
-
-    /* Make sure Supabase client exists */
-
-    if(
-      !window.fcaSupabase
-    ){
+    if(!window.fcaSupabase){
 
       console.error(
         "FCA Supabase client is missing."
@@ -393,9 +383,6 @@ async function checkAdminAuthorization(){
     }
 
 
-
-    /* Get current Supabase session */
-
     const {
       data,
       error
@@ -405,19 +392,12 @@ async function checkAdminAuthorization(){
         .getSession();
 
 
-
-    /* No session */
-
     if(
       error ||
       !data ||
       !data.session ||
       !data.session.user
     ){
-
-      console.warn(
-        "No authorized FCA admin session."
-      );
 
       window.location.replace(
         "admin-login.html"
@@ -428,17 +408,11 @@ async function checkAdminAuthorization(){
     }
 
 
-
-    /* Get logged-in email */
-
     const email =
       data.session.user.email
         ?.trim()
         .toLowerCase();
 
-
-
-    /* Only FCA admin is allowed */
 
     if(
       email !==
@@ -465,17 +439,9 @@ async function checkAdminAuthorization(){
     }
 
 
-
-    console.log(
-      "FCA administrator authorized:",
-      email
-    );
-
-
     return true;
 
   }
-
 
   catch(error){
 
@@ -497,35 +463,37 @@ async function checkAdminAuthorization(){
 }
 
 
-
 /* =====================================================
-   FCA API REQUEST
+   COUNT SUPABASE TABLE
 ===================================================== */
 
-async function fcaAPI(
-  endpoint
-){
+async function countTable(tableName){
 
-  const response =
-    await fetch(
-      FCA_API + endpoint
-    );
+  const {
+    count,
+    error
+  } =
+    await window.fcaSupabase
+      .from(tableName)
+      .select(
+        "*",
+        {
+          count: "exact",
+          head: true
+        }
+      );
 
 
-  if(!response.ok){
+  if(error){
 
-    throw new Error(
-      "API request failed: " +
-      response.status
-    );
+    throw error;
 
   }
 
 
-  return await response.json();
+  return count || 0;
 
 }
-
 
 
 /* =====================================================
@@ -534,7 +502,7 @@ async function fcaAPI(
 
 function updateDatabaseStatus(
   connected,
-  message
+  message = ""
 ){
 
   const status =
@@ -548,7 +516,6 @@ function updateDatabaseStatus(
     return;
 
   }
-
 
 
   if(connected){
@@ -585,7 +552,6 @@ function updateDatabaseStatus(
 }
 
 
-
 /* =====================================================
    LOAD DASHBOARD STATISTICS
 ===================================================== */
@@ -594,15 +560,31 @@ async function updateDashboardStats(){
 
   try{
 
+    /*
+       Read directly from Supabase.
+       No Flask.
+       No Termux.
+    */
 
-    const data =
-      await fcaAPI(
-        "/status"
-      );
+    const [
+      teachers,
+      classes,
+      students
+    ] =
+      await Promise.all([
+
+        countTable("teachers"),
+
+        countTable("classes"),
+
+        countTable("students")
+
+      ]);
 
 
-
-    /* TEACHERS */
+    /* =================================================
+       TEACHERS
+    ================================================= */
 
     const teacherCount =
       document.getElementById(
@@ -613,13 +595,14 @@ async function updateDashboardStats(){
     if(teacherCount){
 
       teacherCount.textContent =
-        data.teachers ?? 0;
+        teachers;
 
     }
 
 
-
-    /* CLASSES */
+    /* =================================================
+       CLASSES
+    ================================================= */
 
     const classCount =
       document.getElementById(
@@ -630,13 +613,14 @@ async function updateDashboardStats(){
     if(classCount){
 
       classCount.textContent =
-        data.classes ?? 0;
+        classes;
 
     }
 
 
-
-    /* STUDENTS */
+    /* =================================================
+       STUDENTS
+    ================================================= */
 
     const studentCount =
       document.getElementById(
@@ -647,37 +631,38 @@ async function updateDashboardStats(){
     if(studentCount){
 
       studentCount.textContent =
-        data.students ?? 0;
+        students;
 
     }
 
 
-
-    /* DATABASE CONNECTED */
+    /* =================================================
+       DATABASE CONNECTED
+    ================================================= */
 
     updateDatabaseStatus(
-      true,
-      ""
+      true
     );
 
 
     console.log(
-      "FCA database:",
-      data
+      "FCA Supabase statistics:",
+      {
+        teachers,
+        classes,
+        students
+      }
     );
 
   }
 
-
   catch(error){
 
     console.error(
-      "FCA database error:",
+      "FCA Supabase database error:",
       error
     );
 
-
-    /* TEACHERS */
 
     const teacherCount =
       document.getElementById(
@@ -685,15 +670,11 @@ async function updateDashboardStats(){
       );
 
 
-    /* CLASSES */
-
     const classCount =
       document.getElementById(
         "dashboardClassCount"
       );
 
-
-    /* STUDENTS */
 
     const studentCount =
       document.getElementById(
@@ -727,13 +708,12 @@ async function updateDashboardStats(){
 
     updateDatabaseStatus(
       false,
-      "Start the FCA API in Termux"
+      "Check Supabase connection and permissions."
     );
 
   }
 
 }
-
 
 
 /* =====================================================
@@ -786,10 +766,8 @@ if(logout){
 }
 
 
-
 /* =====================================================
-   CHECK SESSION WHEN PAGE BECOMES
-   VISIBLE AGAIN
+   CHECK SESSION WHEN PAGE BECOMES VISIBLE
 ===================================================== */
 
 document.addEventListener(
@@ -817,7 +795,6 @@ document.addEventListener(
 );
 
 
-
 /* =====================================================
    INITIALIZE DASHBOARD
 ===================================================== */
@@ -838,7 +815,6 @@ async function initializeDashboard(){
   await updateDashboardStats();
 
 }
-
 
 
 /* =====================================================

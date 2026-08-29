@@ -1,9 +1,26 @@
 /* ============================================================
    FCA TEACHERS MANAGEMENT
-   Flask + SQLite API
+   SUPABASE VERSION
 ============================================================ */
 
-const API_BASE = "http://127.0.0.1:5000/api";
+
+/* ============================================================
+   SUPABASE CONFIGURATION
+============================================================ */
+
+const SUPABASE_URL =
+    "https://lapuqrvfyjxgkynikxqa.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_aSAHDuZrc388YBkhtQbw5A_wX2Q01QK";
+
+const TEACHERS_TABLE =
+    `${SUPABASE_URL}/rest/v1/teachers`;
+
+
+/* ============================================================
+   STATE
+============================================================ */
 
 let teachers = [];
 let editingTeacherId = null;
@@ -13,22 +30,41 @@ let editingTeacherId = null;
    ELEMENTS
 ============================================================ */
 
-const teacherForm = document.getElementById("teacherForm");
-const teacherList = document.getElementById("teacherList");
+const teacherForm =
+    document.getElementById("teacherForm");
 
-const teacherCount = document.getElementById("teacherCount");
-const subjectCount = document.getElementById("subjectCount");
-const classCount = document.getElementById("classCount");
+const teacherList =
+    document.getElementById("teacherList");
 
-const teacherMessage = document.getElementById("teacherMessage");
-const formTitle = document.getElementById("formTitle");
+const teacherCount =
+    document.getElementById("teacherCount");
 
-const firstNameInput = document.getElementById("firstName");
-const lastNameInput = document.getElementById("lastName");
-const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
+const subjectCount =
+    document.getElementById("subjectCount");
 
-const cancelBtn = document.getElementById("cancelBtn");
+const classCount =
+    document.getElementById("classCount");
+
+const teacherMessage =
+    document.getElementById("teacherMessage");
+
+const formTitle =
+    document.getElementById("formTitle");
+
+const firstNameInput =
+    document.getElementById("firstName");
+
+const lastNameInput =
+    document.getElementById("lastName");
+
+const usernameInput =
+    document.getElementById("username");
+
+const passwordInput =
+    document.getElementById("password");
+
+const cancelBtn =
+    document.getElementById("cancelBtn");
 
 const selectAllSubjectsBtn =
     document.getElementById("selectAllSubjectsBtn");
@@ -47,183 +83,253 @@ const passwordToggle =
 
 
 /* ============================================================
-   API REQUEST
+   SUPABASE REQUEST
 ============================================================ */
 
-async function apiRequest(endpoint, options = {}) {
+async function supabaseRequest(
+    url,
+    options = {}
+) {
 
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-        controller.abort();
-    }, 10000);
-
-    try {
-
-        const response = await fetch(
-            API_BASE + endpoint,
+    const response =
+        await fetch(
+            url,
             {
                 ...options,
 
                 headers: {
-                    "Content-Type": "application/json",
-                    ...(options.headers || {})
-                },
 
-                signal: controller.signal
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        `Bearer ${SUPABASE_KEY}`,
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Prefer":
+                        options.method === "POST"
+                            ? "return=representation"
+                            : "return=representation",
+
+                    ...(options.headers || {})
+
+                }
             }
         );
 
-        clearTimeout(timeout);
 
-        let data;
+    const text =
+        await response.text();
+
+
+    let data = null;
+
+
+    if (text) {
 
         try {
 
-            data = await response.json();
+            data =
+                JSON.parse(text);
 
         } catch {
 
-            throw new Error(
-                "The FCA API returned an invalid response."
-            );
+            data = text;
 
         }
 
-        if (!response.ok) {
+    }
 
-            throw new Error(
-                data.message ||
-                `API request failed (${response.status})`
-            );
 
-        }
+    if (!response.ok) {
 
-        return data;
+        let message =
+            "Supabase request failed.";
 
-    } catch (error) {
-
-        clearTimeout(timeout);
-
-        if (error.name === "AbortError") {
-
-            throw new Error(
-                "Connection timed out. Make sure the FCA Flask server is running."
-            );
-
-        }
 
         if (
-            error instanceof TypeError ||
-            error.message.includes("Failed to fetch")
+            data &&
+            typeof data === "object"
         ) {
 
-            throw new Error(
-                "Cannot connect to FCA API at " +
-                API_BASE +
-                ". Start the Flask server in Termux."
-            );
+            message =
+                data.message ||
+                data.details ||
+                data.hint ||
+                data.error ||
+                message;
 
         }
 
-        throw error;
+
+        throw new Error(
+            message
+        );
 
     }
+
+
+    return data;
 
 }
 
 
 /* ============================================================
-   NORMALIZE SUBJECT
+   PASSWORD HASH
 ============================================================ */
 
-function getSubjectName(subject) {
+async function hashPassword(password) {
 
-    if (typeof subject === "string") {
-        return subject;
-    }
+    const encoder =
+        new TextEncoder();
 
-    if (!subject || typeof subject !== "object") {
-        return "";
-    }
+    const data =
+        encoder.encode(password);
 
-    return (
-        subject.subject_name ||
-        subject.name ||
-        subject.subject ||
-        subject.title ||
-        ""
-    );
+    const hashBuffer =
+        await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+    const hashArray =
+        Array.from(
+            new Uint8Array(hashBuffer)
+        );
+
+    return hashArray
+        .map(
+            byte =>
+                byte
+                    .toString(16)
+                    .padStart(2, "0")
+        )
+        .join("");
 
 }
 
 
 /* ============================================================
-   NORMALIZE CLASS
+   PASSWORD VERIFY
 ============================================================ */
 
-function getClassName(classItem) {
+async function verifyPassword(
+    enteredPassword,
+    storedHash
+) {
 
-    if (typeof classItem === "string") {
-        return classItem;
+    if (!enteredPassword || !storedHash) {
+
+        return false;
+
     }
 
-    if (!classItem || typeof classItem !== "object") {
-        return "";
-    }
 
-    return (
-        classItem.class_name ||
-        classItem.name ||
-        classItem.class ||
-        classItem.title ||
-        ""
-    );
+    const enteredHash =
+        await hashPassword(
+            enteredPassword
+        );
+
+
+    return enteredHash === storedHash;
 
 }
 
 
 /* ============================================================
-   NORMALIZE SUBJECTS
+   TEACHER NUMBER
+============================================================ */
+
+function generateTeacherNumber() {
+
+    const year =
+        new Date()
+            .getFullYear();
+
+
+    const random =
+        Math.floor(
+            1000 +
+            Math.random() * 9000
+        );
+
+
+    return `FCA-T-${year}-${random}`;
+
+}
+
+
+/* ============================================================
+   SUBJECTS
 ============================================================ */
 
 function normalizeSubjects(value) {
 
     if (!value) {
+
         return [];
+
     }
+
 
     if (Array.isArray(value)) {
 
         return value
-            .map(getSubjectName)
+            .map(
+                item =>
+                    typeof item === "string"
+                        ? item
+                        : (
+                            item?.name ||
+                            item?.subject_name ||
+                            item?.subject ||
+                            ""
+                        )
+            )
             .filter(Boolean);
 
     }
+
 
     if (typeof value === "string") {
 
         try {
 
-            const parsed = JSON.parse(value);
+            const parsed =
+                JSON.parse(value);
+
 
             if (Array.isArray(parsed)) {
 
                 return parsed
-                    .map(getSubjectName)
+                    .map(
+                        item =>
+                            typeof item === "string"
+                                ? item
+                                : (
+                                    item?.name ||
+                                    item?.subject_name ||
+                                    item?.subject ||
+                                    ""
+                                )
+                    )
                     .filter(Boolean);
 
             }
 
         } catch {
 
-            return value.trim()
+            return value
+                .trim()
                 ? [value.trim()]
                 : [];
 
         }
 
     }
+
 
     return [];
 
@@ -231,46 +337,74 @@ function normalizeSubjects(value) {
 
 
 /* ============================================================
-   NORMALIZE CLASSES
+   CLASSES
 ============================================================ */
 
 function normalizeClasses(value) {
 
     if (!value) {
+
         return [];
+
     }
+
 
     if (Array.isArray(value)) {
 
         return value
-            .map(getClassName)
+            .map(
+                item =>
+                    typeof item === "string"
+                        ? item
+                        : (
+                            item?.name ||
+                            item?.class_name ||
+                            item?.class ||
+                            ""
+                        )
+            )
             .filter(Boolean);
 
     }
+
 
     if (typeof value === "string") {
 
         try {
 
-            const parsed = JSON.parse(value);
+            const parsed =
+                JSON.parse(value);
+
 
             if (Array.isArray(parsed)) {
 
                 return parsed
-                    .map(getClassName)
+                    .map(
+                        item =>
+                            typeof item === "string"
+                                ? item
+                                : (
+                                    item?.name ||
+                                    item?.class_name ||
+                                    item?.class ||
+                                    ""
+                                )
+                    )
                     .filter(Boolean);
 
             }
 
         } catch {
 
-            return value.trim()
+            return value
+                .trim()
                 ? [value.trim()]
                 : [];
 
         }
 
     }
+
 
     return [];
 
@@ -282,10 +416,6 @@ function normalizeClasses(value) {
 ============================================================ */
 
 async function loadTeachers() {
-
-    if (!teacherList) {
-        return;
-    }
 
     teacherList.innerHTML = `
 
@@ -300,40 +430,41 @@ async function loadTeachers() {
             </strong>
 
             <p>
-                Connecting to the FCA database.
+                Connecting to Supabase.
             </p>
 
         </div>
 
     `;
 
+
     try {
 
         const data =
-            await apiRequest("/teachers");
-
-        if (!data.success) {
-
-            throw new Error(
-                data.message ||
-                "Unable to load teachers."
+            await supabaseRequest(
+                `${TEACHERS_TABLE}?select=*&order=created_at.desc`,
+                {
+                    method: "GET"
+                }
             );
 
-        }
 
         teachers =
-            Array.isArray(data.teachers)
-                ? data.teachers
+            Array.isArray(data)
+                ? data
                 : [];
 
+
         displayTeachers();
+
 
     } catch (error) {
 
         console.error(
-            "FCA Teachers API Error:",
+            "Supabase Teachers Error:",
             error
         );
+
 
         teacherList.innerHTML = `
 
@@ -377,33 +508,32 @@ function displayTeachers() {
     teacherCount.textContent =
         teachers.length;
 
+
     let subjectsTotal = 0;
     let classesTotal = 0;
 
 
-    teachers.forEach(teacher => {
+    teachers.forEach(
+        teacher => {
 
-        const subjects =
-            normalizeSubjects(
-                teacher.subjects
-            );
+            subjectsTotal +=
+                normalizeSubjects(
+                    teacher.subjects
+                ).length;
 
-        const classes =
-            normalizeClasses(
-                teacher.classes
-            );
 
-        subjectsTotal +=
-            subjects.length;
+            classesTotal +=
+                normalizeClasses(
+                    teacher.classes
+                ).length;
 
-        classesTotal +=
-            classes.length;
-
-    });
+        }
+    );
 
 
     subjectCount.textContent =
         subjectsTotal;
+
 
     classCount.textContent =
         classesTotal;
@@ -445,178 +575,199 @@ function displayTeachers() {
 
 
     teacherList.innerHTML =
-        teachers.map(teacher => {
+        teachers
+            .map(
+                teacher => {
 
-            const subjects =
-                normalizeSubjects(
-                    teacher.subjects
-                );
-
-            const classes =
-                normalizeClasses(
-                    teacher.classes
-                );
+                    const subjects =
+                        normalizeSubjects(
+                            teacher.subjects
+                        );
 
 
-            const fullName =
-                `${teacher.first_name || ""} ${teacher.last_name || ""}`
-                .trim();
+                    const classes =
+                        normalizeClasses(
+                            teacher.classes
+                        );
 
 
-            const initials =
-                (
-                    (teacher.first_name || "").charAt(0) +
-                    (teacher.last_name || "").charAt(0)
-                ).toUpperCase();
+                    const fullName =
+                        `${teacher.first_name || ""} ${teacher.last_name || ""}`
+                            .trim();
 
 
-            return `
+                    const initials =
+                        (
+                            (teacher.first_name || "")
+                                .charAt(0) +
 
-                <div class="teacher-card">
-
-                    <div class="teacher-main">
-
-                        <div class="teacher-avatar">
-                            ${escapeHtml(initials)}
-                        </div>
-
-
-                        <div class="teacher-info">
-
-                            <div class="teacher-name-row">
-
-                                <h3>
-                                    ${escapeHtml(fullName)}
-                                </h3>
-
-                                <span class="teacher-id">
-
-                                    ${escapeHtml(
-                                        teacher.teacher_number ||
-                                        "No ID"
-                                    )}
-
-                                </span>
-
-                            </div>
+                            (teacher.last_name || "")
+                                .charAt(0)
+                        )
+                            .toUpperCase();
 
 
-                            <p class="username">
+                    return `
 
-                                @${escapeHtml(
-                                    teacher.username ||
-                                    "No username"
-                                )}
+                        <div class="teacher-card">
 
-                            </p>
+                            <div class="teacher-main">
+
+                                <div class="teacher-avatar">
+                                    ${escapeHtml(initials)}
+                                </div>
 
 
-                            <div class="assignment-block">
+                                <div class="teacher-info">
 
-                                <strong>
-                                    Subjects
-                                </strong>
+                                    <div class="teacher-name-row">
 
-                                <div class="tags">
+                                        <h3>
+                                            ${escapeHtml(
+                                                fullName ||
+                                                teacher.full_name ||
+                                                "Unnamed Teacher"
+                                            )}
+                                        </h3>
 
-                                    ${
-                                        subjects.length
+                                        <span class="teacher-id">
 
-                                        ? subjects.map(subject => `
+                                            ${escapeHtml(
+                                                teacher.teacher_number ||
+                                                "No ID"
+                                            )}
 
-                                            <span
-                                                class="tag subject-tag"
-                                            >
-                                                ${escapeHtml(subject)}
-                                            </span>
+                                        </span>
 
-                                        `).join("")
+                                    </div>
 
-                                        : `
 
-                                            <span class="none">
-                                                No subjects assigned
-                                            </span>
+                                    <p class="username">
 
-                                        `
-                                    }
+                                        @${escapeHtml(
+                                            teacher.username ||
+                                            "No username"
+                                        )}
+
+                                    </p>
+
+
+                                    <div class="assignment-block">
+
+                                        <strong>
+                                            Subjects
+                                        </strong>
+
+                                        <div class="tags">
+
+                                            ${
+                                                subjects.length
+
+                                                    ? subjects
+                                                        .map(
+                                                            subject => `
+
+                                                                <span
+                                                                    class="tag subject-tag"
+                                                                >
+                                                                    ${escapeHtml(subject)}
+                                                                </span>
+
+                                                            `
+                                                        )
+                                                        .join("")
+
+                                                    : `
+
+                                                        <span class="none">
+                                                            No subjects assigned
+                                                        </span>
+
+                                                    `
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="assignment-block">
+
+                                        <strong>
+                                            Classes
+                                        </strong>
+
+                                        <div class="tags">
+
+                                            ${
+                                                classes.length
+
+                                                    ? classes
+                                                        .map(
+                                                            className => `
+
+                                                                <span
+                                                                    class="tag class-tag"
+                                                                >
+                                                                    ${escapeHtml(className)}
+                                                                </span>
+
+                                                            `
+                                                        )
+                                                        .join("")
+
+                                                    : `
+
+                                                        <span class="none">
+                                                            No classes assigned
+                                                        </span>
+
+                                                    `
+                                            }
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
 
-                            <div class="assignment-block">
+                            <div class="teacher-actions">
 
-                                <strong>
-                                    Classes
-                                </strong>
+                                <button
+                                    class="edit-btn"
+                                    type="button"
+                                    onclick="editTeacher('${teacher.id}')"
+                                >
+                                    Edit
+                                </button>
 
-                                <div class="tags">
 
-                                    ${
-                                        classes.length
-
-                                        ? classes.map(className => `
-
-                                            <span
-                                                class="tag class-tag"
-                                            >
-                                                ${escapeHtml(className)}
-                                            </span>
-
-                                        `).join("")
-
-                                        : `
-
-                                            <span class="none">
-                                                No classes assigned
-                                            </span>
-
-                                        `
-                                    }
-
-                                </div>
+                                <button
+                                    class="delete-btn"
+                                    type="button"
+                                    onclick="deleteTeacher('${teacher.id}')"
+                                >
+                                    Delete
+                                </button>
 
                             </div>
 
                         </div>
 
-                    </div>
+                    `;
 
-
-                    <div class="teacher-actions">
-
-                        <button
-                            class="edit-btn"
-                            type="button"
-                            onclick="editTeacher(${teacher.id})"
-                        >
-                            Edit
-                        </button>
-
-
-                        <button
-                            class="delete-btn"
-                            type="button"
-                            onclick="deleteTeacher(${teacher.id})"
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
+                }
+            )
+            .join("");
 
 }
 
 
 /* ============================================================
-   GET SELECTED SUBJECTS
+   SELECTED SUBJECTS
 ============================================================ */
 
 function getSelectedSubjects() {
@@ -625,15 +776,17 @@ function getSelectedSubjects() {
         document.querySelectorAll(
             'input[name="subjects"]:checked'
         )
-    ).map(
-        checkbox => checkbox.value
-    );
+    )
+        .map(
+            checkbox =>
+                checkbox.value
+        );
 
 }
 
 
 /* ============================================================
-   GET SELECTED CLASSES
+   SELECTED CLASSES
 ============================================================ */
 
 function getSelectedClasses() {
@@ -642,9 +795,11 @@ function getSelectedClasses() {
         document.querySelectorAll(
             'input[name="classes"]:checked'
         )
-    ).map(
-        checkbox => checkbox.value
-    );
+    )
+        .map(
+            checkbox =>
+                checkbox.value
+        );
 
 }
 
@@ -659,11 +814,14 @@ function selectAllSubjects() {
         .querySelectorAll(
             'input[name="subjects"]'
         )
-        .forEach(checkbox => {
+        .forEach(
+            checkbox => {
 
-            checkbox.checked = true;
+                checkbox.checked =
+                    true;
 
-        });
+            }
+        );
 
 }
 
@@ -678,11 +836,14 @@ function clearSubjects() {
         .querySelectorAll(
             'input[name="subjects"]'
         )
-        .forEach(checkbox => {
+        .forEach(
+            checkbox => {
 
-            checkbox.checked = false;
+                checkbox.checked =
+                    false;
 
-        });
+            }
+        );
 
 }
 
@@ -697,11 +858,14 @@ function selectAllClasses() {
         .querySelectorAll(
             'input[name="classes"]'
         )
-        .forEach(checkbox => {
+        .forEach(
+            checkbox => {
 
-            checkbox.checked = true;
+                checkbox.checked =
+                    true;
 
-        });
+            }
+        );
 
 }
 
@@ -716,55 +880,62 @@ function clearClasses() {
         .querySelectorAll(
             'input[name="classes"]'
         )
-        .forEach(checkbox => {
+        .forEach(
+            checkbox => {
 
-            checkbox.checked = false;
+                checkbox.checked =
+                    false;
 
-        });
+            }
+        );
 
 }
 
 
 /* ============================================================
-   BUTTON LISTENERS
+   BUTTONS
 ============================================================ */
 
 if (selectAllSubjectsBtn) {
 
-    selectAllSubjectsBtn.addEventListener(
-        "click",
-        selectAllSubjects
-    );
+    selectAllSubjectsBtn
+        .addEventListener(
+            "click",
+            selectAllSubjects
+        );
 
 }
 
 
 if (clearSubjectsBtn) {
 
-    clearSubjectsBtn.addEventListener(
-        "click",
-        clearSubjects
-    );
+    clearSubjectsBtn
+        .addEventListener(
+            "click",
+            clearSubjects
+        );
 
 }
 
 
 if (selectAllClassesBtn) {
 
-    selectAllClassesBtn.addEventListener(
-        "click",
-        selectAllClasses
-    );
+    selectAllClassesBtn
+        .addEventListener(
+            "click",
+            selectAllClasses
+        );
 
 }
 
 
 if (clearClassesBtn) {
 
-    clearClassesBtn.addEventListener(
-        "click",
-        clearClasses
-    );
+    clearClassesBtn
+        .addEventListener(
+            "click",
+            clearClasses
+        );
 
 }
 
@@ -773,44 +944,39 @@ if (clearClassesBtn) {
    PASSWORD SHOW / HIDE
 ============================================================ */
 
-if (passwordToggle && passwordInput) {
+if (
+    passwordToggle &&
+    passwordInput
+) {
 
-    passwordToggle.addEventListener(
-        "click",
-        function() {
+    passwordToggle
+        .addEventListener(
+            "click",
+            function() {
 
-            if (
-                passwordInput.type === "password"
-            ) {
+                if (
+                    passwordInput.type ===
+                    "password"
+                ) {
 
-                passwordInput.type =
-                    "text";
+                    passwordInput.type =
+                        "text";
 
-                passwordToggle.textContent =
-                    "🙈";
+                    passwordToggle.textContent =
+                        "🙈";
 
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
+                } else {
 
-            } else {
+                    passwordInput.type =
+                        "password";
 
-                passwordInput.type =
-                    "password";
+                    passwordToggle.textContent =
+                        "👁";
 
-                passwordToggle.textContent =
-                    "👁";
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
+                }
 
             }
-
-        }
-    );
+        );
 
 }
 
@@ -831,27 +997,36 @@ if (teacherForm) {
             const firstName =
                 firstNameInput.value.trim();
 
+
             const lastName =
                 lastNameInput.value.trim();
 
+
             const username =
-                usernameInput.value.trim();
+                usernameInput.value.trim()
+                    .toLowerCase();
+
 
             const password =
                 passwordInput.value;
 
+
             const subjects =
                 getSelectedSubjects();
+
 
             const classes =
                 getSelectedClasses();
 
 
-            /* ====================================================
-               BASIC VALIDATION
-            ==================================================== */
+            /* ================================================
+               VALIDATION
+            ================================================= */
 
-            if (!firstName || !lastName) {
+            if (
+                !firstName ||
+                !lastName
+            ) {
 
                 showMessage(
                     "First name and last name are required.",
@@ -875,34 +1050,26 @@ if (teacherForm) {
             }
 
 
-            /* ====================================================
-               PASSWORD VALIDATION
-            ==================================================== */
-
             if (!password) {
 
-                if (editingTeacherId !== null) {
+                showMessage(
+                    editingTeacherId !== null
 
-                    showMessage(
-                        "Enter the current teacher password to confirm the edit.",
-                        "error"
-                    );
+                        ? "Enter the current password to confirm the edit."
 
-                } else {
+                        : "Password is required when adding a teacher.",
 
-                    showMessage(
-                        "Password is required when adding a teacher.",
-                        "error"
-                    );
-
-                }
+                    "error"
+                );
 
                 return;
 
             }
 
 
-            if (subjects.length === 0) {
+            if (
+                subjects.length === 0
+            ) {
 
                 showMessage(
                     "Please select at least one subject.",
@@ -914,7 +1081,9 @@ if (teacherForm) {
             }
 
 
-            if (classes.length === 0) {
+            if (
+                classes.length === 0
+            ) {
 
                 showMessage(
                     "Please assign at least one class.",
@@ -928,111 +1097,157 @@ if (teacherForm) {
 
             try {
 
-                let data;
+                /* ============================================
+                   EDIT
+                ============================================ */
 
+                if (
+                    editingTeacherId !== null
+                ) {
 
-                /* =================================================
-                   UPDATE EXISTING TEACHER
-                   
-                   IMPORTANT:
-                   The password entered here is the CURRENT
-                   password and is sent to Flask for verification.
-                   
-                   We do NOT send a new password.
-                ================================================= */
-
-                if (editingTeacherId !== null) {
-
-                    data =
-                        await apiRequest(
-                            `/teachers/${editingTeacherId}`,
-                            {
-                                method: "PUT",
-
-                                body:
-                                    JSON.stringify({
-
-                                        first_name:
-                                            firstName,
-
-                                        last_name:
-                                            lastName,
-
-                                        username:
-                                            username,
-
-                                        subjects:
-                                            subjects,
-
-                                        classes:
-                                            classes,
-
-                                        current_password:
-                                            password
-
-                                    })
-                            }
+                    const teacher =
+                        teachers.find(
+                            item =>
+                                String(item.id) ===
+                                String(editingTeacherId)
                         );
 
-                }
 
+                    if (!teacher) {
 
-                /* =================================================
-                   CREATE NEW TEACHER
-                ================================================= */
-
-                else {
-
-                    data =
-                        await apiRequest(
-                            "/teachers",
-                            {
-                                method: "POST",
-
-                                body:
-                                    JSON.stringify({
-
-                                        first_name:
-                                            firstName,
-
-                                        last_name:
-                                            lastName,
-
-                                        username:
-                                            username,
-
-                                        password:
-                                            password,
-
-                                        subjects:
-                                            subjects,
-
-                                        classes:
-                                            classes
-
-                                    })
-                            }
+                        throw new Error(
+                            "Teacher could not be found."
                         );
 
-                }
+                    }
 
 
-                if (!data.success) {
+                    /*
+                       Verify current password
+                    */
 
-                    throw new Error(
-                        data.message ||
-                        "Teacher could not be saved."
+                    const validPassword =
+                        await verifyPassword(
+                            password,
+                            teacher.password_hash
+                        );
+
+
+                    if (!validPassword) {
+
+                        showMessage(
+                            "Incorrect teacher password. The teacher was not updated.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                       Update details
+                    */
+
+                    await supabaseRequest(
+                        `${TEACHERS_TABLE}?id=eq.${encodeURIComponent(editingTeacherId)}`,
+                        {
+                            method: "PATCH",
+
+                            body:
+                                JSON.stringify({
+
+                                    first_name:
+                                        firstName,
+
+                                    last_name:
+                                        lastName,
+
+                                    username:
+                                        username,
+
+                                    subjects:
+                                        subjects,
+
+                                    classes:
+                                        classes,
+
+                                    updated_at:
+                                        new Date()
+                                            .toISOString()
+
+                                })
+                        }
+                    );
+
+
+                    showMessage(
+                        "Teacher updated successfully.",
+                        "success"
                     );
 
                 }
 
 
-                showMessage(
-                    editingTeacherId !== null
-                        ? "Teacher updated successfully."
-                        : "Teacher added successfully.",
-                    "success"
-                );
+                /* ============================================
+                   ADD
+                ============================================ */
+
+                else {
+
+                    const passwordHash =
+                        await hashPassword(
+                            password
+                        );
+
+
+                    const teacherNumber =
+                        generateTeacherNumber();
+
+
+                    await supabaseRequest(
+                        TEACHERS_TABLE,
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+
+                                    first_name:
+                                        firstName,
+
+                                    last_name:
+                                        lastName,
+
+                                    full_name:
+                                        `${firstName} ${lastName}`,
+
+                                    username:
+                                        username,
+
+                                    password_hash:
+                                        passwordHash,
+
+                                    teacher_number:
+                                        teacherNumber,
+
+                                    subjects:
+                                        subjects,
+
+                                    classes:
+                                        classes
+
+                                })
+                        }
+                    );
+
+
+                    showMessage(
+                        "Teacher added successfully.",
+                        "success"
+                    );
+
+                }
 
 
                 resetForm();
@@ -1043,7 +1258,7 @@ if (teacherForm) {
             } catch (error) {
 
                 console.error(
-                    "Save teacher error:",
+                    "Teacher save error:",
                     error
                 );
 
@@ -1070,14 +1285,16 @@ function editTeacher(id) {
     const teacher =
         teachers.find(
             item =>
-                Number(item.id) ===
-                Number(id)
+                String(item.id) ===
+                String(id)
         );
 
 
     if (!teacher) {
 
-        alert("Teacher not found.");
+        alert(
+            "Teacher not found."
+        );
 
         return;
 
@@ -1105,13 +1322,7 @@ function editTeacher(id) {
 
 
     /*
-       IMPORTANT:
-
-       Never load the existing password into
-       the browser.
-
-       The administrator must manually enter
-       the CURRENT password when saving changes.
+       NEVER load the password.
     */
 
     passwordInput.value = "";
@@ -1137,66 +1348,62 @@ function editTeacher(id) {
         );
 
 
-    /* ========================================================
-       SELECT SUBJECTS
-    ======================================================== */
+    subjects.forEach(
+        subject => {
 
-    subjects.forEach(subject => {
+            document
+                .querySelectorAll(
+                    'input[name="subjects"]'
+                )
+                .forEach(
+                    checkbox => {
 
-        document
-            .querySelectorAll(
-                'input[name="subjects"]'
-            )
-            .forEach(checkbox => {
+                        if (
+                            checkbox.value
+                                .toLowerCase() ===
+                            subject
+                                .toLowerCase()
+                        ) {
 
-                if (
-                    checkbox.value
-                        .trim()
-                        .toLowerCase() ===
-                    subject
-                        .trim()
-                        .toLowerCase()
-                ) {
+                            checkbox.checked =
+                                true;
 
-                    checkbox.checked =
-                        true;
+                        }
 
-                }
+                    }
+                );
 
-            });
-
-    });
+        }
+    );
 
 
-    /* ========================================================
-       SELECT CLASSES
-    ======================================================== */
+    classes.forEach(
+        className => {
 
-    classes.forEach(className => {
+            document
+                .querySelectorAll(
+                    'input[name="classes"]'
+                )
+                .forEach(
+                    checkbox => {
 
-        document
-            .querySelectorAll(
-                'input[name="classes"]'
-            )
-            .forEach(checkbox => {
+                        if (
+                            checkbox.value
+                                .toLowerCase() ===
+                            className
+                                .toLowerCase()
+                        ) {
 
-                if (
-                    checkbox.value
-                        .trim()
-                        .toLowerCase() ===
-                    className
-                        .trim()
-                        .toLowerCase()
-                ) {
+                            checkbox.checked =
+                                true;
 
-                    checkbox.checked =
-                        true;
+                        }
 
-                }
+                    }
+                );
 
-            });
-
-    });
+        }
+    );
 
 
     const saveButton =
@@ -1238,8 +1445,8 @@ async function deleteTeacher(id) {
     const teacher =
         teachers.find(
             item =>
-                Number(item.id) ===
-                Number(id)
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1252,16 +1459,31 @@ async function deleteTeacher(id) {
 
     const name =
         `${teacher.first_name || ""} ${teacher.last_name || ""}`
-        .trim();
+            .trim();
 
 
-    const confirmed =
-        confirm(
-            `Delete ${name}?\n\nThis will permanently remove the teacher and their subject/class assignments.`
+    /*
+       Ask for password BEFORE deleting.
+    */
+
+    const password =
+        prompt(
+            `Enter the current password for ${name} to confirm deletion:`
         );
 
 
-    if (!confirmed) {
+    if (password === null) {
+
+        return;
+
+    }
+
+
+    if (!password) {
+
+        alert(
+            "Password is required."
+        );
 
         return;
 
@@ -1270,23 +1492,47 @@ async function deleteTeacher(id) {
 
     try {
 
-        const data =
-            await apiRequest(
-                `/teachers/${id}`,
-                {
-                    method: "DELETE"
-                }
+        /*
+           Verify password
+        */
+
+        const validPassword =
+            await verifyPassword(
+                password,
+                teacher.password_hash
             );
 
 
-        if (!data.success) {
+        if (!validPassword) {
 
-            throw new Error(
-                data.message ||
-                "Teacher could not be deleted."
+            alert(
+                "Incorrect password. Teacher was NOT deleted."
             );
+
+            return;
 
         }
+
+
+        const confirmed =
+            confirm(
+                `Delete ${name} permanently?\n\nThis action cannot be undone.`
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        await supabaseRequest(
+            `${TEACHERS_TABLE}?id=eq.${encodeURIComponent(id)}`,
+            {
+                method: "DELETE"
+            }
+        );
 
 
         showMessage(
@@ -1361,7 +1607,9 @@ function resetForm() {
 
     const saveButton =
         teacherForm
-            ? teacherForm.querySelector(".save-btn")
+            ? teacherForm.querySelector(
+                ".save-btn"
+            )
             : null;
 
 
@@ -1377,11 +1625,6 @@ function resetForm() {
 
         passwordToggle.textContent =
             "👁";
-
-        passwordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
 
     }
 
@@ -1410,14 +1653,21 @@ if (cancelBtn) {
    MESSAGE
 ============================================================ */
 
-function showMessage(message, type) {
+function showMessage(
+    message,
+    type
+) {
 
     if (!teacherMessage) {
+
         return;
+
     }
+
 
     teacherMessage.textContent =
         message;
+
 
     teacherMessage.className =
         "message " + type;
@@ -1431,18 +1681,35 @@ function showMessage(message, type) {
 
 function escapeHtml(value) {
 
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
 
 /* ============================================================
-   INITIALIZE
+   START
 ============================================================ */
 
 loadTeachers();

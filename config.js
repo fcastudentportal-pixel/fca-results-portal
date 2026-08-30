@@ -11,7 +11,7 @@ const SUPABASE_PUBLISHABLE_KEY =
 
 
 /* =========================================================
-   CREATE ONE SHARED SUPABASE CLIENT
+   CREATE SHARED SUPABASE CLIENT
 ========================================================= */
 
 if (!window.supabase) {
@@ -40,63 +40,44 @@ window.FCA_ADMIN_EMAIL =
 
 
 /* =========================================================
-   SUPABASE TABLE HELPERS
+   FCA TABLES
 ========================================================= */
 
 window.FCA_TABLES = {
 
   teachers: "teachers",
-
   classes: "classes",
-
   students: "students",
-
   subjects: "subjects",
-
   results: "results",
-
   announcements: "announcements",
-
   calendar: "calendar"
 
 };
 
 
 /* =========================================================
-   CHECK SUPABASE CLIENT
+   CHECK SUPABASE
 ========================================================= */
 
 window.fcaCheckSupabase =
   function () {
 
-    if (!window.fcaSupabase) {
-
-      console.error(
-        "FCA Supabase client is unavailable."
-      );
-
-      return false;
-
-    }
-
-    return true;
+    return !!window.fcaSupabase;
 
   };
 
 
 /* =========================================================
-   CHECK ADMIN SESSION
+   CHECK ADMIN
 ========================================================= */
 
 window.fcaCheckAdmin =
   async function () {
 
     if (!window.fcaSupabase) {
-
       return false;
-
     }
-
 
     try {
 
@@ -122,14 +103,20 @@ window.fcaCheckAdmin =
 
 
       const email =
-        data.session.user.email
-          ?.trim()
+        String(
+          data.session.user.email || ""
+        )
+          .trim()
           .toLowerCase();
 
 
       return (
         email ===
-        window.FCA_ADMIN_EMAIL
+        String(
+          window.FCA_ADMIN_EMAIL
+        )
+          .trim()
+          .toLowerCase()
       );
 
     }

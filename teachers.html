@@ -1,28 +1,68 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>FCA | Teachers</title><link rel="stylesheet" href="teachers.css"></head><body><div class="teachers-page">  <!-- TOP BAR -->  <header class="topbar"><div class="brand">
+<!DOCTYPE html>
+<html lang="en">
 
-  <a href="admin.html" class="logo-link">
-    <img src="fca-logo.png" alt="First Class Academy">
-  </a>
+<head>
 
-  <div>
-    <strong>FCA Portal</strong>
-    <span>Administration</span>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FCA | Teachers</title>
+
+<link rel="stylesheet" href="teachers.css">
+
+</head>
+
+<body>
+
+<div class="teachers-page">
+
+
+<!-- TOP BAR -->
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <a href="admin.html" class="logo-link">
+
+      <img
+        src="fca-logo.png"
+        alt="First Class Academy"
+      >
+
+    </a>
+
+
+    <div>
+
+      <strong>
+        FCA Portal
+      </strong>
+
+      <span>
+        Administration
+      </span>
+
+    </div>
+
   </div>
 
-</div>
 
-<div class="admin-info">
+  <div class="top-actions">
 
-  <span>Administrator</span>
+    <span class="administrator">
+      Administrator
+    </span>
 
-  <a href="admin.html">
-    Dashboard
-  </a>
+    <a href="admin.html">
+      Dashboard
+    </a>
 
-</div>
+  </div>
 
-  </header>  <!-- MAIN -->  <main class="content"><!-- PAGE HEADING -->
+</header>
+
+<!-- MAIN -->  <main class="content"><!-- PAGE HEADING -->
 
 <section class="page-heading">
 
@@ -536,5 +576,89 @@
   </form>
 
 </section>
+<!-- ============================================================
+     ADMIN DELETE CONFIRMATION MODAL
+============================================================ -->
 
-  </main></div><!-- FCA TEACHERS JAVASCRIPT --><script src="teachers.js"></script></body></html>
+<div id="deleteModal" class="delete-modal">
+
+  <div class="delete-modal-box">
+
+    <div class="delete-modal-header">
+      <div class="delete-modal-icon">
+        !
+      </div>
+
+      <div>
+        <h3>Delete Teacher</h3>
+        <p id="deleteTeacherName">
+          Confirm teacher deletion.
+        </p>
+      </div>
+    </div>
+
+
+    <div class="delete-modal-body">
+
+      <p>
+        Enter the administrator password to permanently
+        delete this teacher.
+      </p>
+
+      <div class="admin-password-wrapper">
+
+        <input
+          type="password"
+          id="adminDeletePassword"
+          placeholder="Administrator password"
+          autocomplete="current-password"
+        >
+
+        <button
+          type="button"
+          id="adminPasswordToggle"
+          aria-label="Show password"
+        >
+          👁
+        </button>
+
+      </div>
+
+      <p
+        id="deleteError"
+        class="delete-error"
+      ></p>
+
+    </div>
+
+
+    <div class="delete-modal-actions">
+
+      <button
+        type="button"
+        id="deleteCancelBtn"
+        class="delete-cancel-btn"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        id="deleteConfirmBtn"
+        class="delete-confirm-btn"
+      >
+        Delete Teacher
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+  </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="config.js"></script>
+
+<script src="teachers.js"></script>

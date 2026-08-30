@@ -346,9 +346,9 @@
 
 <script>
 
-
 /* =====================================================
-   FCA SUPABASE ADMIN DASHBOARD
+   FCA ADMIN DASHBOARD
+   SUPABASE AUTH + DATABASE
 ===================================================== */
 
 
@@ -358,143 +358,6 @@
 
 const FCA_ADMIN_EMAIL =
   "fca.admin@gmail.com";
-
-
-/* =====================================================
-   SUPABASE CLIENT CHECK
-===================================================== */
-
-async function checkAdminAuthorization(){
-
-  try{
-
-    if(!window.fcaSupabase){
-
-      console.error(
-        "FCA Supabase client is missing."
-      );
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    const {
-      data,
-      error
-    } =
-      await window.fcaSupabase
-        .auth
-        .getSession();
-
-
-    if(
-      error ||
-      !data ||
-      !data.session ||
-      !data.session.user
-    ){
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    const email =
-      data.session.user.email
-        ?.trim()
-        .toLowerCase();
-
-
-    if(
-      email !==
-      FCA_ADMIN_EMAIL
-    ){
-
-      console.warn(
-        "Unauthorized account:",
-        email
-      );
-
-
-      await window.fcaSupabase
-        .auth
-        .signOut();
-
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    return true;
-
-  }
-
-  catch(error){
-
-    console.error(
-      "FCA authorization error:",
-      error
-    );
-
-
-    window.location.replace(
-      "admin-login.html"
-    );
-
-
-    return false;
-
-  }
-
-}
-
-
-/* =====================================================
-   COUNT SUPABASE TABLE
-===================================================== */
-
-async function countTable(tableName){
-
-  const {
-    data,
-    error
-  } =
-    await window.fcaSupabase
-      .from(tableName)
-      .select("id");
-
-
-  if(error){
-
-    console.error(
-      `Error loading ${tableName}:`,
-      error
-    );
-
-    throw error;
-
-  }
-
-
-  return Array.isArray(data)
-    ? data.length
-    : 0;
-
-}
 
 
 /* =====================================================
@@ -524,10 +387,8 @@ function updateDatabaseStatus(
     status.textContent =
       "● FCA database connected";
 
-
     status.style.background =
       "#e8f5ee";
-
 
     status.style.color =
       "#18794e";
@@ -540,13 +401,164 @@ function updateDatabaseStatus(
       "● FCA database offline — " +
       message;
 
-
     status.style.background =
       "#fff1f0";
 
-
     status.style.color =
       "#b42318";
+
+  }
+
+}
+
+
+/* =====================================================
+   CHECK ADMIN AUTHORIZATION
+===================================================== */
+
+async function checkAdminAuthorization(){
+
+  try{
+
+    /* -----------------------------------------------
+       CHECK SUPABASE CLIENT
+    ------------------------------------------------ */
+
+    if(!window.fcaSupabase){
+
+      console.error(
+        "FCA Supabase client is missing."
+      );
+
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
+
+    }
+
+
+    /* -----------------------------------------------
+       GET CURRENT SESSION
+    ------------------------------------------------ */
+
+    const {
+      data,
+      error
+    } =
+      await window.fcaSupabase
+        .auth
+        .getSession();
+
+
+    if(error){
+
+      console.error(
+        "FCA session error:",
+        error
+      );
+
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
+
+    }
+
+
+    /* -----------------------------------------------
+       NO SESSION
+    ------------------------------------------------ */
+
+    if(
+      !data ||
+      !data.session ||
+      !data.session.user
+    ){
+
+      console.warn(
+        "No authenticated FCA administrator session."
+      );
+
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
+
+    }
+
+
+    /* -----------------------------------------------
+       GET AUTHENTICATED EMAIL
+    ------------------------------------------------ */
+
+    const email =
+      data.session.user.email
+        ?.trim()
+        .toLowerCase();
+
+
+    console.log(
+      "FCA authenticated user:",
+      email
+    );
+
+
+    /* -----------------------------------------------
+       ADMIN EMAIL CHECK
+    ------------------------------------------------ */
+
+    if(
+      email !==
+      FCA_ADMIN_EMAIL
+    ){
+
+      console.warn(
+        "Unauthorized FCA account:",
+        email
+      );
+
+
+      await window.fcaSupabase
+        .auth
+        .signOut();
+
+
+      window.location.replace(
+        "admin-login.html"
+      );
+
+      return false;
+
+    }
+
+
+    console.log(
+      "FCA administrator authorized."
+    );
+
+
+    return true;
+
+  }
+
+  catch(error){
+
+    console.error(
+      "FCA authorization error:",
+      error
+    );
+
+
+    window.location.replace(
+      "admin-login.html"
+    );
+
+
+    return false;
 
   }
 
@@ -561,35 +573,134 @@ async function updateDashboardStats(){
 
   try{
 
-    /*
-       Read directly from Supabase.
-       No Flask.
-       No Termux.
-    */
+    /* -----------------------------------------------
+       CHECK CLIENT
+    ------------------------------------------------ */
 
-    const [
-      teachers,
-      classes,
-      students
-    ] =
-      await Promise.all([
+    if(!window.fcaSupabase){
 
-        countTable("teachers"),
+      throw new Error(
+        "Supabase client is not available."
+      );
 
-        countTable("classes"),
+    }
 
-        countTable("students")
 
-      ]);
+    console.log(
+      "FCA Supabase client:",
+      window.fcaSupabase
+    );
 
 
     /* =================================================
        TEACHERS
     ================================================= */
 
+    const teachersResult =
+      await window.fcaSupabase
+        .from("teachers")
+        .select("id");
+
+
+    console.log(
+      "FCA teachers result:",
+      teachersResult
+    );
+
+
+    if(teachersResult.error){
+
+      throw new Error(
+        "Teachers: " +
+        teachersResult.error.message
+      );
+
+    }
+
+
+    const teachers =
+      teachersResult.data?.length || 0;
+
+
+    /* =================================================
+       CLASSES
+    ================================================= */
+
+    const classesResult =
+      await window.fcaSupabase
+        .from("classes")
+        .select("id");
+
+
+    console.log(
+      "FCA classes result:",
+      classesResult
+    );
+
+
+    if(classesResult.error){
+
+      throw new Error(
+        "Classes: " +
+        classesResult.error.message
+      );
+
+    }
+
+
+    const classes =
+      classesResult.data?.length || 0;
+
+
+    /* =================================================
+       STUDENTS
+    ================================================= */
+
+    const studentsResult =
+      await window.fcaSupabase
+        .from("students")
+        .select("id");
+
+
+    console.log(
+      "FCA students result:",
+      studentsResult
+    );
+
+
+    if(studentsResult.error){
+
+      throw new Error(
+        "Students: " +
+        studentsResult.error.message
+      );
+
+    }
+
+
+    const students =
+      studentsResult.data?.length || 0;
+
+
+    /* =================================================
+       UPDATE DASHBOARD
+    ================================================= */
+
     const teacherCount =
       document.getElementById(
         "dashboardTeacherCount"
+      );
+
+
+    const classCount =
+      document.getElementById(
+        "dashboardClassCount"
+      );
+
+
+    const studentCount =
+      document.getElementById(
+        "dashboardStudentCount"
       );
 
 
@@ -601,32 +712,12 @@ async function updateDashboardStats(){
     }
 
 
-    /* =================================================
-       CLASSES
-    ================================================= */
-
-    const classCount =
-      document.getElementById(
-        "dashboardClassCount"
-      );
-
-
     if(classCount){
 
       classCount.textContent =
         classes;
 
     }
-
-
-    /* =================================================
-       STUDENTS
-    ================================================= */
-
-    const studentCount =
-      document.getElementById(
-        "dashboardStudentCount"
-      );
 
 
     if(studentCount){
@@ -647,7 +738,7 @@ async function updateDashboardStats(){
 
 
     console.log(
-      "FCA Supabase statistics:",
+      "FCA DASHBOARD COUNTS:",
       {
         teachers,
         classes,
@@ -660,10 +751,14 @@ async function updateDashboardStats(){
   catch(error){
 
     console.error(
-      "FCA Supabase database error:",
+      "FCA DASHBOARD DATABASE ERROR:",
       error
     );
 
+
+    /* -----------------------------------------------
+       SHOW ZERO / DASH
+    ------------------------------------------------ */
 
     const teacherCount =
       document.getElementById(
@@ -707,8 +802,13 @@ async function updateDashboardStats(){
     }
 
 
+    /* -----------------------------------------------
+       DATABASE ERROR
+    ------------------------------------------------ */
+
     updateDatabaseStatus(
       false,
+      error.message ||
       "Check Supabase connection and permissions."
     );
 
@@ -735,9 +835,7 @@ if(logout){
 
       try{
 
-        if(
-          window.fcaSupabase
-        ){
+        if(window.fcaSupabase){
 
           await window.fcaSupabase
             .auth
@@ -768,32 +866,37 @@ if(logout){
 
 
 /* =====================================================
-   CHECK SESSION WHEN PAGE BECOMES VISIBLE
+   SESSION MONITOR
 ===================================================== */
 
-document.addEventListener(
-  "visibilitychange",
-  async function(){
+if(window.fcaSupabase){
 
-    if(
-      document.visibilityState ===
-      "visible"
-    ){
+  window.fcaSupabase
+    .auth
+    .onAuthStateChange(
+      function(event, session){
 
-      const authorized =
-        await checkAdminAuthorization();
+        console.log(
+          "FCA Auth Event:",
+          event
+        );
 
 
-      if(authorized){
+        if(
+          event === "SIGNED_OUT" ||
+          !session
+        ){
 
-        await updateDashboardStats();
+          window.location.replace(
+            "admin-login.html"
+          );
+
+        }
 
       }
+    );
 
-    }
-
-  }
-);
+}
 
 
 /* =====================================================
@@ -801,6 +904,11 @@ document.addEventListener(
 ===================================================== */
 
 async function initializeDashboard(){
+
+  console.log(
+    "FCA Dashboard initializing..."
+  );
+
 
   const authorized =
     await checkAdminAuthorization();
@@ -819,11 +927,10 @@ async function initializeDashboard(){
 
 
 /* =====================================================
-   START
+   START DASHBOARD
 ===================================================== */
 
 initializeDashboard();
-
 
 </script>
 

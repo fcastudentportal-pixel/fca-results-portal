@@ -17,7 +17,9 @@
 <div class="classes-page">
 
 
-<!-- TOP BAR -->
+<!-- =========================================================
+     TOP BAR
+========================================================= -->
 
 <header class="topbar">
 
@@ -31,7 +33,6 @@
       >
 
     </a>
-
 
     <div>
 
@@ -63,610 +64,674 @@
 </header>
 
 
-<!-- MAIN -->
+<!-- =========================================================
+     MAIN
+========================================================= -->
 
 <main class="content">
 
 
-  <!-- PAGE HEADER -->
+<!-- PAGE HEADER -->
 
-  <section class="page-header">
+<section class="page-header">
+
+  <div>
+
+    <span class="eyebrow">
+      ACADEMIC CLASSES
+    </span>
+
+    <h1>
+      Classes
+    </h1>
+
+    <p>
+      Select a class to manage students and results.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     FOUR FORMS
+========================================================= -->
+
+<section class="forms-section">
+
+
+<a href="classes.html?form=1" class="form-card">
+
+  <div class="form-number">
+    01
+  </div>
+
+  <div class="form-info">
+
+    <span>
+      CLASS
+    </span>
+
+    <h2>
+      Form 1
+    </h2>
+
+    <p>
+      Manage Form 1 students and results.
+    </p>
+
+  </div>
+
+  <div class="arrow">
+    →
+  </div>
+
+</a>
+
+
+<a href="classes.html?form=2" class="form-card">
+
+  <div class="form-number">
+    02
+  </div>
+
+  <div class="form-info">
+
+    <span>
+      CLASS
+    </span>
+
+    <h2>
+      Form 2
+    </h2>
+
+    <p>
+      Manage Form 2 students and results.
+    </p>
+
+  </div>
+
+  <div class="arrow">
+    →
+  </div>
+
+</a>
+
+
+<a href="classes.html?form=3" class="form-card">
+
+  <div class="form-number">
+    03
+  </div>
+
+  <div class="form-info">
+
+    <span>
+      CLASS
+    </span>
+
+    <h2>
+      Form 3
+    </h2>
+
+    <p>
+      Manage Form 3 students and results.
+    </p>
+
+  </div>
+
+  <div class="arrow">
+    →
+  </div>
+
+</a>
+
+
+<a href="classes.html?form=4" class="form-card">
+
+  <div class="form-number">
+    04
+  </div>
+
+  <div class="form-info">
+
+    <span>
+      CLASS
+    </span>
+
+    <h2>
+      Form 4
+    </h2>
+
+    <p>
+      Manage Form 4 students and results.
+    </p>
+
+  </div>
+
+  <div class="arrow">
+    →
+  </div>
+
+</a>
+
+
+</section>
+
+
+<!-- =========================================================
+     SELECTED FORM
+========================================================= -->
+
+<section
+  id="selectedForm"
+  class="selected-section"
+>
+
+<div class="selected-header">
+
+  <div>
+
+    <span class="eyebrow">
+      SELECTED CLASS
+    </span>
+
+    <h2 id="selectedFormTitle">
+      Form
+    </h2>
+
+    <p>
+      Manage this class.
+    </p>
+
+  </div>
+
+  <a
+    href="classes.html"
+    class="back-button"
+  >
+    ← All Classes
+  </a>
+
+</div>
+
+
+<!-- =========================================================
+     ACTIONS
+========================================================= -->
+
+<div class="action-grid">
+
+
+<button
+  class="action-card"
+  id="studentsButton"
+  type="button"
+>
+
+  <div class="action-icon">
+    S
+  </div>
+
+  <div>
+
+    <strong>
+      Students
+    </strong>
+
+    <span>
+      View and add students
+    </span>
+
+  </div>
+
+  <b>
+    →
+  </b>
+
+</button>
+
+
+<button
+  class="action-card"
+  id="resultsButton"
+  type="button"
+>
+
+  <div class="action-icon">
+    R
+  </div>
+
+  <div>
+
+    <strong>
+      Results
+    </strong>
+
+    <span>
+      Select students and manage results
+    </span>
+
+  </div>
+
+  <b>
+    →
+  </b>
+
+</button>
+
+
+</div>
+
+
+<!-- =========================================================
+     STUDENTS AREA
+========================================================= -->
+
+<div
+  id="studentsArea"
+  class="management-area"
+>
+
+<div class="area-header">
+
+  <div>
+
+    <span class="eyebrow">
+      STUDENTS
+    </span>
+
+    <h3 id="studentsTitle">
+      Form Students
+    </h3>
+
+    <p>
+      Only a teacher assigned to this class can add or edit students.
+    </p>
+
+  </div>
+
+
+  <button
+    id="addStudentButton"
+    class="primary-button"
+    type="button"
+  >
+    + Add Student
+  </button>
+
+</div>
+
+
+<div
+  id="studentList"
+  class="student-list"
+></div>
+
+
+<!-- =========================================================
+     ADD / EDIT STUDENT FORM
+========================================================= -->
+
+<form
+  id="studentForm"
+  class="hidden-form"
+>
+
+  <h3 id="studentFormTitle">
+    Add Student
+  </h3>
+
+
+  <div class="notice">
+    Student Number and Results Password will be generated automatically
+    after the student is saved.
+  </div>
+
+
+  <div class="form-grid">
+
+
+    <label>
+
+      First Name
+
+      <input
+        id="studentFirstName"
+        type="text"
+        placeholder="First name"
+        required
+      >
+
+    </label>
+
+
+    <label>
+
+      Last Name
+
+      <input
+        id="studentLastName"
+        type="text"
+        placeholder="Last name"
+        required
+      >
+
+    </label>
+
+
+    <label>
+
+      Gender
+
+      <select
+        id="studentGender"
+        required
+      >
+
+        <option value="">
+          Select Gender
+        </option>
+
+        <option value="Male">
+          Male
+        </option>
+
+        <option value="Female">
+          Female
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+
+      Class
+
+      <select
+        id="studentClass"
+        required
+      >
+
+        <option value="">
+          Select Class
+        </option>
+
+        <option value="1">
+          Form 1
+        </option>
+
+        <option value="2">
+          Form 2
+        </option>
+
+        <option value="3">
+          Form 3
+        </option>
+
+        <option value="4">
+          Form 4
+        </option>
+
+      </select>
+
+    </label>
+
+
+  </div>
+
+
+  <!-- SUBJECTS -->
+
+  <div class="subject-selection">
+
+    <span class="subject-selection-title">
+      Subjects Taken By Student
+    </span>
+
+    <div
+      id="studentSubjectGrid"
+      class="subject-grid"
+    ></div>
+
+    <p class="subject-note">
+      Select all subjects taken by this student.
+    </p>
+
+  </div>
+
+
+  <div class="form-actions">
+
+    <button
+      type="button"
+      id="cancelStudent"
+      class="cancel-button"
+    >
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      class="primary-button"
+    >
+      Save Student
+    </button>
+
+  </div>
+
+</form>
+
+
+</div>
+
+
+<!-- =========================================================
+     RESULTS AREA
+========================================================= -->
+
+<div
+  id="resultsArea"
+  class="management-area"
+>
+
+<div class="area-header">
+
+  <div>
+
+    <span class="eyebrow">
+      RESULTS
+    </span>
+
+    <h3 id="resultsTitle">
+      Form Results
+    </h3>
+
+    <p>
+      Select a student below to enter or manage their results.
+    </p>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     STUDENT LIST FOR RESULTS
+========================================================= -->
+
+<div
+  id="resultsStudentList"
+  class="results-students"
+></div>
+
+
+<!-- =========================================================
+     SELECTED STUDENT
+========================================================= -->
+
+<div
+  id="selectedStudentResults"
+  class="selected-student-results"
+>
+
+  <div class="selected-student-heading">
 
     <div>
 
       <span class="eyebrow">
-        ACADEMIC CLASSES
+        STUDENT RESULTS
       </span>
 
-      <h1>
-        Classes
-      </h1>
+      <h3 id="selectedStudentName">
+        Student
+      </h3>
 
-      <p>
-        Select a class to manage students and results.
+      <p id="selectedStudentNumber">
+        Student Number
       </p>
 
     </div>
 
-  </section>
 
-
-  <!-- FOUR FORMS -->
-
-  <section class="forms-section">
-
-
-    <a
-      href="classes.html?form=1"
-      class="form-card"
+    <button
+      id="addResultsButton"
+      class="primary-button"
+      type="button"
     >
+      + Add Results
+    </button>
 
-      <div class="form-number">
-        01
-      </div>
-
-      <div class="form-info">
-
-        <span>
-          CLASS
-        </span>
-
-        <h2>
-          Form 1
-        </h2>
-
-        <p>
-          Manage Form 1 students and results.
-        </p>
-
-      </div>
-
-      <div class="arrow">
-        →
-      </div>
-
-    </a>
+  </div>
 
 
-    <a
-      href="classes.html?form=2"
-      class="form-card"
-    >
+  <!-- RESULT FORM -->
 
-      <div class="form-number">
-        02
-      </div>
-
-      <div class="form-info">
-
-        <span>
-          CLASS
-        </span>
-
-        <h2>
-          Form 2
-        </h2>
-
-        <p>
-          Manage Form 2 students and results.
-        </p>
-
-      </div>
-
-      <div class="arrow">
-        →
-      </div>
-
-    </a>
-
-
-    <a
-      href="classes.html?form=3"
-      class="form-card"
-    >
-
-      <div class="form-number">
-        03
-      </div>
-
-      <div class="form-info">
-
-        <span>
-          CLASS
-        </span>
-
-        <h2>
-          Form 3
-        </h2>
-
-        <p>
-          Manage Form 3 students and results.
-        </p>
-
-      </div>
-
-      <div class="arrow">
-        →
-      </div>
-
-    </a>
-
-
-    <a
-      href="classes.html?form=4"
-      class="form-card"
-    >
-
-      <div class="form-number">
-        04
-      </div>
-
-      <div class="form-info">
-
-        <span>
-          CLASS
-        </span>
-
-        <h2>
-          Form 4
-        </h2>
-
-        <p>
-          Manage Form 4 students and results.
-        </p>
-
-      </div>
-
-      <div class="arrow">
-        →
-      </div>
-
-    </a>
-
-
-  </section>
-
-
-  <!-- SELECTED FORM -->
-
-  <section
-    id="selectedForm"
-    class="selected-section"
+  <form
+    id="resultsForm"
+    class="results-form"
   >
 
-    <div class="selected-header">
-
-      <div>
-
-        <span class="eyebrow">
-          SELECTED CLASS
-        </span>
-
-        <h2 id="selectedFormTitle">
-          Form
-        </h2>
-
-        <p>
-          Manage this class.
-        </p>
-
-      </div>
+    <h3 id="resultFormTitle">
+      Add Result
+    </h3>
 
 
-      <a
-        href="classes.html"
-        class="back-button"
-      >
-        ← All Classes
-      </a>
+    <div class="form-grid">
+
+
+      <label>
+
+        Subject
+
+        <select
+          id="resultSubject"
+          required
+        >
+
+          <option value="">
+            Select Subject
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <label>
+
+        Mark
+
+        <input
+          id="resultMark"
+          type="number"
+          min="0"
+          max="100"
+          placeholder="0 - 100"
+          required
+        >
+
+      </label>
+
+
+      <label>
+
+        Remark Mode
+
+        <select
+          id="remarkMode"
+        >
+
+          <option value="automatic">
+            Automatic
+          </option>
+
+          <option value="manual">
+            Manual
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <label>
+
+        Remark
+
+        <input
+          id="resultRemark"
+          type="text"
+          placeholder="Automatic"
+          required
+        >
+
+      </label>
+
 
     </div>
 
 
-    <!-- ACTIONS -->
-
-    <div class="action-grid">
-
-
-      <!-- STUDENTS -->
+    <div class="form-actions">
 
       <button
-        class="action-card"
-        id="studentsButton"
         type="button"
+        id="cancelResults"
+        class="cancel-button"
       >
-
-        <div class="action-icon">
-          S
-        </div>
-
-        <div>
-
-          <strong>
-            Students
-          </strong>
-
-          <span>
-            View and add students
-          </span>
-
-        </div>
-
-        <b>
-          →
-        </b>
-
+        Cancel
       </button>
-
-
-      <!-- RESULTS -->
 
       <button
-        class="action-card"
-        id="resultsButton"
-        type="button"
+        type="submit"
+        class="primary-button"
       >
-
-        <div class="action-icon">
-          R
-        </div>
-
-        <div>
-
-          <strong>
-            Results
-          </strong>
-
-          <span>
-            Enter and manage results
-          </span>
-
-        </div>
-
-        <b>
-          →
-        </b>
-
+        Save Result
       </button>
 
-
     </div>
 
+  </form>
 
-    <!-- STUDENTS AREA -->
 
-    <div
-      id="studentsArea"
-      class="management-area"
-    >
+  <!-- SAVED RESULTS -->
 
-      <div class="area-header">
+  <div
+    id="resultsList"
+    class="results-list"
+  ></div>
 
-        <div>
 
-          <span class="eyebrow">
-            STUDENTS
-          </span>
+</div>
 
-          <h3 id="studentsTitle">
-            Form Students
-          </h3>
 
-        </div>
+</div>
 
 
-        <button
-          id="addStudentButton"
-          class="primary-button"
-          type="button"
-        >
-          + Add Student
-        </button>
-
-      </div>
-
-
-      <div
-        id="studentList"
-        class="student-list"
-      >
-
-        <div class="empty-state">
-
-          <div class="empty-icon">
-            S
-          </div>
-
-          <strong>
-            No students added yet
-          </strong>
-
-          <p>
-            Students belonging to this class will appear here.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <!-- ADD STUDENT FORM -->
-
-      <form
-        id="studentForm"
-        class="hidden-form"
-      >
-
-        <h3>
-          Add Student
-        </h3>
-
-
-        <div class="form-grid">
-
-
-          <label>
-
-            First Name
-
-            <input
-              id="studentFirstName"
-              type="text"
-              placeholder="First name"
-              required
-            >
-
-          </label>
-
-
-          <label>
-
-            Last Name
-
-            <input
-              id="studentLastName"
-              type="text"
-              placeholder="Last name"
-              required
-            >
-
-          </label>
-
-
-          <label>
-
-            Student Number
-
-            <input
-              id="studentNumber"
-              type="text"
-              placeholder="e.g. FCA-2026-AB-000"
-              required
-            >
-
-          </label>
-
-
-          <label>
-
-            Gender
-
-            <select
-              id="studentGender"
-              required
-            >
-
-              <option value="">
-                Select Gender
-              </option>
-
-              <option value="Male">
-                Male
-              </option>
-
-              <option value="Female">
-                Female
-              </option>
-
-            </select>
-
-          </label>
-
-
-        </div>
-
-
-        <div class="form-actions">
-
-          <button
-            type="button"
-            id="cancelStudent"
-            class="cancel-button"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            class="primary-button"
-          >
-            Save Student
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-
-    <!-- RESULTS AREA -->
-
-    <div
-      id="resultsArea"
-      class="management-area"
-    >
-
-      <div class="area-header">
-
-        <div>
-
-          <span class="eyebrow">
-            RESULTS
-          </span>
-
-          <h3 id="resultsTitle">
-            Form Results
-          </h3>
-
-          <p>
-            Teachers can enter results only for subjects they teach.
-          </p>
-
-        </div>
-
-
-        <button
-          id="addResultsButton"
-          class="primary-button"
-          type="button"
-        >
-          + Add Results
-        </button>
-
-      </div>
-
-
-      <!-- RESULT FORM -->
-
-      <form
-        id="resultsForm"
-        class="results-form"
-      >
-
-        <div class="form-grid">
-
-
-          <label>
-
-            Student
-
-            <select
-              id="resultStudent"
-              required
-            >
-
-              <option value="">
-                Select Student
-              </option>
-
-            </select>
-
-          </label>
-
-
-          <label>
-
-            Subject
-
-            <select
-              id="resultSubject"
-              required
-            >
-
-              <option value="">
-                Select Subject
-              </option>
-
-            </select>
-
-          </label>
-
-
-          <label>
-
-            Mark
-
-            <input
-              id="resultMark"
-              type="number"
-              min="0"
-              max="100"
-              placeholder="0 - 100"
-              required
-            >
-
-          </label>
-
-
-          <label>
-
-            Remark
-
-            <input
-              id="resultRemark"
-              type="text"
-              readonly
-              placeholder="Automatic"
-            >
-
-          </label>
-
-
-        </div>
-
-
-        <div class="form-actions">
-
-          <button
-            type="button"
-            id="cancelResults"
-            class="cancel-button"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            class="primary-button"
-          >
-            Save Result
-          </button>
-
-        </div>
-
-      </form>
-
-
-      <!-- SAVED RESULTS -->
-
-      <div
-        id="resultsList"
-        class="results-list"
-      >
-
-        <div class="empty-state">
-
-          <div class="empty-icon">
-            R
-          </div>
-
-          <strong>
-            No results entered yet
-          </strong>
-
-          <p>
-            Saved results for this class will appear here.
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-  </section>
+</section>
 
 
 </main>
@@ -676,15 +741,19 @@
 
 <script>
 
-/* =========================================
-   SELECT FORM
-========================================= */
+/* =========================================================
+   FCA CLASSES MANAGEMENT
+========================================================= */
+
+
+/* =========================================================
+   SELECTED FORM
+========================================================= */
 
 const params =
   new URLSearchParams(
     window.location.search
   );
-
 
 const formNumber =
   params.get("form");
@@ -714,23 +783,22 @@ const resultsTitle =
   );
 
 
-if(formNumber){
+if(
+  formNumber &&
+  ["1","2","3","4"].includes(formNumber)
+){
 
   const formName =
     `Form ${formNumber}`;
 
-
   selectedFormTitle.textContent =
     formName;
-
 
   studentsTitle.textContent =
     `${formName} Students`;
 
-
   resultsTitle.textContent =
     `${formName} Results`;
-
 
   selectedSection.classList.add(
     "visible"
@@ -739,9 +807,9 @@ if(formNumber){
 }
 
 
-/* =========================================
+/* =========================================================
    DATA
-========================================= */
+========================================================= */
 
 let students =
   JSON.parse(
@@ -767,9 +835,42 @@ let teachers =
   ) || [];
 
 
-/* =========================================
+/* =========================================================
+   SUBJECTS
+========================================================= */
+
+const allSubjects = [
+
+  "Agriculture",
+  "Bible Knowledge",
+  "Biology",
+  "Chemistry",
+  "Chichewa",
+  "English",
+  "Geography",
+  "History",
+  "Life Skills",
+  "Mathematics",
+  "Physics",
+  "Social Studies"
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let editingStudentId = null;
+
+let selectedResultStudentId = null;
+
+let editingResultId = null;
+
+
+/* =========================================================
    ELEMENTS
-========================================= */
+========================================================= */
 
 const studentsArea =
   document.getElementById(
@@ -807,6 +908,12 @@ const studentForm =
   );
 
 
+const studentFormTitle =
+  document.getElementById(
+    "studentFormTitle"
+  );
+
+
 const cancelStudent =
   document.getElementById(
     "cancelStudent"
@@ -819,9 +926,75 @@ const studentList =
   );
 
 
-const resultStudent =
+const studentFirstName =
   document.getElementById(
-    "resultStudent"
+    "studentFirstName"
+  );
+
+
+const studentLastName =
+  document.getElementById(
+    "studentLastName"
+  );
+
+
+const studentGender =
+  document.getElementById(
+    "studentGender"
+  );
+
+
+const studentClass =
+  document.getElementById(
+    "studentClass"
+  );
+
+
+const studentSubjectGrid =
+  document.getElementById(
+    "studentSubjectGrid"
+  );
+
+
+const resultsStudentList =
+  document.getElementById(
+    "resultsStudentList"
+  );
+
+
+const selectedStudentResults =
+  document.getElementById(
+    "selectedStudentResults"
+  );
+
+
+const selectedStudentName =
+  document.getElementById(
+    "selectedStudentName"
+  );
+
+
+const selectedStudentNumber =
+  document.getElementById(
+    "selectedStudentNumber"
+  );
+
+
+const addResultsButton =
+  document.getElementById(
+    "addResultsButton"
+  );
+
+
+const resultsForm =
+  document.getElementById(
+    "resultsForm"
+  );
+
+
+const resultFormTitle =
+  document.getElementById(
+    "resultFormTitle"
   );
 
 
@@ -837,27 +1010,15 @@ const resultMark =
   );
 
 
+const remarkMode =
+  document.getElementById(
+    "remarkMode"
+  );
+
+
 const resultRemark =
   document.getElementById(
     "resultRemark"
-  );
-
-
-const resultsForm =
-  document.getElementById(
-    "resultsForm"
-  );
-
-
-const resultsList =
-  document.getElementById(
-    "resultsList"
-  );
-
-
-const addResultsButton =
-  document.getElementById(
-    "addResultsButton"
   );
 
 
@@ -867,31 +1028,446 @@ const cancelResults =
   );
 
 
-/* =========================================
-   SUBJECTS
-========================================= */
-
-const allSubjects = [
-
-  "Agriculture",
-  "Bible Knowledge",
-  "Biology",
-  "Chemistry",
-  "Chichewa",
-  "English",
-  "Geography",
-  "History",
-  "Life Skills",
-  "Mathematics",
-  "Physics",
-  "Social Studies"
-
-];
+const resultsList =
+  document.getElementById(
+    "resultsList"
+  );
 
 
-/* =========================================
-   STUDENTS
-========================================= */
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function saveStudents(){
+
+  localStorage.setItem(
+    "fcaStudents",
+    JSON.stringify(students)
+  );
+
+}
+
+
+function saveResults(){
+
+  localStorage.setItem(
+    "fcaResults",
+    JSON.stringify(results)
+  );
+
+}
+
+
+/* =========================================================
+   TEACHER HELPERS
+========================================================= */
+
+/*
+  This function supports several teacher object formats.
+
+  Examples:
+
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Banda",
+    password: "1234",
+    form: "1"
+  }
+
+  or:
+
+  {
+    id: 1,
+    name: "John Banda",
+    password: "1234",
+    class: "Form 1"
+  }
+
+  When we connect Supabase later, this will be replaced
+  with database authentication and teacher/class assignments.
+*/
+
+
+function getTeacherName(teacher){
+
+  return (
+    teacher.name ||
+    `${teacher.firstName || ""} ${teacher.lastName || ""}`.trim() ||
+    teacher.fullName ||
+    "Teacher"
+  );
+
+}
+
+
+function getTeacherPassword(teacher){
+
+  return String(
+    teacher.password ||
+    teacher.teacherPassword ||
+    teacher.pass ||
+    ""
+  );
+
+}
+
+
+function teacherHasForm(
+  teacher,
+  selectedForm
+){
+
+  const possibleForms = [
+
+    teacher.form,
+    teacher.class,
+    teacher.className,
+    teacher.formNumber,
+    teacher.assignedClass,
+    teacher.assignedForm
+
+  ];
+
+
+  return possibleForms.some(value => {
+
+    if(value === undefined || value === null){
+      return false;
+    }
+
+
+    const text =
+      String(value)
+        .trim()
+        .toLowerCase();
+
+
+    return (
+
+      text === String(selectedForm) ||
+
+      text === `form ${selectedForm}` ||
+
+      text === `form${selectedForm}`
+
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   TEACHER AUTHORIZATION
+========================================================= */
+
+function requestTeacherAuthorization(
+  action,
+  callback
+){
+
+  if(!formNumber){
+
+    alert(
+      "Please select a class first."
+    );
+
+    return;
+
+  }
+
+
+  if(!teachers.length){
+
+    alert(
+      "No saved teachers were found. Add and assign a teacher to this class first."
+    );
+
+    return;
+
+  }
+
+
+  const classTeachers =
+    teachers.filter(
+      teacher =>
+        teacherHasForm(
+          teacher,
+          formNumber
+        )
+    );
+
+
+  if(!classTeachers.length){
+
+    alert(
+      `No teacher is assigned to Form ${formNumber}.`
+    );
+
+    return;
+
+  }
+
+
+  const teacherList =
+    classTeachers
+      .map(
+        teacher =>
+          getTeacherName(teacher)
+      )
+      .join(", ");
+
+
+  const teacherName =
+    prompt(
+      `Teacher authorization required to ${action}.\n\nAssigned teacher(s):\n${teacherList}\n\nEnter teacher name:`
+    );
+
+
+  if(!teacherName){
+
+    return;
+
+  }
+
+
+  const teacher =
+    classTeachers.find(
+      item =>
+        getTeacherName(item)
+          .toLowerCase() ===
+        teacherName.trim().toLowerCase()
+    );
+
+
+  if(!teacher){
+
+    alert(
+      "Teacher not found or the teacher is not assigned to this class."
+    );
+
+    return;
+
+  }
+
+
+  const password =
+    prompt(
+      `Enter the password for ${getTeacherName(teacher)}:`
+    );
+
+
+  if(password === null){
+
+    return;
+
+  }
+
+
+  if(
+    getTeacherPassword(teacher) !==
+    String(password)
+  ){
+
+    alert(
+      "Incorrect teacher password."
+    );
+
+    return;
+
+  }
+
+
+  callback(teacher);
+
+}
+
+
+/* =========================================================
+   SUBJECT CHECKBOXES
+========================================================= */
+
+function loadSubjectCheckboxes(){
+
+  studentSubjectGrid.innerHTML = "";
+
+
+  allSubjects.forEach(
+    (subject,index) => {
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "subject-option";
+
+
+      const id =
+        `subject_${index}`;
+
+
+      wrapper.innerHTML = `
+
+        <input
+          type="checkbox"
+          id="${id}"
+          value="${subject}"
+        >
+
+        <label for="${id}">
+          ${subject}
+        </label>
+
+      `;
+
+
+      studentSubjectGrid.appendChild(
+        wrapper
+      );
+
+    }
+  );
+
+}
+
+
+function getSelectedSubjects(){
+
+  return Array.from(
+    studentSubjectGrid.querySelectorAll(
+      "input[type='checkbox']:checked"
+    )
+  ).map(
+    checkbox =>
+      checkbox.value
+  );
+
+}
+
+
+function setSelectedSubjects(
+  subjects
+){
+
+  studentSubjectGrid
+    .querySelectorAll(
+      "input[type='checkbox']"
+    )
+    .forEach(
+      checkbox => {
+
+        checkbox.checked =
+          subjects.includes(
+            checkbox.value
+          );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   STUDENT NUMBER GENERATOR
+========================================================= */
+
+function generateStudentNumber(
+  lastName
+){
+
+  const year =
+    new Date()
+      .getFullYear();
+
+
+  const letters =
+    lastName
+      .replace(
+        /[^a-zA-Z]/g,
+        ""
+      )
+      .substring(0,2)
+      .toUpperCase()
+      .padEnd(2,"X");
+
+
+  let number = 1;
+
+
+  while(true){
+
+    const padded =
+      String(number)
+        .padStart(3,"0");
+
+
+    const studentNumber =
+      `FCA-${year}-${letters}-${padded}`;
+
+
+    const exists =
+      students.some(
+        student =>
+          student.studentNumber ===
+          studentNumber
+      );
+
+
+    if(!exists){
+
+      return studentNumber;
+
+    }
+
+
+    number++;
+
+  }
+
+}
+
+
+/* =========================================================
+   PASSWORD GENERATOR
+========================================================= */
+
+function generateResultsPassword(){
+
+  let number = 1;
+
+
+  while(true){
+
+    const password =
+      `fca@hfh${String(number).padStart(3,"0")}`;
+
+
+    const exists =
+      students.some(
+        student =>
+          student.resultsPassword ===
+          password
+      );
+
+
+    if(!exists){
+
+      return password;
+
+    }
+
+
+    number++;
+
+  }
+
+}
+
+
+/* =========================================================
+   GET FORM STUDENTS
+========================================================= */
 
 function getFormStudents(){
 
@@ -904,13 +1480,19 @@ function getFormStudents(){
 }
 
 
+/* =========================================================
+   DISPLAY STUDENTS
+========================================================= */
+
 function displayStudents(){
 
   const formStudents =
     getFormStudents();
 
 
-  if(formStudents.length === 0){
+  if(
+    formStudents.length === 0
+  ){
 
     studentList.innerHTML = `
 
@@ -925,14 +1507,13 @@ function displayStudents(){
         </strong>
 
         <p>
-          Add students to ${`Form ${formNumber}`}.
+          Students belonging to Form ${formNumber}
+          will appear here.
         </p>
 
       </div>
 
     `;
-
-    updateStudentSelect();
 
     return;
 
@@ -940,106 +1521,159 @@ function displayStudents(){
 
 
   studentList.innerHTML =
-    formStudents.map(
-      (student,index) => `
+    formStudents
+      .map(
+        student => {
 
-        <div class="student-row">
-
-          <div class="student-avatar">
-
-            ${student.firstName.charAt(0)}
-
-          </div>
-
-
-          <div class="student-details">
-
-            <strong>
-
-              ${student.firstName}
-              ${student.lastName}
-
-            </strong>
-
-            <span>
-              Student No: ${student.studentNumber}
-            </span>
-
-          </div>
+          const subjects =
+            Array.isArray(
+              student.subjects
+            )
+              ? student.subjects
+              : [];
 
 
-          <span class="student-class">
+          return `
 
-            Form ${student.form}
+            <div class="student-row">
 
-          </span>
+              <div class="student-avatar">
 
-        </div>
+                ${escapeHtml(
+                  String(
+                    student.firstName ||
+                    "S"
+                  ).charAt(0)
+                )}
 
-      `
-    ).join("");
+              </div>
 
 
-  updateStudentSelect();
+              <div class="student-details">
+
+                <strong>
+                  ${escapeHtml(
+                    student.firstName
+                  )}
+                  ${escapeHtml(
+                    student.lastName
+                  )}
+                </strong>
+
+                <span>
+                  Student No:
+                  ${escapeHtml(
+                    student.studentNumber
+                  )}
+                </span>
+
+                <span>
+                  Results Password:
+                  ${escapeHtml(
+                    student.resultsPassword ||
+                    "Not available"
+                  )}
+                </span>
+
+              </div>
+
+
+              <div class="student-subjects">
+
+                <strong>
+                  Subjects
+                </strong>
+
+                <br>
+
+                ${
+                  subjects.length
+                    ? subjects
+                        .map(
+                          escapeHtml
+                        )
+                        .join(", ")
+                    : "No subjects selected"
+                }
+
+              </div>
+
+
+              <span class="student-class">
+
+                Form ${escapeHtml(
+                  String(student.form)
+                )}
+
+              </span>
+
+
+              <div class="student-actions">
+
+                <button
+                  type="button"
+                  class="edit-button"
+                  onclick="editStudent('${student.id}')"
+                >
+                  Edit
+                </button>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
 
 }
 
 
-function updateStudentSelect(){
-
-  const formStudents =
-    getFormStudents();
-
-
-  resultStudent.innerHTML = `
-
-    <option value="">
-      Select Student
-    </option>
-
-  `;
-
-
-  formStudents.forEach(student => {
-
-    const option =
-      document.createElement("option");
-
-    option.value =
-      student.id;
-
-    option.textContent =
-      `${student.firstName} ${student.lastName}`;
-
-    resultStudent.appendChild(
-      option
-    );
-
-  });
-
-}
-
-
-/* =========================================
-   ADD STUDENT
-========================================= */
+/* =========================================================
+   ADD STUDENT BUTTON
+========================================================= */
 
 addStudentButton.addEventListener(
   "click",
   () => {
 
-    studentForm.classList.add(
-      "show"
-    );
+    requestTeacherAuthorization(
+      "add a student",
+      () => {
 
-    studentForm.scrollIntoView({
-      behavior:"smooth",
-      block:"center"
-    });
+        editingStudentId = null;
+
+        studentFormTitle.textContent =
+          "Add Student";
+
+        studentForm.reset();
+
+        studentClass.value =
+          formNumber;
+
+        setSelectedSubjects([]);
+
+        studentForm.classList.add(
+          "show"
+        );
+
+        studentForm.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+
+      }
+    );
 
   }
 );
 
+
+/* =========================================================
+   CANCEL STUDENT
+========================================================= */
 
 cancelStudent.addEventListener(
   "click",
@@ -1051,9 +1685,20 @@ cancelStudent.addEventListener(
       "show"
     );
 
+    editingStudentId = null;
+
+    studentFormTitle.textContent =
+      "Add Student";
+
+    setSelectedSubjects([]);
+
   }
 );
 
+
+/* =========================================================
+   SAVE STUDENT
+========================================================= */
 
 studentForm.addEventListener(
   "submit",
@@ -1062,33 +1707,176 @@ studentForm.addEventListener(
     event.preventDefault();
 
 
+    const firstName =
+      studentFirstName.value.trim();
+
+
+    const lastName =
+      studentLastName.value.trim();
+
+
+    const gender =
+      studentGender.value;
+
+
+    const selectedClass =
+      studentClass.value;
+
+
+    const subjects =
+      getSelectedSubjects();
+
+
+    if(
+      !firstName ||
+      !lastName ||
+      !gender ||
+      !selectedClass
+    ){
+
+      alert(
+        "Please complete all student details."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      subjects.length === 0
+    ){
+
+      alert(
+        "Please select at least one subject."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      String(selectedClass) !==
+      String(formNumber)
+    ){
+
+      alert(
+        `This page is for Form ${formNumber}. Please select Form ${formNumber}.`
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       EDIT EXISTING STUDENT
+    ===================================================== */
+
+    if(editingStudentId){
+
+      const index =
+        students.findIndex(
+          student =>
+            String(student.id) ===
+            String(editingStudentId)
+        );
+
+
+      if(index === -1){
+
+        alert(
+          "Student could not be found."
+        );
+
+        return;
+
+      }
+
+
+      students[index].firstName =
+        firstName;
+
+
+      students[index].lastName =
+        lastName;
+
+
+      students[index].gender =
+        gender;
+
+
+      students[index].form =
+        selectedClass;
+
+
+      students[index].subjects =
+        subjects;
+
+
+      saveStudents();
+
+      displayStudents();
+
+      displayResultsStudents();
+
+      studentForm.reset();
+
+      studentForm.classList.remove(
+        "show"
+      );
+
+      editingStudentId = null;
+
+      studentFormTitle.textContent =
+        "Add Student";
+
+      alert(
+        "Student details updated successfully."
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       NEW STUDENT
+    ===================================================== */
+
+    const studentNumber =
+      generateStudentNumber(
+        lastName
+      );
+
+
+    const resultsPassword =
+      generateResultsPassword();
+
+
     const newStudent = {
 
       id:
         Date.now(),
 
-      firstName:
-        document.getElementById(
-          "studentFirstName"
-        ).value.trim(),
+      firstName,
 
-      lastName:
-        document.getElementById(
-          "studentLastName"
-        ).value.trim(),
+      lastName,
 
-      studentNumber:
-        document.getElementById(
-          "studentNumber"
-        ).value.trim(),
-
-      gender:
-        document.getElementById(
-          "studentGender"
-        ).value,
+      gender,
 
       form:
-        formNumber
+        selectedClass,
+
+      subjects,
+
+      studentNumber,
+
+      resultsPassword,
+
+      createdAt:
+        new Date().toISOString()
 
     };
 
@@ -1098,10 +1886,7 @@ studentForm.addEventListener(
     );
 
 
-    localStorage.setItem(
-      "fcaStudents",
-      JSON.stringify(students)
-    );
+    saveStudents();
 
 
     studentForm.reset();
@@ -1111,17 +1896,337 @@ studentForm.addEventListener(
     );
 
 
+    setSelectedSubjects([]);
+
+
+    displayStudents();
+
+    displayResultsStudents();
+
+
+    alert(
+
+      `Student saved successfully!\n\n` +
+
+      `Student Number:\n${studentNumber}\n\n` +
+
+      `Results Password:\n${resultsPassword}`
+
+    );
+
+  }
+);
+
+
+/* =========================================================
+   EDIT STUDENT
+========================================================= */
+
+function editStudent(
+  studentId
+){
+
+  requestTeacherAuthorization(
+    "edit this student",
+    () => {
+
+      const student =
+        students.find(
+          item =>
+            String(item.id) ===
+            String(studentId)
+        );
+
+
+      if(!student){
+
+        alert(
+          "Student not found."
+        );
+
+        return;
+
+      }
+
+
+      editingStudentId =
+        student.id;
+
+
+      studentFormTitle.textContent =
+        "Edit Student";
+
+
+      studentFirstName.value =
+        student.firstName || "";
+
+
+      studentLastName.value =
+        student.lastName || "";
+
+
+      studentGender.value =
+        student.gender || "";
+
+
+      studentClass.value =
+        student.form || formNumber;
+
+
+      setSelectedSubjects(
+        Array.isArray(student.subjects)
+          ? student.subjects
+          : []
+      );
+
+
+      studentForm.classList.add(
+        "show"
+      );
+
+
+      studentForm.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RESULTS BUTTON
+========================================================= */
+
+resultsButton.addEventListener(
+  "click",
+  () => {
+
+    studentsArea.classList.remove(
+      "show-area"
+    );
+
+    resultsArea.classList.add(
+      "show-area"
+    );
+
+
+    selectedStudentResults.classList.remove(
+      "show"
+    );
+
+
+    selectedResultStudentId =
+      null;
+
+
+    displayResultsStudents();
+
+  }
+);
+
+
+/* =========================================================
+   STUDENTS BUTTON
+========================================================= */
+
+studentsButton.addEventListener(
+  "click",
+  () => {
+
+    resultsArea.classList.remove(
+      "show-area"
+    );
+
+    studentsArea.classList.add(
+      "show-area"
+    );
+
     displayStudents();
 
   }
 );
 
 
-/* =========================================
-   SUBJECTS FOR TEACHER
-========================================= */
+/* =========================================================
+   DISPLAY RESULT STUDENTS
+========================================================= */
 
-function loadTeacherSubjects(){
+function displayResultsStudents(){
+
+  const formStudents =
+    getFormStudents();
+
+
+  if(
+    formStudents.length === 0
+  ){
+
+    resultsStudentList.innerHTML = `
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          R
+        </div>
+
+        <strong>
+          No students in this class
+        </strong>
+
+        <p>
+          Add students to Form ${formNumber}
+          before entering results.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  resultsStudentList.innerHTML =
+    formStudents
+      .map(
+        student => {
+
+          const studentResults =
+            results.filter(
+              result =>
+                String(result.studentId) ===
+                String(student.id)
+            );
+
+
+          return `
+
+            <button
+              type="button"
+              class="results-student-row ${
+                String(selectedResultStudentId) ===
+                String(student.id)
+                  ? "selected"
+                  : ""
+              }"
+              onclick="selectResultStudent('${student.id}')"
+            >
+
+              <div class="student-avatar">
+
+                ${escapeHtml(
+                  String(
+                    student.firstName ||
+                    "S"
+                  ).charAt(0)
+                )}
+
+              </div>
+
+
+              <div class="results-student-info">
+
+                <strong>
+
+                  ${escapeHtml(
+                    student.firstName
+                  )}
+
+                  ${escapeHtml(
+                    student.lastName
+                  )}
+
+                </strong>
+
+                <span>
+
+                  ${escapeHtml(
+                    student.studentNumber
+                  )}
+
+                </span>
+
+              </div>
+
+
+              <span class="results-count">
+
+                ${studentResults.length}
+                result${studentResults.length === 1 ? "" : "s"}
+
+              </span>
+
+              <b>
+                →
+              </b>
+
+            </button>
+
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* =========================================================
+   SELECT RESULT STUDENT
+========================================================= */
+
+function selectResultStudent(
+  studentId
+){
+
+  selectedResultStudentId =
+    studentId;
+
+
+  const student =
+    students.find(
+      item =>
+        String(item.id) ===
+        String(studentId)
+    );
+
+
+  if(!student){
+
+    return;
+
+  }
+
+
+  selectedStudentResults.classList.add(
+    "show"
+  );
+
+
+  selectedStudentName.textContent =
+    `${student.firstName} ${student.lastName}`;
+
+
+  selectedStudentNumber.textContent =
+    `Student Number: ${student.studentNumber}`;
+
+
+  displayResultsForStudent();
+
+  displayResultsStudents();
+
+}
+
+
+/* =========================================================
+   LOAD STUDENT SUBJECTS INTO RESULT FORM
+========================================================= */
+
+function loadResultSubjects(){
 
   resultSubject.innerHTML = `
 
@@ -1132,114 +2237,271 @@ function loadTeacherSubjects(){
   `;
 
 
-  /*
-     For now, show all subjects.
-
-     Later, when teacher login is connected
-     to Supabase, this will be changed to:
-
-     only subjects assigned to the
-     logged-in teacher.
-  */
-
-  allSubjects.forEach(subject => {
-
-    const option =
-      document.createElement("option");
-
-    option.value =
-      subject;
-
-    option.textContent =
-      subject;
-
-    resultSubject.appendChild(
-      option
+  const student =
+    students.find(
+      item =>
+        String(item.id) ===
+        String(selectedResultStudentId)
     );
 
-  });
+
+  if(!student){
+
+    return;
+
+  }
+
+
+  const subjects =
+    Array.isArray(
+      student.subjects
+    )
+      ? student.subjects
+      : [];
+
+
+  const existingResults =
+    results.filter(
+      result =>
+        String(result.studentId) ===
+        String(student.id)
+    );
+
+
+  subjects.forEach(
+    subject => {
+
+      const alreadyExists =
+        existingResults.some(
+          result =>
+            result.subject ===
+            subject &&
+            String(result.id) !==
+            String(editingResultId)
+        );
+
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        subject;
+
+
+      option.textContent =
+        alreadyExists
+          ? `${subject} — Result Saved`
+          : subject;
+
+
+      option.disabled =
+        alreadyExists;
+
+
+      resultSubject.appendChild(
+        option
+      );
+
+    }
+  );
 
 }
 
 
-/* =========================================
-   RESULTS
-========================================= */
-
-studentsButton.addEventListener(
-  "click",
-  () => {
-
-    studentsArea.classList.add(
-      "show-area"
-    );
-
-    resultsArea.classList.remove(
-      "show-area"
-    );
-
-  }
-);
-
-
-resultsButton.addEventListener(
-  "click",
-  () => {
-
-    resultsArea.classList.add(
-      "show-area"
-    );
-
-    studentsArea.classList.remove(
-      "show-area"
-    );
-
-    loadTeacherSubjects();
-
-  }
-);
-
+/* =========================================================
+   ADD RESULTS BUTTON
+========================================================= */
 
 addResultsButton.addEventListener(
   "click",
   () => {
 
-    resultsForm.classList.add(
-      "show"
-    );
+    if(!selectedResultStudentId){
 
-    resultsForm.scrollIntoView({
-      behavior:"smooth",
-      block:"center"
-    });
+      alert(
+        "Please select a student first."
+      );
+
+      return;
+
+    }
+
+
+    requestTeacherAuthorization(
+      "add results",
+      () => {
+
+        editingResultId = null;
+
+        resultFormTitle.textContent =
+          "Add Result";
+
+
+        resultsForm.reset();
+
+        remarkMode.value =
+          "automatic";
+
+        resultRemark.readOnly =
+          true;
+
+        resultRemark.placeholder =
+          "Automatic";
+
+
+        loadResultSubjects();
+
+
+        resultsForm.classList.add(
+          "show"
+        );
+
+
+        resultsForm.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+
+      }
+    );
 
   }
 );
 
 
-cancelResults.addEventListener(
-  "click",
+/* =========================================================
+   REMARK CALCULATOR
+========================================================= */
+
+function getAutomaticRemark(
+  mark
+){
+
+  if(mark >= 80){
+
+    return "Excellent";
+
+  }
+
+  if(mark >= 70){
+
+    return "Very Good";
+
+  }
+
+  if(mark >= 60){
+
+    return "Good";
+
+  }
+
+  if(mark >= 50){
+
+    return "Average";
+
+  }
+
+  if(mark >= 40){
+
+    return "Pass";
+
+  }
+
+  return "Needs Improvement";
+
+}
+
+
+/* =========================================================
+   REMARK MODE
+========================================================= */
+
+remarkMode.addEventListener(
+  "change",
   () => {
 
-    resultsForm.reset();
+    if(
+      remarkMode.value ===
+      "automatic"
+    ){
 
-    resultsForm.classList.remove(
-      "show"
-    );
+      resultRemark.readOnly =
+        true;
 
-    resultRemark.value = "";
+      resultRemark.placeholder =
+        "Automatic";
+
+
+      const mark =
+        Number(
+          resultMark.value
+        );
+
+
+      if(
+        resultMark.value !== ""
+      ){
+
+        resultRemark.value =
+          getAutomaticRemark(
+            mark
+          );
+
+      }
+      else{
+
+        resultRemark.value =
+          "";
+
+      }
+
+    }
+    else{
+
+      resultRemark.readOnly =
+        false;
+
+      resultRemark.placeholder =
+        "Enter remark manually";
+
+    }
 
   }
 );
 
 
-/* =========================================
-   AUTOMATIC REMARK
-========================================= */
+/* =========================================================
+   MARK INPUT
+========================================================= */
 
 resultMark.addEventListener(
   "input",
   () => {
+
+    if(
+      remarkMode.value !==
+      "automatic"
+    ){
+
+      return;
+
+    }
+
+
+    if(
+      resultMark.value === ""
+    ){
+
+      resultRemark.value =
+        "";
+
+      return;
+
+    }
+
 
     const mark =
       Number(
@@ -1248,65 +2510,30 @@ resultMark.addEventListener(
 
 
     if(
-      resultMark.value === ""
+      mark < 0 ||
+      mark > 100
     ){
 
-      resultRemark.value = "";
+      resultRemark.value =
+        "";
 
       return;
 
     }
 
 
-    if(mark >= 80){
-
-      resultRemark.value =
-        "Excellent";
-
-    }
-
-    else if(mark >= 70){
-
-      resultRemark.value =
-        "Very Good";
-
-    }
-
-    else if(mark >= 60){
-
-      resultRemark.value =
-        "Good";
-
-    }
-
-    else if(mark >= 50){
-
-      resultRemark.value =
-        "Average";
-
-    }
-
-    else if(mark >= 40){
-
-      resultRemark.value =
-        "Pass";
-
-    }
-
-    else{
-
-      resultRemark.value =
-        "Needs Improvement";
-
-    }
+    resultRemark.value =
+      getAutomaticRemark(
+        mark
+      );
 
   }
 );
 
 
-/* =========================================
+/* =========================================================
    SAVE RESULT
-========================================= */
+========================================================= */
 
 resultsForm.addEventListener(
   "submit",
@@ -1315,8 +2542,34 @@ resultsForm.addEventListener(
     event.preventDefault();
 
 
-    const studentId =
-      resultStudent.value;
+    if(!selectedResultStudentId){
+
+      alert(
+        "Please select a student first."
+      );
+
+      return;
+
+    }
+
+
+    const student =
+      students.find(
+        item =>
+          String(item.id) ===
+          String(selectedResultStudentId)
+      );
+
+
+    if(!student){
+
+      alert(
+        "Student not found."
+      );
+
+      return;
+
+    }
 
 
     const subject =
@@ -1329,20 +2582,148 @@ resultsForm.addEventListener(
       );
 
 
-    const student =
-      students.find(
-        item =>
-          String(item.id) ===
-          String(studentId)
+    const remark =
+      resultRemark.value.trim();
+
+
+    if(!subject){
+
+      alert(
+        "Please select a subject."
       );
-
-
-    if(!student){
 
       return;
 
     }
 
+
+    if(
+      isNaN(mark) ||
+      mark < 0 ||
+      mark > 100
+    ){
+
+      alert(
+        "Mark must be between 0 and 100."
+      );
+
+      return;
+
+    }
+
+
+    if(!remark){
+
+      alert(
+        "Please enter a remark."
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       EDIT RESULT
+    ===================================================== */
+
+    if(editingResultId){
+
+      const index =
+        results.findIndex(
+          result =>
+            String(result.id) ===
+            String(editingResultId)
+        );
+
+
+      if(index === -1){
+
+        alert(
+          "Result not found."
+        );
+
+        return;
+
+      }
+
+
+      results[index].subject =
+        subject;
+
+
+      results[index].mark =
+        mark;
+
+
+      results[index].remark =
+        remark;
+
+
+      results[index].remarkMode =
+        remarkMode.value;
+
+
+      results[index].updatedAt =
+        new Date().toISOString();
+
+
+      saveResults();
+
+
+      editingResultId =
+        null;
+
+
+      resultsForm.reset();
+
+      resultsForm.classList.remove(
+        "show"
+      );
+
+
+      displayResultsForStudent();
+
+      displayResultsStudents();
+
+
+      alert(
+        "Result updated successfully."
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       CHECK DUPLICATE
+    ===================================================== */
+
+    const duplicate =
+      results.some(
+        result =>
+          String(result.studentId) ===
+          String(student.id) &&
+          result.subject ===
+          subject
+      );
+
+
+    if(duplicate){
+
+      alert(
+        "A result for this subject already exists for this student."
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       NEW RESULT
+    ===================================================== */
 
     const newResult = {
 
@@ -1352,7 +2733,8 @@ resultsForm.addEventListener(
       form:
         formNumber,
 
-      studentId,
+      studentId:
+        student.id,
 
       studentName:
         `${student.firstName} ${student.lastName}`,
@@ -1361,8 +2743,13 @@ resultsForm.addEventListener(
 
       mark,
 
-      remark:
-        resultRemark.value
+      remark,
+
+      remarkMode:
+        remarkMode.value,
+
+      createdAt:
+        new Date().toISOString()
 
     };
 
@@ -1372,42 +2759,88 @@ resultsForm.addEventListener(
     );
 
 
-    localStorage.setItem(
-      "fcaResults",
-      JSON.stringify(results)
-    );
+    saveResults();
 
 
     resultsForm.reset();
-
-    resultRemark.value = "";
 
     resultsForm.classList.remove(
       "show"
     );
 
 
-    displayResults();
+    editingResultId =
+      null;
+
+
+    displayResultsForStudent();
+
+    displayResultsStudents();
+
+
+    alert(
+      "Result saved successfully."
+    );
 
   }
 );
 
 
-/* =========================================
-   DISPLAY RESULTS
-========================================= */
+/* =========================================================
+   CANCEL RESULT
+========================================================= */
 
-function displayResults(){
+cancelResults.addEventListener(
+  "click",
+  () => {
 
-  const formResults =
+    resultsForm.reset();
+
+    resultsForm.classList.remove(
+      "show"
+    );
+
+    editingResultId =
+      null;
+
+    resultFormTitle.textContent =
+      "Add Result";
+
+    remarkMode.value =
+      "automatic";
+
+    resultRemark.readOnly =
+      true;
+
+  }
+);
+
+
+/* =========================================================
+   DISPLAY RESULTS FOR SELECTED STUDENT
+========================================================= */
+
+function displayResultsForStudent(){
+
+  if(!selectedResultStudentId){
+
+    return;
+
+  }
+
+
+  const studentResults =
     results.filter(
       result =>
-        String(result.form) ===
-        String(formNumber)
+        String(result.studentId) ===
+        String(selectedResultStudentId)
     );
 
 
-  if(formResults.length === 0){
+  if(
+    studentResults.length ===
+    0
+  ){
 
     resultsList.innerHTML = `
 
@@ -1422,7 +2855,7 @@ function displayResults(){
         </strong>
 
         <p>
-          Saved results for this class will appear here.
+          Click "+ Add Results" to enter this student's first result.
         </p>
 
       </div>
@@ -1435,53 +2868,220 @@ function displayResults(){
 
 
   resultsList.innerHTML =
-    formResults.map(
-      result => `
+    studentResults
+      .map(
+        result => `
 
-        <div class="result-row">
+          <div class="result-row">
 
-          <div>
+            <div class="result-info">
 
-            <strong>
-              ${result.studentName}
-            </strong>
+              <strong>
+                ${escapeHtml(
+                  result.subject
+                )}
+              </strong>
 
-            <span>
-              ${result.subject}
-            </span>
+              <span>
+                Remark:
+                ${escapeHtml(
+                  result.remark
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="result-mark">
+
+              <strong>
+                ${escapeHtml(
+                  String(result.mark)
+                )}
+              </strong>
+
+              <span>
+                ${result.remarkMode === "manual"
+                  ? "Manual"
+                  : "Automatic"}
+              </span>
+
+            </div>
+
+
+            <div class="result-actions">
+
+              <button
+                type="button"
+                class="edit-button"
+                onclick="editResult('${result.id}')"
+              >
+                Edit
+              </button>
+
+            </div>
 
           </div>
 
-
-          <div class="result-mark">
-
-            <strong>
-              ${result.mark}
-            </strong>
-
-            <span>
-              ${result.remark}
-            </span>
-
-          </div>
-
-        </div>
-
-      `
-    ).join("");
+        `
+      )
+      .join("");
 
 }
 
 
-/* =========================================
+/* =========================================================
+   EDIT RESULT
+========================================================= */
+
+function editResult(
+  resultId
+){
+
+  if(!selectedResultStudentId){
+
+    return;
+
+  }
+
+
+  requestTeacherAuthorization(
+    "edit this result",
+    () => {
+
+      const result =
+        results.find(
+          item =>
+            String(item.id) ===
+            String(resultId)
+        );
+
+
+      if(!result){
+
+        alert(
+          "Result not found."
+        );
+
+        return;
+
+      }
+
+
+      editingResultId =
+        result.id;
+
+
+      resultFormTitle.textContent =
+        "Edit Result";
+
+
+      loadResultSubjects();
+
+
+      resultSubject.value =
+        result.subject;
+
+
+      resultMark.value =
+        result.mark;
+
+
+      remarkMode.value =
+        result.remarkMode ||
+        "automatic";
+
+
+      resultRemark.value =
+        result.remark || "";
+
+
+      if(
+        remarkMode.value ===
+        "manual"
+      ){
+
+        resultRemark.readOnly =
+          false;
+
+        resultRemark.placeholder =
+          "Enter remark manually";
+
+      }
+      else{
+
+        resultRemark.readOnly =
+          true;
+
+        resultRemark.placeholder =
+          "Automatic";
+
+      }
+
+
+      resultsForm.classList.add(
+        "show"
+      );
+
+
+      resultsForm.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(
+  value
+){
+
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================================================
    INITIALIZE
-========================================= */
+========================================================= */
+
+loadSubjectCheckboxes();
+
 
 if(formNumber){
 
   displayStudents();
 
-  displayResults();
+  displayResultsStudents();
 
 }
 

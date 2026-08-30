@@ -1701,19 +1701,114 @@ function generateStudentNumber(
 
 
 /* ============================================================
-   GENERATE RESULTS PASSWORD
+   GENERATE STRONG STUDENT RESULTS PASSWORD
+   Format:
+
+   fca@ + 3 random lowercase letters + 3 random numbers
+
+   Examples:
+   fca@gei183
+   fca@oqp360
+   fca@kxz741
+   fca@vmp528
 ============================================================ */
 
 function generateResultsPassword(){
 
-    let number = 1;
+    const letters =
+        "abcdefghijklmnopqrstuvwxyz";
+
+    const numbers =
+        "0123456789";
 
 
-    while(number <= 999999){
+    /*
+       Generate a cryptographically stronger
+       random character using Web Crypto API.
+    */
+
+    function randomCharacter(
+        characters
+    ){
+
+        const array =
+            new Uint32Array(1);
+
+
+        crypto.getRandomValues(
+            array
+        );
+
+
+        return characters[
+            array[0] %
+            characters.length
+        ];
+
+    }
+
+
+    /*
+       Try multiple times until we get
+       a password that doesn't already exist.
+    */
+
+    for(
+        let attempt = 0;
+        attempt < 10000;
+        attempt++
+    ){
+
+        let randomLetters = "";
+
+        let randomNumbers = "";
+
+
+        /*
+           3 random letters
+        */
+
+        for(
+            let i = 0;
+            i < 3;
+            i++
+        ){
+
+            randomLetters +=
+                randomCharacter(
+                    letters
+                );
+
+        }
+
+
+        /*
+           3 random numbers
+        */
+
+        for(
+            let i = 0;
+            i < 3;
+            i++
+        ){
+
+            randomNumbers +=
+                randomCharacter(
+                    numbers
+                );
+
+        }
+
 
         const password =
-            `fca@hfh${String(number).padStart(3,"0")}`;
+            `fca@${randomLetters}${randomNumbers}`;
 
+
+        /*
+           Check existing students
+           so we don't give two students
+           the same password.
+        */
 
         const exists =
             students.some(
@@ -1732,14 +1827,11 @@ function generateResultsPassword(){
 
         }
 
-
-        number++;
-
     }
 
 
     throw new Error(
-        "Unable to generate a unique results password."
+        "Unable to generate a unique student results password."
     );
 
 }

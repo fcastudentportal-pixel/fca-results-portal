@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>FCA Settings</title>
+
+<link
+  rel="stylesheet"
+  href="settings.css"
+>
+
+</head>
+
+
+<body>
+
+
+<div class="shell">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+  <!-- BRAND -->
+
+  <div class="brand">
+
+    <a
+      class="brand-mark"
+      href="index.html"
+    >
+
+      <img
+        src="fca-logo.png"
+        alt="First Class Academy"
+      >
+
+    </a>
+
+
+    <div>
+
+      <b>
+        FCA Portal
+      </b>
+
+      <small>
+        Administration
+      </small>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       NAVIGATION
+  =================================================== -->
+
+  <nav>
+
+
+    <!-- DASHBOARD -->
+
+    <a
+      class="nav"
+      href="admin.html"
+    >
+      Dashboard
+    </a>
+
+
+    <!-- TEACHERS -->
+
+    <a
+      class="nav"
+      href="teachers.html"
+    >
+      Teachers
+    </a>
+
+
+    <!-- CLASSES -->
+
+    <a
+      class="nav"
+      href="classes.html"
+    >
+      Classes
+    </a>
+
+
+    <!-- STUDENTS -->
+
+    <a
+      class="nav"
+      href="students.html"
+    >
+      Students
+    </a>
+
+
+    <!-- SUBJECTS -->
+
+    <a
+      class="nav"
+      href="subjects.html"
+    >
+      Subjects
+    </a>
+
+
+    <!-- RESULTS -->
+
+    <a
+      class="nav"
+      href="results.html"
+    >
+      Results
+    </a>
+    
+
+  </nav>
+
+
+    <!-- SETTINGS -->
+
+    <a
+      class="nav active"
+      href="settings.html"
+    >
+      ⚙ Settings
+    </a>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+  <!-- ===================================================
+       HEADER
+  =================================================== -->
+
+  <header>
+
+    <div>
+
+      <small>
+        ADMINISTRATION
+      </small>
+
+      <h1>
+        Settings
+      </h1>
+
+    </div>
+
+
+    <div class="pill">
+      Administrator
+    </div>
+
+  </header>
+
+
+
+  <!-- ===================================================
+       SETTINGS CONTENT
+  =================================================== -->
+
+  <section class="view active">
+
+
+    <div class="settings-container">
+
+
+      <!-- =================================================
+           ADMINISTRATOR ACCOUNT
+      ================================================= -->
+
+      <div class="settings-card">
+
+
+        <h2>
+          Administrator Account
+        </h2>
+
+
+        <p>
+          View the account currently signed in
+          to the FCA administration portal.
+        </p>
+
+
+
+        <div class="account-info">
+
+
+          <!-- ACCOUNT TYPE -->
+
+          <div class="info-box">
+
+            <small>
+              Account Type
+            </small>
+
+            <strong>
+              Administrator
+            </strong>
+
+          </div>
+
+
+
+          <!-- EMAIL -->
+
+          <div class="info-box">
+
+            <small>
+              Email Address
+            </small>
+
+            <strong id="adminEmail">
+              Loading...
+            </strong>
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           CHANGE PASSWORD
+      ================================================= -->
+
+      <div class="settings-card">
+
+
+        <h2>
+          Change Password
+        </h2>
+
+
+        <p>
+          Change the password used to access
+          the FCA administration portal.
+        </p>
+
+
+
+        <form
+          id="passwordForm"
+          class="settings-form"
+        >
+
+
+          <!-- NEW PASSWORD -->
+
+          <label>
+
+            New Password
+
+            <input
+              type="password"
+              id="newPassword"
+              minlength="8"
+              placeholder="Enter new password"
+              autocomplete="new-password"
+              required
+            >
+
+          </label>
+
+
+
+          <!-- CONFIRM PASSWORD -->
+
+          <label>
+
+            Confirm New Password
+
+            <input
+              type="password"
+              id="confirmPassword"
+              minlength="8"
+              placeholder="Confirm new password"
+              autocomplete="new-password"
+              required
+            >
+
+          </label>
+
+
+
+          <!-- PASSWORD ACTION -->
+
+          <div class="settings-actions">
+
+            <button
+              type="submit"
+              class="save-button"
+            >
+              Change Password
+            </button>
+
+          </div>
+
+
+        </form>
+
+
+
+        <!-- PASSWORD MESSAGE -->
+
+        <div
+          id="passwordMessage"
+          class="settings-message"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           PORTAL SETTINGS
+      ================================================= -->
+
+      <div class="settings-card">
+
+
+        <h2>
+          Portal Settings
+        </h2>
+
+
+        <p>
+          Configure general FCA portal preferences.
+        </p>
+
+
+
+        <form
+          id="portalSettingsForm"
+          class="settings-form"
+        >
+
+
+          <!-- ACADEMIC YEAR -->
+
+          <label>
+
+            Academic Year
+
+            <select id="academicYear">
+
+              <option value="2026">
+                2026
+              </option>
+
+              <option value="2027">
+                2027
+              </option>
+
+              <option value="2028">
+                2028
+              </option>
+
+              <option value="2029">
+                2029
+              </option>
+
+              <option value="2030">
+                2030
+              </option>
+
+            </select>
+
+          </label>
+
+
+
+          <!-- DEFAULT TERM -->
+
+          <label>
+
+            Default Result Term
+
+            <select id="defaultTerm">
+
+              <option value="Term 1">
+                Term 1
+              </option>
+
+              <option value="Term 2">
+                Term 2
+              </option>
+
+              <option value="Term 3">
+                Term 3
+              </option>
+
+            </select>
+
+          </label>
+
+
+
+          <!-- SAVE -->
+
+          <div class="settings-actions">
+
+            <button
+              type="submit"
+              class="save-button"
+            >
+              Save Settings
+            </button>
+
+          </div>
+
+
+        </form>
+
+
+
+        <!-- PORTAL MESSAGE -->
+
+        <div
+          id="portalMessage"
+          class="settings-message"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           NAVIGATION
+      ================================================= -->
+
+      <div class="settings-card">
+
+
+        <h2>
+          Navigation
+        </h2>
+
+
+        <p>
+          Return to the main FCA administration dashboard.
+        </p>
+
+
+
+        <div class="settings-actions">
+
+          <a
+            href="admin.html"
+            class="back-button"
+          >
+            ← Back to Dashboard
+          </a>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           SIGN OUT
+      ================================================= -->
+
+      <div class="settings-card danger-card">
+
+
+        <h2>
+          Sign Out
+        </h2>
+
+
+        <p>
+          Sign out of the FCA administration account
+          on this device.
+        </p>
+
+
+
+        <div class="settings-actions">
+
+          <button
+            type="button"
+            id="logoutButton"
+            class="logout-button"
+          >
+            Log out
+          </button>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     SUPABASE LIBRARY
+===================================================== -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+
+<!-- =====================================================
+     FCA SUPABASE CONFIG
+===================================================== -->
+
+<script src="config.js"></script>
+
+
+
+<!-- =====================================================
+     FCA SETTINGS JAVASCRIPT
+===================================================== -->
+
+<script src="settings.js"></script>
+
+
+</body>
+
+</html>

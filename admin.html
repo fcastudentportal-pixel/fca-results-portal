@@ -7,7 +7,7 @@
 
 <meta
   name="viewport"
-  content="width=device-width,initial-scale=1.0"
+  content="width=device-width, initial-scale=1.0"
 >
 
 <title>FCA Admin Dashboard</title>
@@ -26,9 +26,9 @@
 <div class="shell">
 
 
-<!-- =========================
+<!-- =====================================================
      SIDEBAR
-========================= -->
+===================================================== -->
 
 <aside class="sidebar">
 
@@ -66,20 +66,21 @@
 
 
 
-  <!-- NAVIGATION -->
+  <!-- ===================================================
+       NAVIGATION
+  =================================================== -->
 
   <nav>
 
 
     <!-- DASHBOARD -->
 
-    <button
+    <a
       class="nav active"
-      data-view="overview"
-      type="button"
+      href="admin.html"
     >
       Dashboard
-    </button>
+    </a>
 
 
     <!-- TEACHERS -->
@@ -132,54 +133,37 @@
     </a>
 
 
-    <!-- ANNOUNCEMENTS -->
-
-    <a
-      class="nav"
-      href="announcements.html"
-    >
-      Announcements
-    </a>
-
-
-    <!-- CALENDAR -->
-
-    <a
-      class="nav"
-      href="calendar.html"
-    >
-      Academic Calendar
-    </a>
-
-
   </nav>
 
 
 
-  <!-- LOGOUT -->
+  <!-- SETTINGS -->
 
-  <button
-    class="logout"
-    type="button"
+  <a
+    class="settings-button"
+    href="settings.html"
   >
-    Log out
-  </button>
+    ⚙ Settings
+  </a>
 
 
 </aside>
 
 
 
-<!-- =========================
-     MAIN
-========================= -->
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
 
 <main class="main">
 
 
-  <!-- HEADER -->
+  <!-- ===================================================
+       HEADER
+  =================================================== -->
 
   <header>
+
 
     <div>
 
@@ -198,13 +182,14 @@
       Administrator
     </div>
 
+
   </header>
 
 
 
-  <!-- =========================
+  <!-- ===================================================
        DASHBOARD
-  ========================= -->
+  =================================================== -->
 
   <section
     id="overview"
@@ -212,39 +197,36 @@
   >
 
 
-    <!-- HERO -->
+    <!-- =================================================
+         HERO
+    ================================================= -->
 
     <div class="hero">
 
+
       <h2>
-        FCA Administration Dashboard
+        FCA Results Administration
       </h2>
 
 
       <p>
-        Manage students, teachers, classes,
-        results, announcements and academic
-        information.
+        Manage teachers, classes, students,
+        subjects and examination results from
+        one central portal.
       </p>
+
 
     </div>
 
 
 
-    <!-- =========================
+    <!-- =================================================
          DATABASE STATUS
-    ========================= -->
+    ================================================= -->
 
     <div
       id="databaseStatus"
-      style="
-        margin:20px 0;
-        padding:14px 18px;
-        border-radius:10px;
-        background:#f4f2ee;
-        color:#6c7480;
-        font-size:14px;
-      "
+      class="database-status"
     >
 
       Checking FCA database...
@@ -253,14 +235,16 @@
 
 
 
-    <!-- =========================
+    <!-- =================================================
          STATISTICS
-    ========================= -->
+    ================================================= -->
 
     <div class="cards">
 
 
-      <!-- TEACHERS -->
+      <!-- =================================================
+           TEACHERS
+      ================================================= -->
 
       <div class="stat">
 
@@ -278,7 +262,9 @@
 
 
 
-      <!-- CLASSES -->
+      <!-- =================================================
+           CLASSES
+      ================================================= -->
 
       <div class="stat">
 
@@ -296,7 +282,9 @@
 
 
 
-      <!-- STUDENTS -->
+      <!-- =================================================
+           STUDENTS
+      ================================================= -->
 
       <div class="stat">
 
@@ -332,6 +320,7 @@
 ></script>
 
 
+
 <!-- =====================================================
      FCA SUPABASE CONFIG
 ===================================================== -->
@@ -344,595 +333,7 @@
      FCA ADMIN DASHBOARD JAVASCRIPT
 ===================================================== -->
 
-<script>
-
-/* =====================================================
-   FCA ADMIN DASHBOARD
-   SUPABASE AUTH + DATABASE
-===================================================== */
-
-
-/* =====================================================
-   OFFICIAL FCA ADMIN
-===================================================== */
-
-const FCA_ADMIN_EMAIL =
-  "fca.admin@gmail.com";
-
-
-/* =====================================================
-   DATABASE STATUS
-===================================================== */
-
-function updateDatabaseStatus(
-  connected,
-  message = ""
-){
-
-  const status =
-    document.getElementById(
-      "databaseStatus"
-    );
-
-
-  if(!status){
-
-    return;
-
-  }
-
-
-  if(connected){
-
-    status.textContent =
-      "● FCA database connected";
-
-    status.style.background =
-      "#e8f5ee";
-
-    status.style.color =
-      "#18794e";
-
-  }
-
-  else{
-
-    status.textContent =
-      "● FCA database offline — " +
-      message;
-
-    status.style.background =
-      "#fff1f0";
-
-    status.style.color =
-      "#b42318";
-
-  }
-
-}
-
-
-/* =====================================================
-   CHECK ADMIN AUTHORIZATION
-===================================================== */
-
-async function checkAdminAuthorization(){
-
-  try{
-
-    /* -----------------------------------------------
-       CHECK SUPABASE CLIENT
-    ------------------------------------------------ */
-
-    if(!window.fcaSupabase){
-
-      console.error(
-        "FCA Supabase client is missing."
-      );
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    /* -----------------------------------------------
-       GET CURRENT SESSION
-    ------------------------------------------------ */
-
-    const {
-      data,
-      error
-    } =
-      await window.fcaSupabase
-        .auth
-        .getSession();
-
-
-    if(error){
-
-      console.error(
-        "FCA session error:",
-        error
-      );
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    /* -----------------------------------------------
-       NO SESSION
-    ------------------------------------------------ */
-
-    if(
-      !data ||
-      !data.session ||
-      !data.session.user
-    ){
-
-      console.warn(
-        "No authenticated FCA administrator session."
-      );
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    /* -----------------------------------------------
-       GET AUTHENTICATED EMAIL
-    ------------------------------------------------ */
-
-    const email =
-      data.session.user.email
-        ?.trim()
-        .toLowerCase();
-
-
-    console.log(
-      "FCA authenticated user:",
-      email
-    );
-
-
-    /* -----------------------------------------------
-       ADMIN EMAIL CHECK
-    ------------------------------------------------ */
-
-    if(
-      email !==
-      FCA_ADMIN_EMAIL
-    ){
-
-      console.warn(
-        "Unauthorized FCA account:",
-        email
-      );
-
-
-      await window.fcaSupabase
-        .auth
-        .signOut();
-
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-      return false;
-
-    }
-
-
-    console.log(
-      "FCA administrator authorized."
-    );
-
-
-    return true;
-
-  }
-
-  catch(error){
-
-    console.error(
-      "FCA authorization error:",
-      error
-    );
-
-
-    window.location.replace(
-      "admin-login.html"
-    );
-
-
-    return false;
-
-  }
-
-}
-
-
-/* =====================================================
-   LOAD DASHBOARD STATISTICS
-===================================================== */
-
-async function updateDashboardStats(){
-
-  try{
-
-    /* -----------------------------------------------
-       CHECK CLIENT
-    ------------------------------------------------ */
-
-    if(!window.fcaSupabase){
-
-      throw new Error(
-        "Supabase client is not available."
-      );
-
-    }
-
-
-    console.log(
-      "FCA Supabase client:",
-      window.fcaSupabase
-    );
-
-
-    /* =================================================
-       TEACHERS
-    ================================================= */
-
-    const teachersResult =
-      await window.fcaSupabase
-        .from("teachers")
-        .select("id");
-
-
-    console.log(
-      "FCA teachers result:",
-      teachersResult
-    );
-
-
-    if(teachersResult.error){
-
-      throw new Error(
-        "Teachers: " +
-        teachersResult.error.message
-      );
-
-    }
-
-
-    const teachers =
-      teachersResult.data?.length || 0;
-
-
-    /* =================================================
-       CLASSES
-    ================================================= */
-
-    const classesResult =
-      await window.fcaSupabase
-        .from("classes")
-        .select("id");
-
-
-    console.log(
-      "FCA classes result:",
-      classesResult
-    );
-
-
-    if(classesResult.error){
-
-      throw new Error(
-        "Classes: " +
-        classesResult.error.message
-      );
-
-    }
-
-
-    const classes =
-      classesResult.data?.length || 0;
-
-
-    /* =================================================
-       STUDENTS
-    ================================================= */
-
-    const studentsResult =
-      await window.fcaSupabase
-        .from("students")
-        .select("id");
-
-
-    console.log(
-      "FCA students result:",
-      studentsResult
-    );
-
-
-    if(studentsResult.error){
-
-      throw new Error(
-        "Students: " +
-        studentsResult.error.message
-      );
-
-    }
-
-
-    const students =
-      studentsResult.data?.length || 0;
-
-
-    /* =================================================
-       UPDATE DASHBOARD
-    ================================================= */
-
-    const teacherCount =
-      document.getElementById(
-        "dashboardTeacherCount"
-      );
-
-
-    const classCount =
-      document.getElementById(
-        "dashboardClassCount"
-      );
-
-
-    const studentCount =
-      document.getElementById(
-        "dashboardStudentCount"
-      );
-
-
-    if(teacherCount){
-
-      teacherCount.textContent =
-        teachers;
-
-    }
-
-
-    if(classCount){
-
-      classCount.textContent =
-        classes;
-
-    }
-
-
-    if(studentCount){
-
-      studentCount.textContent =
-        students;
-
-    }
-
-
-    /* =================================================
-       DATABASE CONNECTED
-    ================================================= */
-
-    updateDatabaseStatus(
-      true
-    );
-
-
-    console.log(
-      "FCA DASHBOARD COUNTS:",
-      {
-        teachers,
-        classes,
-        students
-      }
-    );
-
-  }
-
-  catch(error){
-
-    console.error(
-      "FCA DASHBOARD DATABASE ERROR:",
-      error
-    );
-
-
-    /* -----------------------------------------------
-       SHOW ZERO / DASH
-    ------------------------------------------------ */
-
-    const teacherCount =
-      document.getElementById(
-        "dashboardTeacherCount"
-      );
-
-
-    const classCount =
-      document.getElementById(
-        "dashboardClassCount"
-      );
-
-
-    const studentCount =
-      document.getElementById(
-        "dashboardStudentCount"
-      );
-
-
-    if(teacherCount){
-
-      teacherCount.textContent =
-        "—";
-
-    }
-
-
-    if(classCount){
-
-      classCount.textContent =
-        "—";
-
-    }
-
-
-    if(studentCount){
-
-      studentCount.textContent =
-        "—";
-
-    }
-
-
-    /* -----------------------------------------------
-       DATABASE ERROR
-    ------------------------------------------------ */
-
-    updateDatabaseStatus(
-      false,
-      error.message ||
-      "Check Supabase connection and permissions."
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-const logout =
-  document.querySelector(
-    ".logout"
-  );
-
-
-if(logout){
-
-  logout.addEventListener(
-    "click",
-    async function(){
-
-      try{
-
-        if(window.fcaSupabase){
-
-          await window.fcaSupabase
-            .auth
-            .signOut();
-
-        }
-
-      }
-
-      catch(error){
-
-        console.error(
-          "FCA logout error:",
-          error
-        );
-
-      }
-
-
-      window.location.replace(
-        "admin-login.html"
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   SESSION MONITOR
-===================================================== */
-
-if(window.fcaSupabase){
-
-  window.fcaSupabase
-    .auth
-    .onAuthStateChange(
-      function(event, session){
-
-        console.log(
-          "FCA Auth Event:",
-          event
-        );
-
-
-        if(
-          event === "SIGNED_OUT" ||
-          !session
-        ){
-
-          window.location.replace(
-            "admin-login.html"
-          );
-
-        }
-
-      }
-    );
-
-}
-
-
-/* =====================================================
-   INITIALIZE DASHBOARD
-===================================================== */
-
-async function initializeDashboard(){
-
-  console.log(
-    "FCA Dashboard initializing..."
-  );
-
-
-  const authorized =
-    await checkAdminAuthorization();
-
-
-  if(!authorized){
-
-    return;
-
-  }
-
-
-  await updateDashboardStats();
-
-}
-
-
-/* =====================================================
-   START DASHBOARD
-===================================================== */
-
-initializeDashboard();
-
-</script>
+<script src="admin.js"></script>
 
 
 </body>

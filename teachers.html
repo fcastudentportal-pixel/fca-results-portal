@@ -3,844 +3,661 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<title>FCA | Teachers</title>
+  <title>FCA | Teachers</title>
 
-<link
-  rel="stylesheet"
-  href="teachers.css"
->
+  <link
+    rel="stylesheet"
+    href="teachers.css"
+  >
 
 </head>
 
-
 <body>
 
+<div class="shell">
 
-<div class="teachers-page">
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
 
+  <aside class="sidebar">
 
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
+    <!-- BRAND -->
 
-<header class="topbar">
+    <div class="brand">
 
-
-  <!-- BRAND -->
-
-  <div class="brand">
-
-    <a
-      href="admin.html"
-      class="logo-link"
-    >
-
-      <img
-        src="fca-logo.png"
-        alt="First Class Academy"
+      <a
+        class="brand-mark"
+        href="admin.html"
       >
 
-    </a>
+        <img
+          src="fca-logo.png"
+          alt="First Class Academy"
+        >
 
+      </a>
 
-    <div>
+      <div>
 
-      <strong>
-        FCA Portal
-      </strong>
+        <b>FCA Portal</b>
 
-      <span>
-        Administration
-      </span>
+        <small>Administration</small>
 
-    </div>
-
-  </div>
-
-
-
-  <!-- ===================================================
-       NAVIGATION
-  =================================================== -->
-
-  <nav>
-
-
-    <!-- DASHBOARD -->
-
-    <a
-      class="nav"
-      href="admin.html"
-    >
-      Dashboard
-    </a>
-
-
-    <!-- TEACHERS -->
-
-    <a
-      class="nav active"
-      href="teachers.html"
-    >
-      Teachers
-    </a>
-
-
-    <!-- CLASSES -->
-
-    <a
-      class="nav"
-      href="classes.html"
-    >
-      Classes
-    </a>
-
-
-    <!-- STUDENTS -->
-
-    <a
-      class="nav"
-      href="students.html"
-    >
-      Students
-    </a>
-
-
-    <!-- SUBJECTS -->
-
-    <a
-      class="nav"
-      href="subjects.html"
-    >
-      Subjects
-    </a>
-
-
-    <!-- RESULTS -->
-
-    <a
-      class="nav"
-      href="results.html"
-    >
-      Results
-    </a>
-
-
-  </nav>
-
-
-
-  <!-- SETTINGS -->
-
-  <a
-    class="settings-button"
-    href="settings.html"
-  >
-    ⚙ Settings
-  </a>
-
-
-</aside>
-
-
-
-  <!-- ADMINISTRATOR -->
-
-  <div class="top-actions">
-
-    <span class="administrator">
-      Administrator
-    </span>
-
-  </div>
-
-
-</header>
-
-
-
-<!-- =====================================================
-     MAIN CONTENT
-===================================================== -->
-
-<main class="content">
-
-
-<!-- =====================================================
-     PAGE HEADING
-===================================================== -->
-
-<section class="page-heading">
-
-
-  <div>
-
-    <span class="eyebrow">
-      ADMINISTRATION
-    </span>
-
-
-    <h1>
-      Teachers
-    </h1>
-
-
-    <p>
-      Add teachers and assign the subjects and classes
-      they are responsible for.
-    </p>
-
-  </div>
-
-
-  <a
-    href="#addTeacher"
-    class="add-btn"
-  >
-    + Add Teacher
-  </a>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     STATISTICS
-===================================================== -->
-
-<section class="teacher-stats">
-
-
-  <!-- TOTAL TEACHERS -->
-
-  <div class="stat-card">
-
-    <div class="stat-icon">
-      T
-    </div>
-
-
-    <div>
-
-      <strong id="teacherCount">
-        0
-      </strong>
-
-
-      <span>
-        Total Teachers
-      </span>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     TEACHER LIST
-===================================================== -->
-
-<section class="panel">
-
-
-  <div class="panel-heading">
-
-
-    <div>
-
-      <span class="eyebrow">
-        STAFF
-      </span>
-
-
-      <h2>
-        Teacher List
-      </h2>
-
-
-      <p>
-        Teachers registered in the FCA administration system.
-      </p>
-
-    </div>
-
-
-  </div>
-
-
-
-  <div
-    id="teacherList"
-    class="teacher-list"
-  >
-
-
-    <div class="empty-state">
-
-
-      <div class="empty-icon">
-        T
       </div>
 
-
-      <strong>
-        Loading teachers...
-      </strong>
-
-
-      <p>
-        Connecting to the FCA database.
-      </p>
-
-
     </div>
 
 
-  </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     ADD / EDIT TEACHER
-===================================================== -->
-
-<section
-  id="addTeacher"
-  class="panel form-panel"
->
-
-
-  <div class="panel-heading">
-
-
-    <div>
-
-      <span class="eyebrow">
-        TEACHER ACCOUNT
-      </span>
-
-
-      <h2 id="formTitle">
-        Add Teacher
-      </h2>
-
-
-      <p>
-        Create a teacher account and assign subjects
-        and classes.
-      </p>
-
-    </div>
-
-
-  </div>
-
-
-
-  <form id="teacherForm">
-
-
-    <!-- =================================================
-         PERSONAL INFORMATION
-    ================================================= -->
-
-    <div class="section-title">
-
-
-      <h3>
-        Personal Information
-      </h3>
-
-
-      <p>
-        Enter the teacher's basic information.
-      </p>
-
-
-    </div>
-
-
-
-    <div class="form-grid">
-
-
-      <label>
-
-        First Name
-
-        <input
-          type="text"
-          id="firstName"
-          placeholder="e.g. John"
-          required
-        >
-
-      </label>
-
-
-
-      <label>
-
-        Last Name
-
-        <input
-          type="text"
-          id="lastName"
-          placeholder="e.g. Banda"
-          required
-        >
-
-      </label>
-
-
-
-      <label>
-
-        Username
-
-        <input
-          type="text"
-          id="username"
-          placeholder="e.g. john.banda"
-          required
-        >
-
-      </label>
-
-
-
-      <label>
-
-        Password
-
-        <div class="password-wrapper">
-
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter password"
-            required
-          >
-
-
-          <button
-            type="button"
-            class="password-toggle"
-            id="passwordToggle"
-            aria-label="Show password"
-          >
-            👁
-          </button>
-
-        </div>
-
-      </label>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         SUBJECTS
-    ================================================= -->
-
-    <div class="section-title subject-title">
-
-
-      <h3>
-        Subjects Taught
-      </h3>
-
-
-      <p>
-        Select all subjects this teacher teaches.
-      </p>
-
-
-    </div>
-
-
-
-    <div class="select-actions">
-
-
-      <button
-        type="button"
-        class="small-btn"
-        id="selectAllSubjectsBtn"
+    <!-- ===================================================
+         NAVIGATION
+    ==================================================== -->
+
+    <nav>
+
+      <a
+        class="nav"
+        href="admin.html"
       >
-        Select All
-      </button>
+        Dashboard
+      </a>
 
-
-      <button
-        type="button"
-        class="small-btn light"
-        id="clearSubjectsBtn"
+      <a
+        class="nav active"
+        href="teachers.html"
       >
-        Clear
-      </button>
+        Teachers
+      </a>
 
-
-    </div>
-
-
-
-    <div class="checkbox-grid">
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Agriculture"
-        >
-        <span>Agriculture</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Bible Knowledge"
-        >
-        <span>Bible Knowledge</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Biology"
-        >
-        <span>Biology</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Chemistry"
-        >
-        <span>Chemistry</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Chichewa"
-        >
-        <span>Chichewa</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="English"
-        >
-        <span>English</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Geography"
-        >
-        <span>Geography</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="History"
-        >
-        <span>History</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Life Skills"
-        >
-        <span>Life Skills</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Mathematics"
-        >
-        <span>Mathematics</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Physics"
-        >
-        <span>Physics</span>
-      </label>
-
-
-      <label class="check-option">
-        <input
-          type="checkbox"
-          name="subjects"
-          value="Social Studies"
-        >
-        <span>Social Studies</span>
-      </label>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         CLASSES
-    ================================================= -->
-
-    <div class="section-title class-title">
-
-
-      <h3>
-        Classes Assigned
-      </h3>
-
-
-      <p>
-        Select all classes this teacher can manage.
-      </p>
-
-
-    </div>
-
-
-
-    <div class="select-actions">
-
-
-      <button
-        type="button"
-        class="small-btn"
-        id="selectAllClassesBtn"
+      <a
+        class="nav"
+        href="classes.html"
       >
-        Select All
-      </button>
+        Classes
+      </a>
 
-
-      <button
-        type="button"
-        class="small-btn light"
-        id="clearClassesBtn"
+      <a
+        class="nav"
+        href="students.html"
       >
-        Clear
-      </button>
+        Students
+      </a>
+
+      <a
+        class="nav"
+        href="subjects.html"
+      >
+        Subjects
+      </a>
+
+      <a
+        class="nav"
+        href="results.html"
+      >
+        Results
+      </a>
+
+    </nav>
 
 
-    </div>
+    <!-- SETTINGS -->
+
+    <a
+      class="settings-button"
+      href="settings.html"
+    >
+      ⚙ Settings
+    </a>
+
+  </aside>
 
 
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
 
-    <div class="class-checkboxes">
+  <main class="main">
+
+    <!-- HEADER -->
+
+    <header>
+
+      <div>
+
+        <small>
+          ADMINISTRATION
+        </small>
+
+        <h1>
+          Teachers
+        </h1>
+
+      </div>
+
+      <div class="pill">
+        Administrator
+      </div>
+
+    </header>
 
 
-      <label class="class-option">
+    <!-- ===================================================
+         CONTENT
+    ==================================================== -->
 
-        <input
-          type="checkbox"
-          name="classes"
-          value="Form 1"
-        >
+    <div class="view">
 
+      <section class="page-heading">
 
         <div>
 
-          <strong>
-            Form 1
-          </strong>
-
-          <span>
-            First Year
+          <span class="eyebrow">
+            TEACHER MANAGEMENT
           </span>
+
+          <h2>
+            Teachers
+          </h2>
+
+          <p>
+            Add teachers and assign the subjects and
+            classes they are responsible for.
+          </p>
 
         </div>
 
-      </label>
+        <a
+          href="#addTeacher"
+          class="add-btn"
+        >
+          + Add Teacher
+        </a>
+
+      </section>
 
 
+      <!-- =================================================
+           STATISTICS
+      ================================================== -->
 
-      <label class="class-option">
+      <section class="teacher-stats">
 
-        <input
-          type="checkbox"
-          name="classes"
-          value="Form 2"
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            T
+          </div>
+
+          <div>
+
+            <strong id="teacherCount">
+              0
+            </strong>
+
+            <span>
+              Total Teachers
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           TEACHER LIST
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading">
+
+          <div>
+
+            <span class="eyebrow">
+              STAFF
+            </span>
+
+            <h2>
+              Teacher List
+            </h2>
+
+            <p>
+              Teachers registered in the FCA
+              administration system.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="teacherList"
+          class="teacher-list"
         >
 
+          <div class="empty-state">
 
-        <div>
+            <div class="empty-icon">
+              T
+            </div>
 
-          <strong>
-            Form 2
-          </strong>
+            <strong>
+              Loading teachers...
+            </strong>
 
-          <span>
-            Second Year
-          </span>
+            <p>
+              Connecting to the FCA database.
+            </p>
 
-        </div>
-
-      </label>
-
-
-
-      <label class="class-option">
-
-        <input
-          type="checkbox"
-          name="classes"
-          value="Form 3"
-        >
-
-
-        <div>
-
-          <strong>
-            Form 3
-          </strong>
-
-          <span>
-            Third Year
-          </span>
+          </div>
 
         </div>
 
-      </label>
+      </section>
 
 
+      <!-- =================================================
+           ADD / EDIT TEACHER
+      ================================================== -->
 
-      <label class="class-option">
+      <section
+        id="addTeacher"
+        class="panel form-panel"
+      >
 
-        <input
-          type="checkbox"
-          name="classes"
-          value="Form 4"
-        >
+        <div class="panel-heading">
 
+          <div>
 
-        <div>
+            <span class="eyebrow">
+              TEACHER ACCOUNT
+            </span>
 
-          <strong>
-            Form 4
-          </strong>
+            <h2 id="formTitle">
+              Add Teacher
+            </h2>
 
-          <span>
-            Fourth Year
-          </span>
+            <p>
+              Create a teacher account and assign
+              subjects and classes.
+            </p>
+
+          </div>
 
         </div>
 
-      </label>
 
+        <form id="teacherForm">
+
+          <!-- PERSONAL INFORMATION -->
+
+          <div class="section-title">
+
+            <h3>
+              Personal Information
+            </h3>
+
+            <p>
+              Enter the teacher's basic information.
+            </p>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <label>
+
+              First Name
+
+              <input
+                type="text"
+                id="firstName"
+                placeholder="e.g. John"
+                required
+              >
+
+            </label>
+
+
+            <label>
+
+              Last Name
+
+              <input
+                type="text"
+                id="lastName"
+                placeholder="e.g. Banda"
+                required
+              >
+
+            </label>
+
+
+            <label>
+
+              Username
+
+              <input
+                type="text"
+                id="username"
+                placeholder="e.g. john.banda"
+                required
+              >
+
+            </label>
+
+
+            <label>
+
+              Password
+
+              <div class="password-wrapper">
+
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Enter password"
+                  required
+                >
+
+                <button
+                  type="button"
+                  class="password-toggle"
+                  id="passwordToggle"
+                  aria-label="Show password"
+                >
+                  👁
+                </button>
+
+              </div>
+
+            </label>
+
+          </div>
+
+
+          <!-- SUBJECTS -->
+
+          <div class="section-title">
+
+            <h3>
+              Subjects Taught
+            </h3>
+
+            <p>
+              Select all subjects this teacher teaches.
+            </p>
+
+          </div>
+
+
+          <div class="select-actions">
+
+            <button
+              type="button"
+              class="small-btn"
+              id="selectAllSubjectsBtn"
+            >
+              Select All
+            </button>
+
+            <button
+              type="button"
+              class="small-btn light"
+              id="clearSubjectsBtn"
+            >
+              Clear
+            </button>
+
+          </div>
+
+
+          <div class="checkbox-grid">
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Agriculture">
+              <span>Agriculture</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Bible Knowledge">
+              <span>Bible Knowledge</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Biology">
+              <span>Biology</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Chemistry">
+              <span>Chemistry</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Chichewa">
+              <span>Chichewa</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="English">
+              <span>English</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Geography">
+              <span>Geography</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="History">
+              <span>History</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Life Skills">
+              <span>Life Skills</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Mathematics">
+              <span>Mathematics</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Physics">
+              <span>Physics</span>
+            </label>
+
+            <label class="check-option">
+              <input type="checkbox" name="subjects" value="Social Studies">
+              <span>Social Studies</span>
+            </label>
+
+          </div>
+
+
+          <!-- CLASSES -->
+
+          <div class="section-title">
+
+            <h3>
+              Classes Assigned
+            </h3>
+
+            <p>
+              Select all classes this teacher can manage.
+            </p>
+
+          </div>
+
+
+          <div class="select-actions">
+
+            <button
+              type="button"
+              class="small-btn"
+              id="selectAllClassesBtn"
+            >
+              Select All
+            </button>
+
+            <button
+              type="button"
+              class="small-btn light"
+              id="clearClassesBtn"
+            >
+              Clear
+            </button>
+
+          </div>
+
+
+          <div class="class-checkboxes">
+
+            <label class="class-option">
+
+              <input
+                type="checkbox"
+                name="classes"
+                value="Form 1"
+              >
+
+              <div>
+
+                <strong>Form 1</strong>
+
+                <span>First Year</span>
+
+              </div>
+
+            </label>
+
+
+            <label class="class-option">
+
+              <input
+                type="checkbox"
+                name="classes"
+                value="Form 2"
+              >
+
+              <div>
+
+                <strong>Form 2</strong>
+
+                <span>Second Year</span>
+
+              </div>
+
+            </label>
+
+
+            <label class="class-option">
+
+              <input
+                type="checkbox"
+                name="classes"
+                value="Form 3"
+              >
+
+              <div>
+
+                <strong>Form 3</strong>
+
+                <span>Third Year</span>
+
+              </div>
+
+            </label>
+
+
+            <label class="class-option">
+
+              <input
+                type="checkbox"
+                name="classes"
+                value="Form 4"
+              >
+
+              <div>
+
+                <strong>Form 4</strong>
+
+                <span>Fourth Year</span>
+
+              </div>
+
+            </label>
+
+          </div>
+
+
+          <!-- FORM ACTIONS -->
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              id="cancelBtn"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="save-btn"
+            >
+              Save Teacher
+            </button>
+
+          </div>
+
+
+          <p
+            id="teacherMessage"
+            class="message"
+          ></p>
+
+        </form>
+
+      </section>
 
     </div>
 
+  </main>
 
-
-    <!-- =================================================
-         FORM ACTIONS
-    ================================================= -->
-
-    <div class="form-actions">
-
-
-      <button
-        type="button"
-        class="cancel-btn"
-        id="cancelBtn"
-      >
-        Cancel
-      </button>
-
-
-      <button
-        type="submit"
-        class="save-btn"
-      >
-        Save Teacher
-      </button>
-
-
-    </div>
-
-
-
-    <p
-      id="teacherMessage"
-      class="message"
-    ></p>
-
-
-  </form>
-
-
-</section>
-
+</div>
 
 
 <!-- =====================================================
      DELETE TEACHER MODAL
-===================================================== -->
+====================================================== -->
 
 <div
   id="deleteModal"
   class="delete-modal"
 >
 
-
   <div class="delete-modal-box">
 
-
     <div class="delete-modal-header">
-
 
       <div class="delete-modal-icon">
         !
       </div>
-
 
       <div>
 
@@ -848,30 +665,23 @@
           Delete Teacher
         </h3>
 
-
         <p id="deleteTeacherName">
           Confirm teacher deletion.
         </p>
 
       </div>
 
-
     </div>
 
 
-
     <div class="delete-modal-body">
-
 
       <p>
         Enter the administrator password to permanently
         delete this teacher.
       </p>
 
-
-
       <div class="admin-password-wrapper">
-
 
         <input
           type="password"
@@ -879,7 +689,6 @@
           placeholder="Administrator password"
           autocomplete="current-password"
         >
-
 
         <button
           type="button"
@@ -889,23 +698,17 @@
           👁
         </button>
 
-
       </div>
-
-
 
       <p
         id="deleteError"
         class="delete-error"
       ></p>
 
-
     </div>
 
 
-
     <div class="delete-modal-actions">
-
 
       <button
         type="button"
@@ -915,7 +718,6 @@
         Cancel
       </button>
 
-
       <button
         type="button"
         id="deleteConfirmBtn"
@@ -924,38 +726,22 @@
         Delete Teacher
       </button>
 
-
     </div>
 
-
   </div>
-
 
 </div>
 
 
-</main>
-
-
-
 <!-- =====================================================
      SUPABASE
-===================================================== -->
+====================================================== -->
 
-<script
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
-
-
-<!-- FCA CONFIG -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="config.js"></script>
 
-
-<!-- TEACHERS JAVASCRIPT -->
-
 <script src="teachers.js"></script>
-
 
 </body>
 

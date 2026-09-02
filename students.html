@@ -1,994 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+  <title>Students | FCA Portal</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>FCA | Students</title>
-
-<link rel="stylesheet" href="students.css">
-
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="students.css">
 </head>
 
 <body>
 
-<div class="students-page">
+<div class="shell">
 
-<!-- =========================
-     TOP BAR
-========================= -->
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
 
-<header class="topbar">
+    <div class="brand">
+      <a class="brand-mark" href="admin.html">
+        <img src="fca-logo.png" alt="First Class Academy">
+      </a>
 
-  <div class="brand">
+      <div>
+        <b>FCA Portal</b>
+        <small>Administration</small>
+      </div>
+    </div>
 
-    <a href="admin.html" class="logo-link">
-      <img src="fca-logo.png" alt="First Class Academy">
+    <nav>
+      <a class="nav" href="admin.html">Dashboard</a>
+      <a class="nav" href="teachers.html">Teachers</a>
+      <a class="nav" href="classes.html">Classes</a>
+      <a class="nav active" href="students.html">Students</a>
+      <a class="nav" href="subjects.html">Subjects</a>
+      <a class="nav" href="results.html">Results</a>
+    </nav>
+
+    <a class="settings-button" href="settings.html">
+      ⚙ Settings
     </a>
 
-    <div>
-      <strong>FCA Portal</strong>
-      <span>Administration</span>
-    </div>
+  </aside>
 
-  </div>
 
+  <!-- MAIN -->
+  <main class="main">
 
-  <div class="top-actions">
+    <header>
+      <div>
+        <small>ACADEMIC MANAGEMENT</small>
+        <h1>Students</h1>
+      </div>
 
-    <span>Administrator</span>
+      <div class="pill">Students</div>
+    </header>
 
-    <a href="admin.html">
-      Dashboard
-    </a>
 
-  </div>
-
-</header>
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main class="content">
-
-
-<!-- =========================
-     PAGE HEADER
-========================= -->
-
-<section class="page-heading">
-
-  <div>
-
-    <span class="eyebrow">
-      STUDENTS
-    </span>
-
-    <h1>Students</h1>
-
-    <p>
-      Select a class to view registered students and their results.
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     CLASS SELECTOR
-========================= -->
-
-<section id="classSection" class="panel">
-
-  <div class="panel-heading">
-
-    <div>
-
-      <h2>Select Class</h2>
-
-      <p>
-        Choose a class to view its students.
-      </p>
-
-    </div>
-
-  </div>
-
-
-  <div class="class-grid">
-
-    <button
-      class="class-card"
-      onclick="openClass('Form 1')"
-    >
-
-      <span class="class-number">
-        01
-      </span>
-
-      <strong>
-        Form 1
-      </strong>
-
-      <small>
-        View Students
-      </small>
-
-    </button>
-
-
-    <button
-      class="class-card"
-      onclick="openClass('Form 2')"
-    >
-
-      <span class="class-number">
-        02
-      </span>
-
-      <strong>
-        Form 2
-      </strong>
-
-      <small>
-        View Students
-      </small>
-
-    </button>
-
-
-    <button
-      class="class-card"
-      onclick="openClass('Form 3')"
-    >
-
-      <span class="class-number">
-        03
-      </span>
-
-      <strong>
-        Form 3
-      </strong>
-
-      <small>
-        View Students
-      </small>
-
-    </button>
-
-
-    <button
-      class="class-card"
-      onclick="openClass('Form 4')"
-    >
-
-      <span class="class-number">
-        04
-      </span>
-
-      <strong>
-        Form 4
-      </strong>
-
-      <small>
-        View Students
-      </small>
-
-    </button>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     STUDENT LIST
-========================= -->
-
-<section
-  id="studentSection"
-  class="panel hidden"
->
-
-  <div class="panel-heading">
-
-    <div>
-
-      <span class="eyebrow">
-        CLASS STUDENTS
-      </span>
-
-      <h2 id="selectedClassTitle">
-        Form 1
-      </h2>
-
-      <p>
-        Students registered in this class.
-      </p>
-
+    <!-- DATABASE STATUS -->
+    <div id="databaseStatus" class="database-status">
+      Checking FCA database...
     </div>
 
 
-    <button
-      class="secondary-btn"
-      onclick="showClasses()"
-    >
-      ← Back to Classes
-    </button>
+    <!-- PAGE INTRO -->
+    <section class="students-intro">
 
-  </div>
+      <div>
+        <h2>Student Management</h2>
+        <p id="pageDescription">
+          Select a class to view the students registered in that class.
+        </p>
+      </div>
 
+      <div class="student-total">
+        <strong id="studentCount">0</strong>
+        <small>Students</small>
+      </div>
 
-  <div
-    id="studentList"
-    class="student-list"
-  ></div>
-
-</section>
-
-
-<!-- =========================
-     STUDENT DETAILS
-========================= -->
-
-<section
-  id="studentDetails"
-  class="hidden"
->
+    </section>
 
 
-  <button
-    class="back-btn"
-    onclick="showStudents()"
-  >
-    ← Back to Students
-  </button>
+    <!-- CLASS SELECTOR -->
+    <section id="classSection" class="class-section">
 
-
-  <div class="student-profile panel">
-
-    <div class="profile-avatar" id="profileAvatar">
-      S
-    </div>
-
-
-    <div class="profile-info">
-
-      <span class="eyebrow">
-        STUDENT PROFILE
-      </span>
-
-      <h2 id="profileName">
-        Student Name
-      </h2>
-
-      <div class="profile-details">
-
+      <div class="section-heading">
         <div>
-          <small>Student ID</small>
-          <strong id="profileId">—</strong>
+          <small>SELECT CLASS</small>
+          <h2>Available Classes</h2>
         </div>
 
-        <div>
-          <small>Password</small>
-          <strong id="profilePassword">—</strong>
-        </div>
+        <button id="backToClassesButton"
+                class="secondary-button"
+                type="button"
+                hidden>
+          ← All Classes
+        </button>
+      </div>
+
+      <div id="classesContainer" class="classes-grid"></div>
+
+      <div id="noClassesState" class="empty-state" hidden>
+        <div class="empty-icon">+</div>
+        <h3>No Classes Created</h3>
+        <p>Create Form 1 to Form 4 from the Classes page first.</p>
+        <a href="classes.html" class="primary-button">Go to Classes</a>
+      </div>
+
+    </section>
+
+
+    <!-- STUDENT SECTION -->
+    <section id="studentSection" class="student-section" hidden>
+
+      <div class="section-heading student-heading">
 
         <div>
-          <small>Class</small>
-          <strong id="profileClass">—</strong>
+          <small id="selectedClassLabel">CLASS</small>
+          <h2 id="selectedClassTitle">Form 1 Students</h2>
+          <p id="selectedClassDescription">
+            Students registered in this class.
+          </p>
         </div>
+
+        <button id="refreshStudentsButton"
+                class="secondary-button"
+                type="button">
+          ↻ Refresh
+        </button>
 
       </div>
 
-    </div>
 
-  </div>
+      <div id="studentsContainer" class="students-list"></div>
 
 
-  <!-- =========================
-       RESULTS
-  ========================= -->
+      <div id="noStudentsState" class="empty-state" hidden>
 
-  <div class="panel">
+        <div class="empty-icon">👤</div>
 
-    <div class="panel-heading">
-
-      <div>
-
-        <span class="eyebrow">
-          ACADEMIC RESULTS
-        </span>
-
-        <h2>Student Results</h2>
+        <h3>No Students Yet</h3>
 
         <p>
-          Results entered for this student.
+          There are no students registered in this class.
         </p>
 
       </div>
 
-    </div>
+    </section>
 
-
-    <div
-      id="studentResults"
-      class="results-container"
-    ></div>
-
-  </div>
-
-</section>
-
-
-</main>
+  </main>
 
 </div>
 
 
-<script>
-
-/* =========================
-   DATA
-========================= */
-
-let students =
-  JSON.parse(
-    localStorage.getItem("fcaStudents")
-  ) || [];
-
-
-let results =
-  JSON.parse(
-    localStorage.getItem("fcaResults")
-  ) || [];
-
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const classSection =
-  document.getElementById("classSection");
-
-const studentSection =
-  document.getElementById("studentSection");
-
-const studentDetails =
-  document.getElementById("studentDetails");
-
-const studentList =
-  document.getElementById("studentList");
-
-const selectedClassTitle =
-  document.getElementById(
-    "selectedClassTitle"
-  );
-
-
-/* =========================
-   CURRENT CLASS
-========================= */
-
-let currentClass = "";
-
-
-/* =========================
-   OPEN CLASS
-========================= */
-
-function openClass(className){
-
-  currentClass = className;
-
-  classSection.classList.add("hidden");
-
-  studentDetails.classList.add("hidden");
-
-  studentSection.classList.remove("hidden");
-
-  selectedClassTitle.textContent =
-    className;
-
-  displayStudents(className);
-
-}
-
-
-/* =========================
-   DISPLAY STUDENTS
-========================= */
-
-function displayStudents(className){
-
-  const classStudents =
-    students.filter(student => {
-
-      return (
-        student.className === className ||
-        student.class === className
-      );
-
-    });
-
-
-  if(classStudents.length === 0){
-
-    studentList.innerHTML = `
-
-      <div class="empty-state">
-
-        <div class="empty-icon">
-          S
-        </div>
-
-        <strong>
-          No Students Yet
-        </strong>
-
-        <p>
-          No students have been registered
-          in ${className}.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  studentList.innerHTML =
-    classStudents.map(student => {
-
-      const fullName =
-        student.fullName ||
-        `${student.firstName || ""} ${student.lastName || ""}`.trim();
-
-
-      const studentId =
-        student.studentId ||
-        student.id ||
-        "—";
-
-
-      const password =
-        student.password ||
-        student.accessPassword ||
-        "—";
-
-
-      const initial =
-        fullName.charAt(0).toUpperCase();
-
-
-      return `
-
-        <button
-          class="student-card"
-          onclick="openStudent('${escapeValue(studentId)}')"
-        >
-
-          <div class="student-avatar">
-            ${initial}
-          </div>
-
-
-          <div class="student-main">
-
-            <strong>
-              ${escapeHtml(fullName)}
-            </strong>
-
-            <span>
-              ID: ${escapeHtml(studentId)}
-            </span>
-
-          </div>
-
-
-          <div class="student-password">
-
-            <small>
-              Access Password
-            </small>
-
-            <strong>
-              ${escapeHtml(password)}
-            </strong>
-
-          </div>
-
-
-          <div class="student-arrow">
-            →
-          </div>
-
+<!-- =========================================================
+     EDIT STUDENT MODAL
+========================================================= -->
+
+<div id="editModal" class="modal-overlay" hidden>
+
+  <div class="student-modal">
+
+    <button id="closeEditModal"
+            class="modal-close"
+            type="button"
+            aria-label="Close">
+      ×
+    </button>
+
+    <div class="modal-logo">
+      <img src="fca-logo.png" alt="FCA">
+    </div>
+
+    <div class="modal-heading">
+      <small>FCA STUDENT</small>
+      <h2>Edit Student</h2>
+      <p>Update the student's information below.</p>
+    </div>
+
+
+    <div class="form-group">
+      <label for="editFullName">Full Name</label>
+      <input id="editFullName"
+             type="text"
+             placeholder="Student full name"
+             autocomplete="off">
+    </div>
+
+
+    <div class="form-group">
+      <label for="editStudentId">Student ID</label>
+      <input id="editStudentId"
+             type="text"
+             placeholder="Student ID"
+             autocomplete="off">
+    </div>
+
+
+    <div class="form-group">
+      <label for="editAccessPassword">Access Password</label>
+
+      <div class="password-field">
+        <input id="editAccessPassword"
+               type="text"
+               placeholder="Access password"
+               autocomplete="off">
+
+        <button id="toggleEditPassword"
+                type="button"
+                aria-label="Hide password">
+          🙈
         </button>
-
-      `;
-
-    }).join("");
-
-}
-
-
-/* =========================
-   OPEN STUDENT
-========================= */
-
-function openStudent(studentId){
-
-  const student =
-    students.find(item => {
-
-      return (
-        item.studentId === studentId ||
-        item.id === studentId
-      );
-
-    });
-
-
-  if(!student){
-    return;
-  }
-
-
-  classSection.classList.add("hidden");
-
-  studentSection.classList.add("hidden");
-
-  studentDetails.classList.remove("hidden");
-
-
-  const fullName =
-    student.fullName ||
-    `${student.firstName || ""} ${student.lastName || ""}`.trim();
-
-
-  const password =
-    student.password ||
-    student.accessPassword ||
-    "—";
-
-
-  const actualId =
-    student.studentId ||
-    student.id ||
-    "—";
-
-
-  const studentClass =
-    student.className ||
-    student.class ||
-    "—";
-
-
-  document.getElementById(
-    "profileAvatar"
-  ).textContent =
-    fullName.charAt(0).toUpperCase();
-
-
-  document.getElementById(
-    "profileName"
-  ).textContent =
-    fullName;
-
-
-  document.getElementById(
-    "profileId"
-  ).textContent =
-    actualId;
-
-
-  document.getElementById(
-    "profilePassword"
-  ).textContent =
-    password;
-
-
-  document.getElementById(
-    "profileClass"
-  ).textContent =
-    studentClass;
-
-
-  displayResults(student);
-
-}
-
-
-/* =========================
-   DISPLAY RESULTS
-========================= */
-
-function displayResults(student){
-
-  const container =
-    document.getElementById(
-      "studentResults"
-    );
-
-
-  const studentId =
-    student.studentId ||
-    student.id;
-
-
-  const studentResults =
-    results.filter(result => {
-
-      return (
-        result.studentId === studentId ||
-        result.studentID === studentId
-      );
-
-    });
-
-
-  if(studentResults.length === 0){
-
-    container.innerHTML = `
-
-      <div class="no-results">
-
-        <div class="no-results-icon">
-          —
-        </div>
-
-        <h3>
-          Results Not Added Yet
-        </h3>
-
-        <p>
-          No academic results have been
-          entered for this student.
-        </p>
-
       </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  /*
-    Support both:
-    - one result object containing subjects
-    - separate result objects
-  */
-
-  let subjectResults = [];
-
-
-  studentResults.forEach(result => {
-
-    if(Array.isArray(result.subjects)){
-
-      result.subjects.forEach(subject => {
-
-        subjectResults.push({
-
-          subject:
-            subject.subject ||
-            subject.name,
-
-          mark:
-            subject.mark,
-
-          remark:
-            subject.remark ||
-            getRemark(subject.mark)
-
-        });
-
-      });
-
-    }
-
-    else if(result.subject){
-
-      subjectResults.push({
-
-        subject:
-          result.subject,
-
-        mark:
-          result.mark,
-
-        remark:
-          result.remark ||
-          getRemark(result.mark)
-
-      });
-
-    }
-
-  });
-
-
-  if(subjectResults.length === 0){
-
-    container.innerHTML = `
-
-      <div class="no-results">
-
-        <h3>
-          Results Not Added Yet
-        </h3>
-
-        <p>
-          No subject results have been entered.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  let total = 0;
-
-  let count = 0;
-
-
-  subjectResults.forEach(item => {
-
-    const mark =
-      Number(item.mark);
-
-
-    if(!isNaN(mark)){
-
-      total += mark;
-
-      count++;
-
-    }
-
-  });
-
-
-  const average =
-    count > 0
-      ? (total / count).toFixed(1)
-      : "—";
-
-
-  container.innerHTML = `
-
-    <div class="results-summary">
-
-      <div>
-
-        <small>
-          SUBJECTS
-        </small>
-
-        <strong>
-          ${subjectResults.length}
-        </strong>
-
-      </div>
-
-
-      <div>
-
-        <small>
-          AVERAGE
-        </small>
-
-        <strong>
-          ${average}
-        </strong>
-
-      </div>
-
-
-      <div>
-
-        <small>
-          TOTAL
-        </small>
-
-        <strong>
-          ${count > 0 ? total : "—"}
-        </strong>
-
-      </div>
-
     </div>
 
 
-    <div class="results-table-wrapper">
-
-      <table class="results-table">
-
-        <thead>
-
-          <tr>
-
-            <th>#</th>
-
-            <th>Subject</th>
-
-            <th>Mark</th>
-
-            <th>Remark</th>
-
-          </tr>
-
-        </thead>
+    <div id="editModalMessage" class="modal-message"></div>
 
 
-        <tbody>
+    <div class="modal-actions">
 
-          ${subjectResults.map(
-            (item,index) => `
+      <button id="cancelEdit"
+              class="secondary-button"
+              type="button">
+        Cancel
+      </button>
 
-            <tr>
-
-              <td>
-                ${index + 1}
-              </td>
-
-              <td>
-                <strong>
-                  ${escapeHtml(
-                    item.subject || "—"
-                  )}
-                </strong>
-              </td>
-
-              <td class="mark">
-                ${
-                  item.mark !== undefined &&
-                  item.mark !== ""
-                    ? item.mark
-                    : "—"
-                }
-              </td>
-
-              <td>
-
-                <span class="remark">
-                  ${escapeHtml(
-                    item.remark || "—"
-                  )}
-                </span>
-
-              </td>
-
-            </tr>
-
-          `).join("")}
-
-        </tbody>
-
-      </table>
+      <button id="saveStudent"
+              class="primary-button"
+              type="button">
+        Save Changes
+      </button>
 
     </div>
 
-  `;
+  </div>
 
-}
-
-
-/* =========================
-   REMARK
-========================= */
-
-function getRemark(mark){
-
-  const value =
-    Number(mark);
+</div>
 
 
-  if(isNaN(value)){
-    return "—";
-  }
-
-
-  if(value >= 80){
-    return "Excellent";
-  }
-
-
-  if(value >= 70){
-    return "Very Good";
-  }
-
-
-  if(value >= 60){
-    return "Good";
-  }
-
-
-  if(value >= 50){
-    return "Satisfactory";
-  }
-
-
-  if(value >= 40){
-    return "Pass";
-  }
-
-
-  return "Needs Improvement";
-
-}
-
-
-/* =========================
-   BACK TO CLASSES
-========================= */
-
-function showClasses(){
-
-  classSection.classList.remove("hidden");
-
-  studentSection.classList.add("hidden");
-
-  studentDetails.classList.add("hidden");
-
-}
-
-
-/* =========================
-   BACK TO STUDENTS
-========================= */
-
-function showStudents(){
-
-  studentSection.classList.remove("hidden");
-
-  studentDetails.classList.add("hidden");
-
-  displayStudents(currentClass);
-
-}
-
-
-/* =========================
-   HTML SAFETY
-========================= */
-
-function escapeHtml(value){
-
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-function escapeValue(value){
-
-  return String(value)
-    .replace(/'/g,"\\'")
-    .replace(/"/g,'\\"');
-
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="students.js"></script>
 
 </body>
 </html>

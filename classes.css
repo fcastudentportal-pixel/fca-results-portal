@@ -49,29 +49,39 @@ body{
 
 
 /* =========================================================
-   TOP BAR
+   FCA SIDEBAR
 ========================================================= */
 
-.topbar{
+.sidebar{
 
-  min-height:82px;
+  width:245px;
+
+  min-height:100vh;
+
+  position:fixed;
+
+  left:0;
+  top:0;
+  bottom:0;
 
   background:var(--dark);
 
   color:#fff;
 
-  padding:14px 35px;
+  padding:22px 15px;
 
   display:flex;
 
-  justify-content:space-between;
+  flex-direction:column;
 
-  align-items:center;
-
-  gap:20px;
+  z-index:1000;
 
 }
 
+
+/* =========================================================
+   BRAND
+========================================================= */
 
 .brand{
 
@@ -79,105 +89,178 @@ body{
 
   align-items:center;
 
-  gap:14px;
+  gap:12px;
+
+  padding:
+    5px 8px 25px;
 
 }
 
 
-.logo-link{
+.brand-mark{
 
-  width:58px;
-  height:58px;
+  width:70px;
+  height:70px;
 
   display:block;
 
+  flex-shrink:0;
+
+  border-radius:50%;
+
   overflow:hidden;
+
+  background:#fff;
+
+}
+
+
+.brand-mark img{
+
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  object-fit:cover;
 
   border-radius:50%;
 
 }
 
 
-.logo-link img{
-
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
+.brand b{
 
   display:block;
+
+  font-size:17px;
+
+  font-weight:700;
 
 }
 
 
-.brand strong{
+.brand small{
 
   display:block;
-
-  font-size:18px;
-
-}
-
-
-.brand span{
-
-  display:block;
-
-  margin-top:4px;
 
   color:#d8c9cd;
 
-  font-size:13px;
+  font-size:12px;
+
+  margin-top:3px;
 
 }
 
 
-.top-actions{
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
-  display:flex;
+.sidebar nav{
 
-  align-items:center;
+  flex:1;
 
-  gap:15px;
-
-}
-
-
-.administrator{
-
-  background:#ffffff12;
-
-  padding:9px 14px;
-
-  border-radius:20px;
-
-  font-size:13px;
+  margin-top:15px;
 
 }
 
 
-.top-actions a{
+.nav{
 
-  color:#fff;
+  width:100%;
 
-  text-decoration:none;
+  display:block;
 
-  border:1px solid #ffffff35;
+  text-align:left;
 
-  padding:9px 14px;
+  padding:13px 15px;
+
+  margin:5px 0;
+
+  border:0;
 
   border-radius:8px;
 
-  font-size:14px;
+  background:transparent;
+
+  color:#fff;
+
+  cursor:pointer;
+
+  font-family:Arial,Helvetica,sans-serif;
+
+  font-size:15px;
+
+  font-weight:400;
+
+  text-decoration:none;
 
   transition:.2s ease;
 
 }
 
 
-.top-actions a:hover{
+.nav:hover,
+.nav.active{
 
   background:var(--maroon);
+
+}
+
+
+.sidebar a.nav{
+
+  text-decoration:none;
+
+  color:#fff;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-button{
+
+  width:100%;
+
+  display:block;
+
+  padding:12px 15px;
+
+  border:
+    1px solid rgba(255,255,255,.03);
+
+  border-radius:8px;
+
+  background:transparent;
+
+  color:#fff;
+
+  cursor:pointer;
+
+  text-decoration:none;
+
+  text-align:left;
+
+  font-family:Arial,Helvetica,sans-serif;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  transition:.2s ease;
+
+}
+
+
+.settings-button:hover{
+
+  background:var(--maroon);
+
+  border-color:var(--maroon);
 
 }
 
@@ -186,13 +269,19 @@ body{
    CONTENT
 ========================================================= */
 
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
 .content{
 
-  max-width:1250px;
+  min-height:100vh;
 
-  margin:auto;
+  min-width:0;
 
-  padding:35px;
+  margin-left:245px;
+
+  padding:35px 30px 40px;
 
 }
 
@@ -2508,252 +2597,71 @@ button{
 
 
 /* =========================================================
-   MOBILE
+   SMALL PHONES
 ========================================================= */
 
-@media(max-width:800px){
+@media(max-width:500px){
 
-  .topbar{
-
-    padding:13px 16px;
-
-    align-items:flex-start;
-
+  .brand{
+    gap:10px;
   }
 
 
-  .administrator{
-
-    display:none;
-
+  .logo-link{
+    width:60px;
+    height:60px;
   }
 
 
-  .top-actions{
-
-    gap:5px;
-
+  .brand strong{
+    font-size:15px;
   }
 
 
-  .content{
-
-    padding:22px 15px;
-
+  .brand span{
+    font-size:10px;
   }
 
 
-  .page-header h1{
+  .nav{
+    min-width:105px;
 
-    font-size:30px;
+    padding:
+      11px 10px;
 
+    font-size:13px;
   }
 
 
-  .forms-section{
-
-    grid-template-columns:1fr;
-
-  }
-
-
-  .form-card{
-
-    padding:17px;
-
-  }
-
-
-  .selected-section{
-
+  .panel{
     padding:18px;
-
   }
 
 
-  .selected-header{
-
-    display:block;
-
+  .page-heading h1{
+    font-size:28px;
   }
 
 
-  .back-button{
-
-    display:inline-block;
-
-    margin-top:15px;
-
+  .delete-modal{
+    padding:15px;
   }
 
 
-  .action-grid{
-
-    grid-template-columns:1fr;
-
+  .delete-modal-box{
+    border-radius:15px;
   }
 
 
-  .area-header{
-
-    display:block;
-
-  }
-
-
-  .area-header
-  .primary-button{
-
-    margin-top:15px;
-
-  }
-
-
-  .form-grid{
-
-    grid-template-columns:1fr;
-
-  }
-
-
-  .subject-grid{
-
-    grid-template-columns:
-      repeat(2,1fr);
-
-  }
-
-
-  .form-actions{
-
+  .delete-modal-actions{
     flex-direction:column-reverse;
-
   }
 
 
-  .form-actions button{
-
+  .delete-cancel-btn,
+  .delete-confirm-btn{
     width:100%;
-
   }
-
-
-  .student-row{
-
-    align-items:flex-start;
-
-    flex-wrap:wrap;
-
-  }
-
-
-  .student-details{
-
-    min-width:
-      calc(100% - 60px);
-
-  }
-
-
-  .student-subjects{
-
-    width:100%;
-
-    max-width:none;
-
-    padding-left:55px;
-
-  }
-
-
-  .student-class{
-
-    display:none;
-
-  }
-
-
-  .student-actions{
-
-    margin-left:auto;
-
-  }
-
-
-  .class-management-card{
-
-    align-items:flex-start;
-
-    flex-wrap:wrap;
-
-  }
-
-
-  .class-management-info{
-
-    min-width:
-      calc(100% - 65px);
-
-  }
-
-
-  .class-management-actions{
-
-    width:100%;
-
-    padding-left:60px;
-
-  }
-
-
-  .class-management-actions
-  .edit-button{
-
-    flex:1;
-
-  }
-
-
-  .result-row{
-
-    align-items:flex-start;
-
-    flex-wrap:wrap;
-
-  }
-
-
-  .result-actions{
-
-    width:100%;
-
-  }
-
-
-  .result-actions button{
-
-    flex:1;
-
-  }
-
-
-  .selected-student-heading{
-
-    display:block;
-
-  }
-
-
-  .selected-student-heading
-  .primary-button{
-
-    margin-top:12px;
-
-    width:100%;
-
-  }
-
-}
 
 
 /* =========================================================

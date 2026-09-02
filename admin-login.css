@@ -31,16 +31,13 @@ body{
 ========================= */
 
 .login-container{
-
   min-height:100vh;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
-  padding:25px;
+  padding:50px;
 }
 
 
@@ -49,21 +46,54 @@ body{
 ========================= */
 
 .login-card{
-
-  width:min(430px,100%);
+  width:100%;
+  max-width:900px;
 
   background:var(--white);
 
-  padding:35px;
+  padding:60px 80px;
 
-  border-radius:18px;
+  border-radius:22px;
 
   text-align:center;
 
   border:1px solid #ddd8d2;
 
   box-shadow:
-    0 10px 35px #00000012;
+    0 15px 45px #00000014;
+}
+
+
+/* =========================
+   LARGE DESKTOP
+========================= */
+
+@media (min-width:1200px){
+
+  .login-card{
+    max-width:950px;
+    padding:70px 100px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:600px){
+
+  .login-container{
+    padding:20px;
+  }
+
+  .login-card{
+    max-width:100%;
+    padding:35px 25px;
+    border-radius:18px;
+  }
+
 }
 
 

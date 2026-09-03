@@ -1,248 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Students | FCA Portal</title>
+    <meta charset="UTF-8">
 
-  <link rel="stylesheet" href="admin.css">
-  <link rel="stylesheet" href="students.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Students | FCA Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="students.css"
+    >
+
 </head>
+
 
 <body>
 
 <div class="shell">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
 
-    <div class="brand">
-      <a class="brand-mark" href="admin.html">
-        <img src="fca-logo.png" alt="First Class Academy">
-      </a>
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
-      <div>
-        <b>FCA Portal</b>
-        <small>Administration</small>
-      </div>
-    </div>
+    <aside class="sidebar">
 
-    <nav>
-      <a class="nav" href="admin.html">Dashboard</a>
-      <a class="nav" href="teachers.html">Teachers</a>
-      <a class="nav" href="classes.html">Classes</a>
-      <a class="nav active" href="students.html">Students</a>
-      <a class="nav" href="subjects.html">Subjects</a>
-      <a class="nav" href="results.html">Results</a>
-    </nav>
+        <div class="brand">
 
-    <a class="settings-button" href="settings.html">
-      ⚙ Settings
-    </a>
+            <a
+                class="brand-mark"
+                href="admin.html"
+            >
 
-  </aside>
+                <img
+                    src="fca-logo.png"
+                    alt="First Class Academy"
+                >
 
+            </a>
 
-  <!-- MAIN -->
-  <main class="main">
+            <div>
 
-    <header>
-      <div>
-        <small>ACADEMIC MANAGEMENT</small>
-        <h1>Students</h1>
-      </div>
+                <b>FCA Portal</b>
 
-      <div class="pill">Students</div>
-    </header>
+                <small>
+                    Administration
+                </small>
 
+            </div>
 
-    <!-- DATABASE STATUS -->
-    <div id="databaseStatus" class="database-status">
-      Checking FCA database...
-    </div>
-
-
-    <!-- PAGE INTRO -->
-    <section class="students-intro">
-
-      <div>
-        <h2>Student Management</h2>
-        <p id="pageDescription">
-          Select a class to view the students registered in that class.
-        </p>
-      </div>
-
-      <div class="student-total">
-        <strong id="studentCount">0</strong>
-        <small>Students</small>
-      </div>
-
-    </section>
-
-
-    <!-- CLASS SELECTOR -->
-    <section id="classSection" class="class-section">
-
-      <div class="section-heading">
-        <div>
-          <small>SELECT CLASS</small>
-          <h2>Available Classes</h2>
         </div>
 
-        <button id="backToClassesButton"
-                class="secondary-button"
-                type="button"
-                hidden>
-          ← All Classes
-        </button>
-      </div>
 
-      <div id="classesContainer" class="classes-grid"></div>
+        <nav>
 
-      <div id="noClassesState" class="empty-state" hidden>
-        <div class="empty-icon">+</div>
-        <h3>No Classes Created</h3>
-        <p>Create Form 1 to Form 4 from the Classes page first.</p>
-        <a href="classes.html" class="primary-button">Go to Classes</a>
-      </div>
-
-    </section>
+            <a
+                class="nav"
+                href="admin.html"
+            >
+                Dashboard
+            </a>
 
 
-    <!-- STUDENT SECTION -->
-    <section id="studentSection" class="student-section" hidden>
+            <a
+                class="nav"
+                href="teachers.html"
+            >
+                Teachers
+            </a>
 
-      <div class="section-heading student-heading">
 
-        <div>
-          <small id="selectedClassLabel">CLASS</small>
-          <h2 id="selectedClassTitle">Form 1 Students</h2>
-          <p id="selectedClassDescription">
-            Students registered in this class.
-          </p>
+            <a
+                class="nav"
+                href="classes.html"
+            >
+                Classes
+            </a>
+
+
+            <a
+                class="nav active"
+                href="students.html"
+            >
+                Students
+            </a>
+
+
+            <a
+                class="nav"
+                href="subjects.html"
+            >
+                Subjects
+            </a>
+
+
+            <a
+                class="nav"
+                href="results.html"
+            >
+                Results
+            </a>
+
+        </nav>
+
+
+        <a
+            class="settings-button"
+            href="settings.html"
+        >
+            ⚙ Settings
+        </a>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main">
+
+
+        <!-- HEADER -->
+
+        <header>
+
+            <div>
+
+                <small>
+                    ACADEMIC MANAGEMENT
+                </small>
+
+                <h1>
+                    Students
+                </h1>
+
+            </div>
+
+
+            <div class="pill">
+                Students
+            </div>
+
+        </header>
+
+
+
+        <!-- DATABASE STATUS -->
+
+        <div
+            id="databaseStatus"
+            class="database-status"
+        >
+            Checking FCA database...
         </div>
 
-        <button id="refreshStudentsButton"
-                class="secondary-button"
-                type="button">
-          ↻ Refresh
-        </button>
-
-      </div>
 
 
-      <div id="studentsContainer" class="students-list"></div>
+        <!-- =================================================
+             CLASS SELECTION
+        ================================================== -->
+
+        <section
+            id="classesSection"
+            class="students-page-section"
+        >
+
+            <div class="students-page-heading">
+
+                <div>
+
+                    <small>
+                        FCA STUDENTS
+                    </small>
+
+                    <h2>
+                        Select a Class
+                    </h2>
+
+                    <p>
+                        Select Form 1, Form 2, Form 3 or
+                        Form 4 to manage its students.
+                    </p>
+
+                </div>
+
+            </div>
 
 
-      <div id="noStudentsState" class="empty-state" hidden>
+            <div
+                id="classesContainer"
+                class="student-classes-grid"
+            ></div>
 
-        <div class="empty-icon">👤</div>
 
-        <h3>No Students Yet</h3>
+            <div
+                id="noClassesState"
+                class="students-empty"
+                hidden
+            >
 
-        <p>
-          There are no students registered in this class.
-        </p>
+                <div class="empty-icon">
+                    +
+                </div>
 
-      </div>
+                <h3>
+                    No Classes Available
+                </h3>
 
-    </section>
+                <p>
+                    Create classes first from the Classes page.
+                </p>
 
-  </main>
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STUDENT SECTION
+        ================================================== -->
+
+        <section
+            id="studentsSection"
+            class="students-page-section"
+            hidden
+        >
+
+            <div class="student-section-header">
+
+                <div>
+
+                    <button
+                        id="backToClasses"
+                        class="back-button"
+                        type="button"
+                    >
+                        ← Back to Classes
+                    </button>
+
+
+                    <small
+                        id="selectedClassName"
+                        class="selected-class-label"
+                    >
+                        Form
+                    </small>
+
+
+                    <h2 id="selectedClassTitle">
+                        Form Students
+                    </h2>
+
+
+                    <p id="selectedClassDescription">
+                        Students registered in this class.
+                    </p>
+
+                </div>
+
+
+                <div class="student-header-actions">
+
+                    <button
+                        id="refreshStudentsButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        ↻ Refresh
+                    </button>
+
+
+                    <button
+                        id="addStudentButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        + Add Student
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT COUNT -->
+
+            <div class="student-summary">
+
+                <div>
+
+                    <strong id="studentCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Students
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong id="selectedFormNumber">
+                        —
+                    </strong>
+
+                    <span>
+                        Form
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div
+                id="studentsContainer"
+                class="students-grid"
+            ></div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                id="noStudentsState"
+                class="students-empty"
+                hidden
+            >
+
+                <div class="empty-icon">
+                    👤
+                </div>
+
+                <h3>
+                    No Students in This Class
+                </h3>
+
+                <p>
+                    Add the first student to this class.
+                </p>
+
+
+                <button
+                    id="emptyAddStudentButton"
+                    class="primary-button"
+                    type="button"
+                >
+                    + Add Student
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
 
-<!-- =========================================================
-     EDIT STUDENT MODAL
-========================================================= -->
 
-<div id="editModal" class="modal-overlay" hidden>
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
 
-  <div class="student-modal">
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
-    <button id="closeEditModal"
-            class="modal-close"
-            type="button"
-            aria-label="Close">
-      ×
-    </button>
-
-    <div class="modal-logo">
-      <img src="fca-logo.png" alt="FCA">
-    </div>
-
-    <div class="modal-heading">
-      <small>FCA STUDENT</small>
-      <h2>Edit Student</h2>
-      <p>Update the student's information below.</p>
-    </div>
-
-
-    <div class="form-group">
-      <label for="editFullName">Full Name</label>
-      <input id="editFullName"
-             type="text"
-             placeholder="Student full name"
-             autocomplete="off">
-    </div>
-
-
-    <div class="form-group">
-      <label for="editStudentId">Student ID</label>
-      <input id="editStudentId"
-             type="text"
-             placeholder="Student ID"
-             autocomplete="off">
-    </div>
-
-
-    <div class="form-group">
-      <label for="editAccessPassword">Access Password</label>
-
-      <div class="password-field">
-        <input id="editAccessPassword"
-               type="text"
-               placeholder="Access password"
-               autocomplete="off">
-
-        <button id="toggleEditPassword"
-                type="button"
-                aria-label="Hide password">
-          🙈
-        </button>
-      </div>
-    </div>
-
-
-    <div id="editModalMessage" class="modal-message"></div>
-
-
-    <div class="modal-actions">
-
-      <button id="cancelEdit"
-              class="secondary-button"
-              type="button">
-        Cancel
-      </button>
-
-      <button id="saveStudent"
-              class="primary-button"
-              type="button">
-        Save Changes
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
+
 <script src="students.js"></script>
 
 </body>
+
 </html>

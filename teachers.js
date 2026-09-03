@@ -1,7 +1,7 @@
 /* ============================================================
    FCA TEACHERS MANAGEMENT
    SUPABASE VERSION
-   Uses shared config.js + Supabase Auth session
+   Administrator password required for teacher deletion
 ============================================================ */
 
 
@@ -188,7 +188,7 @@ async function checkAdminAuthorization(){
 
 
         console.log(
-            "FCA authenticated teacher-management user:",
+            "FCA authenticated management user:",
             email
         );
 
@@ -238,6 +238,129 @@ async function checkAdminAuthorization(){
         return false;
 
     }
+
+}
+
+
+/* ============================================================
+   VERIFY ADMINISTRATOR PASSWORD
+============================================================ */
+
+async function verifyAdministratorPassword(
+    password
+){
+
+    if(!password){
+
+        return false;
+
+    }
+
+
+    const supabase =
+        getSupabaseClient();
+
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+        await supabase
+            .auth
+            .getSession();
+
+
+    if(sessionError){
+
+        throw new Error(
+            sessionError.message
+        );
+
+    }
+
+
+    if(
+        !sessionData ||
+        !sessionData.session ||
+        !sessionData.session.user
+    ){
+
+        throw new Error(
+            "Administrator session has expired. Please log in again."
+        );
+
+    }
+
+
+    const currentEmail =
+        sessionData.session.user.email
+            ?.trim()
+            .toLowerCase();
+
+
+    if(
+        currentEmail !==
+        FCA_ADMIN_EMAIL
+    ){
+
+        throw new Error(
+            "Only the FCA administrator can delete teachers."
+        );
+
+    }
+
+
+    /*
+       Re-authenticate the administrator.
+
+       This confirms that the person performing
+       the deletion knows the administrator password.
+    */
+
+    const {
+        data,
+        error
+    } =
+        await supabase
+            .auth
+            .signInWithPassword({
+
+                email:
+                    FCA_ADMIN_EMAIL,
+
+                password:
+                    password
+
+            });
+
+
+    if(error){
+
+        return false;
+
+    }
+
+
+    if(
+        !data ||
+        !data.user
+    ){
+
+        return false;
+
+    }
+
+
+    const authenticatedEmail =
+        data.user.email
+            ?.trim()
+            .toLowerCase();
+
+
+    return (
+        authenticatedEmail ===
+        FCA_ADMIN_EMAIL
+    );
 
 }
 
@@ -1162,10 +1285,6 @@ if(teacherForm){
                 getSelectedClasses();
 
 
-            /* --------------------------------------------
-               VALIDATION
-            -------------------------------------------- */
-
             if(
                 !firstName ||
                 !lastName
@@ -1197,11 +1316,8 @@ if(teacherForm){
 
                 showMessage(
                     editingTeacherId !== null
-
                         ? "Enter the current teacher password to confirm the edit."
-
                         : "Password is required when adding a teacher.",
-
                     "error"
                 );
 
@@ -1493,10 +1609,6 @@ function editTeacher(id){
     }
 
 
-    /*
-       Password is NEVER loaded.
-    */
-
     if(passwordInput){
 
         passwordInput.value = "";
@@ -1690,7 +1802,8 @@ function deleteTeacher(id){
 
     if(deleteError){
 
-        deleteError.textContent = "";
+        deleteError.textContent =
+            "";
 
     }
 
@@ -1761,7 +1874,8 @@ function closeDeleteModal(){
 
     if(deleteError){
 
-        deleteError.textContent = "";
+        deleteError.textContent =
+            "";
 
     }
 
@@ -1794,7 +1908,7 @@ if(deleteCancelBtn){
 
 
 /* ============================================================
-   ADMIN DELETE PASSWORD SHOW/HIDE
+   ADMIN PASSWORD SHOW / HIDE
 ============================================================ */
 
 if(
@@ -1864,7 +1978,7 @@ if(deleteConfirmBtn){
                     true;
 
                 deleteConfirmBtn.textContent =
-                    "Deleting...";
+                    "Verifying...";
 
 
                 if(deleteError){
@@ -1875,15 +1989,64 @@ if(deleteConfirmBtn){
                 }
 
 
+                /* ========================================
+                   REQUIRE ADMIN PASSWORD
+                ======================================== */
+
+                const password =
+                    adminDeletePassword
+                        ? adminDeletePassword.value
+                        : "";
+
+
+                if(!password){
+
+                    if(deleteError){
+
+                        deleteError.textContent =
+                            "Administrator password is required.";
+
+                    }
+
+                    return;
+
+                }
+
+
+                const validAdmin =
+                    await verifyAdministratorPassword(
+                        password
+                    );
+
+
+                if(!validAdmin){
+
+                    if(deleteError){
+
+                        deleteError.textContent =
+                            "Incorrect administrator password. Teacher was not deleted.";
+
+                    }
+
+                    return;
+
+                }
+
+
+                /* ========================================
+                   DELETE TEACHER
+                ======================================== */
+
+                deleteConfirmBtn.textContent =
+                    "Deleting...";
+
+
                 const supabase =
                     getSupabaseClient();
 
 
-                /* --------------------------------------------
-                   DELETE DIRECTLY THROUGH SUPABASE
-                -------------------------------------------- */
-
                 const {
+                    data: deletedRows,
                     error
                 } =
                     await supabase
@@ -1892,7 +2055,8 @@ if(deleteConfirmBtn){
                         .eq(
                             "id",
                             teacherToDeleteId
-                        );
+                        )
+                        .select("id");
 
 
                 if(error){
@@ -1903,6 +2067,30 @@ if(deleteConfirmBtn){
 
                 }
 
+
+                /*
+                   Supabase must return the deleted row.
+
+                   If zero rows are returned, the delete
+                   was blocked by RLS or the teacher no
+                   longer exists.
+                */
+
+                if(
+                    !Array.isArray(deletedRows) ||
+                    deletedRows.length === 0
+                ){
+
+                    throw new Error(
+                        "Teacher was NOT deleted from Supabase. Please check the teachers table DELETE RLS policy."
+                    );
+
+                }
+
+
+                /* ========================================
+                   GET TEACHER NAME
+                ======================================== */
 
                 const deletedTeacher =
                     teachers.find(
@@ -1917,6 +2105,46 @@ if(deleteConfirmBtn){
                         ? `${deletedTeacher.first_name || ""} ${deletedTeacher.last_name || ""}`.trim()
                         : "Teacher";
 
+
+                /* ========================================
+                   VERIFY PERMANENT DELETION
+                ======================================== */
+
+                const {
+                    data: remainingTeacher,
+                    error: verifyError
+                } =
+                    await supabase
+                        .from("teachers")
+                        .select("id")
+                        .eq(
+                            "id",
+                            teacherToDeleteId
+                        )
+                        .maybeSingle();
+
+
+                if(verifyError){
+
+                    throw new Error(
+                        verifyError.message
+                    );
+
+                }
+
+
+                if(remainingTeacher){
+
+                    throw new Error(
+                        "The teacher still exists in Supabase. The deletion could not be completed."
+                    );
+
+                }
+
+
+                /* ========================================
+                   UPDATE LOCAL LIST
+                ======================================== */
 
                 teachers =
                     teachers.filter(

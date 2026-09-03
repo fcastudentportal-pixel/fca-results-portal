@@ -4,10 +4,10 @@
 ========================================================= */
 
 const SUPABASE_URL =
-  "https://lapuqrvfyjxgkynikxqa.supabase.co";
+    "https://lapuqrvfyjxgkynikxqa.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_aSAHDuZrc388YBkhtQbw5A_wX2Q01QK";
+    "sb_publishable_aSAHDuZrc388YBkhtQbw5A_wX2Q01QK";
 
 
 /* =========================================================
@@ -15,7 +15,7 @@ const SUPABASE_PUBLISHABLE_KEY =
 ========================================================= */
 
 window.FCA_ADMIN_EMAIL =
-  "fca.admin@gmail.com";
+    "fca.admin@gmail.com";
 
 
 /* =========================================================
@@ -24,377 +24,386 @@ window.FCA_ADMIN_EMAIL =
 
 window.FCA_TABLES = {
 
-  teachers: "teachers",
-  classes: "classes",
-  students: "students",
-  subjects: "subjects",
-  results: "results"
+    teachers: "teachers",
+    classes: "classes",
+    students: "students",
+    subjects: "subjects",
+    results: "results"
 
 };
 
 
 /* =========================================================
-   CREATE SHARED SUPABASE CLIENT
+   CREATE SUPABASE CLIENT
 ========================================================= */
 
-(function () {
+function createFCAClient() {
 
-  if (!window.supabase) {
+    console.log("FCA: Checking Supabase library...");
 
-    console.error(
-      "FCA ERROR: Supabase JavaScript library was not loaded."
-    );
+    if (
+        typeof window.supabase === "undefined" ||
+        typeof window.supabase.createClient !== "function"
+    ) {
 
-    window.fcaSupabase = null;
+        console.error(
+            "FCA ERROR: Supabase library is NOT loaded."
+        );
 
-    return;
+        window.fcaSupabase = null;
 
-  }
-
-
-  try {
-
-    window.fcaSupabase =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
-
-
-    console.log(
-      "FCA: Supabase client created successfully."
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "FCA ERROR: Could not create Supabase client:",
-      error
-    );
-
-    window.fcaSupabase = null;
-
-  }
-
-})();
-
-
-/* =========================================================
-   CHECK SUPABASE CLIENT
-========================================================= */
-
-window.fcaCheckSupabase =
-  function () {
-
-    return (
-      window.fcaSupabase !== null &&
-      typeof window.fcaSupabase !== "undefined"
-    );
-
-  };
-
-
-/* =========================================================
-   GET CURRENT SESSION
-========================================================= */
-
-window.fcaGetSession =
-  async function () {
-
-    if (!window.fcaCheckSupabase()) {
-
-      return {
-        session: null,
-        error: new Error(
-          "Supabase client is not available."
-        )
-      };
-
+        return false;
     }
 
 
     try {
 
-      const {
-        data,
-        error
-      } =
-        await window.fcaSupabase
-          .auth
-          .getSession();
+        window.fcaSupabase =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_PUBLISHABLE_KEY
+            );
 
 
-      return {
-        session: data?.session || null,
-        error: error || null
-      };
+        console.log(
+            "FCA: Supabase client created successfully."
+        );
+
+        console.log(
+            "FCA Supabase URL:",
+            SUPABASE_URL
+        );
+
+
+        return true;
 
     }
 
     catch (error) {
 
-      console.error(
-        "FCA session error:",
-        error
-      );
+        console.error(
+            "FCA ERROR: Supabase client creation failed:",
+            error
+        );
 
-      return {
-        session: null,
-        error
-      };
+        window.fcaSupabase = null;
+
+        return false;
+    }
+}
+
+
+/* =========================================================
+   CREATE CLIENT
+========================================================= */
+
+createFCAClient();
+
+
+/* =========================================================
+   CHECK SUPABASE
+========================================================= */
+
+window.fcaCheckSupabase = function () {
+
+    return !!(
+        window.fcaSupabase &&
+        typeof window.fcaSupabase.from === "function" &&
+        typeof window.fcaSupabase.auth === "object"
+    );
+
+};
+
+
+/* =========================================================
+   GET SESSION
+========================================================= */
+
+window.fcaGetSession = async function () {
+
+    if (!window.fcaCheckSupabase()) {
+
+        return {
+            session: null,
+            error: new Error(
+                "Supabase client is not available."
+            )
+        };
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await window.fcaSupabase.auth.getSession();
+
+
+        return {
+            session: data?.session || null,
+            error: error || null
+        };
 
     }
 
-  };
+    catch (error) {
+
+        console.error(
+            "FCA session error:",
+            error
+        );
+
+        return {
+            session: null,
+            error
+        };
+    }
+
+};
 
 
 /* =========================================================
    CHECK ADMIN
 ========================================================= */
 
-window.fcaCheckAdmin =
-  async function () {
+window.fcaCheckAdmin = async function () {
 
     if (!window.fcaCheckSupabase()) {
-
-      return false;
-
+        return false;
     }
 
 
     try {
 
-      const {
-        data,
-        error
-      } =
-        await window.fcaSupabase
-          .auth
-          .getSession();
+        const {
+            data,
+            error
+        } =
+            await window.fcaSupabase.auth.getSession();
 
 
-      if (error) {
+        if (error) {
 
-        console.error(
-          "FCA authentication error:",
-          error
-        );
+            console.error(
+                "FCA authentication error:",
+                error
+            );
 
-        return false;
-
-      }
-
-
-      const session =
-        data?.session;
+            return false;
+        }
 
 
-      if (!session || !session.user) {
-
-        return false;
-
-      }
+        const session =
+            data?.session;
 
 
-      const email =
-        String(
-          session.user.email || ""
-        )
-          .trim()
-          .toLowerCase();
+        if (!session?.user) {
+            return false;
+        }
 
 
-      const adminEmail =
-        String(
-          window.FCA_ADMIN_EMAIL || ""
-        )
-          .trim()
-          .toLowerCase();
+        const email =
+            String(
+                session.user.email || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
-      return email === adminEmail;
+        const adminEmail =
+            String(
+                window.FCA_ADMIN_EMAIL || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        return email === adminEmail;
 
     }
 
     catch (error) {
 
-      console.error(
-        "FCA admin check error:",
-        error
-      );
+        console.error(
+            "FCA admin check error:",
+            error
+        );
 
-      return false;
-
+        return false;
     }
 
-  };
+};
 
 
 /* =========================================================
    REQUIRE ADMIN
 ========================================================= */
 
-window.fcaRequireAdmin =
-  async function () {
+window.fcaRequireAdmin = async function () {
 
     const authorized =
-      await window.fcaCheckAdmin();
+        await window.fcaCheckAdmin();
 
 
     if (!authorized) {
 
-      console.warn(
-        "FCA: Admin authorization failed."
-      );
+        console.warn(
+            "FCA: Admin authorization failed."
+        );
 
 
-      if (window.fcaSupabase) {
+        if (window.fcaSupabase) {
 
-        try {
+            try {
 
-          await window.fcaSupabase
-            .auth
-            .signOut();
+                await window.fcaSupabase.auth.signOut();
 
+            }
+
+            catch (error) {
+
+                console.error(
+                    "FCA sign-out error:",
+                    error
+                );
+            }
         }
 
-        catch (error) {
 
-          console.error(
-            "FCA sign-out error:",
-            error
-          );
-
-        }
-
-      }
+        window.location.replace(
+            "admin-login.html"
+        );
 
 
-      window.location.replace(
-        "admin-login.html"
-      );
-
-
-      return false;
-
+        return false;
     }
 
 
     return true;
 
-  };
+};
 
 
 /* =========================================================
    LOGOUT
 ========================================================= */
 
-window.fcaLogout =
-  async function () {
+window.fcaLogout = async function () {
 
     try {
 
-      if (window.fcaSupabase) {
+        if (window.fcaSupabase) {
 
-        await window.fcaSupabase
-          .auth
-          .signOut();
+            await window.fcaSupabase.auth.signOut();
 
-      }
+        }
 
     }
 
     catch (error) {
 
-      console.error(
-        "FCA logout error:",
-        error
-      );
-
+        console.error(
+            "FCA logout error:",
+            error
+        );
     }
 
 
     window.location.replace(
-      "admin-login.html"
+        "admin-login.html"
     );
 
-  };
+};
 
 
 /* =========================================================
-   SUPABASE CONNECTION TEST
+   TEST DATABASE CONNECTION
 ========================================================= */
 
-window.fcaTestConnection =
-  async function () {
+window.fcaTestConnection = async function () {
 
     if (!window.fcaCheckSupabase()) {
 
-      return {
-        connected: false,
-        error: "Supabase client is not available."
-      };
-
+        return {
+            connected: false,
+            error: "Supabase client is not available."
+        };
     }
 
 
     try {
 
-      /*
-       * Auth request tests that the Supabase client
-       * can communicate with the project.
-       */
-
-      const {
-        error
-      } =
-        await window.fcaSupabase
-          .auth
-          .getSession();
+        const {
+            data,
+            error
+        } =
+            await window.fcaSupabase
+                .from("students")
+                .select("id")
+                .limit(1);
 
 
-      if (error) {
+        if (error) {
+
+            console.error(
+                "FCA database test failed:",
+                error
+            );
+
+
+            return {
+                connected: false,
+                error: error.message
+            };
+        }
+
 
         return {
-          connected: false,
-          error: error.message
+            connected: true,
+            error: null,
+            data
         };
-
-      }
-
-
-      return {
-        connected: true,
-        error: null
-      };
 
     }
 
     catch (error) {
 
-      return {
-        connected: false,
-        error: error.message
-      };
+        console.error(
+            "FCA database connection error:",
+            error
+        );
 
+
+        return {
+            connected: false,
+            error: error.message
+        };
     }
 
-  };
+};
 
 
 /* =========================================================
-   FCA CONFIGURATION READY
+   CONFIG READY
 ========================================================= */
 
 console.log(
-  "FCA config.js loaded."
+    "======================================"
 );
 
 console.log(
-  "FCA Supabase:",
-  window.fcaSupabase
-    ? "READY"
-    : "NOT AVAILABLE"
+    "FCA config.js loaded"
+);
+
+console.log(
+    "FCA Supabase:",
+    window.fcaCheckSupabase()
+        ? "READY"
+        : "NOT AVAILABLE"
+);
+
+console.log(
+    "======================================"
 );

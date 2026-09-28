@@ -82,21 +82,56 @@ if(
   passwordInput
 ){
 
+  const eyeOpen =
+    passwordToggle.querySelector(
+      ".eye-open"
+    );
+
+  const eyeClosed =
+    passwordToggle.querySelector(
+      ".eye-closed"
+    );
+
+
+  /* INITIAL STATE */
+
+  if(eyeOpen){
+    eyeOpen.style.display = "block";
+  }
+
+  if(eyeClosed){
+    eyeClosed.style.display = "none";
+  }
+
+
+  /* TOGGLE */
+
   passwordToggle.addEventListener(
     "click",
     function(){
 
-      if(
-        passwordInput.type ===
-        "password"
-      ){
+      const isPasswordHidden =
+        passwordInput.type === "password";
+
+
+      if(isPasswordHidden){
+
+        /* SHOW PASSWORD */
 
         passwordInput.type =
           "text";
 
 
-        passwordToggle.textContent =
-          "👁";
+        if(eyeOpen){
+          eyeOpen.style.display =
+            "none";
+        }
+
+
+        if(eyeClosed){
+          eyeClosed.style.display =
+            "block";
+        }
 
 
         passwordToggle.setAttribute(
@@ -108,18 +143,34 @@ if(
         passwordToggle.setAttribute(
           "title",
           "Hide password"
+        );
+
+
+        passwordToggle.setAttribute(
+          "aria-pressed",
+          "true"
         );
 
       }
 
       else{
 
+        /* HIDE PASSWORD */
+
         passwordInput.type =
           "password";
 
 
-        passwordToggle.textContent =
-          "👁";
+        if(eyeOpen){
+          eyeOpen.style.display =
+            "block";
+        }
+
+
+        if(eyeClosed){
+          eyeClosed.style.display =
+            "none";
+        }
 
 
         passwordToggle.setAttribute(
@@ -131,6 +182,12 @@ if(
         passwordToggle.setAttribute(
           "title",
           "Show password"
+        );
+
+
+        passwordToggle.setAttribute(
+          "aria-pressed",
+          "false"
         );
 
       }

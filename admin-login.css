@@ -446,3 +446,91 @@ input:focus{
   }
 
 }
+/* =========================================================
+   PASSWORD FIELD
+========================================================= */
+
+.password-wrapper{
+  position:relative;
+  width:100%;
+}
+
+
+/* PASSWORD INPUT */
+
+.password-wrapper input{
+  width:100%;
+  padding-right:52px;
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
+
+.password-toggle{
+  position:absolute;
+
+  top:50%;
+  right:12px;
+
+  transform:translateY(-50%);
+
+  width:34px;
+  height:34px;
+
+  padding:0;
+  margin:0;
+
+  border:none;
+  background:transparent;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  color:#3e0714;
+}
+
+
+/* =========================================================
+   SVG EYE
+========================================================= */
+
+.password-toggle .eye-icon{
+  width:22px;
+  height:22px;
+
+  display:block;
+
+  pointer-events:none;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.password-toggle:hover{
+  opacity:0.7;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.password-toggle:focus{
+  outline:none;
+}
+
+
+/* Accessible keyboard focus */
+
+.password-toggle:focus-visible{
+  outline:2px solid #d5b15a;
+  outline-offset:2px;
+  border-radius:6px;
+}

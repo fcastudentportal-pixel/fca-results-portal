@@ -34,7 +34,6 @@ let selectedDeleteButton = null;
    DOM ELEMENTS
 ========================================================= */
 
-let databaseStatus;
 let classCount;
 let classDescription;
 let addClassButton;
@@ -99,11 +98,6 @@ async function startClassesPage() {
 
     if (!window.fcaSupabase) {
 
-        setDatabaseStatus(
-            "error",
-            "❌ Supabase is not available. Check config.js."
-        );
-
         console.error(
             "FCA: window.fcaSupabase does not exist."
         );
@@ -119,12 +113,6 @@ async function startClassesPage() {
 
     console.log(
         "FCA Supabase client found."
-    );
-
-
-    setDatabaseStatus(
-        "loading",
-        "Checking FCA database..."
     );
 
 
@@ -150,12 +138,6 @@ async function startClassesPage() {
     await loadTeachers();
 
 
-    setDatabaseStatus(
-        "success",
-        "✓ FCA database connected."
-    );
-
-
     console.log(
         "FCA Classes page ready."
     );
@@ -172,12 +154,6 @@ function setupDOM() {
     /* =====================================================
        MAIN PAGE
     ===================================================== */
-
-    databaseStatus =
-        document.getElementById(
-            "databaseStatus"
-        );
-
 
     classCount =
         document.getElementById(
@@ -626,14 +602,6 @@ async function checkClassesTable() {
                 result.error
             );
 
-
-            setDatabaseStatus(
-                "error",
-                "❌ Database error: " +
-                result.error.message
-            );
-
-
             return false;
 
         }
@@ -653,13 +621,6 @@ async function checkClassesTable() {
         console.error(
             "Database test failed:",
             error
-        );
-
-
-        setDatabaseStatus(
-            "error",
-            "❌ Database connection failed: " +
-            error.message
         );
 
 
@@ -712,14 +673,6 @@ async function loadClasses() {
 
             renderClasses();
 
-
-            setDatabaseStatus(
-                "error",
-                "❌ Could not load classes: " +
-                error.message
-            );
-
-
             return;
 
         }
@@ -752,13 +705,6 @@ async function loadClasses() {
         classes = [];
 
         renderClasses();
-
-
-        setDatabaseStatus(
-            "error",
-            "❌ Classes error: " +
-            error.message
-        );
 
     }
 
@@ -1780,19 +1726,9 @@ async function confirmDeleteClass() {
     );
 
 
-    setDatabaseStatus(
-        "loading",
-        "Deleting " +
-        className +
-        "..."
-    );
-
-
     try {
 
         /*
-           IMPORTANT:
-
            select("id") makes Supabase return the row
            that was actually deleted.
 
@@ -1844,12 +1780,6 @@ async function confirmDeleteClass() {
             );
 
 
-            setDatabaseStatus(
-                "error",
-                "❌ Class could not be deleted."
-            );
-
-
             return;
 
         }
@@ -1891,12 +1821,6 @@ async function confirmDeleteClass() {
                 "The class was NOT deleted from Supabase. " +
                 "Please check the classes table RLS DELETE policy.",
                 "error"
-            );
-
-
-            setDatabaseStatus(
-                "error",
-                "❌ Class was not deleted from the database."
             );
 
 
@@ -1962,12 +1886,6 @@ async function confirmDeleteClass() {
             );
 
 
-            setDatabaseStatus(
-                "error",
-                "❌ Class still exists in Supabase."
-            );
-
-
             return;
 
         }
@@ -2002,14 +1920,6 @@ async function confirmDeleteClass() {
             className +
             " was deleted successfully.",
             "success"
-        );
-
-
-        setDatabaseStatus(
-            "success",
-            "✓ " +
-            className +
-            " deleted successfully."
         );
 
 
@@ -2073,13 +1983,6 @@ async function confirmDeleteClass() {
             "Delete failed: " +
             error.message,
             "error"
-        );
-
-
-        setDatabaseStatus(
-            "error",
-            "❌ Delete failed: " +
-            error.message
         );
 
     }
@@ -2807,57 +2710,6 @@ async function verifyPassword(
             .trim()
             .toLowerCase()
     );
-
-}
-
-
-/* =========================================================
-   DATABASE STATUS
-========================================================= */
-
-function setDatabaseStatus(
-    type,
-    message
-) {
-
-    if (!databaseStatus) {
-        return;
-    }
-
-
-    databaseStatus.textContent =
-        message;
-
-
-    databaseStatus.className =
-        "database-status";
-
-
-    if (type === "success") {
-
-        databaseStatus.classList.add(
-            "connected"
-        );
-
-    }
-
-
-    if (type === "error") {
-
-        databaseStatus.classList.add(
-            "error"
-        );
-
-    }
-
-
-    if (type === "loading") {
-
-        databaseStatus.classList.add(
-            "loading"
-        );
-
-    }
 
 }
 

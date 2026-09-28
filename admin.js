@@ -13,9 +13,6 @@ document.addEventListener("DOMContentLoaded", async function () {
        ELEMENTS
     ===================================================== */
 
-    const databaseStatus =
-        document.getElementById("databaseStatus");
-
     const teacherCount =
         document.getElementById("dashboardTeacherCount");
 
@@ -48,16 +45,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             "FCA Supabase client was not created."
         );
 
-        if (databaseStatus) {
-
-            databaseStatus.textContent =
-                "❌ FCA database is not connected.";
-
-            databaseStatus.classList.add(
-                "error"
-            );
-        }
-
         return;
     }
 
@@ -65,18 +52,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log(
         "FCA Supabase client loaded successfully."
     );
-
-
-    if (databaseStatus) {
-
-        databaseStatus.textContent =
-            "Connecting to FCA database...";
-
-        databaseStatus.classList.remove(
-            "connected",
-            "error"
-        );
-    }
 
 
     /* =====================================================
@@ -146,8 +121,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         /* =================================================
            STUDENTS
-           
-           NEW STUDENTS TABLE:
+
+           STUDENTS TABLE:
 
            id
            full_name
@@ -262,9 +237,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         /* =================================================
            FORM COUNTS
-           
-           IMPORTANT:
-           students.form_number
         ================================================= */
 
         const form1Students =
@@ -305,8 +277,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         /* =================================================
            CLASS COUNT
-           
-           Use actual classes in database.
         ================================================= */
 
         const actualClassCount =
@@ -391,25 +361,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         /* =================================================
-           DATABASE CONNECTED
-        ================================================= */
-
-        if (databaseStatus) {
-
-            databaseStatus.textContent =
-                "FCA database connected";
-
-            databaseStatus.classList.remove(
-                "error"
-            );
-
-            databaseStatus.classList.add(
-                "connected"
-            );
-        }
-
-
-        /* =================================================
            CONSOLE INFORMATION
         ================================================= */
 
@@ -465,22 +416,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             "FCA dashboard database error:",
             error
         );
-
-
-        if (databaseStatus) {
-
-            databaseStatus.textContent =
-                "❌ Database error: " +
-                error.message;
-
-            databaseStatus.classList.remove(
-                "connected"
-            );
-
-            databaseStatus.classList.add(
-                "error"
-            );
-        }
 
     }
 

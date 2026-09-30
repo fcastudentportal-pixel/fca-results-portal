@@ -1115,36 +1115,76 @@ if(
     passwordInput
 ){
 
-    passwordToggle
-        .addEventListener(
-            "click",
-            function(){
+    passwordToggle.addEventListener(
+        "click",
+        function(){
 
-                if(
-                    passwordInput.type ===
-                    "password"
-                ){
+            const isVisible =
+                passwordInput.type === "text";
 
-                    passwordInput.type =
-                        "text";
 
-                    passwordToggle.textContent =
-                        "🙈";
+            if(isVisible){
 
-                }
+                /* =========================================
+                   HIDE PASSWORD
+                ========================================= */
 
-                else{
+                passwordInput.type =
+                    "password";
 
-                    passwordInput.type =
-                        "password";
+                passwordToggle.classList.remove(
+                    "is-visible"
+                );
 
-                    passwordToggle.textContent =
-                        "👁";
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
 
-                }
+                passwordToggle.setAttribute(
+                    "title",
+                    "Show password"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-pressed",
+                    "false"
+                );
 
             }
-        );
+
+            else{
+
+                /* =========================================
+                   SHOW PASSWORD
+                ========================================= */
+
+                passwordInput.type =
+                    "text";
+
+                passwordToggle.classList.add(
+                    "is-visible"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+                passwordToggle.setAttribute(
+                    "title",
+                    "Hide password"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-pressed",
+                    "true"
+                );
+
+            }
+
+        }
+    );
 
 }
 
@@ -1611,12 +1651,39 @@ function editTeacher(id){
 
     if(passwordInput){
 
-        passwordInput.value = "";
+    passwordInput.value = "";
 
-        passwordInput.placeholder =
-            "Enter current password to confirm";
+    passwordInput.type =
+        "password";
 
-    }
+    passwordInput.placeholder =
+        "Enter current password to confirm";
+
+}
+
+
+if(passwordToggle){
+
+    passwordToggle.classList.remove(
+        "is-visible"
+    );
+
+    passwordToggle.setAttribute(
+        "aria-label",
+        "Show password"
+    );
+
+    passwordToggle.setAttribute(
+        "title",
+        "Show password"
+    );
+
+    passwordToggle.setAttribute(
+        "aria-pressed",
+        "false"
+    );
+
+}
 
 
     clearSubjects();
@@ -1916,36 +1983,76 @@ if(
     adminDeletePassword
 ){
 
-    adminPasswordToggle
-        .addEventListener(
-            "click",
-            function(){
+    adminPasswordToggle.addEventListener(
+        "click",
+        function(){
 
-                if(
-                    adminDeletePassword.type ===
-                    "password"
-                ){
+            const isVisible =
+                adminDeletePassword.type === "text";
 
-                    adminDeletePassword.type =
-                        "text";
 
-                    adminPasswordToggle.textContent =
-                        "🙈";
+            if(isVisible){
 
-                }
+                /* =========================================
+                   HIDE ADMIN PASSWORD
+                ========================================= */
 
-                else{
+                adminDeletePassword.type =
+                    "password";
 
-                    adminDeletePassword.type =
-                        "password";
+                adminPasswordToggle.classList.remove(
+                    "is-visible"
+                );
 
-                    adminPasswordToggle.textContent =
-                        "👁";
+                adminPasswordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
 
-                }
+                adminPasswordToggle.setAttribute(
+                    "title",
+                    "Show password"
+                );
+
+                adminPasswordToggle.setAttribute(
+                    "aria-pressed",
+                    "false"
+                );
 
             }
-        );
+
+            else{
+
+                /* =========================================
+                   SHOW ADMIN PASSWORD
+                ========================================= */
+
+                adminDeletePassword.type =
+                    "text";
+
+                adminPasswordToggle.classList.add(
+                    "is-visible"
+                );
+
+                adminPasswordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+                adminPasswordToggle.setAttribute(
+                    "title",
+                    "Hide password"
+                );
+
+                adminPasswordToggle.setAttribute(
+                    "aria-pressed",
+                    "true"
+                );
+
+            }
+
+        }
+    );
 
 }
 
@@ -2342,10 +2449,26 @@ function resetForm(){
 
     if(passwordToggle){
 
-        passwordToggle.textContent =
-            "👁";
+    passwordToggle.classList.remove(
+        "is-visible"
+    );
 
-    }
+    passwordToggle.setAttribute(
+        "aria-label",
+        "Show password"
+    );
+
+    passwordToggle.setAttribute(
+        "title",
+        "Show password"
+    );
+
+    passwordToggle.setAttribute(
+        "aria-pressed",
+        "false"
+    );
+
+}
 
 }
 

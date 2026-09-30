@@ -620,27 +620,99 @@ textarea:focus{
 }
 
 .password-wrapper input{
-  padding-right:48px;
+  padding-right:52px;
 }
+
+
+/* =====================================================
+   PASSWORD TOGGLE
+===================================================== */
 
 .password-toggle{
   position:absolute;
+
   right:8px;
   top:50%;
+
   transform:translateY(-50%);
-  width:36px;
-  height:36px;
+
+  width:38px;
+  height:38px;
+
+  padding:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
   border:0;
   background:transparent;
+
   color:var(--muted);
-  border-radius:7px;
+
+  border-radius:8px;
+
   cursor:pointer;
-  font-size:17px;
+
+  transition:
+    color .2s ease,
+    background .2s ease;
 }
+
+
+/* HOVER */
 
 .password-toggle:hover{
   background:#f4f2ee;
   color:var(--maroon);
+}
+
+
+/* FOCUS */
+
+.password-toggle:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+
+
+/* =====================================================
+   SVG EYE ICONS
+===================================================== */
+
+.password-toggle .eye-icon{
+  width:21px;
+  height:21px;
+
+  display:block;
+
+  flex-shrink:0;
+}
+
+
+/* PASSWORD HIDDEN
+   SHOW OPEN EYE
+*/
+
+.password-toggle .eye-open{
+  display:block;
+}
+
+.password-toggle .eye-closed{
+  display:none;
+}
+
+
+/* PASSWORD VISIBLE
+   SHOW CLOSED EYE
+*/
+
+.password-toggle.is-visible .eye-open{
+  display:none;
+}
+
+.password-toggle.is-visible .eye-closed{
+  display:block;
 }
 
 

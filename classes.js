@@ -941,7 +941,6 @@ function getTeacherName(teacher) {
 
 }
 
-
 /* =========================================================
    RENDER CLASSES
 ========================================================= */
@@ -1066,15 +1065,17 @@ function renderClasses() {
                 "class-card";
 
 
+            /*
+               Keep form_number internally because it is
+               still needed by the application.
+
+               It is NOT displayed on the card anymore.
+            */
+
             const form =
                 Number(
                     item.form_number
                 );
-
-
-            const title =
-                item.class_name ||
-                "Form " + form;
 
 
             const code =
@@ -1082,41 +1083,13 @@ function renderClasses() {
                 "FCA-FORM-" + form;
 
 
-            const description =
-                item.description ||
-                "Class available for student management and results.";
-
-
             card.innerHTML =
-
-                '<div class="class-card-header">' +
-
-                    '<div class="class-card-number">' +
-                        escapeHtml(
-                            String(form)
-                        ) +
-                    '</div>' +
-
-                    '<span class="class-status">' +
-                        'Active' +
-                    '</span>' +
-
-                '</div>' +
-
 
                 '<div class="class-card-content">' +
 
                     '<small class="class-label">' +
                         'FCA CLASS' +
                     '</small>' +
-
-                    '<h3>' +
-                        escapeHtml(title) +
-                    '</h3>' +
-
-                    '<p>' +
-                        escapeHtml(description) +
-                    '</p>' +
 
                     '<span class="class-code">' +
                         escapeHtml(code) +

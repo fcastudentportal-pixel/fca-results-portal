@@ -63,8 +63,8 @@ let deleteClassModal;
 let closeDeleteModal;
 let deleteClassName;
 let deleteClassWarning;
-let adminClassDeletePassword;
-let adminClassPasswordToggle;
+let adminDeletePassword;
+let adminPasswordToggle;
 let classDeleteMessage;
 let deleteClassCancelBtn;
 let deleteClassConfirmBtn;
@@ -283,15 +283,15 @@ function setupDOM() {
         );
 
 
-    adminClassDeletePassword =
+    adminDeletePassword =
         document.getElementById(
-            "adminClassDeletePassword"
+            "adminDeletePassword"
         );
 
 
-    adminClassPasswordToggle =
+    adminPasswordToggle =
         document.getElementById(
-            "adminClassPasswordToggle"
+            "adminPasswordToggle"
         );
 
 
@@ -460,9 +460,9 @@ function setupEvents() {
     }
 
 
-    if (adminClassPasswordToggle) {
+    if (adminPasswordToggle) {
 
-        adminClassPasswordToggle.addEventListener(
+        adminPasswordToggle.addEventListener(
             "click",
             toggleAdminDeletePassword
         );
@@ -470,9 +470,9 @@ function setupEvents() {
     }
 
 
-    if (adminClassDeletePassword) {
+    if (adminDeletePassword) {
 
-        adminClassDeletePassword.addEventListener(
+        adminDeletePassword.addEventListener(
             "keydown",
             function(event) {
 
@@ -1372,21 +1372,35 @@ function openDeleteClassModal(
        RESET PASSWORD
     ===================================================== */
 
-    if (adminClassDeletePassword) {
+    if (adminDeletePassword) {
 
-        adminClassDeletePassword.value =
-            "";
+        adminDeletePassword.value = "";
 
-        adminClassDeletePassword.type =
-            "password";
+        adminDeletePassword.type = "password";
 
     }
 
 
-    if (adminClassPasswordToggle) {
+    if (adminPasswordToggle) {
 
-        adminClassPasswordToggle.textContent =
-            "👁";
+        adminPasswordToggle.classList.remove(
+            "is-visible"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "title",
+            "Show password"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
     }
 
@@ -1435,9 +1449,9 @@ function openDeleteClassModal(
     setTimeout(
         function() {
 
-            if (adminClassDeletePassword) {
+            if (adminDeletePassword) {
 
-                adminClassDeletePassword.focus();
+                adminDeletePassword.focus();
 
             }
 
@@ -1470,21 +1484,35 @@ function closeDeleteClassModal() {
         null;
 
 
-    if (adminClassDeletePassword) {
+    if (adminDeletePassword) {
 
-        adminClassDeletePassword.value =
-            "";
+        adminDeletePassword.value = "";
 
-        adminClassDeletePassword.type =
-            "password";
+        adminDeletePassword.type = "password";
 
     }
 
 
-    if (adminClassPasswordToggle) {
+    if (adminPasswordToggle) {
 
-        adminClassPasswordToggle.textContent =
-            "👁";
+        adminPasswordToggle.classList.remove(
+            "is-visible"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "title",
+            "Show password"
+        );
+
+        adminPasswordToggle.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
     }
 
@@ -1509,46 +1537,56 @@ function closeDeleteClassModal() {
 
 
 /* =========================================================
-   ADMIN PASSWORD TOGGLE
+   ADMINISTRATOR PASSWORD TOGGLE
 ========================================================= */
 
 function toggleAdminDeletePassword() {
 
-    if (!adminClassDeletePassword) {
+    if (!adminDeletePassword) {
         return;
     }
 
 
-    if (
-        adminClassDeletePassword.type ===
-        "password"
-    ) {
-
-        adminClassDeletePassword.type =
-            "text";
+    const showing =
+        adminDeletePassword.type === "text";
 
 
-        if (adminClassPasswordToggle) {
-
-            adminClassPasswordToggle.textContent =
-                "🙈";
-
-        }
-
-    }
-
-    else {
-
-        adminClassDeletePassword.type =
-            "password";
+    adminDeletePassword.type =
+        showing
+            ? "password"
+            : "text";
 
 
-        if (adminClassPasswordToggle) {
+    if (adminPasswordToggle) {
 
-            adminClassPasswordToggle.textContent =
-                "👁";
+        adminPasswordToggle.classList.toggle(
+            "is-visible",
+            !showing
+        );
 
-        }
+
+        adminPasswordToggle.setAttribute(
+            "aria-label",
+            showing
+                ? "Show password"
+                : "Hide password"
+        );
+
+
+        adminPasswordToggle.setAttribute(
+            "title",
+            showing
+                ? "Show password"
+                : "Hide password"
+        );
+
+
+        adminPasswordToggle.setAttribute(
+            "aria-pressed",
+            showing
+                ? "false"
+                : "true"
+        );
 
     }
 
@@ -1586,9 +1624,9 @@ async function confirmDeleteClass() {
 
 
     const password =
-        adminClassDeletePassword
-            ? adminClassDeletePassword.value.trim()
-            : "";
+    adminDeletePassword
+        ? adminDeletePassword.value.trim()
+        : "";
 
 
     if (!password) {
@@ -1598,9 +1636,9 @@ async function confirmDeleteClass() {
             "error"
         );
 
-        if (adminClassDeletePassword) {
+        if (adminDeletePassword) {
 
-            adminClassDeletePassword.focus();
+            adminDeletePassword.focus();
 
         }
 
@@ -1693,9 +1731,9 @@ async function confirmDeleteClass() {
         );
 
 
-        if (adminClassDeletePassword) {
+        if (adminDeletePassword) {
 
-            adminClassDeletePassword.select();
+            adminDeletePassword.select();
 
         }
 
@@ -2186,8 +2224,24 @@ async function openClassModal() {
 
     if (togglePassword) {
 
-        togglePassword.textContent =
-            "👁";
+        togglePassword.classList.remove(
+            "is-visible"
+        );
+
+        togglePassword.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        togglePassword.setAttribute(
+            "title",
+            "Show password"
+        );
+
+        togglePassword.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
     }
 
@@ -2262,8 +2316,24 @@ function closeClassModal() {
 
     if (togglePassword) {
 
-        togglePassword.textContent =
-            "👁";
+        togglePassword.classList.remove(
+            "is-visible"
+        );
+
+        togglePassword.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        togglePassword.setAttribute(
+            "title",
+            "Show password"
+        );
+
+        togglePassword.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
     }
 
@@ -2282,7 +2352,7 @@ function closeClassModal() {
 
 
 /* =========================================================
-   PASSWORD TOGGLE
+   TEACHER PASSWORD TOGGLE
 ========================================================= */
 
 function toggleTeacherPassword() {
@@ -2292,36 +2362,46 @@ function toggleTeacherPassword() {
     }
 
 
-    if (
-        teacherPassword.type ===
-        "password"
-    ) {
-
-        teacherPassword.type =
-            "text";
+    const showing =
+        teacherPassword.type === "text";
 
 
-        if (togglePassword) {
-
-            togglePassword.textContent =
-                "🙈";
-
-        }
-
-    }
-
-    else {
-
-        teacherPassword.type =
-            "password";
+    teacherPassword.type =
+        showing
+            ? "password"
+            : "text";
 
 
-        if (togglePassword) {
+    if (togglePassword) {
 
-            togglePassword.textContent =
-                "👁";
+        togglePassword.classList.toggle(
+            "is-visible",
+            !showing
+        );
 
-        }
+
+        togglePassword.setAttribute(
+            "aria-label",
+            showing
+                ? "Show password"
+                : "Hide password"
+        );
+
+
+        togglePassword.setAttribute(
+            "title",
+            showing
+                ? "Show password"
+                : "Hide password"
+        );
+
+
+        togglePassword.setAttribute(
+            "aria-pressed",
+            showing
+                ? "false"
+                : "true"
+        );
 
     }
 

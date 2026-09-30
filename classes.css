@@ -1061,28 +1061,32 @@
 
 
 /* =========================================================
-   PASSWORD
+   PASSWORD SHOW / HIDE
 ========================================================= */
 
-.password-field{
+.admin-password-wrapper{
 
   position:relative;
 
-}
-
-.password-field input{
-
-  padding-right:48px;
+  width:100%;
 
 }
 
-.password-field button{
+.admin-password-wrapper input{
+
+  width:100%;
+
+  padding-right:52px;
+
+}
+
+.password-toggle{
 
   position:absolute;
 
   top:50%;
 
-  right:7px;
+  right:8px;
 
   width:36px;
 
@@ -1093,6 +1097,10 @@
   align-items:center;
 
   justify-content:center;
+
+  padding:0;
+
+  margin:0;
 
   transform:translateY(-50%);
 
@@ -1106,15 +1114,49 @@
 
   cursor:pointer;
 
-  font-size:17px;
-
 }
 
-.password-field button:hover{
+.password-toggle:hover{
 
   background:#f4f2ee;
 
   color:var(--maroon);
+
+}
+
+.password-toggle:focus-visible{
+
+  outline:3px solid #650d2230;
+
+  outline-offset:2px;
+
+}
+
+.eye-icon{
+
+  width:20px;
+
+  height:20px;
+
+  display:block;
+
+}
+
+.eye-closed{
+
+  display:none;
+
+}
+
+.password-toggle.is-visible .eye-open{
+
+  display:none;
+
+}
+
+.password-toggle.is-visible .eye-closed{
+
+  display:block;
 
 }
 
@@ -1384,29 +1426,32 @@
 
   .classes-intro{
 
-    margin-bottom:18px;
+    margin:18px;
 
     padding:18px;
 
     border-radius:12px;
 
-    .classes-intro{
-  margin:18px;
-}
+  }
 
-.classes-toolbar{
-  margin:0 18px 20px;
-}
+  .classes-toolbar{
 
-.classes-grid{
-  margin:0 18px 18px;
-}
+    margin:0 18px 20px;
 
-#emptyState,
-#completeState{
-  width:calc(100% - 36px);
-  margin:0 18px;
-}
+  }
+
+  .classes-grid{
+
+    margin:0 18px 18px;
+
+  }
+
+  #emptyState,
+  #completeState{
+
+    width:calc(100% - 36px);
+
+    margin:0 18px;
 
   }
 

@@ -15,10 +15,16 @@ const MAX_CLASSES = 4;
 
 const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
 
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
 let db = null;
 
-let teachers = [];
 let classes = [];
+
+let teachers = [];
 
 let selectedDeleteClassId = null;
 
@@ -29,22 +35,31 @@ let dom = {};
    START
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-  startClassesPage();
-});
+document.addEventListener(
+  "DOMContentLoaded",
+  startClassesPage
+);
 
 
 async function startClassesPage() {
 
-  console.log("FCA Classes: starting...");
+  console.log(
+    "FCA Classes: starting..."
+  );
 
   setupDOM();
+
   setupEvents();
+
+
+  /* -------------------------------------------------------
+     CHECK SUPABASE
+  ------------------------------------------------------- */
 
   if (!window.fcaSupabase) {
 
     console.error(
-      "FCA Classes: window.fcaSupabase was not found."
+      "FCA Classes: window.fcaSupabase not found."
     );
 
     showPageError(
@@ -54,21 +69,32 @@ async function startClassesPage() {
     return;
   }
 
+
   db = window.fcaSupabase;
 
-  console.log("FCA Classes: Supabase client found.");
+
+  console.log(
+    "FCA Classes: Supabase client found."
+  );
+
+
+  /* -------------------------------------------------------
+     LOAD CLASSES
+  ------------------------------------------------------- */
 
   await loadClasses();
 }
 
 
 /* =========================================================
-   DOM
+   DOM ELEMENTS
 ========================================================= */
 
 function setupDOM() {
 
   dom = {
+
+    /* PAGE */
 
     classCount:
       document.getElementById("classCount"),
@@ -155,37 +181,45 @@ function setupDOM() {
 
 
 /* =========================================================
-   EVENTS
+   EVENT LISTENERS
 ========================================================= */
 
 function setupEvents() {
 
-  /* CREATE CLASS */
+
+  /* -------------------------------------------------------
+     CREATE CLASS
+  ------------------------------------------------------- */
 
   dom.createClassButton?.addEventListener(
     "click",
     openClassModal
   );
 
+
   dom.addClassButton?.addEventListener(
     "click",
     openClassModal
   );
+
 
   dom.closeModal?.addEventListener(
     "click",
     closeClassModal
   );
 
+
   dom.cancelModal?.addEventListener(
     "click",
     closeClassModal
   );
 
+
   dom.confirmCreateClass?.addEventListener(
     "click",
     createClass
   );
+
 
   dom.togglePassword?.addEventListener(
     "click",
@@ -193,22 +227,27 @@ function setupEvents() {
   );
 
 
-  /* DELETE CLASS */
+  /* -------------------------------------------------------
+     DELETE CLASS
+  ------------------------------------------------------- */
 
   dom.closeDeleteModal?.addEventListener(
     "click",
     closeDeleteClassModal
   );
 
+
   dom.deleteClassCancelBtn?.addEventListener(
     "click",
     closeDeleteClassModal
   );
 
+
   dom.deleteClassConfirmBtn?.addEventListener(
     "click",
     confirmDeleteClass
   );
+
 
   dom.adminPasswordToggle?.addEventListener(
     "click",
@@ -216,17 +255,20 @@ function setupEvents() {
   );
 
 
-  /* ENTER KEY */
+  /* -------------------------------------------------------
+     ENTER KEY
+  ------------------------------------------------------- */
 
   dom.teacherPassword?.addEventListener(
     "keydown",
     event => {
 
       if (event.key === "Enter") {
+
         event.preventDefault();
+
         createClass();
       }
-
     }
   );
 
@@ -236,24 +278,27 @@ function setupEvents() {
     event => {
 
       if (event.key === "Enter") {
+
         event.preventDefault();
+
         confirmDeleteClass();
       }
-
     }
   );
 
 
-  /* OVERLAY CLOSE */
+  /* -------------------------------------------------------
+     CLICK OUTSIDE MODALS
+  ------------------------------------------------------- */
 
   dom.classModal?.addEventListener(
     "click",
     event => {
 
       if (event.target === dom.classModal) {
+
         closeClassModal();
       }
-
     }
   );
 
@@ -262,15 +307,20 @@ function setupEvents() {
     "click",
     event => {
 
-      if (event.target === dom.deleteClassModal) {
+      if (
+        event.target ===
+        dom.deleteClassModal
+      ) {
+
         closeDeleteClassModal();
       }
-
     }
   );
 
 
-  /* ESCAPE */
+  /* -------------------------------------------------------
+     ESCAPE
+  ------------------------------------------------------- */
 
   document.addEventListener(
     "keydown",
@@ -280,20 +330,23 @@ function setupEvents() {
         return;
       }
 
+
       if (
         dom.classModal &&
         !dom.classModal.hidden
       ) {
+
         closeClassModal();
       }
+
 
       if (
         dom.deleteClassModal &&
         !dom.deleteClassModal.hidden
       ) {
+
         closeDeleteClassModal();
       }
-
     }
   );
 }
@@ -309,7 +362,11 @@ async function loadClasses() {
     return;
   }
 
-  console.log("FCA Classes: loading classes...");
+
+  console.log(
+    "FCA Classes: loading classes..."
+  );
+
 
   try {
 
@@ -318,18 +375,15 @@ async function loadClasses() {
       error
     } = await db
       .from("classes")
-      .select(`
-        id,
-        class_name,
-        class_code,
-        description,
-        created_at,
-        form_number,
-        created_by
-      `)
-      .order("form_number", {
-        ascending: true
-      });
+      .select(
+        "id, class_name, class_code, description, created_at, form_number, created_by"
+      )
+      .order(
+        "form_number",
+        {
+          ascending: true
+        }
+      );
 
 
     if (error) {
@@ -347,23 +401,28 @@ async function loadClasses() {
     }
 
 
-    classes = Array.isArray(data)
-      ? data
-      : [];
+    classes =
+      Array.isArray(data)
+        ? data
+        : [];
 
 
     console.log(
-      "FCA Classes loaded:",
-      classes
+      "FCA Classes found:",
+      classes.length
     );
+
+
+    console.table(classes);
 
 
     renderClasses();
 
+
   } catch (error) {
 
     console.error(
-      "FCA Classes unexpected error:",
+      "FCA Classes load exception:",
       error
     );
 
@@ -380,17 +439,24 @@ async function loadClasses() {
 
 function renderClasses() {
 
-  const count = classes.length;
+  const count =
+    classes.length;
 
 
-  /* COUNT */
+  /* -------------------------------------------------------
+     COUNT
+  ------------------------------------------------------- */
 
   if (dom.classCount) {
-    dom.classCount.textContent = count;
+
+    dom.classCount.textContent =
+      count;
   }
 
 
-  /* DESCRIPTION */
+  /* -------------------------------------------------------
+     DESCRIPTION
+  ------------------------------------------------------- */
 
   if (dom.classDescription) {
 
@@ -399,7 +465,7 @@ function renderClasses() {
       dom.classDescription.textContent =
         "No classes have been created yet.";
 
-    } else if (count === MAX_CLASSES) {
+    } else if (count >= MAX_CLASSES) {
 
       dom.classDescription.textContent =
         "All four FCA classes have been created.";
@@ -412,23 +478,32 @@ function renderClasses() {
   }
 
 
-  /* CONTAINER */
+  /* -------------------------------------------------------
+     CLASS CONTAINER
+  ------------------------------------------------------- */
 
   if (dom.classesContainer) {
 
     dom.classesContainer.innerHTML = "";
 
-    classes.forEach(classItem => {
 
-      const card = createClassCard(classItem);
+    classes.forEach(
+      classItem => {
 
-      dom.classesContainer.appendChild(card);
+        const card =
+          createClassCard(classItem);
 
-    });
+        dom.classesContainer.appendChild(
+          card
+        );
+      }
+    );
   }
 
 
-  /* EMPTY STATE */
+  /* -------------------------------------------------------
+     EMPTY STATE
+  ------------------------------------------------------- */
 
   if (dom.emptyState) {
 
@@ -437,7 +512,9 @@ function renderClasses() {
   }
 
 
-  /* COMPLETE STATE */
+  /* -------------------------------------------------------
+     COMPLETE STATE
+  ------------------------------------------------------- */
 
   if (dom.completeState) {
 
@@ -446,7 +523,9 @@ function renderClasses() {
   }
 
 
-  /* ADD BUTTON */
+  /* -------------------------------------------------------
+     ADD CLASS BUTTON
+  ------------------------------------------------------- */
 
   if (dom.addClassButton) {
 
@@ -462,16 +541,17 @@ function renderClasses() {
 
 function createClassCard(classItem) {
 
-  const card = document.createElement("article");
+  const card =
+    document.createElement("article");
 
-  card.className = "class-card";
 
-  const formNumber =
-    Number(classItem.form_number) || 0;
+  card.className =
+    "class-card";
+
 
   const classCode =
     classItem.class_code ||
-    `FCA-F${formNumber}`;
+    `FCA-F${classItem.form_number}`;
 
 
   card.innerHTML = `
@@ -488,21 +568,21 @@ function createClassCard(classItem) {
 
     </div>
 
+
     <div class="class-card-actions">
 
       <button
         type="button"
         class="view-class-button"
-        data-class-id="${escapeHtml(classItem.id)}"
       >
         <span class="button-icon">→</span>
         <span>View Students</span>
       </button>
 
+
       <button
         type="button"
         class="delete-class-button"
-        data-class-id="${escapeHtml(classItem.id)}"
       >
         <span class="button-icon">×</span>
         <span>Delete Class</span>
@@ -512,32 +592,44 @@ function createClassCard(classItem) {
   `;
 
 
-  /* VIEW STUDENTS */
+  /* -------------------------------------------------------
+     VIEW STUDENTS
+  ------------------------------------------------------- */
 
   const viewButton =
-    card.querySelector(".view-class-button");
+    card.querySelector(
+      ".view-class-button"
+    );
+
 
   viewButton?.addEventListener(
     "click",
     () => {
 
-      openClassStudents(classItem);
-
+      openClassStudents(
+        classItem
+      );
     }
   );
 
 
-  /* DELETE */
+  /* -------------------------------------------------------
+     DELETE
+  ------------------------------------------------------- */
 
   const deleteButton =
-    card.querySelector(".delete-class-button");
+    card.querySelector(
+      ".delete-class-button"
+    );
+
 
   deleteButton?.addEventListener(
     "click",
     () => {
 
-      openDeleteClassModal(classItem);
-
+      openDeleteClassModal(
+        classItem
+      );
     }
   );
 
@@ -550,10 +642,15 @@ function createClassCard(classItem) {
    VIEW STUDENTS
 ========================================================= */
 
-function openClassStudents(classItem) {
+function openClassStudents(
+  classItem
+) {
 
   const formNumber =
-    Number(classItem.form_number);
+    Number(
+      classItem.form_number
+    );
+
 
   if (!formNumber) {
 
@@ -564,13 +661,14 @@ function openClassStudents(classItem) {
     return;
   }
 
+
   window.location.href =
     `students.html?form=${encodeURIComponent(formNumber)}`;
 }
 
 
 /* =========================================================
-   CREATE CLASS MODAL
+   OPEN CREATE CLASS MODAL
 ========================================================= */
 
 async function openClassModal() {
@@ -611,9 +709,12 @@ async function openClassModal() {
 
   if (dom.classModal) {
 
-    dom.classModal.hidden = false;
+    dom.classModal.hidden =
+      false;
 
-    dom.classModal.classList.add("show");
+    dom.classModal.classList.add(
+      "show"
+    );
   }
 
 
@@ -621,33 +722,59 @@ async function openClassModal() {
 }
 
 
+/* =========================================================
+   CLOSE CREATE MODAL
+========================================================= */
+
 function closeClassModal() {
 
   if (!dom.classModal) {
     return;
   }
 
-  dom.classModal.classList.remove("show");
 
-  dom.classModal.hidden = true;
+  dom.classModal.classList.remove(
+    "show"
+  );
+
+
+  dom.classModal.hidden =
+    true;
 }
 
+
+/* =========================================================
+   RESET CREATE MODAL
+========================================================= */
 
 function resetCreateModal() {
 
   if (dom.teacherSelect) {
-    dom.teacherSelect.value = "";
+
+    dom.teacherSelect.value =
+      "";
   }
+
 
   if (dom.teacherPassword) {
-    dom.teacherPassword.value = "";
-    dom.teacherPassword.type = "password";
+
+    dom.teacherPassword.value =
+      "";
+
+    dom.teacherPassword.type =
+      "password";
   }
 
+
   if (dom.modalMessage) {
-    dom.modalMessage.textContent = "";
-    dom.modalMessage.className = "modal-message";
+
+    dom.modalMessage.textContent =
+      "";
+
+    dom.modalMessage.className =
+      "modal-message";
   }
+
 
   setPasswordEye(
     dom.togglePassword,
@@ -675,7 +802,8 @@ async function loadTeachers() {
       </option>
     `;
 
-    dom.teacherSelect.disabled = true;
+    dom.teacherSelect.disabled =
+      true;
   }
 
 
@@ -687,17 +815,21 @@ async function loadTeachers() {
     } = await db
       .from("teachers")
       .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
     if (error) {
 
       console.error(
-        "FCA Teachers load error:",
+        "Teacher load error:",
         error
       );
+
 
       if (dom.teacherSelect) {
 
@@ -706,21 +838,29 @@ async function loadTeachers() {
             Unable to load teachers
           </option>
         `;
-
       }
+
 
       showModalMessage(
         "error",
         `Could not load teachers: ${error.message}`
       );
 
+
       return;
     }
 
 
-    teachers = Array.isArray(data)
-      ? data
-      : [];
+    teachers =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+    console.log(
+      "Teachers found:",
+      teachers.length
+    );
 
 
     populateTeacherSelect();
@@ -729,26 +869,30 @@ async function loadTeachers() {
   } catch (error) {
 
     console.error(
-      "Teacher loading error:",
+      "Teacher loading exception:",
       error
     );
+
 
     showModalMessage(
       "error",
       `Could not load teachers: ${error.message}`
     );
 
+
   } finally {
 
     if (dom.teacherSelect) {
-      dom.teacherSelect.disabled = false;
+
+      dom.teacherSelect.disabled =
+        false;
     }
   }
 }
 
 
 /* =========================================================
-   TEACHER DROPDOWN
+   POPULATE TEACHER SELECT
 ========================================================= */
 
 function populateTeacherSelect() {
@@ -758,53 +902,65 @@ function populateTeacherSelect() {
   }
 
 
-  dom.teacherSelect.innerHTML = "";
+  dom.teacherSelect.innerHTML =
+    "";
 
 
   const firstOption =
-    document.createElement("option");
+    document.createElement(
+      "option"
+    );
 
-  firstOption.value = "";
+
+  firstOption.value =
+    "";
+
 
   firstOption.textContent =
     teachers.length
       ? "Select a teacher"
       : "No teachers available";
 
-  dom.teacherSelect.appendChild(firstOption);
+
+  dom.teacherSelect.appendChild(
+    firstOption
+  );
 
 
-  teachers.forEach(teacher => {
+  teachers.forEach(
+    teacher => {
 
-    const option =
-      document.createElement("option");
-
-    option.value =
-      String(teacher.id);
-
-    const firstName =
-      teacher.first_name || "";
-
-    const lastName =
-      teacher.last_name || "";
-
-    const teacherNumber =
-      teacher.teacher_number || "";
+      const option =
+        document.createElement(
+          "option"
+        );
 
 
-    const fullName =
-      `${firstName} ${lastName}`.trim();
+      option.value =
+        String(teacher.id);
 
 
-    option.textContent =
-      teacherNumber
-        ? `${fullName} — ${teacherNumber}`
-        : fullName || "Teacher";
+      const fullName =
+        `${teacher.first_name || ""} ${teacher.last_name || ""}`
+          .trim();
 
 
-    dom.teacherSelect.appendChild(option);
+      const teacherNumber =
+        teacher.teacher_number ||
+        "";
 
-  });
+
+      option.textContent =
+        teacherNumber
+          ? `${fullName} — ${teacherNumber}`
+          : fullName || "Teacher";
+
+
+      dom.teacherSelect.appendChild(
+        option
+      );
+    }
+  );
 }
 
 
@@ -847,6 +1003,10 @@ async function createClass() {
   const teacherPassword =
     dom.teacherPassword?.value.trim();
 
+
+  /* -------------------------------------------------------
+     VALIDATE TEACHER
+  ------------------------------------------------------- */
 
   if (!teacherId) {
 
@@ -897,7 +1057,8 @@ async function createClass() {
 
   if (confirmButton) {
 
-    confirmButton.disabled = true;
+    confirmButton.disabled =
+      true;
 
     confirmButton.textContent =
       "Creating...";
@@ -906,15 +1067,9 @@ async function createClass() {
 
   try {
 
-    /* =====================================================
-       VERIFY TEACHER PASSWORD
-    ===================================================== */
-
-    showModalMessage(
-      "info",
-      "Verifying teacher password..."
-    );
-
+    /* -----------------------------------------------------
+       GET STORED TEACHER PASSWORD
+    ----------------------------------------------------- */
 
     const storedHash =
       teacher.password_hash ||
@@ -928,6 +1083,16 @@ async function createClass() {
         "This teacher does not have a stored password."
       );
     }
+
+
+    /* -----------------------------------------------------
+       HASH ENTERED PASSWORD
+    ----------------------------------------------------- */
+
+    showModalMessage(
+      "info",
+      "Verifying teacher password..."
+    );
 
 
     const enteredHash =
@@ -947,9 +1112,9 @@ async function createClass() {
     }
 
 
-    /* =====================================================
-       CHECK FOR DUPLICATE FORM
-    ===================================================== */
+    /* -----------------------------------------------------
+       CHECK FORM DOES NOT ALREADY EXIST
+    ----------------------------------------------------- */
 
     const {
       data: existingClass,
@@ -957,7 +1122,10 @@ async function createClass() {
     } = await db
       .from("classes")
       .select("id")
-      .eq("form_number", nextForm)
+      .eq(
+        "form_number",
+        nextForm
+      )
       .limit(1);
 
 
@@ -980,9 +1148,9 @@ async function createClass() {
     }
 
 
-    /* =====================================================
-       CREATE CLASS
-    ===================================================== */
+    /* -----------------------------------------------------
+       INSERT CLASS
+    ----------------------------------------------------- */
 
     showModalMessage(
       "info",
@@ -997,11 +1165,20 @@ async function createClass() {
       .from("classes")
       .insert([
         {
-          class_name: `Form ${nextForm}`,
-          class_code: `FCA-F${nextForm}`,
-          description: `FCA Form ${nextForm}`,
-          form_number: nextForm,
-          created_by: teacher.id
+          class_name:
+            `Form ${nextForm}`,
+
+          class_code:
+            `FCA-F${nextForm}`,
+
+          description:
+            `FCA Form ${nextForm}`,
+
+          form_number:
+            nextForm,
+
+          created_by:
+            teacher.id
         }
       ])
       .select()
@@ -1019,15 +1196,22 @@ async function createClass() {
     if (!createdClass) {
 
       throw new Error(
-        "Class creation returned no data."
+        "Class was created but no record was returned."
       );
     }
 
 
     console.log(
-      "Class created:",
+      "Created class:",
       createdClass
     );
+
+
+    /* -----------------------------------------------------
+       RELOAD
+    ----------------------------------------------------- */
+
+    await loadClasses();
 
 
     showModalMessage(
@@ -1036,18 +1220,10 @@ async function createClass() {
     );
 
 
-    /* =====================================================
-       RELOAD CLASSES
-    ===================================================== */
-
-    await loadClasses();
-
-
-    setTimeout(() => {
-
-      closeClassModal();
-
-    }, 700);
+    setTimeout(
+      closeClassModal,
+      700
+    );
 
 
   } catch (error) {
@@ -1057,17 +1233,20 @@ async function createClass() {
       error
     );
 
+
     showModalMessage(
       "error",
       error.message ||
       "Failed to create class."
     );
 
+
   } finally {
 
     if (confirmButton) {
 
-      confirmButton.disabled = false;
+      confirmButton.disabled =
+        false;
 
       confirmButton.textContent =
         "Create Class";
@@ -1077,10 +1256,12 @@ async function createClass() {
 
 
 /* =========================================================
-   DELETE CLASS MODAL
+   OPEN DELETE MODAL
 ========================================================= */
 
-function openDeleteClassModal(classItem) {
+function openDeleteClassModal(
+  classItem
+) {
 
   if (!classItem) {
     return;
@@ -1092,7 +1273,9 @@ function openDeleteClassModal(classItem) {
 
 
   const formNumber =
-    Number(classItem.form_number) || 0;
+    Number(
+      classItem.form_number
+    );
 
 
   const formName =
@@ -1109,13 +1292,14 @@ function openDeleteClassModal(classItem) {
   if (dom.deleteClassWarning) {
 
     dom.deleteClassWarning.textContent =
-      `Deleting ${formName} will also remove its students and their results. This action cannot be undone.`;
+      `Deleting ${formName} will also delete all students and results belonging to this class. This action cannot be undone.`;
   }
 
 
   if (dom.adminDeletePassword) {
 
-    dom.adminDeletePassword.value = "";
+    dom.adminDeletePassword.value =
+      "";
 
     dom.adminDeletePassword.type =
       "password";
@@ -1130,7 +1314,8 @@ function openDeleteClassModal(classItem) {
 
   if (dom.classDeleteMessage) {
 
-    dom.classDeleteMessage.textContent = "";
+    dom.classDeleteMessage.textContent =
+      "";
 
     dom.classDeleteMessage.className =
       "modal-message";
@@ -1139,7 +1324,8 @@ function openDeleteClassModal(classItem) {
 
   if (dom.deleteClassModal) {
 
-    dom.deleteClassModal.hidden = false;
+    dom.deleteClassModal.hidden =
+      false;
 
     dom.deleteClassModal.classList.add(
       "show"
@@ -1147,6 +1333,10 @@ function openDeleteClassModal(classItem) {
   }
 }
 
+
+/* =========================================================
+   CLOSE DELETE MODAL
+========================================================= */
 
 function closeDeleteClassModal() {
 
@@ -1159,14 +1349,19 @@ function closeDeleteClassModal() {
     "show"
   );
 
-  dom.deleteClassModal.hidden = true;
+
+  dom.deleteClassModal.hidden =
+    true;
 
 
-  selectedDeleteClassId = null;
+  selectedDeleteClassId =
+    null;
 
 
   if (dom.adminDeletePassword) {
-    dom.adminDeletePassword.value = "";
+
+    dom.adminDeletePassword.value =
+      "";
   }
 }
 
@@ -1236,18 +1431,9 @@ async function confirmDeleteClass() {
 
 
   const formNumber =
-    Number(selectedClass.form_number);
-
-
-  if (!formNumber) {
-
-    showDeleteMessage(
-      "error",
-      "This class has an invalid form number."
+    Number(
+      selectedClass.form_number
     );
-
-    return;
-  }
 
 
   const formName =
@@ -1260,7 +1446,8 @@ async function confirmDeleteClass() {
 
   if (deleteButton) {
 
-    deleteButton.disabled = true;
+    deleteButton.disabled =
+      true;
 
     deleteButton.textContent =
       "Deleting...";
@@ -1270,7 +1457,7 @@ async function confirmDeleteClass() {
   try {
 
     /* =====================================================
-       1. VERIFY ADMIN PASSWORD
+       1. VERIFY ADMIN
     ===================================================== */
 
     showDeleteMessage(
@@ -1279,13 +1466,13 @@ async function confirmDeleteClass() {
     );
 
 
-    const verified =
+    const adminVerified =
       await verifyAdministratorPassword(
         password
       );
 
 
-    if (!verified) {
+    if (!adminVerified) {
 
       throw new Error(
         "The administrator password is incorrect."
@@ -1294,11 +1481,9 @@ async function confirmDeleteClass() {
 
 
     /* =====================================================
-       2. FIND STUDENTS
+       2. FIND STUDENTS BY CLASS_ID
 
-       IMPORTANT:
-       Only "id" is selected.
-       There is NO student_number here.
+       THIS MATCHES YOUR REAL SUPABASE SCHEMA.
     ===================================================== */
 
     showDeleteMessage(
@@ -1313,7 +1498,10 @@ async function confirmDeleteClass() {
     } = await db
       .from("students")
       .select("id")
-      .eq("class", formName);
+      .eq(
+        "class_id",
+        selectedDeleteClassId
+      );
 
 
     if (studentsError) {
@@ -1326,12 +1514,15 @@ async function confirmDeleteClass() {
 
     const studentIds =
       (students || [])
-        .map(student => student.id)
+        .map(
+          student =>
+            student.id
+        )
         .filter(Boolean);
 
 
     console.log(
-      `Students found in ${formName}:`,
+      `${formName} students:`,
       studentIds
     );
 
@@ -1340,7 +1531,9 @@ async function confirmDeleteClass() {
        3. DELETE RESULTS
     ===================================================== */
 
-    if (studentIds.length > 0) {
+    if (
+      studentIds.length > 0
+    ) {
 
       showDeleteMessage(
         "info",
@@ -1362,7 +1555,7 @@ async function confirmDeleteClass() {
       if (resultsError) {
 
         throw new Error(
-          `Could not delete student results: ${resultsError.message}`
+          `Could not delete results: ${resultsError.message}`
         );
       }
     }
@@ -1372,7 +1565,9 @@ async function confirmDeleteClass() {
        4. DELETE STUDENTS
     ===================================================== */
 
-    if (studentIds.length > 0) {
+    if (
+      studentIds.length > 0
+    ) {
 
       showDeleteMessage(
         "info",
@@ -1401,7 +1596,43 @@ async function confirmDeleteClass() {
 
 
     /* =====================================================
-       5. DELETE CLASS
+       5. VERIFY STUDENTS ARE GONE
+    ===================================================== */
+
+    const {
+      data: remainingStudents,
+      error: verifyStudentsError
+    } = await db
+      .from("students")
+      .select("id")
+      .eq(
+        "class_id",
+        selectedDeleteClassId
+      )
+      .limit(1);
+
+
+    if (verifyStudentsError) {
+
+      throw new Error(
+        `Could not verify student deletion: ${verifyStudentsError.message}`
+      );
+    }
+
+
+    if (
+      remainingStudents &&
+      remainingStudents.length > 0
+    ) {
+
+      throw new Error(
+        `Students still exist in ${formName}. The database may be blocking their deletion.`
+      );
+    }
+
+
+    /* =====================================================
+       6. DELETE CLASS
     ===================================================== */
 
     showDeleteMessage(
@@ -1437,13 +1668,49 @@ async function confirmDeleteClass() {
     ) {
 
       throw new Error(
-        "The class was not deleted. Check the Supabase RLS policy for the classes table."
+        "The class was not deleted. Check the Supabase DELETE policy for the classes table."
       );
     }
 
 
     /* =====================================================
-       6. SUCCESS
+       7. VERIFY CLASS DELETION
+    ===================================================== */
+
+    const {
+      data: remainingClass,
+      error: verifyClassError
+    } = await db
+      .from("classes")
+      .select("id")
+      .eq(
+        "id",
+        selectedDeleteClassId
+      )
+      .limit(1);
+
+
+    if (verifyClassError) {
+
+      throw new Error(
+        `Could not verify class deletion: ${verifyClassError.message}`
+      );
+    }
+
+
+    if (
+      remainingClass &&
+      remainingClass.length > 0
+    ) {
+
+      throw new Error(
+        `${formName} still exists in the database.`
+      );
+    }
+
+
+    /* =====================================================
+       8. UPDATE PAGE
     ===================================================== */
 
     classes =
@@ -1463,13 +1730,16 @@ async function confirmDeleteClass() {
     );
 
 
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      closeDeleteClassModal();
+        closeDeleteClassModal();
 
-      loadClasses();
+        loadClasses();
 
-    }, 800);
+      },
+      800
+    );
 
 
   } catch (error) {
@@ -1490,7 +1760,8 @@ async function confirmDeleteClass() {
 
     if (deleteButton) {
 
-      deleteButton.disabled = false;
+      deleteButton.disabled =
+        false;
 
       deleteButton.textContent =
         "Delete Class";
@@ -1500,10 +1771,12 @@ async function confirmDeleteClass() {
 
 
 /* =========================================================
-   ADMIN PASSWORD VERIFICATION
+   ADMIN AUTHENTICATION
 ========================================================= */
 
-async function verifyAdministratorPassword(password) {
+async function verifyAdministratorPassword(
+  password
+) {
 
   if (!db) {
     return false;
@@ -1529,7 +1802,7 @@ async function verifyAdministratorPassword(password) {
     if (error) {
 
       console.error(
-        "Administrator authentication failed:",
+        "Admin authentication error:",
         error
       );
 
@@ -1543,7 +1816,7 @@ async function verifyAdministratorPassword(password) {
   } catch (error) {
 
     console.error(
-      "Administrator verification error:",
+      "Admin verification exception:",
       error
     );
 
@@ -1553,19 +1826,23 @@ async function verifyAdministratorPassword(password) {
 
 
 /* =========================================================
-   GET NEXT FORM
+   GET NEXT FORM NUMBER
 ========================================================= */
 
 function getNextFormNumber() {
 
   const existingForms =
     classes
-      .map(item =>
-        Number(item.form_number)
+      .map(
+        item =>
+          Number(
+            item.form_number
+          )
       )
-      .filter(number =>
-        number >= 1 &&
-        number <= MAX_CLASSES
+      .filter(
+        number =>
+          number >= 1 &&
+          number <= MAX_CLASSES
       );
 
 
@@ -1576,7 +1853,9 @@ function getNextFormNumber() {
   ) {
 
     if (
-      !existingForms.includes(number)
+      !existingForms.includes(
+        number
+      )
     ) {
 
       return number;
@@ -1599,26 +1878,26 @@ function toggleTeacherPassword() {
   }
 
 
-  const isPassword =
+  const visible =
     dom.teacherPassword.type ===
-    "password";
+    "text";
 
 
   dom.teacherPassword.type =
-    isPassword
-      ? "text"
-      : "password";
+    visible
+      ? "password"
+      : "text";
 
 
   setPasswordEye(
     dom.togglePassword,
-    isPassword
+    !visible
   );
 }
 
 
 /* =========================================================
-   ADMIN DELETE PASSWORD TOGGLE
+   ADMIN PASSWORD TOGGLE
 ========================================================= */
 
 function toggleAdminDeletePassword() {
@@ -1628,20 +1907,20 @@ function toggleAdminDeletePassword() {
   }
 
 
-  const isPassword =
+  const visible =
     dom.adminDeletePassword.type ===
-    "password";
+    "text";
 
 
   dom.adminDeletePassword.type =
-    isPassword
-      ? "text"
-      : "password";
+    visible
+      ? "password"
+      : "text";
 
 
   setPasswordEye(
     dom.adminPasswordToggle,
-    isPassword
+    !visible
   );
 }
 
@@ -1664,6 +1943,7 @@ function setPasswordEye(
     button.querySelector(
       ".eye-open"
     );
+
 
   const closedEye =
     button.querySelector(
@@ -1702,14 +1982,18 @@ function setPasswordEye(
    HASH PASSWORD
 ========================================================= */
 
-async function hashPassword(password) {
+async function hashPassword(
+  password
+) {
 
   const encoder =
     new TextEncoder();
 
 
   const data =
-    encoder.encode(password);
+    encoder.encode(
+      password
+    );
 
 
   const hashBuffer =
@@ -1721,7 +2005,9 @@ async function hashPassword(password) {
 
   const hashArray =
     Array.from(
-      new Uint8Array(hashBuffer)
+      new Uint8Array(
+        hashBuffer
+      )
     );
 
 
@@ -1730,14 +2016,17 @@ async function hashPassword(password) {
       byte =>
         byte
           .toString(16)
-          .padStart(2, "0")
+          .padStart(
+            2,
+            "0"
+          )
     )
     .join("");
 }
 
 
 /* =========================================================
-   MODAL MESSAGES
+   CREATE MODAL MESSAGE
 ========================================================= */
 
 function showModalMessage(
@@ -1758,6 +2047,10 @@ function showModalMessage(
     `modal-message ${type}`;
 }
 
+
+/* =========================================================
+   DELETE MODAL MESSAGE
+========================================================= */
 
 function showDeleteMessage(
   type,
@@ -1782,7 +2075,9 @@ function showDeleteMessage(
    PAGE ERROR
 ========================================================= */
 
-function showPageError(message) {
+function showPageError(
+  message
+) {
 
   console.error(
     "FCA Classes:",
@@ -1812,9 +2107,13 @@ function showPageError(message) {
    ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
-  return String(value ?? "")
+  return String(
+    value ?? ""
+  )
     .replace(
       /&/g,
       "&amp;"

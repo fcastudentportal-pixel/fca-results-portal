@@ -1542,52 +1542,289 @@ function toggleAdminDeletePassword() {
 
 async function confirmDeleteClass() {
 
-    if (!db) {
+  if (!db) {
+    showDeleteMessage("error", "Database is not connected.");
+    return;
+  }
 
-        showDeleteMessage(
-            "FCA database is not connected.",
-            "error"
-        );
+  if (!selectedDeleteClassId) {
+    showDeleteMessage("error", "No class has been selected.");
+    return;
+  }
 
-        return;
+  const password = dom.adminDeletePassword?.value.trim();
 
+  if (!password) {
+    showDeleteMessage(
+      "error",
+      "Please enter the administrator password."
+    );
+    dom.adminDeletePassword?.focus();
+    return;
+  }
+
+  const selectedClass = classes.find(
+    item => String(item.id) === String(selectedDeleteClassId)
+  );
+
+  if (!selectedClass) {
+    showDeleteMessage(
+      "error",
+      "The selected class could not be found."
+    );
+    return;
+  }
+
+  const formNumber = Number(selectedClass.form_number);
+
+  if (!formNumber) {
+    showDeleteMessage(
+      "error",
+      "This class does not have a valid form number."
+    );
+    return;
+  }
+
+  const formName = `Form ${formNumber}`;
+
+  const deleteButton = dom.deleteClassConfirmBtn;
+
+  if (deleteButton) {
+    deleteButton.disabled = true;
+    deleteButton.textContent = "Deleting...";
+  }
+
+  try {
+
+    /* =====================================================
+       1. VERIFY ADMINISTRATOR PASSWORD
+    ===================================================== */
+
+    showDeleteMessage(
+      "info",
+      "Verifying administrator password..."
+    );
+
+    const adminVerified = await verifyAdministratorPassword(password);
+
+    if (!adminVerified) {
+      throw new Error(
+        "The administrator password is incorrect."
+      );
     }
 
 
-    if (!selectedDeleteClassId) {
+    /* =====================================================
+       2. FIND STUDENTS IN THIS CLASS
+       
+       IMPORTANT:
+       Do NOT request student_number because that column
+       does not exist in the students table.
+    ===================================================== */
 
-        showDeleteMessage(
-            "No class has been selected.",
-            "error"
+    showDeleteMessage(
+      "info",
+      `Finding students in ${formName}...`
+    );
+
+    const {
+      data: students,
+      error: studentsError
+    } = await db
+      .from("students")
+      .select("id")
+      .eq("class", formName);
+
+    if (studentsError) {
+      throw new Error(
+        `Could not find students belonging to ${formName}: ${studentsError.message}`
+      );
+    }
+
+    const studentIds = (students || [])
+      .map(student => student.id)
+      .filter(Boolean);
+
+
+    /* =====================================================
+       3. DELETE RESULTS BELONGING TO THESE STUDENTS
+    ===================================================== */
+
+    if (studentIds.length > 0) {
+
+      showDeleteMessage(
+        "info",
+        `Deleting results for ${studentIds.length} student(s)...`
+      );
+
+      const {
+        error: resultsError
+      } = await db
+        .from("results")
+        .delete()
+        .in("student_id", studentIds);
+
+      if (resultsError) {
+        throw new Error(
+          `Could not delete student results: ${resultsError.message}`
         );
-
-        return;
-
+      }
     }
 
 
-    const password =
-        adminDeletePassword
-            ? adminDeletePassword.value.trim()
-            : "";
+    /* =====================================================
+       4. DELETE STUDENTS
+    ===================================================== */
 
+    if (studentIds.length > 0) {
 
-    if (!password) {
+      showDeleteMessage(
+        "info",
+        `Deleting ${studentIds.length} student(s)...`
+      );
 
-        showDeleteMessage(
-            "Please enter the administrator password.",
-            "error"
+      const {
+        error: deleteStudentsError
+      } = await db
+        .from("students")
+        .delete()
+        .in("id", studentIds);
+
+      if (deleteStudentsError) {
+        throw new Error(
+          `Could not delete students: ${deleteStudentsError.message}`
         );
-
-        if (adminDeletePassword) {
-
-            adminDeletePassword.focus();
-
-        }
-
-        return;
-
+      }
     }
+
+
+    /* =====================================================
+       5. VERIFY STUDENTS WERE DELETED
+    ===================================================== */
+
+    const {
+      data: remainingStudents,
+      error: verifyStudentsError
+    } = await db
+      .from("students")
+      .select("id")
+      .eq("class", formName)
+      .limit(1);
+
+    if (verifyStudentsError) {
+      throw new Error(
+        `Could not verify student deletion: ${verifyStudentsError.message}`
+      );
+    }
+
+    if (remainingStudents && remainingStudents.length > 0) {
+      throw new Error(
+        `Some students belonging to ${formName} could not be deleted.`
+      );
+    }
+
+
+    /* =====================================================
+       6. DELETE THE CLASS
+    ===================================================== */
+
+    showDeleteMessage(
+      "info",
+      `Deleting ${formName}...`
+    );
+
+    const {
+      data: deletedClass,
+      error: deleteClassError
+    } = await db
+      .from("classes")
+      .delete()
+      .eq("id", selectedDeleteClassId)
+      .select("id");
+
+    if (deleteClassError) {
+      throw new Error(
+        `Could not delete ${formName}: ${deleteClassError.message}`
+      );
+    }
+
+    if (!deletedClass || deletedClass.length === 0) {
+      throw new Error(
+        "The class was not deleted. Supabase returned no deleted record."
+      );
+    }
+
+
+    /* =====================================================
+       7. VERIFY CLASS WAS DELETED
+    ===================================================== */
+
+    const {
+      data: remainingClass,
+      error: verifyClassError
+    } = await db
+      .from("classes")
+      .select("id")
+      .eq("id", selectedDeleteClassId)
+      .limit(1);
+
+    if (verifyClassError) {
+      throw new Error(
+        `Could not verify class deletion: ${verifyClassError.message}`
+      );
+    }
+
+    if (remainingClass && remainingClass.length > 0) {
+      throw new Error(
+        "The class still exists in the database."
+      );
+    }
+
+
+    /* =====================================================
+       8. SUCCESS
+    ===================================================== */
+
+    classes = classes.filter(
+      item =>
+        String(item.id) !== String(selectedDeleteClassId)
+    );
+
+    showDeleteMessage(
+      "success",
+      `${formName} and its students/results were deleted successfully.`
+    );
+
+    setTimeout(() => {
+
+      closeDeleteClassModal();
+
+      selectedDeleteClassId = null;
+
+      loadClasses();
+
+    }, 900);
+
+  } catch (error) {
+
+    console.error(
+      "CLASS DELETE ERROR:",
+      error
+    );
+
+    showDeleteMessage(
+      "error",
+      error.message || "Failed to delete class."
+    );
+
+  } finally {
+
+    if (deleteButton) {
+      deleteButton.disabled = false;
+      deleteButton.textContent = "Delete Class";
+    }
+  }
+}
 
 
     /* =====================================================

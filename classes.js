@@ -13,13 +13,7 @@
 
 const MAX_CLASSES = 4;
 
-/*
-   FCA administrator account.
-
-   This must match the administrator's Supabase Auth email.
-*/
 const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
-
 
 let db = null;
 
@@ -27,291 +21,136 @@ let teachers = [];
 let classes = [];
 
 let selectedDeleteClassId = null;
-let selectedDeleteButton = null;
 
-
-/* =========================================================
-   DOM ELEMENTS
-========================================================= */
-
-let classCount;
-let classDescription;
-let addClassButton;
-let createClassButton;
-let classesContainer;
-let emptyState;
-let completeState;
-
-
-/* CREATE CLASS MODAL */
-
-let classModal;
-let closeModal;
-let cancelModal;
-let confirmCreateClass;
-
-let teacherSelect;
-let teacherPassword;
-let togglePassword;
-let nextClassName;
-let modalMessage;
-
-
-/* DELETE CLASS MODAL */
-
-let deleteClassModal;
-let closeDeleteModal;
-let deleteClassName;
-let deleteClassWarning;
-let adminDeletePassword;
-let adminPasswordToggle;
-let classDeleteMessage;
-let deleteClassCancelBtn;
-let deleteClassConfirmBtn;
+let dom = {};
 
 
 /* =========================================================
    START
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    startClassesPage
-);
+document.addEventListener("DOMContentLoaded", () => {
+  startClassesPage();
+});
 
 
 async function startClassesPage() {
 
-    console.log(
-        "FCA Classes page starting..."
+  console.log("FCA Classes: starting...");
+
+  setupDOM();
+  setupEvents();
+
+  if (!window.fcaSupabase) {
+
+    console.error(
+      "FCA Classes: window.fcaSupabase was not found."
     );
 
-
-    setupDOM();
-
-    setupEvents();
-
-
-    /* =====================================================
-       CHECK SUPABASE
-    ===================================================== */
-
-    if (!window.fcaSupabase) {
-
-        console.error(
-            "FCA: window.fcaSupabase does not exist."
-        );
-
-        return;
-
-    }
-
-
-    db =
-        window.fcaSupabase;
-
-
-    console.log(
-        "FCA Supabase client found."
+    showPageError(
+      "Database connection is not available. Please check config.js."
     );
 
+    return;
+  }
 
-    /* =====================================================
-       CHECK CLASSES TABLE
-    ===================================================== */
+  db = window.fcaSupabase;
 
-    const connected =
-        await checkClassesTable();
+  console.log("FCA Classes: Supabase client found.");
 
-
-    if (!connected) {
-        return;
-    }
-
-
-    /* =====================================================
-       LOAD DATA
-    ===================================================== */
-
-    await loadClasses();
-
-    await loadTeachers();
-
-
-    console.log(
-        "FCA Classes page ready."
-    );
-
+  await loadClasses();
 }
 
 
 /* =========================================================
-   DOM SETUP
+   DOM
 ========================================================= */
 
 function setupDOM() {
 
-    /* =====================================================
-       MAIN PAGE
-    ===================================================== */
+  dom = {
 
-    classCount =
-        document.getElementById(
-            "classCount"
-        );
+    classCount:
+      document.getElementById("classCount"),
 
+    classDescription:
+      document.getElementById("classDescription"),
 
-    classDescription =
-        document.getElementById(
-            "classDescription"
-        );
+    addClassButton:
+      document.getElementById("addClassButton"),
 
+    createClassButton:
+      document.getElementById("createClassButton"),
 
-    addClassButton =
-        document.getElementById(
-            "addClassButton"
-        );
+    classesContainer:
+      document.getElementById("classesContainer"),
 
+    emptyState:
+      document.getElementById("emptyState"),
 
-    createClassButton =
-        document.getElementById(
-            "createClassButton"
-        );
+    completeState:
+      document.getElementById("completeState"),
 
 
-    classesContainer =
-        document.getElementById(
-            "classesContainer"
-        );
+    /* CREATE MODAL */
+
+    classModal:
+      document.getElementById("classModal"),
+
+    closeModal:
+      document.getElementById("closeModal"),
+
+    teacherSelect:
+      document.getElementById("teacherSelect"),
+
+    teacherPassword:
+      document.getElementById("teacherPassword"),
+
+    togglePassword:
+      document.getElementById("togglePassword"),
+
+    nextClassName:
+      document.getElementById("nextClassName"),
+
+    modalMessage:
+      document.getElementById("modalMessage"),
+
+    cancelModal:
+      document.getElementById("cancelModal"),
+
+    confirmCreateClass:
+      document.getElementById("confirmCreateClass"),
 
 
-    emptyState =
-        document.getElementById(
-            "emptyState"
-        );
+    /* DELETE MODAL */
 
+    deleteClassModal:
+      document.getElementById("deleteClassModal"),
 
-    completeState =
-        document.getElementById(
-            "completeState"
-        );
+    closeDeleteModal:
+      document.getElementById("closeDeleteModal"),
 
+    deleteClassName:
+      document.getElementById("deleteClassName"),
 
-    /* =====================================================
-       CREATE CLASS MODAL
-    ===================================================== */
+    deleteClassWarning:
+      document.getElementById("deleteClassWarning"),
 
-    classModal =
-        document.getElementById(
-            "classModal"
-        );
+    adminDeletePassword:
+      document.getElementById("adminDeletePassword"),
 
+    adminPasswordToggle:
+      document.getElementById("adminPasswordToggle"),
 
-    closeModal =
-        document.getElementById(
-            "closeModal"
-        );
+    classDeleteMessage:
+      document.getElementById("classDeleteMessage"),
 
+    deleteClassCancelBtn:
+      document.getElementById("deleteClassCancelBtn"),
 
-    cancelModal =
-        document.getElementById(
-            "cancelModal"
-        );
-
-
-    confirmCreateClass =
-        document.getElementById(
-            "confirmCreateClass"
-        );
-
-
-    teacherSelect =
-        document.getElementById(
-            "teacherSelect"
-        );
-
-
-    teacherPassword =
-        document.getElementById(
-            "teacherPassword"
-        );
-
-
-    togglePassword =
-        document.getElementById(
-            "togglePassword"
-        );
-
-
-    nextClassName =
-        document.getElementById(
-            "nextClassName"
-        );
-
-
-    modalMessage =
-        document.getElementById(
-            "modalMessage"
-        );
-
-
-    /* =====================================================
-       DELETE CLASS MODAL
-    ===================================================== */
-
-    deleteClassModal =
-        document.getElementById(
-            "deleteClassModal"
-        );
-
-
-    closeDeleteModal =
-        document.getElementById(
-            "closeDeleteModal"
-        );
-
-
-    deleteClassName =
-        document.getElementById(
-            "deleteClassName"
-        );
-
-
-    deleteClassWarning =
-        document.getElementById(
-            "deleteClassWarning"
-        );
-
-
-    adminDeletePassword =
-        document.getElementById(
-            "adminDeletePassword"
-        );
-
-
-    adminPasswordToggle =
-        document.getElementById(
-            "adminPasswordToggle"
-        );
-
-
-    classDeleteMessage =
-        document.getElementById(
-            "classDeleteMessage"
-        );
-
-
-    deleteClassCancelBtn =
-        document.getElementById(
-            "deleteClassCancelBtn"
-        );
-
-
-    deleteClassConfirmBtn =
-        document.getElementById(
-            "deleteClassConfirmBtn"
-        );
-
+    deleteClassConfirmBtn:
+      document.getElementById("deleteClassConfirmBtn")
+  };
 }
 
 
@@ -321,313 +160,142 @@ function setupDOM() {
 
 function setupEvents() {
 
-    /* =====================================================
-       CREATE CLASS
-    ===================================================== */
+  /* CREATE CLASS */
 
-    if (createClassButton) {
+  dom.createClassButton?.addEventListener(
+    "click",
+    openClassModal
+  );
 
-        createClassButton.addEventListener(
-            "click",
-            openClassModal
-        );
+  dom.addClassButton?.addEventListener(
+    "click",
+    openClassModal
+  );
 
-    }
+  dom.closeModal?.addEventListener(
+    "click",
+    closeClassModal
+  );
 
+  dom.cancelModal?.addEventListener(
+    "click",
+    closeClassModal
+  );
 
-    if (addClassButton) {
+  dom.confirmCreateClass?.addEventListener(
+    "click",
+    createClass
+  );
 
-        addClassButton.addEventListener(
-            "click",
-            openClassModal
-        );
-
-    }
-
-
-    if (closeModal) {
-
-        closeModal.addEventListener(
-            "click",
-            closeClassModal
-        );
-
-    }
-
-
-    if (cancelModal) {
-
-        cancelModal.addEventListener(
-            "click",
-            closeClassModal
-        );
-
-    }
+  dom.togglePassword?.addEventListener(
+    "click",
+    toggleTeacherPassword
+  );
 
 
-    if (confirmCreateClass) {
+  /* DELETE CLASS */
 
-        confirmCreateClass.addEventListener(
-            "click",
-            createClass
-        );
+  dom.closeDeleteModal?.addEventListener(
+    "click",
+    closeDeleteClassModal
+  );
 
-    }
+  dom.deleteClassCancelBtn?.addEventListener(
+    "click",
+    closeDeleteClassModal
+  );
+
+  dom.deleteClassConfirmBtn?.addEventListener(
+    "click",
+    confirmDeleteClass
+  );
+
+  dom.adminPasswordToggle?.addEventListener(
+    "click",
+    toggleAdminDeletePassword
+  );
 
 
-    if (togglePassword) {
+  /* ENTER KEY */
 
-        togglePassword.addEventListener(
-            "click",
-            toggleTeacherPassword
-        );
+  dom.teacherPassword?.addEventListener(
+    "keydown",
+    event => {
 
-    }
-
-
-    if (teacherPassword) {
-
-        teacherPassword.addEventListener(
-            "keydown",
-            function(event) {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    createClass();
-
-                }
-
-            }
-        );
+      if (event.key === "Enter") {
+        event.preventDefault();
+        createClass();
+      }
 
     }
+  );
 
 
-    if (classModal) {
+  dom.adminDeletePassword?.addEventListener(
+    "keydown",
+    event => {
 
-        classModal.addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target ===
-                    classModal
-                ) {
-
-                    closeClassModal();
-
-                }
-
-            }
-        );
+      if (event.key === "Enter") {
+        event.preventDefault();
+        confirmDeleteClass();
+      }
 
     }
+  );
 
 
-    /* =====================================================
-       DELETE CLASS MODAL
-    ===================================================== */
+  /* OVERLAY CLOSE */
 
-    if (closeDeleteModal) {
+  dom.classModal?.addEventListener(
+    "click",
+    event => {
 
-        closeDeleteModal.addEventListener(
-            "click",
-            closeDeleteClassModal
-        );
-
-    }
-
-
-    if (deleteClassCancelBtn) {
-
-        deleteClassCancelBtn.addEventListener(
-            "click",
-            closeDeleteClassModal
-        );
+      if (event.target === dom.classModal) {
+        closeClassModal();
+      }
 
     }
+  );
 
 
-    if (deleteClassConfirmBtn) {
+  dom.deleteClassModal?.addEventListener(
+    "click",
+    event => {
 
-        deleteClassConfirmBtn.addEventListener(
-            "click",
-            confirmDeleteClass
-        );
-
-    }
-
-
-    if (adminPasswordToggle) {
-
-        adminPasswordToggle.addEventListener(
-            "click",
-            toggleAdminDeletePassword
-        );
+      if (event.target === dom.deleteClassModal) {
+        closeDeleteClassModal();
+      }
 
     }
+  );
 
 
-    if (adminDeletePassword) {
+  /* ESCAPE */
 
-        adminDeletePassword.addEventListener(
-            "keydown",
-            function(event) {
+  document.addEventListener(
+    "keydown",
+    event => {
 
-                if (event.key === "Enter") {
+      if (event.key !== "Escape") {
+        return;
+      }
 
-                    event.preventDefault();
+      if (
+        dom.classModal &&
+        !dom.classModal.hidden
+      ) {
+        closeClassModal();
+      }
 
-                    confirmDeleteClass();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    if (deleteClassModal) {
-
-        deleteClassModal.addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target ===
-                    deleteClassModal
-                ) {
-
-                    closeDeleteClassModal();
-
-                }
-
-            }
-        );
+      if (
+        dom.deleteClassModal &&
+        !dom.deleteClassModal.hidden
+      ) {
+        closeDeleteClassModal();
+      }
 
     }
-
-
-    /* =====================================================
-       ESC KEY
-    ===================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                if (
-                    classModal &&
-                    !classModal.hidden
-                ) {
-
-                    closeClassModal();
-
-                }
-
-
-                if (
-                    deleteClassModal &&
-                    !deleteClassModal.hidden
-                ) {
-
-                    closeDeleteClassModal();
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   DATABASE TEST
-========================================================= */
-
-async function checkClassesTable() {
-
-    try {
-
-        console.log(
-            "Testing FCA classes table..."
-        );
-
-
-        const result =
-            await Promise.race([
-
-                db
-                    .from("classes")
-                    .select("id")
-                    .limit(1),
-
-                new Promise(
-                    function(resolve) {
-
-                        setTimeout(
-                            function() {
-
-                                resolve({
-                                    data: null,
-                                    error: {
-                                        message:
-                                            "Database request timed out."
-                                    }
-                                });
-
-                            },
-                            10000
-                        );
-
-                    }
-                )
-
-            ]);
-
-
-        if (result.error) {
-
-            console.error(
-                "Classes table error:",
-                result.error
-            );
-
-            return false;
-
-        }
-
-
-        console.log(
-            "Classes table is accessible."
-        );
-
-
-        return true;
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "Database test failed:",
-            error
-        );
-
-
-        return false;
-
-    }
-
+  );
 }
 
 
@@ -637,308 +305,72 @@ async function checkClassesTable() {
 
 async function loadClasses() {
 
-    try {
+  if (!db) {
+    return;
+  }
 
-        console.log(
-            "Loading FCA classes..."
-        );
+  console.log("FCA Classes: loading classes...");
 
+  try {
 
-        const {
-            data,
-            error
-        } =
-            await db
-                .from("classes")
-                .select(
-                    "id, class_name, class_code, description, created_at, form_number, created_by"
-                )
-                .order(
-                    "form_number",
-                    {
-                        ascending: true
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Load classes error:",
-                error
-            );
+    const {
+      data,
+      error
+    } = await db
+      .from("classes")
+      .select(`
+        id,
+        class_name,
+        class_code,
+        description,
+        created_at,
+        form_number,
+        created_by
+      `)
+      .order("form_number", {
+        ascending: true
+      });
 
 
-            classes = [];
+    if (error) {
 
-            renderClasses();
+      console.error(
+        "FCA Classes load error:",
+        error
+      );
 
-            return;
+      showPageError(
+        `Could not load classes: ${error.message}`
+      );
 
-        }
-
-
-        classes =
-            Array.isArray(data)
-                ? data
-                : [];
-
-
-        console.log(
-            "Classes loaded:",
-            classes
-        );
-
-
-        renderClasses();
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "Load classes exception:",
-            error
-        );
-
-
-        classes = [];
-
-        renderClasses();
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD TEACHERS
-========================================================= */
-
-async function loadTeachers() {
-
-    try {
-
-        console.log(
-            "Loading FCA teachers..."
-        );
-
-
-        const {
-            data,
-            error
-        } =
-            await db
-                .from("teachers")
-                .select("*");
-
-
-        if (error) {
-
-            console.error(
-                "Teacher loading error:",
-                error
-            );
-
-
-            teachers = [];
-
-            populateTeacherSelect();
-
-            return;
-
-        }
-
-
-        teachers =
-            Array.isArray(data)
-                ? data
-                : [];
-
-
-        console.log(
-            "Teachers loaded:",
-            teachers.length
-        );
-
-
-        populateTeacherSelect();
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "Teacher loading exception:",
-            error
-        );
-
-
-        teachers = [];
-
-        populateTeacherSelect();
-
-    }
-
-}
-
-
-/* =========================================================
-   TEACHER SELECT
-========================================================= */
-
-function populateTeacherSelect() {
-
-    if (!teacherSelect) {
-        return;
+      return;
     }
 
 
-    teacherSelect.innerHTML =
-        "";
+    classes = Array.isArray(data)
+      ? data
+      : [];
 
 
-    const first =
-        document.createElement(
-            "option"
-        );
-
-
-    first.value =
-        "";
-
-
-    first.textContent =
-        teachers.length
-            ? "Select your name"
-            : "No teachers available";
-
-
-    teacherSelect.appendChild(
-        first
+    console.log(
+      "FCA Classes loaded:",
+      classes
     );
 
 
-    teachers.forEach(
-        function(teacher) {
+    renderClasses();
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+  } catch (error) {
 
-
-            option.value =
-                String(
-                    teacher.id || ""
-                );
-
-
-            const teacherName =
-                getTeacherName(
-                    teacher
-                );
-
-
-            option.textContent =
-                teacher.teacher_number
-                    ? teacherName +
-                      " (" +
-                      teacher.teacher_number +
-                      ")"
-                    : teacherName;
-
-
-            teacherSelect.appendChild(
-                option
-            );
-
-        }
+    console.error(
+      "FCA Classes unexpected error:",
+      error
     );
 
-}
-
-
-/* =========================================================
-   TEACHER NAME
-========================================================= */
-
-function getTeacherName(teacher) {
-
-    if (!teacher) {
-        return "Teacher";
-    }
-
-
-    if (
-        teacher.full_name &&
-        String(
-            teacher.full_name
-        ).trim()
-    ) {
-
-        return String(
-            teacher.full_name
-        ).trim();
-
-    }
-
-
-    const first =
-        String(
-            teacher.first_name || ""
-        ).trim();
-
-
-    const last =
-        String(
-            teacher.last_name || ""
-        ).trim();
-
-
-    const combined =
-        (
-            first +
-            " " +
-            last
-        ).trim();
-
-
-    if (combined) {
-        return combined;
-    }
-
-
-    if (
-        teacher.name &&
-        String(
-            teacher.name
-        ).trim()
-    ) {
-
-        return String(
-            teacher.name
-        ).trim();
-
-    }
-
-
-    if (
-        teacher.username &&
-        String(
-            teacher.username
-        ).trim()
-    ) {
-
-        return String(
-            teacher.username
-        ).trim();
-
-    }
-
-
-    return "Teacher";
-
+    showPageError(
+      `Could not load classes: ${error.message}`
+    );
+  }
 }
 
 
@@ -948,262 +380,169 @@ function getTeacherName(teacher) {
 
 function renderClasses() {
 
-    const count =
-        classes.length;
+  const count = classes.length;
 
 
-    if (classCount) {
+  /* COUNT */
 
-        classCount.textContent =
-            String(count);
-
-    }
-
-
-    if (classesContainer) {
-
-        classesContainer.innerHTML =
-            "";
-
-    }
+  if (dom.classCount) {
+    dom.classCount.textContent = count;
+  }
 
 
-    /* =====================================================
-       NO CLASSES
-    ===================================================== */
+  /* DESCRIPTION */
+
+  if (dom.classDescription) {
 
     if (count === 0) {
 
-        if (emptyState) {
-            emptyState.hidden = false;
-        }
+      dom.classDescription.textContent =
+        "No classes have been created yet.";
+
+    } else if (count === MAX_CLASSES) {
+
+      dom.classDescription.textContent =
+        "All four FCA classes have been created.";
+
+    } else {
+
+      dom.classDescription.textContent =
+        `${count} class${count === 1 ? "" : "es"} created.`;
+    }
+  }
 
 
-        if (completeState) {
-            completeState.hidden = true;
-        }
+  /* CONTAINER */
+
+  if (dom.classesContainer) {
+
+    dom.classesContainer.innerHTML = "";
+
+    classes.forEach(classItem => {
+
+      const card = createClassCard(classItem);
+
+      dom.classesContainer.appendChild(card);
+
+    });
+  }
 
 
-        if (addClassButton) {
-            addClassButton.hidden = true;
-        }
+  /* EMPTY STATE */
+
+  if (dom.emptyState) {
+
+    dom.emptyState.hidden =
+      count !== 0;
+  }
 
 
-        if (classDescription) {
+  /* COMPLETE STATE */
 
-            classDescription.textContent =
-                "No classes have been created yet.";
+  if (dom.completeState) {
 
-        }
+    dom.completeState.hidden =
+      count < MAX_CLASSES;
+  }
 
 
-        return;
+  /* ADD BUTTON */
+
+  if (dom.addClassButton) {
+
+    dom.addClassButton.hidden =
+      count >= MAX_CLASSES;
+  }
+}
+
+
+/* =========================================================
+   CREATE CLASS CARD
+========================================================= */
+
+function createClassCard(classItem) {
+
+  const card = document.createElement("article");
+
+  card.className = "class-card";
+
+  const formNumber =
+    Number(classItem.form_number) || 0;
+
+  const classCode =
+    classItem.class_code ||
+    `FCA-F${formNumber}`;
+
+
+  card.innerHTML = `
+
+    <div class="class-card-content">
+
+      <small class="class-label">
+        FCA CLASS
+      </small>
+
+      <span class="class-code">
+        ${escapeHtml(classCode)}
+      </span>
+
+    </div>
+
+    <div class="class-card-actions">
+
+      <button
+        type="button"
+        class="view-class-button"
+        data-class-id="${escapeHtml(classItem.id)}"
+      >
+        <span class="button-icon">→</span>
+        <span>View Students</span>
+      </button>
+
+      <button
+        type="button"
+        class="delete-class-button"
+        data-class-id="${escapeHtml(classItem.id)}"
+      >
+        <span class="button-icon">×</span>
+        <span>Delete Class</span>
+      </button>
+
+    </div>
+  `;
+
+
+  /* VIEW STUDENTS */
+
+  const viewButton =
+    card.querySelector(".view-class-button");
+
+  viewButton?.addEventListener(
+    "click",
+    () => {
+
+      openClassStudents(classItem);
 
     }
+  );
 
 
-    /* =====================================================
-       CLASSES EXIST
-    ===================================================== */
+  /* DELETE */
 
-    if (emptyState) {
-        emptyState.hidden = true;
-    }
+  const deleteButton =
+    card.querySelector(".delete-class-button");
 
+  deleteButton?.addEventListener(
+    "click",
+    () => {
 
-    if (completeState) {
-
-        completeState.hidden =
-            count < MAX_CLASSES;
+      openDeleteClassModal(classItem);
 
     }
+  );
 
 
-    if (addClassButton) {
-
-        addClassButton.hidden =
-            count >= MAX_CLASSES;
-
-    }
-
-
-    if (classDescription) {
-
-        if (count >= MAX_CLASSES) {
-
-            classDescription.textContent =
-                "All four FCA classes have been created.";
-
-        }
-
-        else {
-
-            classDescription.textContent =
-                count +
-                " of " +
-                MAX_CLASSES +
-                " classes have been created.";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CREATE CLASS CARDS
-    ===================================================== */
-
-    classes.forEach(
-        function(item) {
-
-            const card =
-                document.createElement(
-                    "article"
-                );
-
-
-            card.className =
-                "class-card";
-
-
-            const form =
-                Number(
-                    item.form_number
-                );
-
-
-            const code =
-                item.class_code ||
-                "FCA-FORM-" + form;
-
-
-            card.innerHTML =
-
-                '<div class="class-card-content">' +
-
-                    '<small class="class-label">' +
-                        'FCA CLASS' +
-                    '</small>' +
-
-                    '<span class="class-code">' +
-                        escapeHtml(code) +
-                    '</span>' +
-
-                '</div>' +
-
-
-                '<div class="class-card-actions">' +
-
-                    '<button' +
-                        ' type="button"' +
-                        ' class="view-class-button"' +
-                        ' data-class-id="' +
-                        escapeHtml(
-                            String(item.id)
-                        ) +
-                    '">' +
-
-                        '<span class="button-icon">→</span>' +
-
-                        '<span>View Students</span>' +
-
-                    '</button>' +
-
-
-                    '<button' +
-                        ' type="button"' +
-                        ' class="delete-class-button"' +
-                        ' data-class-id="' +
-                        escapeHtml(
-                            String(item.id)
-                        ) +
-                    '">' +
-
-                        '<span class="button-icon">×</span>' +
-
-                        '<span>Delete Class</span>' +
-
-                    '</button>' +
-
-                '</div>';
-
-
-            if (classesContainer) {
-
-                classesContainer.appendChild(
-                    card
-                );
-
-            }
-
-
-            /* =================================================
-               VIEW STUDENTS
-            ================================================= */
-
-            const viewButton =
-                card.querySelector(
-                    ".view-class-button"
-                );
-
-
-            if (viewButton) {
-
-                viewButton.addEventListener(
-                    "click",
-                    function(event) {
-
-                        event.stopPropagation();
-
-                        const classId =
-                            this.dataset.classId;
-
-
-                        openClassStudents(
-                            classId
-                        );
-
-                    }
-                );
-
-            }
-
-
-            /* =================================================
-               DELETE BUTTON
-            ================================================= */
-
-            const deleteButton =
-                card.querySelector(
-                    ".delete-class-button"
-                );
-
-
-            if (deleteButton) {
-
-                deleteButton.addEventListener(
-                    "click",
-                    function(event) {
-
-                        event.stopPropagation();
-
-                        const classId =
-                            this.dataset.classId;
-
-
-                        openDeleteClassModal(
-                            classId,
-                            this
-                        );
-
-                    }
-                );
-
-            }
-
-        }
-    );
-
+  return card;
 }
 
 
@@ -1211,393 +550,727 @@ function renderClasses() {
    VIEW STUDENTS
 ========================================================= */
 
-function openClassStudents(classId) {
+function openClassStudents(classItem) {
 
-    const selectedClass =
-        classes.find(
-            function(item) {
+  const formNumber =
+    Number(classItem.form_number);
 
-                return String(item.id) ===
-                    String(classId);
+  if (!formNumber) {
 
-            }
-        );
+    alert(
+      "This class does not have a valid form number."
+    );
 
+    return;
+  }
 
-    if (!selectedClass) {
-
-        alert(
-            "Class could not be found."
-        );
-
-        return;
-
-    }
-
-
-    const form =
-        Number(
-            selectedClass.form_number
-        );
-
-
-    window.location.href =
-        "students.html?form=" +
-        encodeURIComponent(form);
-
+  window.location.href =
+    `students.html?form=${encodeURIComponent(formNumber)}`;
 }
 
 
 /* =========================================================
-   OPEN DELETE CLASS MODAL
+   CREATE CLASS MODAL
 ========================================================= */
 
-function openDeleteClassModal(
-    classId,
-    button
-) {
+async function openClassModal() {
 
-    if (!db) {
+  if (!db) {
 
-        alert(
-            "FCA database is not connected."
-        );
-
-        return;
-
-    }
-
-
-    const selectedClass =
-        classes.find(
-            function(item) {
-
-                return String(item.id) ===
-                    String(classId);
-
-            }
-        );
-
-
-    if (!selectedClass) {
-
-        alert(
-            "Class could not be found."
-        );
-
-        return;
-
-    }
-
-
-    selectedDeleteClassId =
-        classId;
-
-
-    selectedDeleteButton =
-        button || null;
-
-
-    const formNumber =
-        Number(
-            selectedClass.form_number
-        );
-
-
-    const className =
-        selectedClass.class_name ||
-        "Form " + formNumber;
-
-
-    if (deleteClassName) {
-
-        deleteClassName.textContent =
-            className;
-
-    }
-
-
-    if (deleteClassWarning) {
-
-        deleteClassWarning.textContent =
-            "Deleting " +
-            className +
-            " may affect students and results associated with this class.";
-
-    }
-
-
-    if (adminDeletePassword) {
-
-        adminDeletePassword.value =
-            "";
-
-        adminDeletePassword.type =
-            "password";
-
-    }
-
-
-    if (adminPasswordToggle) {
-
-        adminPasswordToggle.classList.remove(
-            "is-visible"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    showDeleteMessage(
-        "",
-        ""
+    showPageError(
+      "Database connection is not available."
     );
 
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled =
-            false;
-
-        deleteClassConfirmBtn.innerHTML =
-            "Delete Class";
-
-    }
+    return;
+  }
 
 
-    if (deleteClassModal) {
-
-        deleteClassModal.hidden =
-            false;
-
-    }
+  const nextForm =
+    getNextFormNumber();
 
 
-    setTimeout(
-        function() {
+  if (!nextForm) {
 
-            if (adminDeletePassword) {
-
-                adminDeletePassword.focus();
-
-            }
-
-        },
-        100
+    alert(
+      "All four FCA classes have already been created."
     );
 
+    return;
+  }
+
+
+  resetCreateModal();
+
+
+  if (dom.nextClassName) {
+
+    dom.nextClassName.textContent =
+      `Form ${nextForm}`;
+  }
+
+
+  if (dom.classModal) {
+
+    dom.classModal.hidden = false;
+
+    dom.classModal.classList.add("show");
+  }
+
+
+  await loadTeachers();
+}
+
+
+function closeClassModal() {
+
+  if (!dom.classModal) {
+    return;
+  }
+
+  dom.classModal.classList.remove("show");
+
+  dom.classModal.hidden = true;
+}
+
+
+function resetCreateModal() {
+
+  if (dom.teacherSelect) {
+    dom.teacherSelect.value = "";
+  }
+
+  if (dom.teacherPassword) {
+    dom.teacherPassword.value = "";
+    dom.teacherPassword.type = "password";
+  }
+
+  if (dom.modalMessage) {
+    dom.modalMessage.textContent = "";
+    dom.modalMessage.className = "modal-message";
+  }
+
+  setPasswordEye(
+    dom.togglePassword,
+    false
+  );
 }
 
 
 /* =========================================================
-   CLOSE DELETE CLASS MODAL
+   LOAD TEACHERS
 ========================================================= */
+
+async function loadTeachers() {
+
+  if (!db) {
+    return;
+  }
+
+
+  if (dom.teacherSelect) {
+
+    dom.teacherSelect.innerHTML = `
+      <option value="">
+        Loading teachers...
+      </option>
+    `;
+
+    dom.teacherSelect.disabled = true;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db
+      .from("teachers")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
+
+    if (error) {
+
+      console.error(
+        "FCA Teachers load error:",
+        error
+      );
+
+      if (dom.teacherSelect) {
+
+        dom.teacherSelect.innerHTML = `
+          <option value="">
+            Unable to load teachers
+          </option>
+        `;
+
+      }
+
+      showModalMessage(
+        "error",
+        `Could not load teachers: ${error.message}`
+      );
+
+      return;
+    }
+
+
+    teachers = Array.isArray(data)
+      ? data
+      : [];
+
+
+    populateTeacherSelect();
+
+
+  } catch (error) {
+
+    console.error(
+      "Teacher loading error:",
+      error
+    );
+
+    showModalMessage(
+      "error",
+      `Could not load teachers: ${error.message}`
+    );
+
+  } finally {
+
+    if (dom.teacherSelect) {
+      dom.teacherSelect.disabled = false;
+    }
+  }
+}
+
+
+/* =========================================================
+   TEACHER DROPDOWN
+========================================================= */
+
+function populateTeacherSelect() {
+
+  if (!dom.teacherSelect) {
+    return;
+  }
+
+
+  dom.teacherSelect.innerHTML = "";
+
+
+  const firstOption =
+    document.createElement("option");
+
+  firstOption.value = "";
+
+  firstOption.textContent =
+    teachers.length
+      ? "Select a teacher"
+      : "No teachers available";
+
+  dom.teacherSelect.appendChild(firstOption);
+
+
+  teachers.forEach(teacher => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      String(teacher.id);
+
+    const firstName =
+      teacher.first_name || "";
+
+    const lastName =
+      teacher.last_name || "";
+
+    const teacherNumber =
+      teacher.teacher_number || "";
+
+
+    const fullName =
+      `${firstName} ${lastName}`.trim();
+
+
+    option.textContent =
+      teacherNumber
+        ? `${fullName} — ${teacherNumber}`
+        : fullName || "Teacher";
+
+
+    dom.teacherSelect.appendChild(option);
+
+  });
+}
+
+
+/* =========================================================
+   CREATE CLASS
+========================================================= */
+
+async function createClass() {
+
+  if (!db) {
+
+    showModalMessage(
+      "error",
+      "Database connection is not available."
+    );
+
+    return;
+  }
+
+
+  const nextForm =
+    getNextFormNumber();
+
+
+  if (!nextForm) {
+
+    showModalMessage(
+      "error",
+      "All four FCA classes already exist."
+    );
+
+    return;
+  }
+
+
+  const teacherId =
+    dom.teacherSelect?.value;
+
+
+  const teacherPassword =
+    dom.teacherPassword?.value.trim();
+
+
+  if (!teacherId) {
+
+    showModalMessage(
+      "error",
+      "Please select a teacher."
+    );
+
+    return;
+  }
+
+
+  if (!teacherPassword) {
+
+    showModalMessage(
+      "error",
+      "Please enter the teacher password."
+    );
+
+    dom.teacherPassword?.focus();
+
+    return;
+  }
+
+
+  const teacher =
+    teachers.find(
+      item =>
+        String(item.id) ===
+        String(teacherId)
+    );
+
+
+  if (!teacher) {
+
+    showModalMessage(
+      "error",
+      "The selected teacher could not be found."
+    );
+
+    return;
+  }
+
+
+  const confirmButton =
+    dom.confirmCreateClass;
+
+
+  if (confirmButton) {
+
+    confirmButton.disabled = true;
+
+    confirmButton.textContent =
+      "Creating...";
+  }
+
+
+  try {
+
+    /* =====================================================
+       VERIFY TEACHER PASSWORD
+    ===================================================== */
+
+    showModalMessage(
+      "info",
+      "Verifying teacher password..."
+    );
+
+
+    const storedHash =
+      teacher.password_hash ||
+      teacher.password ||
+      teacher.password_hash_value;
+
+
+    if (!storedHash) {
+
+      throw new Error(
+        "This teacher does not have a stored password."
+      );
+    }
+
+
+    const enteredHash =
+      await hashPassword(
+        teacherPassword
+      );
+
+
+    if (
+      String(storedHash).toLowerCase() !==
+      String(enteredHash).toLowerCase()
+    ) {
+
+      throw new Error(
+        "The teacher password is incorrect."
+      );
+    }
+
+
+    /* =====================================================
+       CHECK FOR DUPLICATE FORM
+    ===================================================== */
+
+    const {
+      data: existingClass,
+      error: existingError
+    } = await db
+      .from("classes")
+      .select("id")
+      .eq("form_number", nextForm)
+      .limit(1);
+
+
+    if (existingError) {
+
+      throw new Error(
+        `Could not check existing classes: ${existingError.message}`
+      );
+    }
+
+
+    if (
+      existingClass &&
+      existingClass.length > 0
+    ) {
+
+      throw new Error(
+        `Form ${nextForm} already exists.`
+      );
+    }
+
+
+    /* =====================================================
+       CREATE CLASS
+    ===================================================== */
+
+    showModalMessage(
+      "info",
+      `Creating Form ${nextForm}...`
+    );
+
+
+    const {
+      data: createdClass,
+      error: createError
+    } = await db
+      .from("classes")
+      .insert([
+        {
+          class_name: `Form ${nextForm}`,
+          class_code: `FCA-F${nextForm}`,
+          description: `FCA Form ${nextForm}`,
+          form_number: nextForm,
+          created_by: teacher.id
+        }
+      ])
+      .select()
+      .single();
+
+
+    if (createError) {
+
+      throw new Error(
+        `Could not create class: ${createError.message}`
+      );
+    }
+
+
+    if (!createdClass) {
+
+      throw new Error(
+        "Class creation returned no data."
+      );
+    }
+
+
+    console.log(
+      "Class created:",
+      createdClass
+    );
+
+
+    showModalMessage(
+      "success",
+      `Form ${nextForm} created successfully.`
+    );
+
+
+    /* =====================================================
+       RELOAD CLASSES
+    ===================================================== */
+
+    await loadClasses();
+
+
+    setTimeout(() => {
+
+      closeClassModal();
+
+    }, 700);
+
+
+  } catch (error) {
+
+    console.error(
+      "CREATE CLASS ERROR:",
+      error
+    );
+
+    showModalMessage(
+      "error",
+      error.message ||
+      "Failed to create class."
+    );
+
+  } finally {
+
+    if (confirmButton) {
+
+      confirmButton.disabled = false;
+
+      confirmButton.textContent =
+        "Create Class";
+    }
+  }
+}
+
+
+/* =========================================================
+   DELETE CLASS MODAL
+========================================================= */
+
+function openDeleteClassModal(classItem) {
+
+  if (!classItem) {
+    return;
+  }
+
+
+  selectedDeleteClassId =
+    classItem.id;
+
+
+  const formNumber =
+    Number(classItem.form_number) || 0;
+
+
+  const formName =
+    `Form ${formNumber}`;
+
+
+  if (dom.deleteClassName) {
+
+    dom.deleteClassName.textContent =
+      formName;
+  }
+
+
+  if (dom.deleteClassWarning) {
+
+    dom.deleteClassWarning.textContent =
+      `Deleting ${formName} will also remove its students and their results. This action cannot be undone.`;
+  }
+
+
+  if (dom.adminDeletePassword) {
+
+    dom.adminDeletePassword.value = "";
+
+    dom.adminDeletePassword.type =
+      "password";
+  }
+
+
+  setPasswordEye(
+    dom.adminPasswordToggle,
+    false
+  );
+
+
+  if (dom.classDeleteMessage) {
+
+    dom.classDeleteMessage.textContent = "";
+
+    dom.classDeleteMessage.className =
+      "modal-message";
+  }
+
+
+  if (dom.deleteClassModal) {
+
+    dom.deleteClassModal.hidden = false;
+
+    dom.deleteClassModal.classList.add(
+      "show"
+    );
+  }
+}
+
 
 function closeDeleteClassModal() {
 
-    if (deleteClassModal) {
-
-        deleteClassModal.hidden =
-            true;
-
-    }
+  if (!dom.deleteClassModal) {
+    return;
+  }
 
 
-    selectedDeleteClassId =
-        null;
+  dom.deleteClassModal.classList.remove(
+    "show"
+  );
+
+  dom.deleteClassModal.hidden = true;
 
 
-    selectedDeleteButton =
-        null;
+  selectedDeleteClassId = null;
 
 
-    if (adminDeletePassword) {
-
-        adminDeletePassword.value =
-            "";
-
-        adminDeletePassword.type =
-            "password";
-
-    }
-
-
-    if (adminPasswordToggle) {
-
-        adminPasswordToggle.classList.remove(
-            "is-visible"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        adminPasswordToggle.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    showDeleteMessage(
-        "",
-        ""
-    );
-
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled =
-            false;
-
-        deleteClassConfirmBtn.innerHTML =
-            "Delete Class";
-
-    }
-
+  if (dom.adminDeletePassword) {
+    dom.adminDeletePassword.value = "";
+  }
 }
 
 
 /* =========================================================
-   ADMINISTRATOR PASSWORD TOGGLE
-========================================================= */
-
-function toggleAdminDeletePassword() {
-
-    if (!adminDeletePassword) {
-        return;
-    }
-
-
-    const showing =
-        adminDeletePassword.type === "text";
-
-
-    adminDeletePassword.type =
-        showing
-            ? "password"
-            : "text";
-
-
-    if (adminPasswordToggle) {
-
-        adminPasswordToggle.classList.toggle(
-            "is-visible",
-            !showing
-        );
-
-
-        adminPasswordToggle.setAttribute(
-            "aria-label",
-            showing
-                ? "Show password"
-                : "Hide password"
-        );
-
-
-        adminPasswordToggle.setAttribute(
-            "title",
-            showing
-                ? "Show password"
-                : "Hide password"
-        );
-
-
-        adminPasswordToggle.setAttribute(
-            "aria-pressed",
-            showing
-                ? "false"
-                : "true"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CONFIRM DELETE CLASS
+   DELETE CLASS
 ========================================================= */
 
 async function confirmDeleteClass() {
 
   if (!db) {
-    showDeleteMessage("error", "Database is not connected.");
+
+    showDeleteMessage(
+      "error",
+      "Database connection is not available."
+    );
+
     return;
   }
+
 
   if (!selectedDeleteClassId) {
-    showDeleteMessage("error", "No class has been selected.");
+
+    showDeleteMessage(
+      "error",
+      "No class has been selected."
+    );
+
     return;
   }
 
-  const password = dom.adminDeletePassword?.value.trim();
+
+  const password =
+    dom.adminDeletePassword?.value.trim();
+
 
   if (!password) {
+
     showDeleteMessage(
       "error",
       "Please enter the administrator password."
     );
+
     dom.adminDeletePassword?.focus();
+
     return;
   }
 
-  const selectedClass = classes.find(
-    item => String(item.id) === String(selectedDeleteClassId)
-  );
+
+  const selectedClass =
+    classes.find(
+      item =>
+        String(item.id) ===
+        String(selectedDeleteClassId)
+    );
+
 
   if (!selectedClass) {
+
     showDeleteMessage(
       "error",
       "The selected class could not be found."
     );
+
     return;
   }
 
-  const formNumber = Number(selectedClass.form_number);
+
+  const formNumber =
+    Number(selectedClass.form_number);
+
 
   if (!formNumber) {
+
     showDeleteMessage(
       "error",
-      "This class does not have a valid form number."
+      "This class has an invalid form number."
     );
+
     return;
   }
 
-  const formName = `Form ${formNumber}`;
 
-  const deleteButton = dom.deleteClassConfirmBtn;
+  const formName =
+    `Form ${formNumber}`;
+
+
+  const deleteButton =
+    dom.deleteClassConfirmBtn;
+
 
   if (deleteButton) {
+
     deleteButton.disabled = true;
-    deleteButton.textContent = "Deleting...";
+
+    deleteButton.textContent =
+      "Deleting...";
   }
+
 
   try {
 
     /* =====================================================
-       1. VERIFY ADMINISTRATOR PASSWORD
+       1. VERIFY ADMIN PASSWORD
     ===================================================== */
 
     showDeleteMessage(
@@ -1605,9 +1278,15 @@ async function confirmDeleteClass() {
       "Verifying administrator password..."
     );
 
-    const adminVerified = await verifyAdministratorPassword(password);
 
-    if (!adminVerified) {
+    const verified =
+      await verifyAdministratorPassword(
+        password
+      );
+
+
+    if (!verified) {
+
       throw new Error(
         "The administrator password is incorrect."
       );
@@ -1615,17 +1294,18 @@ async function confirmDeleteClass() {
 
 
     /* =====================================================
-       2. FIND STUDENTS IN THIS CLASS
-       
+       2. FIND STUDENTS
+
        IMPORTANT:
-       Do NOT request student_number because that column
-       does not exist in the students table.
+       Only "id" is selected.
+       There is NO student_number here.
     ===================================================== */
 
     showDeleteMessage(
       "info",
       `Finding students in ${formName}...`
     );
+
 
     const {
       data: students,
@@ -1635,19 +1315,29 @@ async function confirmDeleteClass() {
       .select("id")
       .eq("class", formName);
 
+
     if (studentsError) {
+
       throw new Error(
         `Could not find students belonging to ${formName}: ${studentsError.message}`
       );
     }
 
-    const studentIds = (students || [])
-      .map(student => student.id)
-      .filter(Boolean);
+
+    const studentIds =
+      (students || [])
+        .map(student => student.id)
+        .filter(Boolean);
+
+
+    console.log(
+      `Students found in ${formName}:`,
+      studentIds
+    );
 
 
     /* =====================================================
-       3. DELETE RESULTS BELONGING TO THESE STUDENTS
+       3. DELETE RESULTS
     ===================================================== */
 
     if (studentIds.length > 0) {
@@ -1657,14 +1347,20 @@ async function confirmDeleteClass() {
         `Deleting results for ${studentIds.length} student(s)...`
       );
 
+
       const {
         error: resultsError
       } = await db
         .from("results")
         .delete()
-        .in("student_id", studentIds);
+        .in(
+          "student_id",
+          studentIds
+        );
+
 
       if (resultsError) {
+
         throw new Error(
           `Could not delete student results: ${resultsError.message}`
         );
@@ -1683,49 +1379,29 @@ async function confirmDeleteClass() {
         `Deleting ${studentIds.length} student(s)...`
       );
 
+
       const {
-        error: deleteStudentsError
+        error: studentsDeleteError
       } = await db
         .from("students")
         .delete()
-        .in("id", studentIds);
+        .in(
+          "id",
+          studentIds
+        );
 
-      if (deleteStudentsError) {
+
+      if (studentsDeleteError) {
+
         throw new Error(
-          `Could not delete students: ${deleteStudentsError.message}`
+          `Could not delete students: ${studentsDeleteError.message}`
         );
       }
     }
 
 
     /* =====================================================
-       5. VERIFY STUDENTS WERE DELETED
-    ===================================================== */
-
-    const {
-      data: remainingStudents,
-      error: verifyStudentsError
-    } = await db
-      .from("students")
-      .select("id")
-      .eq("class", formName)
-      .limit(1);
-
-    if (verifyStudentsError) {
-      throw new Error(
-        `Could not verify student deletion: ${verifyStudentsError.message}`
-      );
-    }
-
-    if (remainingStudents && remainingStudents.length > 0) {
-      throw new Error(
-        `Some students belonging to ${formName} could not be deleted.`
-      );
-    }
-
-
-    /* =====================================================
-       6. DELETE THE CLASS
+       5. DELETE CLASS
     ===================================================== */
 
     showDeleteMessage(
@@ -1733,952 +1409,182 @@ async function confirmDeleteClass() {
       `Deleting ${formName}...`
     );
 
+
     const {
       data: deletedClass,
-      error: deleteClassError
+      error: classDeleteError
     } = await db
       .from("classes")
       .delete()
-      .eq("id", selectedDeleteClassId)
+      .eq(
+        "id",
+        selectedDeleteClassId
+      )
       .select("id");
 
-    if (deleteClassError) {
-      throw new Error(
-        `Could not delete ${formName}: ${deleteClassError.message}`
-      );
-    }
 
-    if (!deletedClass || deletedClass.length === 0) {
+    if (classDeleteError) {
+
       throw new Error(
-        "The class was not deleted. Supabase returned no deleted record."
+        `Could not delete ${formName}: ${classDeleteError.message}`
       );
     }
 
 
-    /* =====================================================
-       7. VERIFY CLASS WAS DELETED
-    ===================================================== */
+    if (
+      !deletedClass ||
+      deletedClass.length === 0
+    ) {
 
-    const {
-      data: remainingClass,
-      error: verifyClassError
-    } = await db
-      .from("classes")
-      .select("id")
-      .eq("id", selectedDeleteClassId)
-      .limit(1);
-
-    if (verifyClassError) {
       throw new Error(
-        `Could not verify class deletion: ${verifyClassError.message}`
-      );
-    }
-
-    if (remainingClass && remainingClass.length > 0) {
-      throw new Error(
-        "The class still exists in the database."
+        "The class was not deleted. Check the Supabase RLS policy for the classes table."
       );
     }
 
 
     /* =====================================================
-       8. SUCCESS
+       6. SUCCESS
     ===================================================== */
 
-    classes = classes.filter(
-      item =>
-        String(item.id) !== String(selectedDeleteClassId)
-    );
+    classes =
+      classes.filter(
+        item =>
+          String(item.id) !==
+          String(selectedDeleteClassId)
+      );
+
+
+    renderClasses();
+
 
     showDeleteMessage(
       "success",
-      `${formName} and its students/results were deleted successfully.`
+      `${formName} was deleted successfully.`
     );
+
 
     setTimeout(() => {
 
       closeDeleteClassModal();
 
-      selectedDeleteClassId = null;
-
       loadClasses();
 
-    }, 900);
+    }, 800);
+
 
   } catch (error) {
 
     console.error(
-      "CLASS DELETE ERROR:",
+      "DELETE CLASS ERROR:",
       error
     );
 
+
     showDeleteMessage(
       "error",
-      error.message || "Failed to delete class."
+      `Delete failed: ${error.message}`
     );
+
 
   } finally {
 
     if (deleteButton) {
+
       deleteButton.disabled = false;
-      deleteButton.textContent = "Delete Class";
+
+      deleteButton.textContent =
+        "Delete Class";
     }
   }
 }
 
 
-    /* =====================================================
-       FIND SELECTED CLASS
-    ===================================================== */
-
-    const selectedClass =
-        classes.find(
-            function(item) {
-
-                return String(item.id) ===
-                    String(selectedDeleteClassId);
-
-            }
-        );
-
-
-    if (!selectedClass) {
-
-        showDeleteMessage(
-            "The selected class could not be found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const className =
-        selectedClass.class_name ||
-        "Form " +
-        selectedClass.form_number;
-
-
-    /* =====================================================
-       DISABLE BUTTON
-    ===================================================== */
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled =
-            true;
-
-        deleteClassConfirmBtn.innerHTML =
-            '<span class="button-spinner"></span>' +
-            '<span>Verifying...</span>';
-
-    }
-
-
-    showDeleteMessage(
-        "Verifying administrator authorization...",
-        "loading"
-    );
-
-
-    /* =====================================================
-       VERIFY ADMIN PASSWORD
-    ===================================================== */
-
-    const valid =
-        await verifyAdministratorPassword(
-            password
-        );
-
-
-    if (!valid) {
-
-        if (deleteClassConfirmBtn) {
-
-            deleteClassConfirmBtn.disabled =
-                false;
-
-            deleteClassConfirmBtn.innerHTML =
-                "Delete Class";
-
-        }
-
-
-        showDeleteMessage(
-            "Incorrect administrator password.",
-            "error"
-        );
-
-
-        if (adminDeletePassword) {
-
-            adminDeletePassword.select();
-
-        }
-
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       START DELETE
-    ===================================================== */
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.innerHTML =
-            '<span class="button-spinner"></span>' +
-            '<span>Deleting...</span>';
-
-    }
-
-
-    showDeleteMessage(
-        "Administrator verified. Checking students in " +
-        className +
-        "...",
-        "loading"
-    );
-
-
-    try {
-
-        /* =================================================
-           STEP 1
-           FIND STUDENTS BELONGING TO THIS CLASS
-        ================================================= */
-
-        const formNumber =
-            Number(
-                selectedClass.form_number
-            );
-
-
-        const formName =
-            "Form " +
-            formNumber;
-
-
-        const {
-            data: studentsInClass,
-            error: studentLookupError
-        } =
-            await db
-                .from("students")
-                .select(
-                    "id,student_number,name,class"
-                )
-                .eq(
-                    "class",
-                    formName
-                );
-
-
-        if (studentLookupError) {
-
-            console.error(
-                "Student lookup error:",
-                studentLookupError
-            );
-
-
-            throw new Error(
-                "Could not find students belonging to " +
-                className +
-                ": " +
-                studentLookupError.message
-            );
-
-        }
-
-
-        const students =
-            Array.isArray(studentsInClass)
-                ? studentsInClass
-                : [];
-
-
-        const studentIds =
-            students
-                .map(
-                    function(student) {
-
-                        return student.id;
-
-                    }
-                )
-                .filter(
-                    function(id) {
-
-                        return (
-                            id !== null &&
-                            id !== undefined &&
-                            String(id).trim() !== ""
-                        );
-
-                    }
-                );
-
-
-        console.log(
-            "Students belonging to class:",
-            students
-        );
-
-
-        console.log(
-            "Number of students to delete:",
-            studentIds.length
-        );
-
-
-        /* =================================================
-           STEP 2
-           DELETE RESULTS
-        ================================================= */
-
-        if (studentIds.length > 0) {
-
-            showDeleteMessage(
-                "Deleting " +
-                studentIds.length +
-                " student result record(s)...",
-                "loading"
-            );
-
-
-            const {
-                error: resultsDeleteError
-            } =
-                await db
-                    .from("results")
-                    .delete()
-                    .in(
-                        "student_id",
-                        studentIds
-                    );
-
-
-            if (resultsDeleteError) {
-
-                console.error(
-                    "Delete student results error:",
-                    resultsDeleteError
-                );
-
-
-                throw new Error(
-                    "Student results could not be deleted: " +
-                    resultsDeleteError.message
-                );
-
-            }
-
-        }
-
-
-        /* =================================================
-           STEP 3
-           DELETE STUDENTS
-        ================================================= */
-
-        if (studentIds.length > 0) {
-
-            showDeleteMessage(
-                "Deleting " +
-                studentIds.length +
-                " student(s)...",
-                "loading"
-            );
-
-
-            const {
-                error: studentsDeleteError
-            } =
-                await db
-                    .from("students")
-                    .delete()
-                    .in(
-                        "id",
-                        studentIds
-                    );
-
-
-            if (studentsDeleteError) {
-
-                console.error(
-                    "Delete students error:",
-                    studentsDeleteError
-                );
-
-
-                throw new Error(
-                    "Students could not be deleted: " +
-                    studentsDeleteError.message
-                );
-
-            }
-
-        }
-
-
-        /* =================================================
-           STEP 4
-           VERIFY STUDENTS WERE DELETED
-        ================================================= */
-
-        if (studentIds.length > 0) {
-
-            const {
-                data: remainingStudents,
-                error: studentVerifyError
-            } =
-                await db
-                    .from("students")
-                    .select("id")
-                    .in(
-                        "id",
-                        studentIds
-                    );
-
-
-            if (studentVerifyError) {
-
-                console.warn(
-                    "Student deletion verification warning:",
-                    studentVerifyError
-                );
-
-            }
-
-
-            if (
-                Array.isArray(remainingStudents) &&
-                remainingStudents.length > 0
-            ) {
-
-                throw new Error(
-                    "Some students still exist in Supabase. " +
-                    "Check the students table DELETE policy."
-                );
-
-            }
-
-        }
-
-
-        /* =================================================
-           STEP 5
-           DELETE CLASS
-        ================================================= */
-
-        showDeleteMessage(
-            "Students removed. Deleting " +
-            className +
-            "...",
-            "loading"
-        );
-
-
-        const {
-            data: deletedRows,
-            error: classDeleteError
-        } =
-            await db
-                .from("classes")
-                .delete()
-                .eq(
-                    "id",
-                    selectedDeleteClassId
-                )
-                .select("id");
-
-
-        if (classDeleteError) {
-
-            console.error(
-                "Delete class error:",
-                classDeleteError
-            );
-
-
-            throw new Error(
-                "Class could not be deleted: " +
-                classDeleteError.message
-            );
-
-        }
-
-
-        /* =================================================
-           VERIFY CLASS WAS DELETED
-        ================================================= */
-
-        if (
-            !Array.isArray(deletedRows) ||
-            deletedRows.length === 0
-        ) {
-
-            throw new Error(
-                "The class was NOT deleted from Supabase. " +
-                "Please check the classes table DELETE policy."
-            );
-
-        }
-
-
-        const {
-            data: remainingClass,
-            error: verifyClassError
-        } =
-            await db
-                .from("classes")
-                .select("id")
-                .eq(
-                    "id",
-                    selectedDeleteClassId
-                )
-                .maybeSingle();
-
-
-        if (verifyClassError) {
-
-            console.warn(
-                "Class verification warning:",
-                verifyClassError
-            );
-
-        }
-
-
-        if (remainingClass) {
-
-            throw new Error(
-                "The class still exists in the database."
-            );
-
-        }
-
-
-        /* =================================================
-           STEP 6
-           REMOVE CLASS FROM LOCAL ARRAY
-        ================================================= */
-
-        classes =
-            classes.filter(
-                function(item) {
-
-                    return String(item.id) !==
-                        String(selectedDeleteClassId);
-
-                }
-            );
-
-
-        console.log(
-            "Class deleted:",
-            selectedDeleteClassId
-        );
-
-
-        console.log(
-            "Students deleted:",
-            studentIds.length
-        );
-
-
-        /* =================================================
-           SUCCESS
-        ================================================= */
-
-        showDeleteMessage(
-            className +
-            " and " +
-            studentIds.length +
-            " student(s) were deleted successfully.",
-            "success"
-        );
-
-
-        if (deleteClassConfirmBtn) {
-
-            deleteClassConfirmBtn.disabled =
-                true;
-
-            deleteClassConfirmBtn.innerHTML =
-                "Deleted";
-
-        }
-
-
-        /* =================================================
-           RELOAD CLASSES
-        ================================================= */
-
-        await loadClasses();
-
-
-        /* =================================================
-           CLOSE MODAL
-        ================================================= */
-
-        setTimeout(
-            function() {
-
-                closeDeleteClassModal();
-
-            },
-            900
-        );
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "Delete class exception:",
-            error
-        );
-
-
-        if (deleteClassConfirmBtn) {
-
-            deleteClassConfirmBtn.disabled =
-                false;
-
-            deleteClassConfirmBtn.innerHTML =
-                "Delete Class";
-
-        }
-
-
-        showDeleteMessage(
-            "Delete failed: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
 /* =========================================================
-   VERIFY ADMINISTRATOR PASSWORD
+   ADMIN PASSWORD VERIFICATION
 ========================================================= */
 
-async function verifyAdministratorPassword(
-    password
-) {
+async function verifyAdministratorPassword(password) {
 
-    if (
-        !db ||
-        !password
-    ) {
+  if (!db) {
+    return false;
+  }
 
-        return false;
 
+  try {
+
+    const {
+      data,
+      error
+    } = await db.auth.signInWithPassword({
+
+      email:
+        FCA_ADMIN_EMAIL,
+
+      password:
+        password
+
+    });
+
+
+    if (error) {
+
+      console.error(
+        "Administrator authentication failed:",
+        error
+      );
+
+      return false;
     }
 
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await db.auth.signInWithPassword({
-
-                email:
-                    FCA_ADMIN_EMAIL,
-
-                password:
-                    password
-
-            });
+    return !!data?.user;
 
 
-        if (error) {
+  } catch (error) {
 
-            console.error(
-                "Administrator verification failed:",
-                error.message
-            );
+    console.error(
+      "Administrator verification error:",
+      error
+    );
 
-
-            return false;
-
-        }
-
-
-        if (
-            data &&
-            data.user &&
-            data.user.email
-        ) {
-
-            return (
-                String(
-                    data.user.email
-                ).toLowerCase() ===
-                FCA_ADMIN_EMAIL.toLowerCase()
-            );
-
-        }
-
-
-        return false;
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "Administrator authentication error:",
-            error
-        );
-
-
-        return false;
-
-    }
-
+    return false;
+  }
 }
 
 
 /* =========================================================
-   NEXT FORM NUMBER
+   GET NEXT FORM
 ========================================================= */
 
 function getNextFormNumber() {
 
-    const existing = [];
+  const existingForms =
+    classes
+      .map(item =>
+        Number(item.form_number)
+      )
+      .filter(number =>
+        number >= 1 &&
+        number <= MAX_CLASSES
+      );
 
 
-    classes.forEach(
-        function(item) {
+  for (
+    let number = 1;
+    number <= MAX_CLASSES;
+    number++
+  ) {
 
-            const number =
-                Number(
-                    item.form_number
-                );
-
-
-            if (!isNaN(number)) {
-
-                existing.push(
-                    number
-                );
-
-            }
-
-        }
-    );
-
-
-    for (
-        let i = 1;
-        i <= MAX_CLASSES;
-        i++
+    if (
+      !existingForms.includes(number)
     ) {
 
-        if (
-            existing.indexOf(i) === -1
-        ) {
-
-            return i;
-
-        }
-
+      return number;
     }
+  }
 
 
-    return null;
-
-}
-
-
-/* =========================================================
-   OPEN CLASS MODAL
-========================================================= */
-
-async function openClassModal() {
-
-    if (!db) {
-
-        alert(
-            "FCA database is not connected."
-        );
-
-        return;
-
-    }
-
-
-    const next =
-        getNextFormNumber();
-
-
-    if (!next) {
-
-        alert(
-            "All four FCA classes have already been created."
-        );
-
-        return;
-
-    }
-
-
-    if (nextClassName) {
-
-        nextClassName.textContent =
-            "Form " + next;
-
-    }
-
-
-    if (teacherPassword) {
-
-        teacherPassword.value =
-            "";
-
-        teacherPassword.type =
-            "password";
-
-    }
-
-
-    if (togglePassword) {
-
-        togglePassword.classList.remove(
-            "is-visible"
-        );
-
-        togglePassword.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        togglePassword.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        togglePassword.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    if (modalMessage) {
-
-        modalMessage.textContent =
-            "";
-
-        modalMessage.className =
-            "modal-message";
-
-    }
-
-
-    if (teacherSelect) {
-
-        teacherSelect.value =
-            "";
-
-    }
-
-
-    if (classModal) {
-
-        classModal.hidden =
-            false;
-
-    }
-
-
-    await loadTeachers();
-
-
-    if (!teachers.length) {
-
-        showModalMessage(
-            "No teacher accounts were found. Create a teacher account first.",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CLOSE CLASS MODAL
-========================================================= */
-
-function closeClassModal() {
-
-    if (!classModal) {
-        return;
-    }
-
-
-    classModal.hidden =
-        true;
-
-
-    if (teacherPassword) {
-
-        teacherPassword.value =
-            "";
-
-        teacherPassword.type =
-            "password";
-
-    }
-
-
-    if (togglePassword) {
-
-        togglePassword.classList.remove(
-            "is-visible"
-        );
-
-        togglePassword.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        togglePassword.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        togglePassword.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    if (modalMessage) {
-
-        modalMessage.textContent =
-            "";
-
-        modalMessage.className =
-            "modal-message";
-
-    }
-
+  return null;
 }
 
 
@@ -2688,356 +1594,107 @@ function closeClassModal() {
 
 function toggleTeacherPassword() {
 
-    if (!teacherPassword) {
-        return;
-    }
+  if (!dom.teacherPassword) {
+    return;
+  }
 
 
-    const showing =
-        teacherPassword.type === "text";
+  const isPassword =
+    dom.teacherPassword.type ===
+    "password";
 
 
-    teacherPassword.type =
-        showing
-            ? "password"
-            : "text";
+  dom.teacherPassword.type =
+    isPassword
+      ? "text"
+      : "password";
 
 
-    if (togglePassword) {
-
-        togglePassword.classList.toggle(
-            "is-visible",
-            !showing
-        );
-
-
-        togglePassword.setAttribute(
-            "aria-label",
-            showing
-                ? "Show password"
-                : "Hide password"
-        );
-
-
-        togglePassword.setAttribute(
-            "title",
-            showing
-                ? "Show password"
-                : "Hide password"
-        );
-
-
-        togglePassword.setAttribute(
-            "aria-pressed",
-            showing
-                ? "false"
-                : "true"
-        );
-
-    }
-
+  setPasswordEye(
+    dom.togglePassword,
+    isPassword
+  );
 }
 
 
 /* =========================================================
-   CREATE CLASS
+   ADMIN DELETE PASSWORD TOGGLE
 ========================================================= */
 
-async function createClass() {
+function toggleAdminDeletePassword() {
 
-    if (!db) {
-
-        showModalMessage(
-            "FCA database is not connected.",
-            "error"
-        );
-
-        return;
-
-    }
+  if (!dom.adminDeletePassword) {
+    return;
+  }
 
 
-    const formNumber =
-        getNextFormNumber();
+  const isPassword =
+    dom.adminDeletePassword.type ===
+    "password";
 
 
-    if (!formNumber) {
-
-        showModalMessage(
-            "All four classes already exist.",
-            "error"
-        );
-
-        return;
-
-    }
+  dom.adminDeletePassword.type =
+    isPassword
+      ? "text"
+      : "password";
 
 
-    const teacherId =
-        teacherSelect
-            ? teacherSelect.value
-            : "";
+  setPasswordEye(
+    dom.adminPasswordToggle,
+    isPassword
+  );
+}
 
 
-    const password =
-        teacherPassword
-            ? teacherPassword.value.trim()
-            : "";
+/* =========================================================
+   PASSWORD EYE ICON
+========================================================= */
+
+function setPasswordEye(
+  button,
+  visible
+) {
+
+  if (!button) {
+    return;
+  }
 
 
-    if (!teacherId) {
+  const openEye =
+    button.querySelector(
+      ".eye-open"
+    );
 
-        showModalMessage(
-            "Please select your teacher name.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if (!password) {
-
-        showModalMessage(
-            "Please enter your teacher password.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const teacher =
-        teachers.find(
-            function(item) {
-
-                return String(item.id) ===
-                    String(teacherId);
-
-            }
-        );
-
-
-    if (!teacher) {
-
-        showModalMessage(
-            "Selected teacher was not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    const storedHash =
-        teacher.password_hash ||
-        teacher.password ||
-        teacher.password_hash_value ||
-        "";
-
-
-    if (!storedHash) {
-
-        showModalMessage(
-            "This teacher account has no password stored.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       VERIFY TEACHER PASSWORD
-    ===================================================== */
-
-    showModalMessage(
-        "Verifying teacher authorization...",
-        "loading"
+  const closedEye =
+    button.querySelector(
+      ".eye-closed"
     );
 
 
-    const valid =
-        await verifyPassword(
-            password,
-            storedHash
-        );
+  if (openEye) {
+
+    openEye.style.display =
+      visible
+        ? "block"
+        : "none";
+  }
 
 
-    if (!valid) {
+  if (closedEye) {
 
-        showModalMessage(
-            "Incorrect teacher password.",
-            "error"
-        );
-
-        return;
-
-    }
+    closedEye.style.display =
+      visible
+        ? "none"
+        : "block";
+  }
 
 
-    /* =====================================================
-       DUPLICATE CHECK
-    ===================================================== */
-
-    const {
-        data: existing,
-        error: duplicateError
-    } =
-        await db
-            .from("classes")
-            .select(
-                "id, form_number"
-            )
-            .eq(
-                "form_number",
-                formNumber
-            )
-            .maybeSingle();
-
-
-    if (duplicateError) {
-
-        console.error(
-            "Duplicate check error:",
-            duplicateError
-        );
-
-
-        showModalMessage(
-            "Could not check existing classes: " +
-            duplicateError.message,
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    if (existing) {
-
-        showModalMessage(
-            "Form " +
-            formNumber +
-            " already exists.",
-            "error"
-        );
-
-
-        await loadClasses();
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       CREATE CLASS
-    ===================================================== */
-
-    showModalMessage(
-        "Creating Form " +
-        formNumber +
-        "...",
-        "loading"
-    );
-
-
-    const teacherName =
-        getTeacherName(
-            teacher
-        );
-
-
-    const classData = {
-
-        class_name:
-            "Form " + formNumber,
-
-        class_code:
-            "FCA-F" + formNumber,
-
-        description:
-            "FCA Form " + formNumber,
-
-        form_number:
-            formNumber,
-
-        created_by:
-            teacherName
-
-    };
-
-
-    console.log(
-        "Creating class:",
-        classData
-    );
-
-
-    const {
-        data,
-        error
-    } =
-        await db
-            .from("classes")
-            .insert(
-                classData
-            )
-            .select()
-            .single();
-
-
-    if (error) {
-
-        console.error(
-            "CREATE CLASS ERROR:",
-            error
-        );
-
-
-        showModalMessage(
-            "Class could not be created: " +
-            error.message,
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    console.log(
-        "Class created successfully:",
-        data
-    );
-
-
-    showModalMessage(
-        "Form " +
-        formNumber +
-        " created successfully.",
-        "success"
-    );
-
-
-    await loadClasses();
-
-
-    setTimeout(
-        function() {
-
-            closeClassModal();
-
-        },
-        700
-    );
-
+  button.setAttribute(
+    "aria-label",
+    visible
+      ? "Hide password"
+      : "Show password"
+  );
 }
 
 
@@ -3047,147 +1704,107 @@ async function createClass() {
 
 async function hashPassword(password) {
 
-    const encoder =
-        new TextEncoder();
+  const encoder =
+    new TextEncoder();
 
 
-    const bytes =
-        encoder.encode(
-            password
-        );
+  const data =
+    encoder.encode(password);
 
 
-    const hashBuffer =
-        await crypto.subtle.digest(
-            "SHA-256",
-            bytes
-        );
-
-
-    const hashArray =
-        Array.from(
-            new Uint8Array(
-                hashBuffer
-            )
-        );
-
-
-    return hashArray
-        .map(
-            function(byte) {
-
-                return byte
-                    .toString(16)
-                    .padStart(
-                        2,
-                        "0"
-                    );
-
-            }
-        )
-        .join("");
-
-}
-
-
-/* =========================================================
-   VERIFY TEACHER PASSWORD
-========================================================= */
-
-async function verifyPassword(
-    password,
-    storedHash
-) {
-
-    if (
-        !password ||
-        !storedHash
-    ) {
-
-        return false;
-
-    }
-
-
-    const hash =
-        await hashPassword(
-            password
-        );
-
-
-    return (
-        hash.toLowerCase() ===
-        String(storedHash)
-            .trim()
-            .toLowerCase()
+  const hashBuffer =
+    await crypto.subtle.digest(
+      "SHA-256",
+      data
     );
 
+
+  const hashArray =
+    Array.from(
+      new Uint8Array(hashBuffer)
+    );
+
+
+  return hashArray
+    .map(
+      byte =>
+        byte
+          .toString(16)
+          .padStart(2, "0")
+    )
+    .join("");
 }
 
 
 /* =========================================================
-   CREATE MODAL MESSAGE
+   MODAL MESSAGES
 ========================================================= */
 
 function showModalMessage(
-    message,
-    type
+  type,
+  message
 ) {
 
-    if (!modalMessage) {
-        return;
-    }
+  if (!dom.modalMessage) {
+    return;
+  }
 
 
-    modalMessage.textContent =
-        message;
+  dom.modalMessage.textContent =
+    message;
 
 
-    modalMessage.className =
-        "modal-message";
+  dom.modalMessage.className =
+    `modal-message ${type}`;
+}
 
 
-    if (type) {
+function showDeleteMessage(
+  type,
+  message
+) {
 
-        modalMessage.classList.add(
-            type
-        );
+  if (!dom.classDeleteMessage) {
+    return;
+  }
 
-    }
 
+  dom.classDeleteMessage.textContent =
+    message;
+
+
+  dom.classDeleteMessage.className =
+    `modal-message ${type}`;
 }
 
 
 /* =========================================================
-   DELETE MODAL MESSAGE
+   PAGE ERROR
 ========================================================= */
 
-function showDeleteMessage(
-    message,
-    type
-) {
+function showPageError(message) {
 
-    if (!classDeleteMessage) {
-        return;
-    }
+  console.error(
+    "FCA Classes:",
+    message
+  );
 
 
-    classDeleteMessage.textContent =
-        message;
+  if (dom.classDescription) {
+
+    dom.classDescription.textContent =
+      message;
+  }
 
 
-    classDeleteMessage.className =
-        "modal-message";
+  if (dom.classesContainer) {
 
-
-    if (type) {
-
-        classDeleteMessage.classList.add(
-            type
-        );
-
-    }
-
+    dom.classesContainer.innerHTML = `
+      <div class="classes-error">
+        ${escapeHtml(message)}
+      </div>
+    `;
+  }
 }
 
 
@@ -3197,31 +1814,25 @@ function showDeleteMessage(
 
 function escapeHtml(value) {
 
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+  return String(value ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 }

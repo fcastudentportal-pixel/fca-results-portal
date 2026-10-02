@@ -714,11 +714,15 @@
 
 }
 
+/* =========================================================
+   DELETE CLASS CONFIRM BUTTON
+========================================================= */
+
 .danger-button{
 
-  border:1px solid var(--red);
+  border:1px solid #650d22;
 
-  background:var(--red);
+  background:#650d22;
 
   color:#fff;
 
@@ -726,9 +730,11 @@
 
 .danger-button:hover{
 
-  background:#941d15;
+  background:#4e091b;
 
-  border-color:#941d15;
+  border-color:#4e091b;
+
+  color:#fff;
 
 }
 

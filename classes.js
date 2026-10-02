@@ -941,6 +941,7 @@ function getTeacherName(teacher) {
 
 }
 
+
 /* =========================================================
    RENDER CLASSES
 ========================================================= */
@@ -1064,13 +1065,6 @@ function renderClasses() {
             card.className =
                 "class-card";
 
-
-            /*
-               Keep form_number internally because it is
-               still needed by the application.
-
-               It is NOT displayed on the card anymore.
-            */
 
             const form =
                 Number(
@@ -1315,10 +1309,6 @@ function openDeleteClassModal(
         "Form " + formNumber;
 
 
-    /* =====================================================
-       CLASS NAME
-    ===================================================== */
-
     if (deleteClassName) {
 
         deleteClassName.textContent =
@@ -1326,10 +1316,6 @@ function openDeleteClassModal(
 
     }
 
-
-    /* =====================================================
-       WARNING
-    ===================================================== */
 
     if (deleteClassWarning) {
 
@@ -1341,15 +1327,13 @@ function openDeleteClassModal(
     }
 
 
-    /* =====================================================
-       RESET PASSWORD
-    ===================================================== */
-
     if (adminDeletePassword) {
 
-        adminDeletePassword.value = "";
+        adminDeletePassword.value =
+            "";
 
-        adminDeletePassword.type = "password";
+        adminDeletePassword.type =
+            "password";
 
     }
 
@@ -1378,19 +1362,11 @@ function openDeleteClassModal(
     }
 
 
-    /* =====================================================
-       RESET MESSAGE
-    ===================================================== */
-
     showDeleteMessage(
         "",
         ""
     );
 
-
-    /* =====================================================
-       RESET BUTTON
-    ===================================================== */
 
     if (deleteClassConfirmBtn) {
 
@@ -1403,10 +1379,6 @@ function openDeleteClassModal(
     }
 
 
-    /* =====================================================
-       SHOW MODAL
-    ===================================================== */
-
     if (deleteClassModal) {
 
         deleteClassModal.hidden =
@@ -1414,10 +1386,6 @@ function openDeleteClassModal(
 
     }
 
-
-    /* =====================================================
-       FOCUS PASSWORD
-    ===================================================== */
 
     setTimeout(
         function() {
@@ -1459,9 +1427,11 @@ function closeDeleteClassModal() {
 
     if (adminDeletePassword) {
 
-        adminDeletePassword.value = "";
+        adminDeletePassword.value =
+            "";
 
-        adminDeletePassword.type = "password";
+        adminDeletePassword.type =
+            "password";
 
     }
 
@@ -1572,578 +1542,52 @@ function toggleAdminDeletePassword() {
 
 async function confirmDeleteClass() {
 
-if (!db) {
-
-    showDeleteMessage(
-        "FCA database is not connected.",
-        "error"
-    );
-
-    return;
-}
-
-
-if (!selectedDeleteClassId) {
-
-    showDeleteMessage(
-        "No class has been selected.",
-        "error"
-    );
-
-    return;
-}
-
-
-const password =
-    adminDeletePassword
-        ? adminDeletePassword.value.trim()
-        : "";
-
-
-if (!password) {
-
-    showDeleteMessage(
-        "Please enter the administrator password.",
-        "error"
-    );
-
-    if (adminDeletePassword) {
-        adminDeletePassword.focus();
-    }
-
-    return;
-}
-
-
-/* =====================================================
-   FIND SELECTED CLASS
-===================================================== */
-
-const selectedClass =
-    classes.find(
-        function(item) {
-
-            return String(item.id) ===
-                String(selectedDeleteClassId);
-
-        }
-    );
-
-
-if (!selectedClass) {
-
-    showDeleteMessage(
-        "The selected class could not be found.",
-        "error"
-    );
-
-    return;
-}
-
-
-const className =
-    selectedClass.class_name ||
-    "Form " +
-    selectedClass.form_number;
-
-
-/* =====================================================
-   DISABLE BUTTON
-===================================================== */
-
-if (deleteClassConfirmBtn) {
-
-    deleteClassConfirmBtn.disabled = true;
-
-    deleteClassConfirmBtn.innerHTML =
-        '<span class="button-spinner"></span>' +
-        '<span>Verifying...</span>';
-}
-
-
-showDeleteMessage(
-    "Verifying administrator authorization...",
-    "loading"
-);
-
-
-/* =====================================================
-   VERIFY ADMIN PASSWORD
-===================================================== */
-
-const valid =
-    await verifyAdministratorPassword(
-        password
-    );
-
-
-if (!valid) {
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled = false;
-
-        deleteClassConfirmBtn.innerHTML =
-            "Delete Class";
-    }
-
-
-    showDeleteMessage(
-        "Incorrect administrator password.",
-        "error"
-    );
-
-
-    if (adminDeletePassword) {
-        adminDeletePassword.select();
-    }
-
-
-    return;
-}
-
-
-/* =====================================================
-   START DELETE
-===================================================== */
-
-if (deleteClassConfirmBtn) {
-
-    deleteClassConfirmBtn.innerHTML =
-        '<span class="button-spinner"></span>' +
-        '<span>Deleting...</span>';
-}
-
-
-showDeleteMessage(
-    "Administrator verified. Checking students in " +
-    className +
-    "...",
-    "loading"
-);
-
-
-try {
-
-    /* =================================================
-       STEP 1
-       FIND STUDENTS BELONGING TO THIS CLASS
-
-       Your students table uses:
-
-       students.class
-
-       Example:
-       "Form 1"
-    ================================================= */
-
-    const formNumber =
-        Number(
-            selectedClass.form_number
-        );
-
-
-    const formName =
-        "Form " +
-        formNumber;
-
-
-    const {
-        data: studentsInClass,
-        error: studentLookupError
-    } =
-        await db
-            .from("students")
-            .select(
-                "id,student_number,name,class"
-            )
-            .eq(
-                "class",
-                formName
-            );
-
-
-    if (studentLookupError) {
-
-        console.error(
-            "Student lookup error:",
-            studentLookupError
-        );
-
-
-        throw new Error(
-            "Could not find students belonging to " +
-            className +
-            ": " +
-            studentLookupError.message
-        );
-    }
-
-
-    const students =
-        Array.isArray(studentsInClass)
-            ? studentsInClass
-            : [];
-
-
-    const studentIds =
-        students
-            .map(
-                function(student) {
-                    return student.id;
-                }
-            )
-            .filter(
-                function(id) {
-                    return id !== null &&
-                           id !== undefined &&
-                           String(id).trim() !== "";
-                }
-            );
-
-
-    console.log(
-        "Students belonging to class:",
-        students
-    );
-
-
-    console.log(
-        "Number of students to delete:",
-        studentIds.length
-    );
-
-
-    /* =================================================
-       STEP 2
-       DELETE RESULTS BELONGING TO THOSE STUDENTS
-
-       results.student_id
-       points to
-       students.id
-    ================================================= */
-
-    if (studentIds.length > 0) {
+    if (!db) {
 
         showDeleteMessage(
-            "Deleting " +
-            studentIds.length +
-            " student result record(s)...",
-            "loading"
+            "FCA database is not connected.",
+            "error"
         );
 
-
-        const {
-            error: resultsDeleteError
-        } =
-            await db
-                .from("results")
-                .delete()
-                .in(
-                    "student_id",
-                    studentIds
-                );
-
-
-        if (resultsDeleteError) {
-
-            console.error(
-                "Delete student results error:",
-                resultsDeleteError
-            );
-
-
-            throw new Error(
-                "Student results could not be deleted: " +
-                resultsDeleteError.message
-            );
-        }
+        return;
 
     }
 
 
-    /* =================================================
-       STEP 3
-       DELETE STUDENTS
-
-       This removes the students from Supabase,
-       so dashboard student counts will no longer
-       include them.
-    ================================================= */
-
-    if (studentIds.length > 0) {
+    if (!selectedDeleteClassId) {
 
         showDeleteMessage(
-            "Deleting " +
-            studentIds.length +
-            " student(s)...",
-            "loading"
+            "No class has been selected.",
+            "error"
         );
 
-
-        const {
-            error: studentsDeleteError
-        } =
-            await db
-                .from("students")
-                .delete()
-                .in(
-                    "id",
-                    studentIds
-                );
-
-
-        if (studentsDeleteError) {
-
-            console.error(
-                "Delete students error:",
-                studentsDeleteError
-            );
-
-
-            throw new Error(
-                "Students could not be deleted: " +
-                studentsDeleteError.message
-            );
-        }
+        return;
 
     }
 
 
-    /* =================================================
-       STEP 4
-       VERIFY STUDENTS WERE REALLY DELETED
-    ================================================= */
-
-    if (studentIds.length > 0) {
-
-        const {
-            data: remainingStudents,
-            error: studentVerifyError
-        } =
-            await db
-                .from("students")
-                .select("id")
-                .in(
-                    "id",
-                    studentIds
-                );
+    const password =
+        adminDeletePassword
+            ? adminDeletePassword.value.trim()
+            : "";
 
 
-        if (studentVerifyError) {
+    if (!password) {
 
-            console.warn(
-                "Student deletion verification warning:",
-                studentVerifyError
-            );
+        showDeleteMessage(
+            "Please enter the administrator password.",
+            "error"
+        );
+
+        if (adminDeletePassword) {
+
+            adminDeletePassword.focus();
 
         }
 
-
-        if (
-            Array.isArray(remainingStudents) &&
-            remainingStudents.length > 0
-        ) {
-
-            throw new Error(
-                "Some students still exist in Supabase. " +
-                "Check the students table DELETE policy."
-            );
-        }
+        return;
 
     }
-
-
-    /* =================================================
-       STEP 5
-       DELETE CLASS
-    ================================================= */
-
-    showDeleteMessage(
-        "Students removed. Deleting " +
-        className +
-        "...",
-        "loading"
-    );
-
-
-    const {
-        data: deletedRows,
-        error: classDeleteError
-    } =
-        await db
-            .from("classes")
-            .delete()
-            .eq(
-                "id",
-                selectedDeleteClassId
-            )
-            .select("id");
-
-
-    if (classDeleteError) {
-
-        console.error(
-            "Delete class error:",
-            classDeleteError
-        );
-
-
-        throw new Error(
-            "Class could not be deleted: " +
-            classDeleteError.message
-        );
-    }
-
-
-    /* =================================================
-       VERIFY CLASS WAS DELETED
-    ================================================= */
-
-    if (
-        !Array.isArray(deletedRows) ||
-        deletedRows.length === 0
-    ) {
-
-        throw new Error(
-            "The class was NOT deleted from Supabase. " +
-            "Please check the classes table DELETE policy."
-        );
-    }
-
-
-    const {
-        data: remainingClass,
-        error: verifyClassError
-    } =
-        await db
-            .from("classes")
-            .select("id")
-            .eq(
-                "id",
-                selectedDeleteClassId
-            )
-            .maybeSingle();
-
-
-    if (verifyClassError) {
-
-        console.warn(
-            "Class verification warning:",
-            verifyClassError
-        );
-    }
-
-
-    if (remainingClass) {
-
-        throw new Error(
-            "The class still exists in the database."
-        );
-    }
-
-
-    /* =================================================
-       STEP 6
-       REMOVE CLASS FROM LOCAL ARRAY
-    ================================================= */
-
-    classes =
-        classes.filter(
-            function(item) {
-
-                return String(item.id) !==
-                    String(selectedDeleteClassId);
-
-            }
-        );
-
-
-    console.log(
-        "Class deleted:",
-        selectedDeleteClassId
-    );
-
-
-    console.log(
-        "Students deleted:",
-        studentIds.length
-    );
-
-
-    /* =================================================
-       SUCCESS MESSAGE
-    ================================================= */
-
-    showDeleteMessage(
-        className +
-        " and " +
-        studentIds.length +
-        " student(s) were deleted successfully.",
-        "success"
-    );
-
-
-    /* =================================================
-       BUTTON
-    ================================================= */
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled = true;
-
-        deleteClassConfirmBtn.innerHTML =
-            "Deleted";
-    }
-
-
-    /* =================================================
-       RELOAD CLASSES
-    ================================================= */
-
-    await loadClasses();
-
-
-    /* =================================================
-       CLOSE MODAL
-    ================================================= */
-
-    setTimeout(
-        function() {
-
-            closeDeleteClassModal();
-
-        },
-        900
-    );
-
-}
-
-catch(error) {
-
-    console.error(
-        "Delete class exception:",
-        error
-    );
-
-
-    if (deleteClassConfirmBtn) {
-
-        deleteClassConfirmBtn.disabled = false;
-
-        deleteClassConfirmBtn.innerHTML =
-            "Delete Class";
-    }
-
-
-    showDeleteMessage(
-        "Delete failed: " +
-        error.message,
-        "error"
-    );
-}
-
-}
 
 
     /* =====================================================
@@ -2243,7 +1687,7 @@ catch(error) {
 
 
     /* =====================================================
-       DELETE FROM SUPABASE
+       START DELETE
     ===================================================== */
 
     if (deleteClassConfirmBtn) {
@@ -2256,7 +1700,7 @@ catch(error) {
 
 
     showDeleteMessage(
-        "Administrator verified. Deleting " +
+        "Administrator verified. Checking students in " +
         className +
         "...",
         "loading"
@@ -2265,17 +1709,246 @@ catch(error) {
 
     try {
 
-        /*
-           select("id") makes Supabase return the row
-           that was actually deleted.
+        /* =================================================
+           STEP 1
+           FIND STUDENTS BELONGING TO THIS CLASS
+        ================================================= */
 
-           If the returned array is empty, the class
-           was NOT actually deleted.
-        */
+        const formNumber =
+            Number(
+                selectedClass.form_number
+            );
+
+
+        const formName =
+            "Form " +
+            formNumber;
+
+
+        const {
+            data: studentsInClass,
+            error: studentLookupError
+        } =
+            await db
+                .from("students")
+                .select(
+                    "id,student_number,name,class"
+                )
+                .eq(
+                    "class",
+                    formName
+                );
+
+
+        if (studentLookupError) {
+
+            console.error(
+                "Student lookup error:",
+                studentLookupError
+            );
+
+
+            throw new Error(
+                "Could not find students belonging to " +
+                className +
+                ": " +
+                studentLookupError.message
+            );
+
+        }
+
+
+        const students =
+            Array.isArray(studentsInClass)
+                ? studentsInClass
+                : [];
+
+
+        const studentIds =
+            students
+                .map(
+                    function(student) {
+
+                        return student.id;
+
+                    }
+                )
+                .filter(
+                    function(id) {
+
+                        return (
+                            id !== null &&
+                            id !== undefined &&
+                            String(id).trim() !== ""
+                        );
+
+                    }
+                );
+
+
+        console.log(
+            "Students belonging to class:",
+            students
+        );
+
+
+        console.log(
+            "Number of students to delete:",
+            studentIds.length
+        );
+
+
+        /* =================================================
+           STEP 2
+           DELETE RESULTS
+        ================================================= */
+
+        if (studentIds.length > 0) {
+
+            showDeleteMessage(
+                "Deleting " +
+                studentIds.length +
+                " student result record(s)...",
+                "loading"
+            );
+
+
+            const {
+                error: resultsDeleteError
+            } =
+                await db
+                    .from("results")
+                    .delete()
+                    .in(
+                        "student_id",
+                        studentIds
+                    );
+
+
+            if (resultsDeleteError) {
+
+                console.error(
+                    "Delete student results error:",
+                    resultsDeleteError
+                );
+
+
+                throw new Error(
+                    "Student results could not be deleted: " +
+                    resultsDeleteError.message
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           STEP 3
+           DELETE STUDENTS
+        ================================================= */
+
+        if (studentIds.length > 0) {
+
+            showDeleteMessage(
+                "Deleting " +
+                studentIds.length +
+                " student(s)...",
+                "loading"
+            );
+
+
+            const {
+                error: studentsDeleteError
+            } =
+                await db
+                    .from("students")
+                    .delete()
+                    .in(
+                        "id",
+                        studentIds
+                    );
+
+
+            if (studentsDeleteError) {
+
+                console.error(
+                    "Delete students error:",
+                    studentsDeleteError
+                );
+
+
+                throw new Error(
+                    "Students could not be deleted: " +
+                    studentsDeleteError.message
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           STEP 4
+           VERIFY STUDENTS WERE DELETED
+        ================================================= */
+
+        if (studentIds.length > 0) {
+
+            const {
+                data: remainingStudents,
+                error: studentVerifyError
+            } =
+                await db
+                    .from("students")
+                    .select("id")
+                    .in(
+                        "id",
+                        studentIds
+                    );
+
+
+            if (studentVerifyError) {
+
+                console.warn(
+                    "Student deletion verification warning:",
+                    studentVerifyError
+                );
+
+            }
+
+
+            if (
+                Array.isArray(remainingStudents) &&
+                remainingStudents.length > 0
+            ) {
+
+                throw new Error(
+                    "Some students still exist in Supabase. " +
+                    "Check the students table DELETE policy."
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
+           STEP 5
+           DELETE CLASS
+        ================================================= */
+
+        showDeleteMessage(
+            "Students removed. Deleting " +
+            className +
+            "...",
+            "loading"
+        );
+
 
         const {
             data: deletedRows,
-            error
+            error: classDeleteError
         } =
             await db
                 .from("classes")
@@ -2287,43 +1960,24 @@ catch(error) {
                 .select("id");
 
 
-        /* =================================================
-           DATABASE ERROR
-        ================================================= */
-
-        if (error) {
+        if (classDeleteError) {
 
             console.error(
                 "Delete class error:",
-                error
+                classDeleteError
             );
 
 
-            if (deleteClassConfirmBtn) {
-
-                deleteClassConfirmBtn.disabled =
-                    false;
-
-                deleteClassConfirmBtn.innerHTML =
-                    "Delete Class";
-
-            }
-
-
-            showDeleteMessage(
+            throw new Error(
                 "Class could not be deleted: " +
-                error.message,
-                "error"
+                classDeleteError.message
             );
-
-
-            return;
 
         }
 
 
         /* =================================================
-           VERIFY ACTUAL DELETE
+           VERIFY CLASS WAS DELETED
         ================================================= */
 
         if (
@@ -2331,48 +1985,17 @@ catch(error) {
             deletedRows.length === 0
         ) {
 
-            console.error(
-                "Supabase did not delete the class.",
-                {
-                    classId:
-                        selectedDeleteClassId,
-
-                    className:
-                        className
-                }
-            );
-
-
-            if (deleteClassConfirmBtn) {
-
-                deleteClassConfirmBtn.disabled =
-                    false;
-
-                deleteClassConfirmBtn.innerHTML =
-                    "Delete Class";
-
-            }
-
-
-            showDeleteMessage(
+            throw new Error(
                 "The class was NOT deleted from Supabase. " +
-                "Please check the classes table RLS DELETE policy.",
-                "error"
+                "Please check the classes table DELETE policy."
             );
-
-
-            return;
 
         }
 
 
-        /* =================================================
-           VERIFY DATABASE
-        ================================================= */
-
         const {
             data: remainingClass,
-            error: verifyError
+            error: verifyClassError
         } =
             await db
                 .from("classes")
@@ -2384,52 +2007,28 @@ catch(error) {
                 .maybeSingle();
 
 
-        if (verifyError) {
+        if (verifyClassError) {
 
             console.warn(
-                "Delete verification query returned an error:",
-                verifyError
+                "Class verification warning:",
+                verifyClassError
             );
 
         }
 
 
-        /*
-           If the row can still be found, stop here.
-        */
-
         if (remainingClass) {
 
-            console.error(
-                "Class still exists after delete:",
-                remainingClass
+            throw new Error(
+                "The class still exists in the database."
             );
-
-
-            if (deleteClassConfirmBtn) {
-
-                deleteClassConfirmBtn.disabled =
-                    false;
-
-                deleteClassConfirmBtn.innerHTML =
-                    "Delete Class";
-
-            }
-
-
-            showDeleteMessage(
-                "The class still exists in the database.",
-                "error"
-            );
-
-
-            return;
 
         }
 
 
         /* =================================================
-           REMOVE FROM LOCAL ARRAY
+           STEP 6
+           REMOVE CLASS FROM LOCAL ARRAY
         ================================================= */
 
         classes =
@@ -2444,8 +2043,14 @@ catch(error) {
 
 
         console.log(
-            "Class actually deleted from Supabase:",
+            "Class deleted:",
             selectedDeleteClassId
+        );
+
+
+        console.log(
+            "Students deleted:",
+            studentIds.length
         );
 
 
@@ -2455,14 +2060,12 @@ catch(error) {
 
         showDeleteMessage(
             className +
-            " was deleted successfully.",
+            " and " +
+            studentIds.length +
+            " student(s) were deleted successfully.",
             "success"
         );
 
-
-        /* =================================================
-           BUTTON
-        ================================================= */
 
         if (deleteClassConfirmBtn) {
 
@@ -2476,7 +2079,7 @@ catch(error) {
 
 
         /* =================================================
-           RELOAD FROM DATABASE
+           RELOAD CLASSES
         ================================================= */
 
         await loadClasses();
@@ -2492,7 +2095,7 @@ catch(error) {
                 closeDeleteClassModal();
 
             },
-            700
+            900
         );
 
     }
@@ -2546,14 +2149,6 @@ async function verifyAdministratorPassword(
 
 
     try {
-
-        /*
-           Authenticate the FCA administrator through
-           Supabase Auth.
-
-           The administrator password is NOT stored
-           inside this JavaScript file.
-        */
 
         const {
             data,

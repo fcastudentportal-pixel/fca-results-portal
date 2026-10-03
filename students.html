@@ -72,14 +72,12 @@
                 Dashboard
             </a>
 
-
             <a
                 class="nav"
                 href="teachers.html"
             >
                 Teachers
             </a>
-
 
             <a
                 class="nav"
@@ -88,7 +86,6 @@
                 Classes
             </a>
 
-
             <a
                 class="nav active"
                 href="students.html"
@@ -96,14 +93,12 @@
                 Students
             </a>
 
-
             <a
                 class="nav"
                 href="subjects.html"
             >
                 Subjects
             </a>
-
 
             <a
                 class="nav"
@@ -133,7 +128,9 @@
     <main class="main">
 
 
-        <!-- HEADER -->
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
         <header>
 
@@ -150,8 +147,11 @@
             </div>
 
 
-            <div class="pill">
-                Students
+            <div
+                id="databaseStatus"
+                class="database-status"
+            >
+                Connecting...
             </div>
 
         </header>
@@ -180,8 +180,8 @@
                     </h2>
 
                     <p>
-                        Select Form 1, Form 2, Form 3 or
-                        Form 4 to manage its students.
+                        Select a class to view and manage
+                        its students.
                     </p>
 
                 </div>
@@ -220,7 +220,7 @@
 
 
         <!-- =================================================
-             STUDENT SECTION
+             STUDENTS SECTION
         ================================================== -->
 
         <section
@@ -246,7 +246,7 @@
                         id="selectedClassName"
                         class="selected-class-label"
                     >
-                        Form
+                        FCA CLASS
                     </small>
 
 
@@ -286,7 +286,10 @@
             </div>
 
 
-            <!-- STUDENT COUNT -->
+
+            <!-- =================================================
+                 STUDENT SUMMARY
+            ================================================== -->
 
             <div class="student-summary">
 
@@ -318,7 +321,10 @@
             </div>
 
 
-            <!-- STUDENTS -->
+
+            <!-- =================================================
+                 STUDENT LIST
+            ================================================== -->
 
             <div
                 id="studentsContainer"
@@ -326,7 +332,10 @@
             ></div>
 
 
-            <!-- EMPTY -->
+
+            <!-- =================================================
+                 EMPTY STUDENT STATE
+            ================================================== -->
 
             <div
                 id="noStudentsState"

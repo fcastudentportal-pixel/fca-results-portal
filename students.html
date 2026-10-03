@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,156 +8,92 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="description"
+        content="FCA Portal Students Management"
+    >
+
     <title>Students | FCA Portal</title>
 
-    <link
-        rel="stylesheet"
-        href="admin.css"
-    >
+    <!-- FCA ADMIN STYLES -->
+    <link rel="stylesheet" href="admin.css">
 
-    <link
-        rel="stylesheet"
-        href="students.css"
-    >
-
+    <!-- STUDENTS STYLES -->
+    <link rel="stylesheet" href="students.css">
 </head>
-
 
 <body>
 
-<div class="shell">
-
+<div class="admin-layout">
 
     <!-- =====================================================
          SIDEBAR
     ====================================================== -->
 
-    <aside class="sidebar">
+    <aside class="admin-sidebar">
 
-        <div class="brand">
+        <div class="sidebar-brand">
 
-            <a
-                class="brand-mark"
-                href="admin.html"
+            <img
+                src="fca-logo.png"
+                alt="First Class Academy"
+                class="sidebar-logo"
             >
 
-                <img
-                    src="fca-logo.png"
-                    alt="First Class Academy"
-                >
-
-            </a>
-
-            <div>
-
-                <b>FCA Portal</b>
-
-                <small>
-                    Administration
-                </small>
-
+            <div class="sidebar-brand-text">
+                <strong>FCA Portal</strong>
+                <span>Administration</span>
             </div>
 
         </div>
 
 
-        <nav>
+        <nav class="admin-nav">
 
-            <a
-                class="nav"
-                href="admin.html"
-            >
-                Dashboard
+            <a href="admin.html">
+                <span>Dashboard</span>
+            </a>
+
+            <a href="teachers.html">
+                <span>Teachers</span>
+            </a>
+
+            <a href="classes.html">
+                <span>Classes</span>
             </a>
 
             <a
-                class="nav"
-                href="teachers.html"
-            >
-                Teachers
-            </a>
-
-            <a
-                class="nav"
-                href="classes.html"
-            >
-                Classes
-            </a>
-
-            <a
-                class="nav active"
                 href="students.html"
+                class="active"
             >
-                Students
+                <span>Students</span>
             </a>
 
-            <a
-                class="nav"
-                href="subjects.html"
-            >
-                Subjects
+            <a href="subjects.html">
+                <span>Subjects</span>
             </a>
 
-            <a
-                class="nav"
-                href="results.html"
-            >
-                Results
+            <a href="results.html">
+                <span>Results</span>
+            </a>
+
+            <a href="settings.html">
+                <span>Settings</span>
             </a>
 
         </nav>
 
-
-        <a
-            class="settings-button"
-            href="settings.html"
-        >
-            ⚙ Settings
-        </a>
-
     </aside>
 
 
-
     <!-- =====================================================
-         MAIN
+         MAIN CONTENT
     ====================================================== -->
 
-    <main class="main">
-
-
-        <!-- =================================================
-             HEADER
-        ================================================== -->
-
-        <header>
-
-            <div>
-
-                <small>
-                    ACADEMIC MANAGEMENT
-                </small>
-
-                <h1>
-                    Students
-                </h1>
-
-            </div>
-
-
-            <div
-                id="databaseStatus"
-                class="database-status"
-            >
-                Connecting...
-            </div>
-
-        </header>
-
-
+    <main class="admin-main">
 
         <!-- =================================================
-             CLASS SELECTION
+             CLASSES SECTION
         ================================================== -->
 
         <section
@@ -167,21 +101,18 @@
             class="students-page-section"
         >
 
-            <div class="students-page-heading">
+            <div class="students-page-header">
 
                 <div>
 
-                    <small>
-                        FCA STUDENTS
-                    </small>
+                    <span class="students-eyebrow">
+                        ACADEMIC MANAGEMENT
+                    </span>
 
-                    <h2>
-                        Select a Class
-                    </h2>
+                    <h1>Students</h1>
 
                     <p>
-                        Select a class to view and manage
-                        its students.
+                        Select a class to manage its students.
                     </p>
 
                 </div>
@@ -202,16 +133,21 @@
             >
 
                 <div class="empty-icon">
-                    +
+                    🎓
                 </div>
 
-                <h3>
-                    No Classes Available
-                </h3>
+                <h3>No Classes Available</h3>
 
                 <p>
-                    Create classes first from the Classes page.
+                    Create a class first before adding students.
                 </p>
+
+                <a
+                    href="classes.html"
+                    class="empty-action-button"
+                >
+                    Go to Classes
+                </a>
 
             </div>
 
@@ -229,54 +165,39 @@
             hidden
         >
 
-            <div class="student-section-header">
+            <div class="students-section-top">
 
-                <div>
-
-                    <button
-                        id="backToClasses"
-                        class="back-button"
-                        type="button"
-                    >
-                        ← Back to Classes
-                    </button>
+                <button
+                    type="button"
+                    id="backToClasses"
+                    class="back-to-classes"
+                >
+                    ← Back to Classes
+                </button>
 
 
-                    <small
+                <div class="selected-class-heading">
+
+                    <span
                         id="selectedClassName"
-                        class="selected-class-label"
+                        class="selected-class-code"
                     >
-                        FCA CLASS
-                    </small>
-
+                        FCA-F1
+                    </span>
 
                     <h2 id="selectedClassTitle">
-                        Form Students
+                        Students
                     </h2>
-
-
-                    <p id="selectedClassDescription">
-                        Students registered in this class.
-                    </p>
 
                 </div>
 
 
-                <div class="student-header-actions">
+                <div class="students-header-actions">
 
                     <button
-                        id="refreshStudentsButton"
-                        class="secondary-button"
                         type="button"
-                    >
-                        ↻ Refresh
-                    </button>
-
-
-                    <button
                         id="addStudentButton"
-                        class="primary-button"
-                        type="button"
+                        class="add-student-button"
                     >
                         + Add Student
                     </button>
@@ -286,35 +207,28 @@
             </div>
 
 
+            <p
+                id="selectedClassDescription"
+                class="selected-class-description"
+            ></p>
+
+
 
             <!-- =================================================
-                 STUDENT SUMMARY
+                 SUMMARY
             ================================================== -->
 
-            <div class="student-summary">
+            <div class="students-summary">
 
-                <div>
+                <div class="summary-card">
 
-                    <strong id="studentCount">
-                        0
-                    </strong>
+                    <div class="summary-number">
+                        <span id="studentCount">0</span>
+                    </div>
 
-                    <span>
-                        Students
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong id="selectedFormNumber">
-                        —
-                    </strong>
-
-                    <span>
-                        Form
-                    </span>
+                    <div class="summary-text">
+                        <strong>Students</strong>
+                    </div>
 
                 </div>
 
@@ -332,11 +246,6 @@
             ></div>
 
 
-
-            <!-- =================================================
-                 EMPTY STUDENT STATE
-            ================================================== -->
-
             <div
                 id="noStudentsState"
                 class="students-empty"
@@ -344,22 +253,19 @@
             >
 
                 <div class="empty-icon">
-                    👤
+                    👨‍🎓
                 </div>
 
-                <h3>
-                    No Students in This Class
-                </h3>
+                <h3>No Students Yet</h3>
 
                 <p>
-                    Add the first student to this class.
+                    This class does not have any students yet.
                 </p>
 
-
                 <button
-                    id="emptyAddStudentButton"
-                    class="primary-button"
                     type="button"
+                    id="emptyAddStudentButton"
+                    class="empty-action-button"
                 >
                     + Add Student
                 </button>
@@ -374,18 +280,671 @@
 
 
 
-<!-- =====================================================
-     SUPABASE
-====================================================== -->
+<!-- =========================================================
+     ADD STUDENT MODAL
+========================================================= -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
+<div
+    id="studentAddModal"
+    class="student-modal-overlay"
+    hidden
+>
+
+    <div
+        class="student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addStudentModalTitle"
+    >
+
+        <div class="student-modal-header">
+
+            <div>
+                <span class="modal-eyebrow">
+                    STUDENT MANAGEMENT
+                </span>
+
+                <h2 id="addStudentModalTitle">
+                    Add Student
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                id="closeAddStudentModal"
+                class="modal-close-button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="addStudentForm">
+
+            <div class="student-form-group">
+
+                <label for="studentFullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="studentFullName"
+                    placeholder="Enter student's full name"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label for="studentIdPreview">
+                    Student ID
+                </label>
+
+                <input
+                    type="text"
+                    id="studentIdPreview"
+                    readonly
+                >
+
+                <small>
+                    Generated automatically.
+                </small>
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label for="studentPasswordPreview">
+                    Access Password
+                </label>
+
+                <input
+                    type="text"
+                    id="studentPasswordPreview"
+                    readonly
+                >
+
+                <small>
+                    Generated automatically.
+                </small>
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label>
+                    Class
+                </label>
+
+                <input
+                    type="text"
+                    id="studentClassPreview"
+                    readonly
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBJECTS
+            ================================================== -->
+
+            <div class="student-form-group subjects-form-group">
+
+                <div class="subjects-label-row">
+
+                    <label>
+                        Subjects Taken
+                    </label>
+
+                    <div class="subject-controls">
+
+                        <button
+                            type="button"
+                            id="selectAllSubjectsBtn"
+                            class="subject-control-button"
+                        >
+                            Select All
+                        </button>
+
+                        <button
+                            type="button"
+                            id="clearSubjectsBtn"
+                            class="subject-control-button clear"
+                        >
+                            Clear
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="studentSubjectsGrid"
+                    class="checkbox-grid"
+                >
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Agriculture"
+                        >
+                        <span>Agriculture</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Bible Knowledge"
+                        >
+                        <span>Bible Knowledge</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Biology"
+                        >
+                        <span>Biology</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Chemistry"
+                        >
+                        <span>Chemistry</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Chichewa"
+                        >
+                        <span>Chichewa</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="English"
+                        >
+                        <span>English</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Geography"
+                        >
+                        <span>Geography</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="History"
+                        >
+                        <span>History</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Life Skills"
+                        >
+                        <span>Life Skills</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Mathematics"
+                        >
+                        <span>Mathematics</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Physics"
+                        >
+                        <span>Physics</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="studentSubjects"
+                            value="Social Studies"
+                        >
+                        <span>Social Studies</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="addStudentError"
+                class="student-form-error"
+                hidden
+            ></div>
+
+
+            <div class="student-modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelAddStudent"
+                    class="modal-cancel-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="modal-save-button"
+                    id="saveStudentButton"
+                >
+                    Create Student
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- =================================================
+             SUCCESS BOX
+        ================================================== -->
+
+        <div
+            id="studentCreatedBox"
+            class="student-created-box"
+            hidden
+        >
+
+            <div class="created-icon">
+                ✓
+            </div>
+
+            <h3>Student Created</h3>
+
+            <p>
+                Save these login details securely.
+            </p>
+
+
+            <div class="created-credentials">
+
+                <div>
+                    <span>Student ID</span>
+                    <strong id="createdStudentId"></strong>
+                </div>
+
+                <div>
+                    <span>Access Password</span>
+                    <strong id="createdStudentPassword"></strong>
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeCreatedStudent"
+                class="modal-save-button"
+            >
+                Done
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     EDIT STUDENT MODAL
+========================================================= -->
+
+<div
+    id="studentEditModal"
+    class="student-modal-overlay"
+    hidden
+>
+
+    <div
+        class="student-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editStudentModalTitle"
+    >
+
+        <div class="student-modal-header">
+
+            <div>
+
+                <span class="modal-eyebrow">
+                    STUDENT MANAGEMENT
+                </span>
+
+                <h2 id="editStudentModalTitle">
+                    Edit Student
+                </h2>
+
+            </div>
+
+            <button
+                type="button"
+                id="closeEditStudentModal"
+                class="modal-close-button"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="editStudentForm">
+
+            <div class="student-form-group">
+
+                <label for="editStudentFullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="editStudentFullName"
+                    required
+                >
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label for="editStudentId">
+                    Student ID
+                </label>
+
+                <input
+                    type="text"
+                    id="editStudentId"
+                    readonly
+                >
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label for="editStudentPassword">
+                    Access Password
+                </label>
+
+                <input
+                    type="text"
+                    id="editStudentPassword"
+                    required
+                >
+
+            </div>
+
+
+            <div class="student-form-group">
+
+                <label for="editStudentClass">
+                    Class
+                </label>
+
+                <input
+                    type="text"
+                    id="editStudentClass"
+                    readonly
+                >
+
+            </div>
+
+
+            <div class="student-form-group subjects-form-group">
+
+                <div class="subjects-label-row">
+
+                    <label>
+                        Subjects Taken
+                    </label>
+
+                    <div class="subject-controls">
+
+                        <button
+                            type="button"
+                            id="editSelectAllSubjectsBtn"
+                            class="subject-control-button"
+                        >
+                            Select All
+                        </button>
+
+                        <button
+                            type="button"
+                            id="editClearSubjectsBtn"
+                            class="subject-control-button clear"
+                        >
+                            Clear
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="checkbox-grid">
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Agriculture"
+                        >
+                        <span>Agriculture</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Bible Knowledge"
+                        >
+                        <span>Bible Knowledge</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Biology"
+                        >
+                        <span>Biology</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Chemistry"
+                        >
+                        <span>Chemistry</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Chichewa"
+                        >
+                        <span>Chichewa</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="English"
+                        >
+                        <span>English</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Geography"
+                        >
+                        <span>Geography</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="History"
+                        >
+                        <span>History</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Life Skills"
+                        >
+                        <span>Life Skills</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Mathematics"
+                        >
+                        <span>Mathematics</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Physics"
+                        >
+                        <span>Physics</span>
+                    </label>
+
+
+                    <label class="check-option">
+                        <input
+                            type="checkbox"
+                            name="editStudentSubjects"
+                            value="Social Studies"
+                        >
+                        <span>Social Studies</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="editStudentError"
+                class="student-form-error"
+                hidden
+            ></div>
+
+
+            <div class="student-modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelEditStudent"
+                    class="modal-cancel-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="modal-save-button"
+                    id="updateStudentButton"
+                >
+                    Update Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SUPABASE
+========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="config.js"></script>
 
 <script src="students.js"></script>
 
 </body>
-
 </html>

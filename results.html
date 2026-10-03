@@ -4,287 +4,487 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>FCA | Student Results</title>
+  <meta
+    name="description"
+    content="First Class Academy Student Results Management"
+  >
 
+  <title>Results | FCA Portal</title>
+
+  <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="results.css">
 </head>
 
 <body>
 
+  <main class="results-page">
 
-<main class="container">
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
 
-  <!-- STUDENT DETAILS -->
-  <section class="card results-card">
-
-    <div class="results-title">
-
-  <div class="results-title-text">
-    <div class="eyebrow">ACADEMIC PERFORMANCE</div>
-    <h2>Student Results</h2>
-  </div>
-
-  <div class="results-logo">
-    <img src="fca-logo.png" alt="FCA Logo">
-  </div>
-
-</div>
-
-    <div class="student-details">
+    <section class="page-header">
 
       <div>
-        <span>Full Name</span>
-        <strong id="studentName">Peter Banda</strong>
+        <div class="page-eyebrow">FIRST CLASS ACADEMY</div>
+        <h1>Student Results</h1>
+        <p id="pageDescription">
+          Select a class to manage student academic results.
+        </p>
       </div>
 
-      <div>
-        <span>Student ID</span>
-        <strong id="studentId">FCA-2026-BA-001</strong>
+      <img
+        src="fca-logo.png"
+        alt="First Class Academy"
+        class="page-logo"
+      >
+
+    </section>
+
+
+    <!-- =====================================================
+         DATABASE STATUS
+    ====================================================== -->
+
+    <div id="databaseStatus" class="database-status checking">
+      <span class="status-dot"></span>
+      Checking database...
+    </div>
+
+
+    <!-- =====================================================
+         VIEW 1 — CLASSES
+    ====================================================== -->
+
+    <section id="classesView" class="results-view">
+
+      <div class="section-heading">
+        <div>
+          <span class="section-eyebrow">STEP 1</span>
+          <h2>Select Class</h2>
+          <p>Choose a class to view its students.</p>
+        </div>
       </div>
 
-      <div>
-        <span>Class</span>
-        <strong id="studentClass">Form 4</strong>
+      <div id="classesGrid" class="classes-grid">
+
+        <div class="loading-card">
+          <div class="loading-spinner"></div>
+          <p>Loading classes...</p>
+        </div>
+
       </div>
 
-    </div>
+    </section>
 
 
-    <!-- RESULTS TABLE -->
-    <div class="table-wrap">
+    <!-- =====================================================
+         VIEW 2 — STUDENTS
+    ====================================================== -->
 
-      <table id="resultsTable">
+    <section
+      id="studentsView"
+      class="results-view hidden"
+    >
 
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Subject</th>
-            <th>Marks</th>
-            <th>Remark</th>
-          </tr>
-        </thead>
+      <div class="view-toolbar">
 
-        <tbody>
+        <button
+          id="backToClassesBtn"
+          class="back-button"
+          type="button"
+        >
+          ← Classes
+        </button>
 
-          <tr>
-            <td>1</td>
-            <td>Agriculture</td>
-            <td>79</td>
-            <td>strong Credit</td>
-          </tr>
+        <div class="selected-class-title">
+          <span class="section-eyebrow">STEP 2</span>
+          <h2 id="selectedClassTitle">Students</h2>
+          <p id="selectedClassDescription">
+            Students in this class
+          </p>
+        </div>
 
-          <tr>
-            <td>2</td>
-            <td>Bible Knowledge</td>
-            <td>50</td>
-            <td>pass</td>
-          </tr>
-
-          <tr>
-            <td>3</td>
-            <td>Biology</td>
-            <td>80</td>
-            <td>Distinction</td>
-          </tr>
-
-          <tr>
-            <td>4</td>
-            <td>Chemistry</td>
-            <td>75</td>
-            <td>strong Credit</td>
-          </tr>
-
-          <tr>
-            <td>5</td>
-            <td>Chichewa</td>
-            <td>60</td>
-            <td>Credit</td>
-          </tr>
-
-          <tr>
-            <td>6</td>
-            <td>English</td>
-            <td>55</td>
-            <td>pass</td>
-          </tr>
-
-          <tr>
-            <td>7</td>
-            <td>Geography</td>
-            <td>70</td>
-            <td>strong Credit</td>
-          </tr>
-
-          <tr>
-            <td>8</td>
-            <td>History</td>
-            <td>59</td>
-            <td>pass</td>
-          </tr>
-
-          <tr>
-            <td>9</td>
-            <td>Life Skills</td>
-            <td>62</td>
-            <td>Credit</td>
-          </tr>
-
-          <tr>
-            <td>10</td>
-            <td>Mathematics</td>
-            <td>98</td>
-            <td>Distinction</td>
-          </tr>
-
-          <tr>
-            <td>11</td>
-            <td>Physics</td>
-            <td>91</td>
-            <td>Distinction</td>
-          </tr>
-
-          <tr>
-            <td>12</td>
-            <td>Social Studies</td>
-            <td>49</td>
-            <td>Fail</td>
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
+      </div>
 
 
-    <!-- OVERALL RESULT -->
-    <div class="overall-result">
+      <div id="studentsGrid" class="students-grid">
 
-      <span>OVERALL RESULT</span>
+        <div class="loading-card">
+          <div class="loading-spinner"></div>
+          <p>Loading students...</p>
+        </div>
 
-      <strong id="overallResult">PASS</strong>
+      </div>
 
-    </div>
-
-
-    <!-- ACTIONS -->
-    <div class="results-actions">
-
-      <button id="downloadPdfBtn" class="primary" type="button" onclick="downloadResult()">
-  Download Results PDF
-</button>
-
-      <button class="secondary" type="button"  
-    onclick="window.location.href='index.html'">  
-    Back to Portal  
-  </button>  
+    </section>
 
 
-    </div>
+    <!-- =====================================================
+         VIEW 3 — ENTER RESULTS
+    ====================================================== -->
 
-  </section>
+    <section
+      id="entryView"
+      class="results-view hidden"
+    >
 
-</main>
+      <div class="view-toolbar">
+
+        <button
+          id="backToStudentsBtn"
+          class="back-button"
+          type="button"
+        >
+          ← Students
+        </button>
+
+        <div class="selected-class-title">
+          <span class="section-eyebrow">STEP 3</span>
+          <h2>Enter Results</h2>
+          <p id="entryStudentSubtitle">
+            Enter academic results for the student.
+          </p>
+        </div>
+
+      </div>
 
 
-<footer>
-  © First Class Academy
-</footer>
+      <!-- STUDENT INFORMATION -->
+
+      <div class="student-info-card">
+
+        <div class="student-avatar" id="entryStudentAvatar">
+          ST
+        </div>
+
+        <div class="student-info-main">
+
+          <h3 id="entryStudentName">
+            Student Name
+          </h3>
+
+          <div class="student-info-meta">
+
+            <span>
+              <small>Student ID</small>
+              <strong id="entryStudentId">—</strong>
+            </span>
+
+            <span>
+              <small>Class</small>
+              <strong id="entryStudentClass">—</strong>
+            </span>
+
+            <span>
+              <small>Gender</small>
+              <strong id="entryStudentGender">—</strong>
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RESULTS ENTRY -->
+
+      <div class="entry-card">
+
+        <div class="entry-card-header">
+
+          <div>
+            <span class="section-eyebrow">ACADEMIC RECORD</span>
+            <h3>Subjects & Marks</h3>
+            <p>
+              Enter a mark for each subject taken by this student.
+              Remarks are generated automatically but can be edited.
+            </p>
+          </div>
+
+          <div class="entry-count">
+            <strong id="subjectCount">0</strong>
+            <span>Subjects</span>
+          </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table class="entry-table">
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Subject</th>
+                <th>Mark</th>
+                <th>Remark</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="resultsEntryBody">
+
+              <tr>
+                <td colspan="5">
+                  <div class="table-loading">
+                    Loading subjects...
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="entry-actions">
+
+          <button
+            id="saveResultsBtn"
+            class="primary-button"
+            type="button"
+          >
+            Save Results
+          </button>
+
+          <button
+            id="viewOverallFromEntryBtn"
+            class="secondary-button"
+            type="button"
+          >
+            View Overall Results
+          </button>
+
+        </div>
+
+        <div
+          id="saveMessage"
+          class="save-message hidden"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         VIEW 4 — OVERALL RESULTS
+    ====================================================== -->
+
+    <section
+      id="overallView"
+      class="results-view hidden"
+    >
+
+      <div class="overall-toolbar">
+
+        <button
+          id="backToEntryBtn"
+          class="back-button"
+          type="button"
+        >
+          ← Results
+        </button>
+
+        <button
+          id="backToStudentsFromOverallBtn"
+          class="secondary-button small-button"
+          type="button"
+        >
+          Back to Students
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
+           PDF / RESULT DOCUMENT
+      ================================================== -->
+
+      <section
+        id="printableResult"
+        class="card results-card"
+      >
+
+        <div class="results-title">
+
+          <div class="results-title-text">
+
+            <div class="eyebrow">
+              ACADEMIC PERFORMANCE
+            </div>
+
+            <h2>Student Results</h2>
+
+          </div>
+
+          <div class="results-logo">
+
+            <img
+              src="fca-logo.png"
+              alt="FCA Logo"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- STUDENT DETAILS -->
+
+        <div class="student-details">
+
+          <div>
+            <span>Full Name</span>
+            <strong id="studentName">—</strong>
+          </div>
+
+          <div>
+            <span>Student ID</span>
+            <strong id="studentId">—</strong>
+          </div>
+
+          <div>
+            <span>Class</span>
+            <strong id="studentClass">—</strong>
+          </div>
+
+          <div>
+            <span>Gender</span>
+            <strong id="studentGender">—</strong>
+          </div>
+
+          <div>
+            <span>Subjects Taken</span>
+            <strong id="studentSubjectCount">—</strong>
+          </div>
+
+          <div>
+            <span>Average Mark</span>
+            <strong id="studentAverage">—</strong>
+          </div>
+
+        </div>
+
+
+        <!-- RESULTS TABLE -->
+
+        <div class="table-wrap">
+
+          <table id="resultsTable">
+
+            <thead>
+
+              <tr>
+                <th>#</th>
+                <th>Subject</th>
+                <th>Marks</th>
+                <th>Remark</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="overallResultsBody">
+
+              <tr>
+                <td colspan="4">
+                  <div class="table-loading">
+                    Loading results...
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <!-- OVERALL RESULT -->
+
+        <div class="overall-result">
+
+          <span>OVERALL RESULT</span>
+
+          <strong id="overallResult">
+            —
+          </strong>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="results-actions">
+
+          <button
+            id="downloadPdfBtn"
+            class="primary"
+            type="button"
+          >
+            Download Results PDF
+          </button>
+
+          <button
+            id="overallBackBtn"
+            class="secondary"
+            type="button"
+          >
+            Back to Students
+          </button>
+
+        </div>
+
+      </section>
+
+    </section>
+
+
+    <!-- =====================================================
+         GLOBAL EMPTY / ERROR MESSAGE
+    ====================================================== -->
+
+    <div
+      id="globalMessage"
+      class="global-message hidden"
+    ></div>
+
+  </main>
+
+
+  <footer>
+    © First Class Academy
+  </footer>
+
+
+  <!-- =====================================================
+       SUPABASE
+  ====================================================== -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Your existing FCA Supabase configuration -->
+  <script src="config.js"></script>
+
+
+  <!-- =====================================================
+       PDF LIBRARY
+  ====================================================== -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- =====================================================
+       RESULTS JAVASCRIPT
+  ====================================================== -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script>
-document.getElementById("downloadPdfBtn").addEventListener("click", function () {
-
-    const result = document.querySelector(".results-card");
-    const actions = document.querySelector(".results-actions");
-
-    const studentName =
-        document.getElementById("studentName").textContent.trim();
-
-    const fileName =
-        studentName.replace(/[^a-z0-9]/gi, "-") + "-Result.pdf";
-
-    /* Hide buttons */
-    actions.style.display = "none";
-
-    /* Save original styles */
-    const originalWidth = result.style.width;
-    const originalMargin = result.style.margin;
-    const originalBoxSizing = result.style.boxSizing;
-
-    /* A4 content area */
-    result.style.width = "190mm";
-    result.style.margin = "0 auto";
-    result.style.boxSizing = "border-box";
-
-    const options = {
-
-        margin: [10, 10, 10, 10],
-
-        filename: fileName,
-
-        image: {
-            type: "jpeg",
-            quality: 0.98
-        },
-
-        html2canvas: {
-            scale: 2,
-            useCORS: true,
-            scrollX: 0,
-            scrollY: 0
-        },
-
-        jsPDF: {
-            unit: "mm",
-            format: "a4",
-            orientation: "portrait"
-        },
-
-        pagebreak: {
-            mode: ["css", "legacy"],
-            avoid: [
-                "tr",
-                ".overall-result"
-            ]
-        }
-    };
-
-    html2pdf()
-        .set(options)
-        .from(result)
-        .save()
-        .then(function () {
-
-            /* Restore website layout */
-            result.style.width = originalWidth;
-            result.style.margin = originalMargin;
-            result.style.boxSizing = originalBoxSizing;
-
-            actions.style.display = "";
-
-        })
-        .catch(function (error) {
-
-            result.style.width = originalWidth;
-            result.style.margin = originalMargin;
-            result.style.boxSizing = originalBoxSizing;
-
-            actions.style.display = "";
-
-            console.error("PDF error:", error);
-        });
-
-});
-</script>
+  <script src="results.js"></script>
 
 </body>
 </html>

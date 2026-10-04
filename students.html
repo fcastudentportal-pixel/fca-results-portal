@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -16,15 +17,24 @@
     <title>Students | FCA Portal</title>
 
     <!-- FCA ADMIN STYLES -->
-    <link rel="stylesheet" href="admin.css">
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
 
     <!-- STUDENTS STYLES -->
-    <link rel="stylesheet" href="students.css">
+    <link
+        rel="stylesheet"
+        href="students.css?v=20261005"
+    >
+
 </head>
+
 
 <body>
 
 <div class="admin-layout">
+
 
     <!-- =====================================================
          SIDEBAR
@@ -41,8 +51,13 @@
             >
 
             <div class="sidebar-brand-text">
+
                 <strong>FCA Portal</strong>
-                <span>Administration</span>
+
+                <span>
+                    Administration
+                </span>
+
             </div>
 
         </div>
@@ -50,37 +65,64 @@
 
         <nav class="sidebar-nav">
 
-            <a href="admin.html" class="sidebar-link">
+            <a
+                href="admin.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">⌂</span>
                 <span>Dashboard</span>
             </a>
 
-            <a href="teachers.html" class="sidebar-link">
+
+            <a
+                href="teachers.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">♙</span>
                 <span>Teachers</span>
             </a>
 
-            <a href="classes.html" class="sidebar-link">
+
+            <a
+                href="classes.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">▦</span>
                 <span>Classes</span>
             </a>
 
-            <a href="students.html" class="sidebar-link active">
+
+            <a
+                href="students.html"
+                class="sidebar-link active"
+            >
                 <span class="sidebar-icon">♟</span>
                 <span>Students</span>
             </a>
 
-            <a href="subjects.html" class="sidebar-link">
+
+            <a
+                href="subjects.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">▤</span>
                 <span>Subjects</span>
             </a>
 
-            <a href="results.html" class="sidebar-link">
+
+            <a
+                href="results.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">▥</span>
                 <span>Results</span>
             </a>
 
-            <a href="settings.html" class="sidebar-link">
+
+            <a
+                href="settings.html"
+                class="sidebar-link"
+            >
                 <span class="sidebar-icon">⚙</span>
                 <span>Settings</span>
             </a>
@@ -90,7 +132,10 @@
 
         <div class="sidebar-footer">
 
-            <a href="index.html" class="sidebar-back-link">
+            <a
+                href="index.html"
+                class="sidebar-back-link"
+            >
                 ← Back to Portal
             </a>
 
@@ -99,11 +144,13 @@
     </aside>
 
 
+
     <!-- =====================================================
-         MAIN CONTENT
+         MAIN
     ====================================================== -->
 
     <main class="admin-main">
+
 
         <!-- MOBILE HEADER -->
 
@@ -117,13 +164,21 @@
                 >
 
                 <div>
-                    <strong>FCA Portal</strong>
-                    <span>Administration</span>
+
+                    <strong>
+                        FCA Portal
+                    </strong>
+
+                    <span>
+                        Administration
+                    </span>
+
                 </div>
 
             </div>
 
         </header>
+
 
 
         <!-- =================================================
@@ -132,40 +187,44 @@
 
         <section class="students-page-header">
 
-            <div>
+            <div class="students-page-header-content">
 
-                <p class="page-eyebrow">
-                    STUDENT MANAGEMENT
-                </p>
 
-                <h1>
-                    Students
-                </h1>
+                <div class="students-page-header-text">
 
-                <p>
-                    Manage FCA students, their classes,
-                    subjects and access credentials.
-                </p>
+                    <p class="page-eyebrow">
+                        STUDENT MANAGEMENT
+                    </p>
+
+
+                    <h1>
+                        Students
+                    </h1>
+
+
+                    <p class="students-page-description">
+                        Manage FCA students, their classes,
+                        subjects and access credentials.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="databaseStatus"
+                    class="database-status loading"
+                >
+                    Checking database...
+                </div>
 
             </div>
 
         </section>
 
 
-        <!-- =================================================
-             DATABASE STATUS
-        ================================================== -->
-
-        <div
-            id="databaseStatus"
-            class="database-status"
-        >
-            Checking database...
-        </div>
-
 
         <!-- =================================================
-             CLASSES SECTION
+             CLASSES
         ================================================== -->
 
         <section
@@ -173,13 +232,20 @@
             class="students-section"
         >
 
+
             <div class="section-heading">
 
                 <div>
 
+                    <p class="page-eyebrow">
+                        CLASS MANAGEMENT
+                    </p>
+
+
                     <h2>
                         Select a Class
                     </h2>
+
 
                     <p>
                         Choose a class to manage its students.
@@ -190,11 +256,13 @@
             </div>
 
 
+
             <div
                 id="classesContainer"
                 class="classes-grid"
             >
             </div>
+
 
 
             <div
@@ -207,13 +275,16 @@
                     ▦
                 </div>
 
+
                 <h3>
                     No Classes Available
                 </h3>
 
+
                 <p>
                     Create classes first before adding students.
                 </p>
+
 
                 <a
                     href="classes.html"
@@ -227,8 +298,9 @@
         </section>
 
 
+
         <!-- =================================================
-             STUDENTS SECTION
+             STUDENTS
         ================================================== -->
 
         <section
@@ -236,6 +308,9 @@
             class="students-section"
             hidden
         >
+
+
+            <!-- BACK BUTTON -->
 
             <div class="students-section-top">
 
@@ -250,7 +325,8 @@
             </div>
 
 
-            <!-- CLASS INFORMATION -->
+
+            <!-- SELECTED CLASS -->
 
             <div class="selected-class-header">
 
@@ -260,14 +336,17 @@
                         SELECTED CLASS
                     </p>
 
+
                     <h2 id="selectedClassTitle">
                         Form
                     </h2>
+
 
                     <p id="selectedClassDescription">
                     </p>
 
                 </div>
+
 
                 <div
                     id="selectedClassCode"
@@ -279,7 +358,8 @@
             </div>
 
 
-            <!-- STUDENTS TOOLBAR -->
+
+            <!-- STUDENT TOOLBAR -->
 
             <div class="students-toolbar">
 
@@ -288,6 +368,7 @@
                     <span class="summary-label">
                         Students
                     </span>
+
 
                     <strong id="studentCount">
                         0
@@ -307,13 +388,15 @@
             </div>
 
 
-            <!-- STUDENTS GRID -->
+
+            <!-- STUDENT GRID -->
 
             <div
                 id="studentsGrid"
                 class="students-grid"
             >
             </div>
+
 
 
             <!-- NO STUDENTS -->
@@ -328,13 +411,16 @@
                     ♟
                 </div>
 
+
                 <h3>
                     No Students Yet
                 </h3>
 
+
                 <p>
                     Add the first student to this class.
                 </p>
+
 
                 <button
                     type="button"
@@ -353,6 +439,7 @@
 </div>
 
 
+
 <!-- =========================================================
      ADD STUDENT MODAL
 ========================================================= -->
@@ -365,6 +452,7 @@
 
     <div class="modal">
 
+
         <div class="modal-header">
 
             <div>
@@ -373,11 +461,13 @@
                     STUDENT MANAGEMENT
                 </p>
 
+
                 <h2>
                     Add Student
                 </h2>
 
             </div>
+
 
             <button
                 type="button"
@@ -391,9 +481,9 @@
         </div>
 
 
+
         <form id="addStudentForm">
 
-            <!-- FULL NAME -->
 
             <div class="form-group">
 
@@ -412,7 +502,6 @@
             </div>
 
 
-            <!-- GENDER -->
 
             <div class="form-group">
 
@@ -442,7 +531,6 @@
             </div>
 
 
-            <!-- STUDENT ID -->
 
             <div class="form-group">
 
@@ -459,7 +547,6 @@
             </div>
 
 
-            <!-- PASSWORD -->
 
             <div class="form-group">
 
@@ -476,7 +563,6 @@
             </div>
 
 
-            <!-- CLASS -->
 
             <div class="form-group">
 
@@ -493,6 +579,7 @@
             </div>
 
 
+
             <!-- SUBJECTS -->
 
             <div class="form-group">
@@ -500,6 +587,7 @@
                 <label>
                     Subjects Taken
                 </label>
+
 
                 <div class="subjects-selection">
 
@@ -512,6 +600,7 @@
                         <span>Agriculture</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -520,6 +609,7 @@
                         >
                         <span>Bible Knowledge</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -530,6 +620,7 @@
                         <span>Biology</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -538,6 +629,7 @@
                         >
                         <span>Chemistry</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -548,6 +640,7 @@
                         <span>Chichewa</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -556,6 +649,7 @@
                         >
                         <span>English</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -566,6 +660,7 @@
                         <span>Geography</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -574,6 +669,7 @@
                         >
                         <span>History</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -584,6 +680,7 @@
                         <span>Life Skills</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -593,6 +690,7 @@
                         <span>Mathematics</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -601,6 +699,7 @@
                         >
                         <span>Physics</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -616,7 +715,6 @@
             </div>
 
 
-            <!-- ERROR -->
 
             <div
                 id="addStudentError"
@@ -626,7 +724,6 @@
             </div>
 
 
-            <!-- ACTIONS -->
 
             <div class="modal-actions">
 
@@ -638,6 +735,7 @@
                     Cancel
                 </button>
 
+
                 <button
                     type="submit"
                     class="primary-button"
@@ -648,6 +746,7 @@
             </div>
 
         </form>
+
 
 
         <!-- SUCCESS -->
@@ -662,23 +761,39 @@
                 Student Created Successfully
             </h3>
 
+
             <p>
                 Save these credentials securely.
             </p>
 
+
             <div class="generated-credentials">
 
                 <div>
-                    <span>Student ID</span>
-                    <strong id="createdStudentId"></strong>
+
+                    <span>
+                        Student ID
+                    </span>
+
+                    <strong id="createdStudentId">
+                    </strong>
+
                 </div>
 
+
                 <div>
-                    <span>Access Password</span>
-                    <strong id="createdStudentPassword"></strong>
+
+                    <span>
+                        Access Password
+                    </span>
+
+                    <strong id="createdStudentPassword">
+                    </strong>
+
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -695,6 +810,7 @@
 </div>
 
 
+
 <!-- =========================================================
      EDIT STUDENT MODAL
 ========================================================= -->
@@ -707,6 +823,7 @@
 
     <div class="modal">
 
+
         <div class="modal-header">
 
             <div>
@@ -715,11 +832,13 @@
                     STUDENT MANAGEMENT
                 </p>
 
+
                 <h2>
                     Edit Student
                 </h2>
 
             </div>
+
 
             <button
                 type="button"
@@ -733,9 +852,9 @@
         </div>
 
 
+
         <form id="editStudentForm">
 
-            <!-- FULL NAME -->
 
             <div class="form-group">
 
@@ -752,7 +871,6 @@
             </div>
 
 
-            <!-- GENDER -->
 
             <div class="form-group">
 
@@ -782,7 +900,6 @@
             </div>
 
 
-            <!-- STUDENT ID -->
 
             <div class="form-group">
 
@@ -799,7 +916,6 @@
             </div>
 
 
-            <!-- ACCESS PASSWORD -->
 
             <div class="form-group">
 
@@ -816,7 +932,6 @@
             </div>
 
 
-            <!-- CLASS -->
 
             <div class="form-group">
 
@@ -833,13 +948,13 @@
             </div>
 
 
-            <!-- SUBJECTS -->
 
             <div class="form-group">
 
                 <label>
                     Subjects Taken
                 </label>
+
 
                 <div class="subjects-selection">
 
@@ -852,6 +967,7 @@
                         <span>Agriculture</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -860,6 +976,7 @@
                         >
                         <span>Bible Knowledge</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -870,6 +987,7 @@
                         <span>Biology</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -878,6 +996,7 @@
                         >
                         <span>Chemistry</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -888,6 +1007,7 @@
                         <span>Chichewa</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -896,6 +1016,7 @@
                         >
                         <span>English</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -906,6 +1027,7 @@
                         <span>Geography</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -914,6 +1036,7 @@
                         >
                         <span>History</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -924,6 +1047,7 @@
                         <span>Life Skills</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -933,6 +1057,7 @@
                         <span>Mathematics</span>
                     </label>
 
+
                     <label class="subject-checkbox">
                         <input
                             type="checkbox"
@@ -941,6 +1066,7 @@
                         >
                         <span>Physics</span>
                     </label>
+
 
                     <label class="subject-checkbox">
                         <input
@@ -956,7 +1082,6 @@
             </div>
 
 
-            <!-- ERROR -->
 
             <div
                 id="editStudentError"
@@ -966,7 +1091,6 @@
             </div>
 
 
-            <!-- ACTIONS -->
 
             <div class="modal-actions">
 
@@ -977,6 +1101,7 @@
                 >
                     Cancel
                 </button>
+
 
                 <button
                     type="submit"
@@ -994,6 +1119,7 @@
 </div>
 
 
+
 <!-- =========================================================
      DELETE STUDENT MODAL
 ========================================================= -->
@@ -1006,6 +1132,7 @@
 
     <div class="modal modal-small">
 
+
         <div class="modal-header">
 
             <div>
@@ -1014,11 +1141,13 @@
                     CONFIRM ACTION
                 </p>
 
+
                 <h2>
                     Delete Student
                 </h2>
 
             </div>
+
 
             <button
                 type="button"
@@ -1032,11 +1161,16 @@
         </div>
 
 
+
         <p class="delete-warning">
+
             Are you sure you want to delete this student?
+
             This action cannot be undone and may affect
             the student's results.
+
         </p>
+
 
 
         <div
@@ -1045,6 +1179,7 @@
             hidden
         >
         </div>
+
 
 
         <div class="modal-actions">
@@ -1056,6 +1191,7 @@
             >
                 Cancel
             </button>
+
 
             <button
                 type="button"
@@ -1072,16 +1208,17 @@
 </div>
 
 
+
 <!-- =========================================================
-     SUPABASE
+     SCRIPTS
 ========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="config.js"></script>
 
-<!-- CACHE BUST -->
-<script src="students.js?v=20261004"></script>
+<script src="students.js?v=20261005"></script>
+
 
 </body>
 </html>

@@ -36,7 +36,7 @@
 
             <img
                 src="fca-logo.png"
-                alt="First Class Academy"
+                alt="FCA Logo"
                 class="sidebar-logo"
             >
 
@@ -48,40 +48,53 @@
         </div>
 
 
-        <nav class="admin-nav">
+        <nav class="sidebar-nav">
 
-            <a href="admin.html">
+            <a href="admin.html" class="sidebar-link">
+                <span class="sidebar-icon">⌂</span>
                 <span>Dashboard</span>
             </a>
 
-            <a href="teachers.html">
+            <a href="teachers.html" class="sidebar-link">
+                <span class="sidebar-icon">♙</span>
                 <span>Teachers</span>
             </a>
 
-            <a href="classes.html">
+            <a href="classes.html" class="sidebar-link">
+                <span class="sidebar-icon">▦</span>
                 <span>Classes</span>
             </a>
 
-            <a
-                href="students.html"
-                class="active"
-            >
+            <a href="students.html" class="sidebar-link active">
+                <span class="sidebar-icon">♟</span>
                 <span>Students</span>
             </a>
 
-            <a href="subjects.html">
+            <a href="subjects.html" class="sidebar-link">
+                <span class="sidebar-icon">▤</span>
                 <span>Subjects</span>
             </a>
 
-            <a href="results.html">
+            <a href="results.html" class="sidebar-link">
+                <span class="sidebar-icon">▥</span>
                 <span>Results</span>
             </a>
 
-            <a href="settings.html">
+            <a href="settings.html" class="sidebar-link">
+                <span class="sidebar-icon">⚙</span>
                 <span>Settings</span>
             </a>
 
         </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="index.html" class="sidebar-back-link">
+                ← Back to Portal
+            </a>
+
+        </div>
 
     </aside>
 
@@ -92,27 +105,84 @@
 
     <main class="admin-main">
 
+        <!-- MOBILE HEADER -->
+
+        <header class="admin-mobile-header">
+
+            <div class="mobile-brand">
+
+                <img
+                    src="fca-logo.png"
+                    alt="FCA Logo"
+                >
+
+                <div>
+                    <strong>FCA Portal</strong>
+                    <span>Administration</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <section class="students-page-header">
+
+            <div>
+
+                <p class="page-eyebrow">
+                    STUDENT MANAGEMENT
+                </p>
+
+                <h1>
+                    Students
+                </h1>
+
+                <p>
+                    Manage FCA students, their classes,
+                    subjects and access credentials.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATABASE STATUS
+        ================================================== -->
+
+        <div
+            id="databaseStatus"
+            class="database-status"
+        >
+            Checking database...
+        </div>
+
+
         <!-- =================================================
              CLASSES SECTION
         ================================================== -->
 
         <section
             id="classesSection"
-            class="students-page-section"
+            class="students-section"
         >
 
-            <div class="students-page-header">
+            <div class="section-heading">
 
                 <div>
 
-                    <span class="students-eyebrow">
-                        ACADEMIC MANAGEMENT
-                    </span>
-
-                    <h1>Students</h1>
+                    <h2>
+                        Select a Class
+                    </h2>
 
                     <p>
-                        Select a class to manage its students.
+                        Choose a class to manage its students.
                     </p>
 
                 </div>
@@ -122,37 +192,39 @@
 
             <div
                 id="classesContainer"
-                class="student-classes-grid"
-            ></div>
+                class="classes-grid"
+            >
+            </div>
 
 
             <div
                 id="noClassesState"
-                class="students-empty"
+                class="empty-state"
                 hidden
             >
 
-                <div class="empty-icon">
-                    🎓
+                <div class="empty-state-icon">
+                    ▦
                 </div>
 
-                <h3>No Classes Available</h3>
+                <h3>
+                    No Classes Available
+                </h3>
 
                 <p>
-                    Create a class first before adding students.
+                    Create classes first before adding students.
                 </p>
 
                 <a
                     href="classes.html"
-                    class="empty-action-button"
+                    class="primary-button"
                 >
-                    Go to Classes
+                    Manage Classes
                 </a>
 
             </div>
 
         </section>
-
 
 
         <!-- =================================================
@@ -161,7 +233,7 @@
 
         <section
             id="studentsSection"
-            class="students-page-section"
+            class="students-section"
             hidden
         >
 
@@ -169,103 +241,105 @@
 
                 <button
                     type="button"
-                    id="backToClasses"
-                    class="back-to-classes"
+                    id="backToClassesButton"
+                    class="secondary-button"
                 >
                     ← Back to Classes
                 </button>
 
+            </div>
 
-                <div class="selected-class-heading">
 
-                    <span
-                        id="selectedClassName"
-                        class="selected-class-code"
-                    >
-                        FCA-F1
-                    </span>
+            <!-- CLASS INFORMATION -->
+
+            <div class="selected-class-header">
+
+                <div>
+
+                    <p class="page-eyebrow">
+                        SELECTED CLASS
+                    </p>
 
                     <h2 id="selectedClassTitle">
-                        Students
+                        Form
                     </h2>
 
+                    <p id="selectedClassDescription">
+                    </p>
+
                 </div>
 
-
-                <div class="students-header-actions">
-
-                    <button
-                        type="button"
-                        id="addStudentButton"
-                        class="add-student-button"
-                    >
-                        + Add Student
-                    </button>
-
+                <div
+                    id="selectedClassCode"
+                    class="class-code-badge"
+                >
+                    FCA
                 </div>
 
             </div>
 
 
-            <p
-                id="selectedClassDescription"
-                class="selected-class-description"
-            ></p>
+            <!-- STUDENTS TOOLBAR -->
 
+            <div class="students-toolbar">
 
+                <div class="students-summary">
 
-            <!-- =================================================
-                 SUMMARY
-            ================================================== -->
+                    <span class="summary-label">
+                        Students
+                    </span>
 
-            <div class="students-summary">
-
-                <div class="summary-card">
-
-                    <div class="summary-number">
-                        <span id="studentCount">0</span>
-                    </div>
-
-                    <div class="summary-text">
-                        <strong>Students</strong>
-                    </div>
+                    <strong id="studentCount">
+                        0
+                    </strong>
 
                 </div>
+
+
+                <button
+                    type="button"
+                    id="addStudentButton"
+                    class="primary-button"
+                >
+                    + Add Student
+                </button>
 
             </div>
 
 
-
-            <!-- =================================================
-                 STUDENT LIST
-            ================================================== -->
+            <!-- STUDENTS GRID -->
 
             <div
-                id="studentsContainer"
+                id="studentsGrid"
                 class="students-grid"
-            ></div>
+            >
+            </div>
 
+
+            <!-- NO STUDENTS -->
 
             <div
                 id="noStudentsState"
-                class="students-empty"
+                class="empty-state"
                 hidden
             >
 
-                <div class="empty-icon">
-                    👨‍🎓
+                <div class="empty-state-icon">
+                    ♟
                 </div>
 
-                <h3>No Students Yet</h3>
+                <h3>
+                    No Students Yet
+                </h3>
 
                 <p>
-                    This class does not have any students yet.
+                    Add the first student to this class.
                 </p>
 
                 <button
                     type="button"
                     id="emptyAddStudentButton"
-                    class="empty-action-button"
+                    class="primary-button"
                 >
                     + Add Student
                 </button>
@@ -279,33 +353,27 @@
 </div>
 
 
-
 <!-- =========================================================
      ADD STUDENT MODAL
 ========================================================= -->
 
 <div
-    id="studentAddModal"
-    class="student-modal-overlay"
+    id="addStudentModal"
+    class="modal-overlay"
     hidden
 >
 
-    <div
-        class="student-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="addStudentModalTitle"
-    >
+    <div class="modal">
 
-        <div class="student-modal-header">
+        <div class="modal-header">
 
             <div>
 
-                <span class="modal-eyebrow">
+                <p class="page-eyebrow">
                     STUDENT MANAGEMENT
-                </span>
+                </p>
 
-                <h2 id="addStudentModalTitle">
+                <h2>
                     Add Student
                 </h2>
 
@@ -313,8 +381,8 @@
 
             <button
                 type="button"
+                class="modal-close"
                 id="closeAddStudentModal"
-                class="modal-close-button"
                 aria-label="Close"
             >
                 ×
@@ -327,7 +395,7 @@
 
             <!-- FULL NAME -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="studentFullName">
                     Full Name
@@ -346,7 +414,7 @@
 
             <!-- GENDER -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="studentGender">
                     Gender
@@ -357,11 +425,7 @@
                     required
                 >
 
-                    <option
-                        value=""
-                        selected
-                        disabled
-                    >
+                    <option value="">
                         Select gender
                     </option>
 
@@ -380,7 +444,7 @@
 
             <!-- STUDENT ID -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="studentIdPreview">
                     Student ID
@@ -392,16 +456,12 @@
                     readonly
                 >
 
-                <small>
-                    Generated automatically.
-                </small>
-
             </div>
 
 
-            <!-- ACCESS PASSWORD -->
+            <!-- PASSWORD -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="studentPasswordPreview">
                     Access Password
@@ -413,16 +473,12 @@
                     readonly
                 >
 
-                <small>
-                    Generated automatically.
-                </small>
-
             </div>
 
 
             <!-- CLASS -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="studentClassPreview">
                     Class
@@ -437,149 +493,119 @@
             </div>
 
 
-            <!-- =================================================
-                 SUBJECTS
-            ================================================== -->
+            <!-- SUBJECTS -->
 
-            <div class="student-form-group subjects-form-group">
+            <div class="form-group">
 
-                <div class="subjects-label-row">
+                <label>
+                    Subjects Taken
+                </label>
 
-                    <label>
-                        Subjects Taken
-                    </label>
+                <div class="subjects-selection">
 
-                    <div class="subject-controls">
-
-                        <button
-                            type="button"
-                            id="selectAllSubjectsBtn"
-                            class="subject-control-button"
-                        >
-                            Select All
-                        </button>
-
-                        <button
-                            type="button"
-                            id="clearSubjectsBtn"
-                            class="subject-control-button clear"
-                        >
-                            Clear
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="studentSubjectsGrid"
-                    class="checkbox-grid"
-                >
-
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Agriculture"
                         >
                         <span>Agriculture</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Bible Knowledge"
                         >
                         <span>Bible Knowledge</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Biology"
                         >
                         <span>Biology</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Chemistry"
                         >
                         <span>Chemistry</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Chichewa"
                         >
                         <span>Chichewa</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="English"
                         >
                         <span>English</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Geography"
                         >
                         <span>Geography</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="History"
                         >
                         <span>History</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Life Skills"
                         >
                         <span>Life Skills</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Mathematics"
                         >
                         <span>Mathematics</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Physics"
                         >
                         <span>Physics</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="studentSubjects"
+                            name="addStudentSubject"
                             value="Social Studies"
                         >
                         <span>Social Studies</span>
@@ -590,27 +616,31 @@
             </div>
 
 
+            <!-- ERROR -->
+
             <div
                 id="addStudentError"
-                class="student-form-error"
+                class="form-error"
                 hidden
-            ></div>
+            >
+            </div>
 
 
-            <div class="student-modal-actions">
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
 
                 <button
                     type="button"
                     id="cancelAddStudent"
-                    class="modal-cancel-button"
+                    class="secondary-button"
                 >
                     Cancel
                 </button>
 
                 <button
                     type="submit"
-                    class="modal-save-button"
-                    id="saveStudentButton"
+                    class="primary-button"
                 >
                     Create Student
                 </button>
@@ -620,28 +650,23 @@
         </form>
 
 
-        <!-- =================================================
-             SUCCESS BOX
-        ================================================== -->
+        <!-- SUCCESS -->
 
         <div
-            id="studentCreatedBox"
-            class="student-created-box"
+            id="addStudentSuccess"
+            class="success-box"
             hidden
         >
 
-            <div class="created-icon">
-                ✓
-            </div>
-
-            <h3>Student Created</h3>
+            <h3>
+                Student Created Successfully
+            </h3>
 
             <p>
-                Save these login details securely.
+                Save these credentials securely.
             </p>
 
-
-            <div class="created-credentials">
+            <div class="generated-credentials">
 
                 <div>
                     <span>Student ID</span>
@@ -655,11 +680,10 @@
 
             </div>
 
-
             <button
                 type="button"
-                id="closeCreatedStudent"
-                class="modal-save-button"
+                id="closeSuccessButton"
+                class="primary-button"
             >
                 Done
             </button>
@@ -671,33 +695,27 @@
 </div>
 
 
-
 <!-- =========================================================
      EDIT STUDENT MODAL
 ========================================================= -->
 
 <div
-    id="studentEditModal"
-    class="student-modal-overlay"
+    id="editStudentModal"
+    class="modal-overlay"
     hidden
 >
 
-    <div
-        class="student-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="editStudentModalTitle"
-    >
+    <div class="modal">
 
-        <div class="student-modal-header">
+        <div class="modal-header">
 
             <div>
 
-                <span class="modal-eyebrow">
+                <p class="page-eyebrow">
                     STUDENT MANAGEMENT
-                </span>
+                </p>
 
-                <h2 id="editStudentModalTitle">
+                <h2>
                     Edit Student
                 </h2>
 
@@ -705,8 +723,8 @@
 
             <button
                 type="button"
+                class="modal-close"
                 id="closeEditStudentModal"
-                class="modal-close-button"
                 aria-label="Close"
             >
                 ×
@@ -719,7 +737,7 @@
 
             <!-- FULL NAME -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="editStudentFullName">
                     Full Name
@@ -736,7 +754,7 @@
 
             <!-- GENDER -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="editStudentGender">
                     Gender
@@ -747,10 +765,7 @@
                     required
                 >
 
-                    <option
-                        value=""
-                        disabled
-                    >
+                    <option value="">
                         Select gender
                     </option>
 
@@ -769,7 +784,7 @@
 
             <!-- STUDENT ID -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="editStudentId">
                     Student ID
@@ -784,9 +799,9 @@
             </div>
 
 
-            <!-- PASSWORD -->
+            <!-- ACCESS PASSWORD -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="editStudentPassword">
                     Access Password
@@ -803,7 +818,7 @@
 
             <!-- CLASS -->
 
-            <div class="student-form-group">
+            <div class="form-group">
 
                 <label for="editStudentClass">
                     Class
@@ -820,142 +835,117 @@
 
             <!-- SUBJECTS -->
 
-            <div class="student-form-group subjects-form-group">
+            <div class="form-group">
 
-                <div class="subjects-label-row">
+                <label>
+                    Subjects Taken
+                </label>
 
-                    <label>
-                        Subjects Taken
-                    </label>
+                <div class="subjects-selection">
 
-                    <div class="subject-controls">
-
-                        <button
-                            type="button"
-                            id="editSelectAllSubjectsBtn"
-                            class="subject-control-button"
-                        >
-                            Select All
-                        </button>
-
-                        <button
-                            type="button"
-                            id="editClearSubjectsBtn"
-                            class="subject-control-button clear"
-                        >
-                            Clear
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="checkbox-grid">
-
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Agriculture"
                         >
                         <span>Agriculture</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Bible Knowledge"
                         >
                         <span>Bible Knowledge</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Biology"
                         >
                         <span>Biology</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Chemistry"
                         >
                         <span>Chemistry</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Chichewa"
                         >
                         <span>Chichewa</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="English"
                         >
                         <span>English</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Geography"
                         >
                         <span>Geography</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="History"
                         >
                         <span>History</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Life Skills"
                         >
                         <span>Life Skills</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Mathematics"
                         >
                         <span>Mathematics</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Physics"
                         >
                         <span>Physics</span>
                     </label>
 
-                    <label class="check-option">
+                    <label class="subject-checkbox">
                         <input
                             type="checkbox"
-                            name="editStudentSubjects"
+                            name="editStudentSubject"
                             value="Social Studies"
                         >
                         <span>Social Studies</span>
@@ -966,27 +956,31 @@
             </div>
 
 
+            <!-- ERROR -->
+
             <div
                 id="editStudentError"
-                class="student-form-error"
+                class="form-error"
                 hidden
-            ></div>
+            >
+            </div>
 
 
-            <div class="student-modal-actions">
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
 
                 <button
                     type="button"
                     id="cancelEditStudent"
-                    class="modal-cancel-button"
+                    class="secondary-button"
                 >
                     Cancel
                 </button>
 
                 <button
                     type="submit"
-                    class="modal-save-button"
-                    id="updateStudentButton"
+                    class="primary-button"
                 >
                     Update Student
                 </button>
@@ -1000,6 +994,83 @@
 </div>
 
 
+<!-- =========================================================
+     DELETE STUDENT MODAL
+========================================================= -->
+
+<div
+    id="deleteStudentModal"
+    class="modal-overlay"
+    hidden
+>
+
+    <div class="modal modal-small">
+
+        <div class="modal-header">
+
+            <div>
+
+                <p class="page-eyebrow">
+                    CONFIRM ACTION
+                </p>
+
+                <h2>
+                    Delete Student
+                </h2>
+
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeDeleteStudentModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p class="delete-warning">
+            Are you sure you want to delete this student?
+            This action cannot be undone and may affect
+            the student's results.
+        </p>
+
+
+        <div
+            id="deleteStudentError"
+            class="form-error"
+            hidden
+        >
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                id="cancelDeleteStudent"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="confirmDeleteStudent"
+                class="danger-button"
+            >
+                Delete Student
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <!-- =========================================================
      SUPABASE
@@ -1009,7 +1080,8 @@
 
 <script src="config.js"></script>
 
-<script src="students.js"></script>
+<!-- CACHE BUST -->
+<script src="students.js?v=20261004"></script>
 
 </body>
 </html>

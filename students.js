@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
 
+    const GENDERS = [
+        "Male",
+        "Female"
+    ];
+
+
     /* =====================================================
        DOM ELEMENTS
     ===================================================== */
@@ -79,7 +85,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("selectedClassTitle");
 
     const selectedClassDescription =
-        document.getElementById("selectedClassDescription");
+        document.getElementById(
+            "selectedClassDescription"
+        );
 
     const studentCount =
         document.getElementById("studentCount");
@@ -88,7 +96,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("addStudentButton");
 
     const emptyAddStudentButton =
-        document.getElementById("emptyAddStudentButton");
+        document.getElementById(
+            "emptyAddStudentButton"
+        );
 
 
     /* =====================================================
@@ -96,52 +106,89 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const studentAddModal =
-        document.getElementById("studentAddModal");
+        document.getElementById(
+            "studentAddModal"
+        );
 
     const addStudentForm =
-        document.getElementById("addStudentForm");
+        document.getElementById(
+            "addStudentForm"
+        );
 
     const closeAddStudentModal =
-        document.getElementById("closeAddStudentModal");
+        document.getElementById(
+            "closeAddStudentModal"
+        );
 
     const cancelAddStudent =
-        document.getElementById("cancelAddStudent");
+        document.getElementById(
+            "cancelAddStudent"
+        );
 
     const studentFullName =
-        document.getElementById("studentFullName");
+        document.getElementById(
+            "studentFullName"
+        );
+
+    const studentGender =
+        document.getElementById(
+            "studentGender"
+        );
 
     const studentIdPreview =
-        document.getElementById("studentIdPreview");
+        document.getElementById(
+            "studentIdPreview"
+        );
 
     const studentPasswordPreview =
-        document.getElementById("studentPasswordPreview");
+        document.getElementById(
+            "studentPasswordPreview"
+        );
 
     const studentClassPreview =
-        document.getElementById("studentClassPreview");
+        document.getElementById(
+            "studentClassPreview"
+        );
 
     const addStudentError =
-        document.getElementById("addStudentError");
+        document.getElementById(
+            "addStudentError"
+        );
 
     const saveStudentButton =
-        document.getElementById("saveStudentButton");
+        document.getElementById(
+            "saveStudentButton"
+        );
 
     const studentCreatedBox =
-        document.getElementById("studentCreatedBox");
+        document.getElementById(
+            "studentCreatedBox"
+        );
 
     const createdStudentId =
-        document.getElementById("createdStudentId");
+        document.getElementById(
+            "createdStudentId"
+        );
 
     const createdStudentPassword =
-        document.getElementById("createdStudentPassword");
+        document.getElementById(
+            "createdStudentPassword"
+        );
 
     const closeCreatedStudent =
-        document.getElementById("closeCreatedStudent");
+        document.getElementById(
+            "closeCreatedStudent"
+        );
 
     const selectAllSubjectsBtn =
-        document.getElementById("selectAllSubjectsBtn");
+        document.getElementById(
+            "selectAllSubjectsBtn"
+        );
 
     const clearSubjectsBtn =
-        document.getElementById("clearSubjectsBtn");
+        document.getElementById(
+            "clearSubjectsBtn"
+        );
 
 
     /* =====================================================
@@ -149,34 +196,59 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const studentEditModal =
-        document.getElementById("studentEditModal");
+        document.getElementById(
+            "studentEditModal"
+        );
 
     const editStudentForm =
-        document.getElementById("editStudentForm");
+        document.getElementById(
+            "editStudentForm"
+        );
 
     const closeEditStudentModal =
-        document.getElementById("closeEditStudentModal");
+        document.getElementById(
+            "closeEditStudentModal"
+        );
 
     const cancelEditStudent =
-        document.getElementById("cancelEditStudent");
+        document.getElementById(
+            "cancelEditStudent"
+        );
 
     const editStudentFullName =
-        document.getElementById("editStudentFullName");
+        document.getElementById(
+            "editStudentFullName"
+        );
+
+    const editStudentGender =
+        document.getElementById(
+            "editStudentGender"
+        );
 
     const editStudentId =
-        document.getElementById("editStudentId");
+        document.getElementById(
+            "editStudentId"
+        );
 
     const editStudentPassword =
-        document.getElementById("editStudentPassword");
+        document.getElementById(
+            "editStudentPassword"
+        );
 
     const editStudentClass =
-        document.getElementById("editStudentClass");
+        document.getElementById(
+            "editStudentClass"
+        );
 
     const editStudentError =
-        document.getElementById("editStudentError");
+        document.getElementById(
+            "editStudentError"
+        );
 
     const updateStudentButton =
-        document.getElementById("updateStudentButton");
+        document.getElementById(
+            "updateStudentButton"
+        );
 
     const editSelectAllSubjectsBtn =
         document.getElementById(
@@ -233,30 +305,36 @@ document.addEventListener("DOMContentLoaded", function () {
             backToClassesHandler
         );
 
+
         addStudentButton.addEventListener(
             "click",
             openAddStudentModal
         );
+
 
         emptyAddStudentButton.addEventListener(
             "click",
             openAddStudentModal
         );
 
+
         closeAddStudentModal.addEventListener(
             "click",
             closeAddModal
         );
+
 
         cancelAddStudent.addEventListener(
             "click",
             closeAddModal
         );
 
+
         closeCreatedStudent.addEventListener(
             "click",
             closeAddModal
         );
+
 
         addStudentForm.addEventListener(
             "submit",
@@ -267,9 +345,11 @@ document.addEventListener("DOMContentLoaded", function () {
         selectAllSubjectsBtn.addEventListener(
             "click",
             function () {
+
                 selectAllSubjects(
                     "studentSubjects"
                 );
+
             }
         );
 
@@ -277,9 +357,11 @@ document.addEventListener("DOMContentLoaded", function () {
         clearSubjectsBtn.addEventListener(
             "click",
             function () {
+
                 clearSubjects(
                     "studentSubjects"
                 );
+
             }
         );
 
@@ -289,10 +371,12 @@ document.addEventListener("DOMContentLoaded", function () {
             closeEditModal
         );
 
+
         cancelEditStudent.addEventListener(
             "click",
             closeEditModal
         );
+
 
         editStudentForm.addEventListener(
             "submit",
@@ -303,9 +387,11 @@ document.addEventListener("DOMContentLoaded", function () {
         editSelectAllSubjectsBtn.addEventListener(
             "click",
             function () {
+
                 selectAllSubjects(
                     "editStudentSubjects"
                 );
+
             }
         );
 
@@ -313,9 +399,11 @@ document.addEventListener("DOMContentLoaded", function () {
         editClearSubjectsBtn.addEventListener(
             "click",
             function () {
+
                 clearSubjects(
                     "editStudentSubjects"
                 );
+
             }
         );
 
@@ -325,9 +413,12 @@ document.addEventListener("DOMContentLoaded", function () {
             function (event) {
 
                 if (
-                    event.target === studentAddModal
+                    event.target ===
+                    studentAddModal
                 ) {
+
                     closeAddModal();
+
                 }
 
             }
@@ -339,9 +430,12 @@ document.addEventListener("DOMContentLoaded", function () {
             function (event) {
 
                 if (
-                    event.target === studentEditModal
+                    event.target ===
+                    studentEditModal
                 ) {
+
                     closeEditModal();
+
                 }
 
             }
@@ -356,7 +450,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function loadClasses() {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
             .from("classes")
             .select(
                 "id, class_name, class_code, description, form_number"
@@ -384,7 +481,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        classes = data || [];
+        classes =
+            data || [];
+
 
         renderClasses();
 
@@ -397,7 +496,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function loadStudents() {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
             .from("students")
             .select("*")
             .order(
@@ -421,7 +523,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        students = data || [];
+        students =
+            data || [];
 
     }
 
@@ -437,80 +540,101 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!classes.length) {
 
-            noClassesState.hidden = false;
+            noClassesState.hidden =
+                false;
 
             return;
         }
 
 
-        noClassesState.hidden = true;
+        noClassesState.hidden =
+            true;
 
 
-        classes.forEach(function (classItem) {
+        classes.forEach(
+            function (classItem) {
 
-            const card =
-                document.createElement("button");
-
-            card.type = "button";
-
-            card.className =
-                "student-class-card";
+                const card =
+                    document.createElement(
+                        "button"
+                    );
 
 
-            const formNumber =
-                getFormNumber(classItem);
+                card.type =
+                    "button";
 
 
-            const classCode =
-                getClassCode(
-                    classItem,
-                    formNumber
+                card.className =
+                    "student-class-card";
+
+
+                const formNumber =
+                    getFormNumber(
+                        classItem
+                    );
+
+
+                const classCode =
+                    getClassCode(
+                        classItem,
+                        formNumber
+                    );
+
+
+                const className =
+                    getClassName(
+                        classItem,
+                        formNumber
+                    );
+
+
+                card.innerHTML = `
+
+                    <div class="student-class-icon">
+                        ${escapeHtml(formNumber)}
+                    </div>
+
+                    <div class="student-class-info">
+
+                        <small>
+                            FCA CLASS
+                        </small>
+
+                        <h3>
+                            ${escapeHtml(className)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(classCode)}
+                        </p>
+
+                    </div>
+
+                    <div class="student-class-arrow">
+                        →
+                    </div>
+
+                `;
+
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        openClass(
+                            classItem
+                        );
+
+                    }
                 );
 
 
-            const className =
-                getClassName(
-                    classItem,
-                    formNumber
+                classesContainer.appendChild(
+                    card
                 );
 
-
-            card.innerHTML = `
-                <div class="student-class-icon">
-                    ${escapeHtml(formNumber)}
-                </div>
-
-                <div class="student-class-info">
-
-                    <small>FCA CLASS</small>
-
-                    <h3>
-                        ${escapeHtml(className)}
-                    </h3>
-
-                    <p>
-                        ${escapeHtml(classCode)}
-                    </p>
-
-                </div>
-
-                <div class="student-class-arrow">
-                    →
-                </div>
-            `;
-
-
-            card.addEventListener(
-                "click",
-                function () {
-                    openClass(classItem);
-                }
-            );
-
-
-            classesContainer.appendChild(card);
-
-        });
+            }
+        );
 
     }
 
@@ -538,25 +662,30 @@ document.addEventListener("DOMContentLoaded", function () {
             form < 1 ||
             form > 4
         ) {
+
             return;
+
         }
 
 
         const classItem =
-            classes.find(function (item) {
+            classes.find(
+                function (item) {
 
-                return (
-                    Number(
-                        item.form_number
-                    ) === form
-                );
+                    return (
+                        Number(
+                            item.form_number
+                        ) === form
+                    );
 
-            });
+                }
+            );
 
 
         if (!classItem) {
 
             return;
+
         }
 
 
@@ -577,22 +706,18 @@ document.addEventListener("DOMContentLoaded", function () {
         updateUrl = true
     ) {
 
-        selectedClass = classItem;
+        selectedClass =
+            classItem;
 
 
         const formNumber =
-            getFormNumber(classItem);
+            getFormNumber(
+                classItem
+            );
 
 
         const classCode =
             getClassCode(
-                classItem,
-                formNumber
-            );
-
-
-        const className =
-            getClassName(
                 classItem,
                 formNumber
             );
@@ -605,10 +730,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.href
                 );
 
+
             url.searchParams.set(
                 "form",
                 formNumber
             );
+
 
             window.history.pushState(
                 {},
@@ -619,20 +746,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /*
-           REQUIRED DISPLAY:
-
-           FCA-F1
-        */
-
         selectedClassName.textContent =
             classCode;
 
-
-        /*
-           Only "Students" here.
-           No "Form 1 Students".
-        */
 
         selectedClassTitle.textContent =
             "Students";
@@ -646,9 +762,12 @@ document.addEventListener("DOMContentLoaded", function () {
             classCode;
 
 
-        classesSection.hidden = true;
+        classesSection.hidden =
+            true;
 
-        studentsSection.hidden = false;
+
+        studentsSection.hidden =
+            false;
 
 
         showStudentsForClass();
@@ -668,27 +787,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const classStudents =
-            students.filter(function (student) {
+            students.filter(
+                function (student) {
 
-                if (
-                    student.class_id &&
-                    selectedClass.id
-                ) {
+                    if (
+                        student.class_id &&
+                        selectedClass.id
+                    ) {
+
+                        return (
+                            String(
+                                student.class_id
+                            ) ===
+                            String(
+                                selectedClass.id
+                            )
+                        );
+
+                    }
+
 
                     return (
-                        String(student.class_id) ===
-                        String(selectedClass.id)
+                        Number(
+                            student.form_number
+                        ) ===
+                        Number(
+                            selectedClass.form_number
+                        )
                     );
 
                 }
-
-
-                return (
-                    Number(student.form_number) ===
-                    Number(selectedClass.form_number)
-                );
-
-            });
+            );
 
 
         renderStudents(
@@ -711,29 +840,37 @@ document.addEventListener("DOMContentLoaded", function () {
         classStudents
     ) {
 
-        studentsContainer.innerHTML = "";
+        studentsContainer.innerHTML =
+            "";
 
 
         if (!classStudents.length) {
 
-            studentsContainer.hidden = true;
+            studentsContainer.hidden =
+                true;
 
-            noStudentsState.hidden = false;
+            noStudentsState.hidden =
+                false;
 
             return;
         }
 
 
-        studentsContainer.hidden = false;
+        studentsContainer.hidden =
+            false;
 
-        noStudentsState.hidden = true;
+
+        noStudentsState.hidden =
+            true;
 
 
         classStudents.forEach(
             function (student) {
 
                 studentsContainer.appendChild(
-                    createStudentCard(student)
+                    createStudentCard(
+                        student
+                    )
                 );
 
             }
@@ -751,7 +888,10 @@ document.addEventListener("DOMContentLoaded", function () {
     ) {
 
         const card =
-            document.createElement("article");
+            document.createElement(
+                "article"
+            );
+
 
         card.className =
             "student-card";
@@ -760,6 +900,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const fullName =
             student.full_name ||
             "Unnamed Student";
+
+
+        const gender =
+            normalizeGender(
+                student.gender
+            );
 
 
         const studentId =
@@ -803,15 +949,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const subjectHtml =
             subjects.length
-                ? subjects.map(function (subject) {
+                ? subjects.map(
+                    function (subject) {
 
-                    return `
-                        <span class="subject-tag">
-                            ${escapeHtml(subject)}
-                        </span>
-                    `;
+                        return `
+                            <span class="subject-tag">
+                                ${escapeHtml(subject)}
+                            </span>
+                        `;
 
-                }).join("")
+                    }
+                ).join("")
                 : `
                     <span class="no-subjects">
                         No subjects selected
@@ -852,6 +1000,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <strong>
                         ${escapeHtml(fullName)}
+                    </strong>
+
+                </div>
+
+
+                <div class="student-detail">
+
+                    <span>
+                        Gender
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(gender)}
                     </strong>
 
                 </div>
@@ -928,6 +1089,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </button>
 
             </div>
+
         `;
 
 
@@ -946,9 +1108,11 @@ document.addEventListener("DOMContentLoaded", function () {
         editButton.addEventListener(
             "click",
             function () {
+
                 openEditStudentModal(
                     student
                 );
+
             }
         );
 
@@ -956,9 +1120,11 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteButton.addEventListener(
             "click",
             function () {
+
                 deleteStudent(
                     student
                 );
+
             }
         );
 
@@ -993,21 +1159,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        addStudentForm.hidden = false;
-
-        studentCreatedBox.hidden = true;
-
-        addStudentError.hidden = true;
-
-        addStudentError.textContent = "";
+        addStudentForm.hidden =
+            false;
 
 
-        studentFullName.value = "";
+        studentCreatedBox.hidden =
+            true;
+
+
+        addStudentError.hidden =
+            true;
+
+
+        addStudentError.textContent =
+            "";
+
+
+        studentFullName.value =
+            "";
+
+
+        studentGender.value =
+            "";
+
 
         studentClassPreview.value =
             getClassCode(
                 selectedClass,
-                getFormNumber(selectedClass)
+                getFormNumber(
+                    selectedClass
+                )
             );
 
 
@@ -1024,7 +1205,8 @@ document.addEventListener("DOMContentLoaded", function () {
             generateAccessPassword();
 
 
-        studentAddModal.hidden = false;
+        studentAddModal.hidden =
+            false;
 
 
         studentFullName.focus();
@@ -1037,12 +1219,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     ""
                 );
 
+
             studentIdPreview.value =
                 generatedId;
+
 
         } catch (error) {
 
             console.error(error);
+
 
             studentIdPreview.value =
                 "Will generate on save";
@@ -1058,17 +1243,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function closeAddModal() {
 
-        studentAddModal.hidden = true;
+        studentAddModal.hidden =
+            true;
+
 
         addStudentForm.reset();
+
 
         clearSubjects(
             "studentSubjects"
         );
 
-        studentCreatedBox.hidden = true;
 
-        addStudentForm.hidden = false;
+        studentCreatedBox.hidden =
+            true;
+
+
+        addStudentForm.hidden =
+            false;
 
     }
 
@@ -1098,11 +1290,28 @@ document.addEventListener("DOMContentLoaded", function () {
             studentFullName.value.trim();
 
 
+        const gender =
+            normalizeGender(
+                studentGender.value
+            );
+
+
         if (!fullName) {
 
             showError(
                 addStudentError,
                 "Please enter the student's full name."
+            );
+
+            return;
+        }
+
+
+        if (!isValidGender(gender)) {
+
+            showError(
+                addStudentError,
+                "Please select the student's gender."
             );
 
             return;
@@ -1126,7 +1335,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        saveStudentButton.disabled = true;
+        saveStudentButton.disabled =
+            true;
+
 
         saveStudentButton.textContent =
             "Creating...";
@@ -1157,6 +1368,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 full_name:
                     fullName,
+
+                gender:
+                    gender,
 
                 student_id:
                     studentId,
@@ -1209,9 +1423,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 accessPassword;
 
 
-            addStudentForm.hidden = true;
+            addStudentForm.hidden =
+                true;
 
-            studentCreatedBox.hidden = false;
+
+            studentCreatedBox.hidden =
+                false;
 
 
         } catch (error) {
@@ -1230,9 +1447,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
             );
 
+
         } finally {
 
-            saveStudentButton.disabled = false;
+            saveStudentButton.disabled =
+                false;
+
 
             saveStudentButton.textContent =
                 "Create Student";
@@ -1244,8 +1464,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        GENERATE STUDENT ID
-       
+
        FORMAT:
+
        FCA-2026-NG-2
 
        NO ZERO PADDING
@@ -1294,7 +1515,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        let highestNumber = 0;
+        let highestNumber =
+            0;
 
 
         (data || []).forEach(
@@ -1309,7 +1531,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (
                     !id.startsWith(prefix)
                 ) {
+
                     return;
+
                 }
 
 
@@ -1320,7 +1544,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 const number =
-                    Number(suffix);
+                    Number(
+                        suffix
+                    );
 
 
                 if (
@@ -1349,10 +1575,6 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-        /*
-           Extra duplicate protection.
-        */
-
         for (
             let attempt = 0;
             attempt < 20;
@@ -1377,8 +1599,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            if (!existing || !existing.length) {
+            if (
+                !existing ||
+                !existing.length
+            ) {
+
                 return candidate;
+
             }
 
 
@@ -1407,16 +1634,6 @@ document.addEventListener("DOMContentLoaded", function () {
         surnameCode,
         number
     ) {
-
-        /*
-           IMPORTANT:
-           No padStart().
-           Therefore:
-
-           1  -> FCA-2026-NG-1
-           2  -> FCA-2026-NG-2
-           10 -> FCA-2026-NG-10
-        */
 
         return (
             `FCA-${year}-${surnameCode}-${number}`
@@ -1454,7 +1671,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         const surname =
-            parts[parts.length - 1];
+            parts[
+                parts.length - 1
+            ];
 
 
         const letters =
@@ -1472,7 +1691,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         if (letters.length === 1) {
-            return letters + "X";
+
+            return (
+                letters +
+                "X"
+            );
+
         }
 
 
@@ -1488,20 +1712,17 @@ document.addEventListener("DOMContentLoaded", function () {
        ACCESS PASSWORD
        
        FORMAT:
+
        fca@000aaa
 
-       Length = 10
-       
-       fca@ = 4
-       000 = 3
-       aaa = 3
-       TOTAL = 10
+       LENGTH = 10
     ===================================================== */
 
     function generateAccessPassword() {
 
         const numbers =
             "0123456789";
+
 
         const letters =
             "abcdefghijklmnopqrstuvwxyz";
@@ -1568,7 +1789,9 @@ document.addEventListener("DOMContentLoaded", function () {
             checked
         ).map(
             function (checkbox) {
+
                 return checkbox.value;
+
             }
         );
 
@@ -1588,7 +1811,8 @@ document.addEventListener("DOMContentLoaded", function () {
         checkboxes.forEach(
             function (checkbox) {
 
-                checkbox.checked = true;
+                checkbox.checked =
+                    true;
 
             }
         );
@@ -1609,7 +1833,8 @@ document.addEventListener("DOMContentLoaded", function () {
         checkboxes.forEach(
             function (checkbox) {
 
-                checkbox.checked = false;
+                checkbox.checked =
+                    false;
 
             }
         );
@@ -1632,12 +1857,19 @@ document.addEventListener("DOMContentLoaded", function () {
         editStudentError.hidden =
             true;
 
+
         editStudentError.textContent =
             "";
 
 
         editStudentFullName.value =
             student.full_name || "";
+
+
+        editStudentGender.value =
+            normalizeGender(
+                student.gender
+            );
 
 
         editStudentId.value =
@@ -1701,7 +1933,9 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-        studentEditModal.hidden = false;
+        studentEditModal.hidden =
+            false;
+
 
         editStudentFullName.focus();
 
@@ -1714,13 +1948,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function closeEditModal() {
 
-        studentEditModal.hidden = true;
+        studentEditModal.hidden =
+            true;
+
 
         editStudentForm.reset();
+
 
         clearSubjects(
             "editStudentSubjects"
         );
+
 
         selectedEditStudent =
             null;
@@ -1753,6 +1991,12 @@ document.addEventListener("DOMContentLoaded", function () {
             editStudentFullName.value.trim();
 
 
+        const gender =
+            normalizeGender(
+                editStudentGender.value
+            );
+
+
         const password =
             editStudentPassword.value.trim();
 
@@ -1762,6 +2006,17 @@ document.addEventListener("DOMContentLoaded", function () {
             showError(
                 editStudentError,
                 "Please enter the student's full name."
+            );
+
+            return;
+        }
+
+
+        if (!isValidGender(gender)) {
+
+            showError(
+                editStudentError,
+                "Please select the student's gender."
             );
 
             return;
@@ -1799,6 +2054,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateStudentButton.disabled =
             true;
 
+
         updateStudentButton.textContent =
             "Updating...";
 
@@ -1809,6 +2065,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 full_name:
                     fullName,
+
+                gender:
+                    gender,
 
                 access_password:
                     password,
@@ -1824,7 +2083,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             } = await supabase
                 .from("students")
-                .update(updates)
+                .update(
+                    updates
+                )
                 .eq(
                     "id",
                     selectedEditStudent.id
@@ -1843,8 +2104,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     function (student) {
 
                         return (
-                            String(student.id) ===
-                            String(selectedEditStudent.id)
+                            String(
+                                student.id
+                            ) ===
+                            String(
+                                selectedEditStudent.id
+                            )
                         );
 
                     }
@@ -1860,6 +2125,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             closeEditModal();
+
 
             showStudentsForClass();
 
@@ -1880,10 +2146,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
             );
 
+
         } finally {
 
             updateStudentButton.disabled =
                 false;
+
 
             updateStudentButton.textContent =
                 "Update Student";
@@ -1954,8 +2222,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     function (item) {
 
                         return (
-                            String(item.id) !==
-                            String(student.id)
+                            String(
+                                item.id
+                            ) !==
+                            String(
+                                student.id
+                            )
                         );
 
                     }
@@ -1998,6 +2270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         studentsSection.hidden =
             true;
 
+
         classesSection.hidden =
             false;
 
@@ -2017,6 +2290,64 @@ document.addEventListener("DOMContentLoaded", function () {
             {},
             "",
             url
+        );
+
+    }
+
+
+    /* =====================================================
+       GENDER HELPERS
+    ===================================================== */
+
+    function normalizeGender(
+        gender
+    ) {
+
+        const value =
+            String(
+                gender || ""
+            )
+                .trim();
+
+
+        if (!value) {
+            return "";
+        }
+
+
+        const normalized =
+            value.toLowerCase();
+
+
+        if (
+            normalized === "male"
+        ) {
+
+            return "Male";
+
+        }
+
+
+        if (
+            normalized === "female"
+        ) {
+
+            return "Female";
+
+        }
+
+
+        return value;
+
+    }
+
+
+    function isValidGender(
+        gender
+    ) {
+
+        return GENDERS.includes(
+            gender
         );
 
     }
@@ -2048,7 +2379,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const code =
             String(
-                classItem?.class_code || ""
+                classItem?.class_code ||
+                ""
             );
 
 
@@ -2079,7 +2411,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const existing =
             String(
-                classItem?.class_code || ""
+                classItem?.class_code ||
+                ""
             ).trim();
 
 
@@ -2100,7 +2433,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const existing =
             String(
-                classItem?.class_name || ""
+                classItem?.class_name ||
+                ""
             ).trim();
 
 
@@ -2143,7 +2477,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return (
             parts[0].charAt(0) +
-            parts[parts.length - 1].charAt(0)
+            parts[
+                parts.length - 1
+            ].charAt(0)
         ).toUpperCase();
 
     }
@@ -2202,7 +2538,9 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
 
                 const parsed =
-                    JSON.parse(subjects);
+                    JSON.parse(
+                        subjects
+                    );
 
 
                 if (
@@ -2244,6 +2582,7 @@ document.addEventListener("DOMContentLoaded", function () {
         element.textContent =
             message;
 
+
         element.hidden =
             false;
 
@@ -2256,6 +2595,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         element.textContent =
             "";
+
 
         element.hidden =
             true;

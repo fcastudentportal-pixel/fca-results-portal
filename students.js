@@ -1,19 +1,32 @@
-"use strict";
-
 /* =========================================================
    FIRST CLASS ACADEMY
-   STUDENTS MANAGEMENT
-   SUPABASE VERSION
+   FCA STUDENTS MANAGEMENT
+   students.js
+
+   EXISTING DATABASE STRUCTURE
+
+   students:
+   - id
+   - name
+   - student_number
+   - access_password
+   - class
+   - created_at
+   - gender
+
+   This page intentionally does NOT use a database
+   connection-status display.
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+"use strict";
 
-    console.log("FCA Students: starting...");
+
+document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
        SUPABASE
-    ===================================================== */
+    ====================================================== */
 
     const supabase = window.fcaSupabase;
 
@@ -21,60 +34,47 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!supabase) {
 
         console.error(
-            "FCA Supabase client not found."
+            "FCA Supabase client was not found."
         );
 
-        const status =
-            document.getElementById("databaseStatus");
-
-        if (status) {
-
-            status.textContent =
-                "Database connection unavailable.";
-
-            status.className =
-                "database-status error";
-
-        }
+        showPageError(
+            "FCA database connection is not available."
+        );
 
         return;
-
     }
 
 
-    console.log(
-        "FCA Supabase client found."
-    );
+    /* =====================================================
+       CONSTANTS
+    ====================================================== */
+
+    const CLASSES = [
+        "Form 1",
+        "Form 2",
+        "Form 3",
+        "Form 4"
+    ];
 
 
     /* =====================================================
        STATE
-    ===================================================== */
-
-    let classes = [];
+    ====================================================== */
 
     let students = [];
 
     let selectedClass = null;
 
-    let editingStudent = null;
-
-    let deletingStudent = null;
+    let deleteStudentId = null;
 
 
     /* =====================================================
        ELEMENTS
-    ===================================================== */
+    ====================================================== */
 
-    const databaseStatus =
+    const classesGrid =
         document.getElementById(
-            "databaseStatus"
-        );
-
-
-    const classesSection =
-        document.getElementById(
-            "classesSection"
+            "classesGrid"
         );
 
 
@@ -84,33 +84,15 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-    const classesContainer =
-        document.getElementById(
-            "classesContainer"
-        );
-
-
-    const noClassesState =
-        document.getElementById(
-            "noClassesState"
-        );
-
-
     const studentsGrid =
         document.getElementById(
             "studentsGrid"
         );
 
 
-    const noStudentsState =
+    const noStudents =
         document.getElementById(
-            "noStudentsState"
-        );
-
-
-    const studentCount =
-        document.getElementById(
-            "studentCount"
+            "noStudents"
         );
 
 
@@ -120,730 +102,398 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-    const selectedClassDescription =
+    const studentCount =
         document.getElementById(
-            "selectedClassDescription"
+            "studentCount"
         );
 
 
-    const selectedClassCode =
+    const addStudentTopBtn =
         document.getElementById(
-            "selectedClassCode"
+            "addStudentTopBtn"
         );
 
 
-    const addStudentButton =
+    const addStudentBtn =
         document.getElementById(
-            "addStudentButton"
+            "addStudentBtn"
         );
 
 
-    const emptyAddStudentButton =
+    const emptyAddStudentBtn =
         document.getElementById(
-            "emptyAddStudentButton"
+            "emptyAddStudentBtn"
         );
 
 
-    const backToClassesButton =
+    const studentModal =
         document.getElementById(
-            "backToClassesButton"
+            "studentModal"
+        );
+
+
+    const studentModalOverlay =
+        document.getElementById(
+            "studentModalOverlay"
+        );
+
+
+    const closeStudentModal =
+        document.getElementById(
+            "closeStudentModal"
+        );
+
+
+    const cancelStudentBtn =
+        document.getElementById(
+            "cancelStudentBtn"
+        );
+
+
+    const studentForm =
+        document.getElementById(
+            "studentForm"
+        );
+
+
+    const studentModalTitle =
+        document.getElementById(
+            "studentModalTitle"
+        );
+
+
+    const editingStudentId =
+        document.getElementById(
+            "editingStudentId"
+        );
+
+
+    const studentNameInput =
+        document.getElementById(
+            "studentNameInput"
+        );
+
+
+    const studentGenderInput =
+        document.getElementById(
+            "studentGenderInput"
+        );
+
+
+    const studentNumberInput =
+        document.getElementById(
+            "studentNumberInput"
+        );
+
+
+    const studentPasswordInput =
+        document.getElementById(
+            "studentPasswordInput"
+        );
+
+
+    const studentClassInput =
+        document.getElementById(
+            "studentClassInput"
+        );
+
+
+    const generatePasswordBtn =
+        document.getElementById(
+            "generatePasswordBtn"
+        );
+
+
+    const saveStudentBtn =
+        document.getElementById(
+            "saveStudentBtn"
+        );
+
+
+    const formMessage =
+        document.getElementById(
+            "formMessage"
+        );
+
+
+    const deleteModal =
+        document.getElementById(
+            "deleteModal"
+        );
+
+
+    const deleteModalOverlay =
+        document.getElementById(
+            "deleteModalOverlay"
+        );
+
+
+    const closeDeleteModal =
+        document.getElementById(
+            "closeDeleteModal"
+        );
+
+
+    const cancelDeleteBtn =
+        document.getElementById(
+            "cancelDeleteBtn"
+        );
+
+
+    const confirmDeleteBtn =
+        document.getElementById(
+            "confirmDeleteBtn"
+        );
+
+
+    const deleteMessage =
+        document.getElementById(
+            "deleteMessage"
         );
 
 
     /* =====================================================
-       ADD STUDENT
-    ===================================================== */
-
-    const addStudentModal =
-        document.getElementById(
-            "addStudentModal"
-        );
-
-
-    const addStudentForm =
-        document.getElementById(
-            "addStudentForm"
-        );
-
-
-    const studentFullName =
-        document.getElementById(
-            "studentFullName"
-        );
-
-
-    const studentGender =
-        document.getElementById(
-            "studentGender"
-        );
-
-
-    const studentIdPreview =
-        document.getElementById(
-            "studentIdPreview"
-        );
-
-
-    const studentPasswordPreview =
-        document.getElementById(
-            "studentPasswordPreview"
-        );
-
-
-    const studentClassPreview =
-        document.getElementById(
-            "studentClassPreview"
-        );
-
-
-    const addStudentError =
-        document.getElementById(
-            "addStudentError"
-        );
-
-
-    const addStudentSuccess =
-        document.getElementById(
-            "addStudentSuccess"
-        );
-
-
-    const createdStudentId =
-        document.getElementById(
-            "createdStudentId"
-        );
-
-
-    const createdStudentPassword =
-        document.getElementById(
-            "createdStudentPassword"
-        );
-
-
-    /* =====================================================
-       EDIT STUDENT
-    ===================================================== */
-
-    const editStudentModal =
-        document.getElementById(
-            "editStudentModal"
-        );
-
-
-    const editStudentForm =
-        document.getElementById(
-            "editStudentForm"
-        );
-
-
-    const editStudentFullName =
-        document.getElementById(
-            "editStudentFullName"
-        );
-
-
-    const editStudentGender =
-        document.getElementById(
-            "editStudentGender"
-        );
-
-
-    const editStudentId =
-        document.getElementById(
-            "editStudentId"
-        );
-
-
-    const editStudentPassword =
-        document.getElementById(
-            "editStudentPassword"
-        );
-
-
-    const editStudentClass =
-        document.getElementById(
-            "editStudentClass"
-        );
-
-
-    const editStudentError =
-        document.getElementById(
-            "editStudentError"
-        );
-
-
-    /* =====================================================
-       DELETE STUDENT
-    ===================================================== */
-
-    const deleteStudentModal =
-        document.getElementById(
-            "deleteStudentModal"
-        );
-
-
-    const deleteStudentError =
-        document.getElementById(
-            "deleteStudentError"
-        );
-
-
-    /* =====================================================
-       INITIALIZE
-    ===================================================== */
-
-    initialize();
-
-
-    async function initialize() {
-
-        setDatabaseStatus(
-            "Checking database...",
-            "loading"
-        );
-
-
-        try {
-
-            /*
-             * First test the classes table.
-             * This page depends on classes first.
-             */
-
-            const {
-                error: classesError
-            } =
-                await supabase
-                    .from("classes")
-                    .select("id")
-                    .limit(1);
-
-
-            if (classesError) {
-
-                throw classesError;
-
-            }
-
-
-            await loadClasses();
-
-
-            await loadStudents();
-
-
-            setDatabaseStatus(
-                "Database connected",
-                "success"
-            );
-
-
-            openClassFromUrl();
-
-
-            console.log(
-                "FCA Students: initialization complete."
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "FCA Students initialization error:",
-                error
-            );
-
-
-            setDatabaseStatus(
-                "Database connection failed",
-                "error"
-            );
-
-        }
-
+       GENERAL HELPERS
+    ====================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
 
-    /* =====================================================
-       DATABASE STATUS
-    ===================================================== */
+    function normalize(value) {
 
-    function setDatabaseStatus(
-        message,
-        type
-    ) {
+        return String(value ?? "")
+            .trim()
+            .toLowerCase();
+    }
 
-        if (!databaseStatus) {
+
+    function showPageError(message) {
+
+        if (!classesGrid) {
             return;
         }
 
-
-        databaseStatus.textContent =
-            message;
-
-
-        databaseStatus.className =
-            "database-status " + type;
-
+        classesGrid.innerHTML = `
+            <div class="empty-state">
+                <h4>Unable to Load Students</h4>
+                <p>${escapeHTML(message)}</p>
+            </div>
+        `;
     }
 
 
-    /* =====================================================
-       LOAD CLASSES
-    ===================================================== */
+    function showFormMessage(message) {
 
-    async function loadClasses() {
+        if (formMessage) {
 
-        const {
-            data,
-            error
-        } =
-            await supabase
-                .from("classes")
-                .select(
-                    "id, class_name, class_code, description, form_number"
-                )
-                .order(
-                    "form_number",
-                    {
-                        ascending: true
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Error loading classes:",
-                error
-            );
-
-            throw error;
-
+            formMessage.textContent =
+                message || "";
         }
-
-
-        classes =
-            Array.isArray(data)
-                ? data
-                : [];
-
-
-        renderClasses();
-
     }
 
 
-    /* =====================================================
-       LOAD STUDENTS
-    ===================================================== */
+    function clearFormMessage() {
 
-    async function loadStudents() {
-
-        const {
-            data,
-            error
-        } =
-            await supabase
-                .from("students")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Error loading students:",
-                error
-            );
-
-            throw error;
-
-        }
-
-
-        students =
-            Array.isArray(data)
-                ? data
-                : [];
-
-
-        console.log(
-            "Students loaded:",
-            students.length
-        );
-
+        showFormMessage("");
     }
 
 
     /* =====================================================
        RENDER CLASSES
-    ===================================================== */
+    ====================================================== */
 
     function renderClasses() {
 
-        if (!classesContainer) {
+        if (!classesGrid) {
             return;
         }
 
 
-        classesContainer.innerHTML = "";
+        classesGrid.innerHTML =
+            CLASSES.map(
+                (className) => {
 
-
-        if (!classes.length) {
-
-            noClassesState.hidden = false;
-
-            return;
-
-        }
-
-
-        noClassesState.hidden = true;
-
-
-        classes.forEach(
-            function (classItem) {
-
-                const card =
-                    document.createElement(
-                        "article"
-                    );
-
-
-                card.className =
-                    "class-card";
-
-
-                const className =
-                    escapeHtml(
-                        getClassName(
-                            classItem
-                        )
-                    );
-
-
-                const classCode =
-                    escapeHtml(
-                        classItem.class_code || ""
-                    );
-
-
-                const description =
-                    escapeHtml(
-                        classItem.description || ""
-                    );
-
-
-                card.innerHTML = `
-
-                    <div class="class-card-content">
-
-                        <div class="class-card-main">
-
-                            <h3>
-                                ${className}
-                            </h3>
-
-                            ${
-                                classCode
-                                    ? `
-                                        <span class="class-card-code">
-                                            ${classCode}
-                                        </span>
-                                      `
-                                    : ""
-                            }
-
-                        </div>
-
-
-                        ${
-                            description
-                                ? `
-                                    <p class="class-card-description">
-                                        ${description}
-                                    </p>
-                                  `
-                                : ""
-                        }
-
-                    </div>
-
-
-                    <div class="class-card-actions">
-
-                        <button
-                            type="button"
-                            class="view-class-button"
-                        >
-                            View Students
-                        </button>
-
-                    </div>
-
-                `;
-
-
-                const viewButton =
-                    card.querySelector(
-                        ".view-class-button"
-                    );
-
-
-                viewButton.addEventListener(
-                    "click",
-                    function () {
-
-                        openClass(
-                            classItem
+                    const classStudents =
+                        students.filter(
+                            (student) =>
+                                normalize(
+                                    student.class
+                                ) ===
+                                normalize(
+                                    className
+                                )
                         );
 
-                    }
-                );
+
+                    const activeClass =
+                        selectedClass ===
+                        className
+                            ? "active"
+                            : "";
 
 
-                classesContainer.appendChild(
-                    card
-                );
+                    return `
+                        <button
+                            type="button"
+                            class="class-card ${activeClass}"
+                            data-class="${escapeHTML(className)}"
+                        >
 
-            }
-        );
+                            <div class="eyebrow">
+                                FCA CLASS
+                            </div>
 
-    }
+                            <h4>
+                                ${escapeHTML(className)}
+                            </h4>
 
+                            <p>
+                                ${classStudents.length}
+                                ${
+                                    classStudents.length === 1
+                                        ? "student"
+                                        : "students"
+                                }
+                            </p>
 
-    /* =====================================================
-       URL CLASS
-    ===================================================== */
-
-    function openClassFromUrl() {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-
-        const form =
-            params.get("form");
-
-
-        if (!form) {
-            return;
-        }
-
-
-        const classItem =
-            classes.find(
-                function (item) {
-
-                    return String(
-                        item.form_number
-                    ) === String(form);
-
+                        </button>
+                    `;
                 }
-            );
-
-
-        if (classItem) {
-
-            openClass(
-                classItem
-            );
-
-        }
-
+            )
+            .join("");
     }
 
 
     /* =====================================================
-       OPEN CLASS
-    ===================================================== */
+       SELECT CLASS
+    ====================================================== */
 
-    function openClass(classItem) {
+    function selectClass(className) {
 
         selectedClass =
-            classItem;
+            className;
 
 
-        classesSection.hidden =
-            true;
+        renderClasses();
 
 
-        studentsSection.hidden =
-            false;
+        if (studentsSection) {
 
-
-        selectedClassTitle.textContent =
-            getClassName(
-                classItem
+            studentsSection.classList.remove(
+                "hidden"
             );
+        }
 
 
-        selectedClassDescription.textContent =
-            classItem.description ||
-            "Manage students in this class.";
+        if (selectedClassTitle) {
 
-
-        selectedClassCode.textContent =
-            classItem.class_code ||
-            `Form ${classItem.form_number}`;
+            selectedClassTitle.textContent =
+                `${className} Students`;
+        }
 
 
         renderStudents();
 
 
-        const newUrl =
-            `${window.location.pathname}?form=${encodeURIComponent(
-                classItem.form_number
-            )}`;
+        if (studentsSection) {
 
+            setTimeout(() => {
 
-        window.history.replaceState(
-            {},
-            "",
-            newUrl
-        );
+                studentsSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
 
-    }
-
-
-    /* =====================================================
-       BACK TO CLASSES
-    ===================================================== */
-
-    function backToClasses() {
-
-        selectedClass =
-            null;
-
-
-        studentsSection.hidden =
-            true;
-
-
-        classesSection.hidden =
-            false;
-
-
-        window.history.replaceState(
-            {},
-            "",
-            window.location.pathname
-        );
-
+            }, 50);
+        }
     }
 
 
     /* =====================================================
        RENDER STUDENTS
-    ===================================================== */
+    ====================================================== */
 
     function renderStudents() {
 
-        if (!selectedClass) {
+        if (!studentsGrid) {
             return;
         }
 
 
-        const classStudents =
+        const filteredStudents =
             students.filter(
-                function (student) {
-
-                    if (
-                        student.class_id !== null &&
-                        student.class_id !== undefined
-                    ) {
-
-                        return String(
-                            student.class_id
-                        ) === String(
-                            selectedClass.id
-                        );
-
-                    }
-
-
-                    return String(
-                        student.form_number
-                    ) === String(
-                        selectedClass.form_number
-                    );
-
-                }
+                (student) =>
+                    normalize(
+                        student.class
+                    ) ===
+                    normalize(
+                        selectedClass
+                    )
             );
 
 
-        studentCount.textContent =
-            classStudents.length;
+        if (studentCount) {
 
-
-        studentsGrid.innerHTML =
-            "";
-
-
-        if (!classStudents.length) {
-
-            noStudentsState.hidden =
-                false;
-
-            return;
-
+            studentCount.textContent =
+                `${filteredStudents.length} ${
+                    filteredStudents.length === 1
+                        ? "student"
+                        : "students"
+                }`;
         }
 
 
-        noStudentsState.hidden =
-            true;
+        if (
+            filteredStudents.length === 0
+        ) {
+
+            studentsGrid.innerHTML = "";
 
 
-        classStudents.forEach(
-            function (student) {
+            if (noStudents) {
 
-                studentsGrid.appendChild(
-                    createStudentCard(
-                        student
-                    )
+                noStudents.classList.remove(
+                    "hidden"
                 );
-
             }
-        );
 
+            return;
+        }
+
+
+        if (noStudents) {
+
+            noStudents.classList.add(
+                "hidden"
+            );
+        }
+
+
+        studentsGrid.innerHTML =
+            filteredStudents
+                .map(
+                    (student) =>
+                        createStudentCard(
+                            student
+                        )
+                )
+                .join("");
     }
 
 
     /* =====================================================
        STUDENT CARD
-    ===================================================== */
+    ====================================================== */
 
-    function createStudentCard(
-        student
-    ) {
-
-        const card =
-            document.createElement(
-                "article"
-            );
-
-
-        card.className =
-            "student-card";
-
-
-        const fullName =
-            student.full_name ||
-            "Unnamed Student";
-
-
-        const studentId =
-            student.student_id ||
-            "Not assigned";
-
+    function createStudentCard(student) {
 
         const gender =
             student.gender ||
@@ -852,939 +502,358 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const password =
             student.access_password ||
-            "Not available";
+            "Not set";
 
 
-        const className =
-            getStudentClassName(
-                student
-            );
+        return `
+            <article class="student-card">
 
+                <div class="student-card-header">
 
-        const subjects =
-            normalizeSubjects(
-                student.subjects
-            );
+                    <h4>
+                        ${escapeHTML(
+                            student.name ||
+                            "Unnamed Student"
+                        )}
+                    </h4>
 
-
-        const initials =
-            getInitials(
-                fullName
-            );
-
-
-        card.innerHTML = `
-
-            <div class="student-card-header">
-
-                <div class="student-avatar">
-                    ${escapeHtml(initials)}
-                </div>
-
-
-                <div class="student-card-title">
-
-                    <h3>
-                        ${escapeHtml(fullName)}
-                    </h3>
-
-                    <span>
-                        ${escapeHtml(studentId)}
+                    <span class="student-class-badge">
+                        ${escapeHTML(
+                            student.class ||
+                            "No class"
+                        )}
                     </span>
 
                 </div>
 
-            </div>
+
+                <div class="student-details">
+
+                    <div class="student-detail">
+
+                        <span>
+                            Gender
+                        </span>
+
+                        <span>
+                            ${escapeHTML(
+                                gender
+                            )}
+                        </span>
+
+                    </div>
 
 
-            <div class="student-card-details">
+                    <div class="student-detail">
+
+                        <span>
+                            Student Number
+                        </span>
+
+                        <span>
+                            ${escapeHTML(
+                                student.student_number ||
+                                "Not set"
+                            )}
+                        </span>
+
+                    </div>
 
 
-                <div class="student-detail">
+                    <div class="student-detail">
 
-                    <span>
-                        Full Name
-                    </span>
+                        <span>
+                            Access Password
+                        </span>
 
-                    <strong>
-                        ${escapeHtml(fullName)}
-                    </strong>
+                        <span>
+                            ${escapeHTML(
+                                password
+                            )}
+                        </span>
 
-                </div>
-
-
-                <div class="student-detail">
-
-                    <span>
-                        Gender
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(gender)}
-                    </strong>
-
-                </div>
-
-
-                <div class="student-detail">
-
-                    <span>
-                        Student ID
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(studentId)}
-                    </strong>
-
-                </div>
-
-
-                <div class="student-detail">
-
-                    <span>
-                        Access Password
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(password)}
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="student-detail">
+                <div class="student-card-actions">
 
-                    <span>
-                        Class
-                    </span>
+                    <button
+                        type="button"
+                        class="secondary edit-student-btn"
+                        data-id="${escapeHTML(student.id)}"
+                    >
+                        Edit
+                    </button>
 
-                    <strong>
-                        ${escapeHtml(className)}
-                    </strong>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="student-subjects">
-
-                <span class="student-subjects-label">
-                    Subjects Taken
-                </span>
-
-
-                <div class="student-subject-tags">
-
-                    ${
-                        subjects.length
-
-                            ? subjects.map(
-                                function (subject) {
-
-                                    return `
-                                        <span class="subject-tag">
-                                            ${escapeHtml(subject)}
-                                        </span>
-                                    `;
-
-                                }
-                              ).join("")
-
-                            : `
-                                <span class="subject-empty">
-                                    No subjects assigned
-                                </span>
-                              `
-                    }
+                    <button
+                        type="button"
+                        class="danger delete-student-btn"
+                        data-id="${escapeHTML(student.id)}"
+                    >
+                        Delete
+                    </button>
 
                 </div>
 
-            </div>
-
-
-            <div class="student-card-actions">
-
-                <button
-                    type="button"
-                    class="edit-student-button"
-                >
-                    Edit Student
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delete-student-button"
-                >
-                    Delete Student
-                </button>
-
-            </div>
-
+            </article>
         `;
-
-
-        card
-            .querySelector(
-                ".edit-student-button"
-            )
-            .addEventListener(
-                "click",
-                function () {
-
-                    openEditStudentModal(
-                        student
-                    );
-
-                }
-            );
-
-
-        card
-            .querySelector(
-                ".delete-student-button"
-            )
-            .addEventListener(
-                "click",
-                function () {
-
-                    openDeleteStudentModal(
-                        student
-                    );
-
-                }
-            );
-
-
-        return card;
-
     }
 
 
     /* =====================================================
-       ADD STUDENT MODAL
-    ===================================================== */
+       LOAD STUDENTS
+    ====================================================== */
 
-    function openAddStudentModal() {
+    async function loadStudents() {
 
-        if (!selectedClass) {
-            return;
-        }
+        try {
 
-
-        addStudentForm.hidden =
-            false;
-
-
-        addStudentSuccess.hidden =
-            true;
-
-
-        clearError(
-            addStudentError
-        );
-
-
-        studentFullName.value =
-            "";
-
-
-        studentGender.value =
-            "";
-
-
-        studentClassPreview.value =
-            getClassName(
-                selectedClass
-            );
-
-
-        clearSubjectCheckboxes(
-            "addStudentSubject"
-        );
-
-
-        studentIdPreview.value =
-            generateStudentId(
-                selectedClass.form_number
-            );
-
-
-        studentPasswordPreview.value =
-            generateAccessPassword();
-
-
-        addStudentModal.hidden =
-            false;
-
-
-        setTimeout(
-            function () {
-
-                studentFullName.focus();
-
-            },
-            50
-        );
-
-    }
-
-
-    function closeAddStudentModal() {
-
-        addStudentModal.hidden =
-            true;
-
-
-        clearError(
-            addStudentError
-        );
-
-    }
-
-
-    /* =====================================================
-       SAVE STUDENT
-    ===================================================== */
-
-    async function saveNewStudent(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        if (!selectedClass) {
-
-            showError(
-                addStudentError,
-                "Please select a class first."
-            );
-
-            return;
-
-        }
-
-
-        const fullName =
-            studentFullName.value.trim();
-
-
-        const gender =
-            studentGender.value.trim();
-
-
-        const studentId =
-            studentIdPreview.value.trim();
-
-
-        const password =
-            studentPasswordPreview.value.trim();
-
-
-        const subjects =
-            getSelectedSubjects(
-                "addStudentSubject"
-            );
-
-
-        clearError(
-            addStudentError
-        );
-
-
-        if (!fullName) {
-
-            showError(
-                addStudentError,
-                "Please enter the student's full name."
-            );
-
-            studentFullName.focus();
-
-            return;
-
-        }
-
-
-        if (!gender) {
-
-            showError(
-                addStudentError,
-                "Please select the student's gender."
-            );
-
-            studentGender.focus();
-
-            return;
-
-        }
-
-
-        if (!subjects.length) {
-
-            showError(
-                addStudentError,
-                "Please select at least one subject."
-            );
-
-            return;
-
-        }
-
-
-        const newStudent = {
-
-            id:
-                crypto.randomUUID(),
-
-            full_name:
-                fullName,
-
-            gender:
-                gender,
-
-            student_id:
-                studentId,
-
-            access_password:
-                password,
-
-            class_id:
-                selectedClass.id,
-
-            form_number:
-                Number(
-                    selectedClass.form_number
-                ),
-
-            subjects:
-                subjects
-
-        };
-
-
-        const {
-            data,
-            error
-        } =
-            await supabase
-                .from("students")
-                .insert(
-                    newStudent
-                )
-                .select()
-                .single();
-
-
-        if (error) {
-
-            console.error(
-                "Create student error:",
+            const {
+                data,
                 error
-            );
-
-
-            showError(
-                addStudentError,
-                getSupabaseErrorMessage(
-                    error
-                )
-            );
-
-            return;
-
-        }
-
-
-        students.unshift(
-            data
-        );
-
-
-        renderStudents();
-
-
-        createdStudentId.textContent =
-            data.student_id;
-
-
-        createdStudentPassword.textContent =
-            data.access_password;
-
-
-        addStudentForm.hidden =
-            true;
-
-
-        addStudentSuccess.hidden =
-            false;
-
-    }
-
-
-    /* =====================================================
-       EDIT STUDENT
-    ===================================================== */
-
-    function openEditStudentModal(
-        student
-    ) {
-
-        editingStudent =
-            student;
-
-
-        clearError(
-            editStudentError
-        );
-
-
-        editStudentFullName.value =
-            student.full_name || "";
-
-
-        editStudentGender.value =
-            student.gender || "";
-
-
-        editStudentId.value =
-            student.student_id || "";
-
-
-        editStudentPassword.value =
-            student.access_password || "";
-
-
-        editStudentClass.value =
-            getStudentClassName(
-                student
-            );
-
-
-        clearSubjectCheckboxes(
-            "editStudentSubject"
-        );
-
-
-        const subjects =
-            normalizeSubjects(
-                student.subjects
-            );
-
-
-        document
-            .querySelectorAll(
-                'input[name="editStudentSubject"]'
-            )
-            .forEach(
-                function (checkbox) {
-
-                    checkbox.checked =
-                        subjects.includes(
-                            checkbox.value
-                        );
-
-                }
-            );
-
-
-        editStudentModal.hidden =
-            false;
-
-
-        setTimeout(
-            function () {
-
-                editStudentFullName.focus();
-
-            },
-            50
-        );
-
-    }
-
-
-    function closeEditStudentModal() {
-
-        editStudentModal.hidden =
-            true;
-
-
-        editingStudent =
-            null;
-
-
-        clearError(
-            editStudentError
-        );
-
-    }
-
-
-    /* =====================================================
-       UPDATE STUDENT
-    ===================================================== */
-
-    async function updateStudent(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        if (!editingStudent) {
-            return;
-        }
-
-
-        const fullName =
-            editStudentFullName.value.trim();
-
-
-        const gender =
-            editStudentGender.value.trim();
-
-
-        const password =
-            editStudentPassword.value.trim();
-
-
-        const subjects =
-            getSelectedSubjects(
-                "editStudentSubject"
-            );
-
-
-        clearError(
-            editStudentError
-        );
-
-
-        if (!fullName) {
-
-            showError(
-                editStudentError,
-                "Please enter the student's full name."
-            );
-
-            return;
-
-        }
-
-
-        if (!gender) {
-
-            showError(
-                editStudentError,
-                "Please select the student's gender."
-            );
-
-            return;
-
-        }
-
-
-        if (!password) {
-
-            showError(
-                editStudentError,
-                "Please enter an access password."
-            );
-
-            return;
-
-        }
-
-
-        if (!subjects.length) {
-
-            showError(
-                editStudentError,
-                "Please select at least one subject."
-            );
-
-            return;
-
-        }
-
-
-        const updates = {
-
-            full_name:
-                fullName,
-
-            gender:
-                gender,
-
-            access_password:
-                password,
-
-            subjects:
-                subjects
-
-        };
-
-
-        const {
-            data,
-            error
-        } =
-            await supabase
+            } = await supabase
                 .from("students")
-                .update(
-                    updates
+                .select(
+                    "id,name,student_number,access_password,class,gender,created_at"
                 )
-                .eq(
-                    "id",
-                    editingStudent.id
-                )
-                .select()
-                .single();
-
-
-        if (error) {
-
-            console.error(
-                "Update student error:",
-                error
-            );
-
-
-            showError(
-                editStudentError,
-                getSupabaseErrorMessage(
-                    error
-                )
-            );
-
-            return;
-
-        }
-
-
-        const index =
-            students.findIndex(
-                function (student) {
-
-                    return String(
-                        student.id
-                    ) === String(
-                        editingStudent.id
-                    );
-
-                }
-            );
-
-
-        if (index !== -1) {
-
-            students[index] =
-                data;
-
-        }
-
-
-        renderStudents();
-
-
-        closeEditStudentModal();
-
-    }
-
-
-    /* =====================================================
-       DELETE STUDENT
-    ===================================================== */
-
-    function openDeleteStudentModal(
-        student
-    ) {
-
-        deletingStudent =
-            student;
-
-
-        clearError(
-            deleteStudentError
-        );
-
-
-        deleteStudentModal.hidden =
-            false;
-
-    }
-
-
-    function closeDeleteStudentModal() {
-
-        deleteStudentModal.hidden =
-            true;
-
-
-        deletingStudent =
-            null;
-
-
-        clearError(
-            deleteStudentError
-        );
-
-    }
-
-
-    async function deleteStudent() {
-
-        if (!deletingStudent) {
-            return;
-        }
-
-
-        clearError(
-            deleteStudentError
-        );
-
-
-        const {
-            error
-        } =
-            await supabase
-                .from("students")
-                .delete()
-                .eq(
-                    "id",
-                    deletingStudent.id
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
                 );
 
 
-        if (error) {
+            if (error) {
+
+                console.error(
+                    "FCA STUDENTS ERROR:",
+                    error
+                );
+
+                showPageError(
+                    error.message
+                );
+
+                return;
+            }
+
+
+            students =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            renderClasses();
+
+
+            if (selectedClass) {
+
+                renderStudents();
+            }
+
+        } catch (error) {
 
             console.error(
-                "Delete student error:",
+                "Unexpected students error:",
                 error
             );
 
-
-            showError(
-                deleteStudentError,
-                getSupabaseErrorMessage(
-                    error
-                )
+            showPageError(
+                error.message ||
+                "Unable to load students."
             );
+        }
+    }
 
+
+    /* =====================================================
+       OPEN ADD MODAL
+    ====================================================== */
+
+    function openAddStudentModal() {
+
+        if (!studentModal) {
             return;
-
         }
 
 
-        students =
-            students.filter(
-                function (student) {
-
-                    return String(
-                        student.id
-                    ) !== String(
-                        deletingStudent.id
-                    );
-
-                }
-            );
+        studentForm.reset();
 
 
-        closeDeleteStudentModal();
+        editingStudentId.value = "";
 
 
-        renderStudents();
+        studentModalTitle.textContent =
+            "Add Student";
 
+
+        saveStudentBtn.textContent =
+            "Save Student";
+
+
+        clearFormMessage();
+
+
+        if (selectedClass) {
+
+            studentClassInput.value =
+                selectedClass;
+        }
+
+
+        studentModal.classList.remove(
+            "hidden"
+        );
+
+
+        studentModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        setTimeout(() => {
+
+            studentNameInput.focus();
+
+        }, 50);
     }
 
 
     /* =====================================================
-       STUDENT ID
-    ===================================================== */
+       OPEN EDIT MODAL
+    ====================================================== */
 
-    function generateStudentId(
-        formNumber
+    function openEditStudentModal(
+        studentId
     ) {
 
-        const year =
-            new Date().getFullYear();
-
-
-        const surnameCode =
-            getSurnameCode(
-                studentFullName.value
+        const student =
+            students.find(
+                (item) =>
+                    String(item.id) ===
+                    String(studentId)
             );
 
 
-        const prefix =
-            `FCA-${year}-${surnameCode}`;
+        if (!student) {
+
+            alert(
+                "Student record could not be found."
+            );
+
+            return;
+        }
 
 
-        let highestNumber =
-            0;
+        editingStudentId.value =
+            student.id;
 
 
-        students.forEach(
-            function (student) {
-
-                const existingId =
-                    String(
-                        student.student_id || ""
-                    );
+        studentNameInput.value =
+            student.name || "";
 
 
-                if (
-                    existingId.startsWith(
-                        prefix + "-"
-                    )
-                ) {
-
-                    const parts =
-                        existingId.split("-");
+        studentGenderInput.value =
+            student.gender || "";
 
 
-                    const number =
-                        Number(
-                            parts[
-                                parts.length - 1
-                            ]
-                        );
+        studentNumberInput.value =
+            student.student_number || "";
 
 
-                    if (
-                        Number.isFinite(
-                            number
-                        ) &&
-                        number >
-                            highestNumber
-                    ) {
+        studentPasswordInput.value =
+            student.access_password || "";
 
-                        highestNumber =
-                            number;
 
-                    }
+        studentClassInput.value =
+            student.class || "";
 
-                }
 
-            }
+        studentModalTitle.textContent =
+            "Edit Student";
+
+
+        saveStudentBtn.textContent =
+            "Update Student";
+
+
+        clearFormMessage();
+
+
+        studentModal.classList.remove(
+            "hidden"
         );
 
 
-        return (
-            `${prefix}-${highestNumber + 1}`
+        studentModal.setAttribute(
+            "aria-hidden",
+            "false"
         );
 
+
+        setTimeout(() => {
+
+            studentNameInput.focus();
+
+        }, 50);
     }
 
 
     /* =====================================================
-       PASSWORD
-    ===================================================== */
+       CLOSE STUDENT MODAL
+    ====================================================== */
 
-    function generateAccessPassword() {
+    function closeStudentModalWindow() {
+
+        if (!studentModal) {
+            return;
+        }
+
+
+        studentModal.classList.add(
+            "hidden"
+        );
+
+
+        studentModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        clearFormMessage();
+    }
+
+
+    /* =====================================================
+       GENERATE PASSWORD
+    ====================================================== */
+
+    function generatePassword() {
+
+        const letters =
+            "abcdefghijklmnopqrstuvwxyz";
+
+
+        let randomLetters = "";
+
+
+        for (let i = 0; i < 3; i++) {
+
+            randomLetters +=
+                letters[
+                    Math.floor(
+                        Math.random() *
+                        letters.length
+                    )
+                ];
+        }
+
 
         const numbers =
             Math.floor(
@@ -1793,657 +862,730 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-        const letters =
-            Math.random()
-                .toString(36)
-                .substring(2, 5)
-                .toLowerCase();
-
-
-        return (
-            `fca@${numbers}${letters}`
-        );
-
+        studentPasswordInput.value =
+            `fca@${randomLetters}${numbers}`;
     }
 
 
     /* =====================================================
-       SURNAME CODE
-    ===================================================== */
+       GENERATE STUDENT NUMBER
+    ====================================================== */
 
-    function getSurnameCode(
-        fullName
-    ) {
+    function generateStudentNumber() {
 
-        const parts =
-            String(
-                fullName || ""
-            )
+        const year =
+            new Date()
+                .getFullYear();
+
+
+        const surnameSource =
+            studentNameInput.value
                 .trim()
                 .split(/\s+/)
-                .filter(Boolean);
+                .filter(Boolean)
+                .pop() || "STUDENT";
 
 
-        if (!parts.length) {
-            return "XX";
-        }
-
-
-        const surname =
-            parts[
-                parts.length - 1
-            ]
+        const surnameLetters =
+            surnameSource
                 .replace(
-                    /[^A-Za-z]/g,
+                    /[^a-zA-Z]/g,
                     ""
                 )
-                .toUpperCase();
+                .toUpperCase()
+                .padEnd(2, "X")
+                .substring(0, 2);
 
 
-        if (!surname) {
-            return "XX";
-        }
+        let number;
 
+        do {
 
-        return (
-            surname.substring(0, 2) ||
-            "XX"
+            number =
+                String(
+                    Math.floor(
+                        1 +
+                        Math.random() *
+                        999
+                    )
+                ).padStart(
+                    3,
+                    "0"
+                );
+
+        } while (
+            students.some(
+                (student) =>
+                    normalize(
+                        student.student_number
+                    ) ===
+                    normalize(
+                        `FCA-${year}-${surnameLetters}-${number}`
+                    )
+            )
         );
 
+
+        studentNumberInput.value =
+            `FCA-${year}-${surnameLetters}-${number}`;
     }
 
 
     /* =====================================================
-       CLASS NAME
-    ===================================================== */
+       SAVE STUDENT
+    ====================================================== */
 
-    function getClassName(
-        classItem
+    async function saveStudent(
+        event
     ) {
 
-        if (!classItem) {
-            return "Unknown Class";
-        }
+        event.preventDefault();
 
 
-        if (classItem.class_name) {
-
-            return classItem.class_name;
-
-        }
+        clearFormMessage();
 
 
-        if (
-            classItem.form_number !==
-                null &&
-            classItem.form_number !==
-                undefined
-        ) {
+        const name =
+            studentNameInput.value.trim();
 
-            return (
-                `Form ${classItem.form_number}`
+
+        const gender =
+            studentGenderInput.value.trim();
+
+
+        const studentNumber =
+            studentNumberInput.value.trim();
+
+
+        const password =
+            studentPasswordInput.value.trim();
+
+
+        const className =
+            studentClassInput.value.trim();
+
+
+        if (!name) {
+
+            showFormMessage(
+                "Please enter the student's name."
             );
 
-        }
+            studentNameInput.focus();
 
-
-        return "Unknown Class";
-
-    }
-
-
-    /* =====================================================
-       STUDENT CLASS
-    ===================================================== */
-
-    function getStudentClassName(
-        student
-    ) {
-
-        if (!student) {
-            return "Unknown Class";
-        }
-
-
-        const classItem =
-            classes.find(
-                function (item) {
-
-                    return String(
-                        item.id
-                    ) === String(
-                        student.class_id
-                    );
-
-                }
-            );
-
-
-        if (classItem) {
-
-            return getClassName(
-                classItem
-            );
-
-        }
-
-
-        if (
-            student.form_number !==
-                null &&
-            student.form_number !==
-                undefined
-        ) {
-
-            return (
-                `Form ${student.form_number}`
-            );
-
-        }
-
-
-        return "Unknown Class";
-
-    }
-
-
-    /* =====================================================
-       INITIALS
-    ===================================================== */
-
-    function getInitials(
-        name
-    ) {
-
-        const parts =
-            String(name)
-                .trim()
-                .split(/\s+/)
-                .filter(Boolean);
-
-
-        if (!parts.length) {
-            return "ST";
-        }
-
-
-        if (parts.length === 1) {
-
-            return parts[0]
-                .substring(0, 2)
-                .toUpperCase();
-
-        }
-
-
-        return (
-            parts[0][0] +
-            parts[
-                parts.length - 1
-            ][0]
-        ).toUpperCase();
-
-    }
-
-
-    /* =====================================================
-       SUBJECTS
-    ===================================================== */
-
-    function normalizeSubjects(
-        subjects
-    ) {
-
-        if (
-            Array.isArray(
-                subjects
-            )
-        ) {
-
-            return subjects
-                .filter(Boolean)
-                .map(String);
-
-        }
-
-
-        if (
-            typeof subjects ===
-            "string"
-        ) {
-
-            try {
-
-                const parsed =
-                    JSON.parse(
-                        subjects
-                    );
-
-
-                if (
-                    Array.isArray(
-                        parsed
-                    )
-                ) {
-
-                    return parsed
-                        .filter(Boolean)
-                        .map(String);
-
-                }
-
-            } catch (error) {
-
-                return subjects
-                    .split(",")
-                    .map(
-                        function (item) {
-
-                            return item.trim();
-
-                        }
-                    )
-                    .filter(Boolean);
-
-            }
-
-        }
-
-
-        return [];
-
-    }
-
-
-    function getSelectedSubjects(
-        name
-    ) {
-
-        return Array.from(
-            document.querySelectorAll(
-                `input[name="${name}"]:checked`
-            )
-        ).map(
-            function (checkbox) {
-
-                return checkbox.value;
-
-            }
-        );
-
-    }
-
-
-    function clearSubjectCheckboxes(
-        name
-    ) {
-
-        document
-            .querySelectorAll(
-                `input[name="${name}"]`
-            )
-            .forEach(
-                function (checkbox) {
-
-                    checkbox.checked =
-                        false;
-
-                }
-            );
-
-    }
-
-
-    /* =====================================================
-       ERRORS
-    ===================================================== */
-
-    function showError(
-        element,
-        message
-    ) {
-
-        if (!element) {
             return;
         }
 
 
-        element.textContent =
-            message;
+        if (!studentNumber) {
 
+            showFormMessage(
+                "Please enter the student number."
+            );
 
-        element.hidden =
-            false;
+            studentNumberInput.focus();
 
-    }
-
-
-    function clearError(
-        element
-    ) {
-
-        if (!element) {
             return;
         }
 
 
-        element.textContent =
-            "";
+        if (!password) {
+
+            showFormMessage(
+                "Please enter an access password."
+            );
+
+            studentPasswordInput.focus();
+
+            return;
+        }
 
 
-        element.hidden =
+        if (!className) {
+
+            showFormMessage(
+                "Please select a class."
+            );
+
+            studentClassInput.focus();
+
+            return;
+        }
+
+
+        const currentId =
+            editingStudentId.value.trim();
+
+
+        const duplicateStudent =
+            students.find(
+                (student) => {
+
+                    if (
+                        currentId &&
+                        String(student.id) ===
+                        String(currentId)
+                    ) {
+
+                        return false;
+                    }
+
+
+                    return (
+                        normalize(
+                            student.student_number
+                        ) ===
+                        normalize(
+                            studentNumber
+                        )
+                    );
+                }
+            );
+
+
+        if (duplicateStudent) {
+
+            showFormMessage(
+                "That student number is already in use."
+            );
+
+            studentNumberInput.focus();
+
+            return;
+        }
+
+
+        saveStudentBtn.disabled =
             true;
 
+
+        saveStudentBtn.textContent =
+            currentId
+                ? "Updating..."
+                : "Saving...";
+
+
+        try {
+
+            const studentData = {
+
+                name: name,
+
+                gender:
+                    gender || null,
+
+                student_number:
+                    studentNumber,
+
+                access_password:
+                    password,
+
+                class:
+                    className
+            };
+
+
+            if (currentId) {
+
+                /* =====================================
+                   UPDATE
+                ====================================== */
+
+                const {
+                    error
+                } = await supabase
+                    .from("students")
+                    .update(
+                        studentData
+                    )
+                    .eq(
+                        "id",
+                        currentId
+                    );
+
+
+                if (error) {
+
+                    console.error(
+                        "UPDATE STUDENT ERROR:",
+                        error
+                    );
+
+                    showFormMessage(
+                        error.message
+                    );
+
+                    return;
+                }
+
+
+            } else {
+
+                /* =====================================
+                   INSERT
+                ====================================== */
+
+                const {
+                    error
+                } = await supabase
+                    .from("students")
+                    .insert(
+                        studentData
+                    );
+
+
+                if (error) {
+
+                    console.error(
+                        "ADD STUDENT ERROR:",
+                        error
+                    );
+
+                    showFormMessage(
+                        error.message
+                    );
+
+                    return;
+                }
+            }
+
+
+            closeStudentModalWindow();
+
+
+            await loadStudents();
+
+
+            selectClass(
+                className
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "SAVE STUDENT ERROR:",
+                error
+            );
+
+            showFormMessage(
+                error.message ||
+                "Unable to save student."
+            );
+
+        } finally {
+
+            saveStudentBtn.disabled =
+                false;
+
+            saveStudentBtn.textContent =
+                currentId
+                    ? "Update Student"
+                    : "Save Student";
+        }
     }
 
 
     /* =====================================================
-       SUPABASE ERROR
-    ===================================================== */
+       OPEN DELETE MODAL
+    ====================================================== */
 
-    function getSupabaseErrorMessage(
-        error
+    function openDeleteStudentModal(
+        studentId
     ) {
 
-        if (!error) {
-
-            return (
-                "An unexpected error occurred."
+        const student =
+            students.find(
+                (item) =>
+                    String(item.id) ===
+                    String(studentId)
             );
 
+
+        if (!student) {
+            return;
         }
 
 
-        const message =
-            String(
-                error.message || ""
-            );
+        deleteStudentId =
+            student.id;
 
 
-        if (
-            message
-                .toLowerCase()
-                .includes("gender")
-        ) {
+        if (deleteMessage) {
 
-            return (
-                "The Gender field could not be saved. " +
-                "Make sure the gender column exists " +
-                "in the students table."
-            );
-
+            deleteMessage.textContent =
+                `Are you sure you want to delete ${student.name || "this student"}?`;
         }
 
 
-        return (
-            message ||
-            "An unexpected database error occurred."
+        deleteModal.classList.remove(
+            "hidden"
         );
 
+
+        deleteModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
     }
 
 
     /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
+       CLOSE DELETE MODAL
+    ====================================================== */
 
-    function escapeHtml(
-        value
-    ) {
+    function closeDeleteStudentModal() {
 
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
+        if (!deleteModal) {
+            return;
+        }
+
+
+        deleteModal.classList.add(
+            "hidden"
+        );
+
+
+        deleteModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        deleteStudentId = null;
+    }
+
+
+    /* =====================================================
+       DELETE STUDENT
+    ====================================================== */
+
+    async function deleteStudent() {
+
+        if (!deleteStudentId) {
+            return;
+        }
+
+
+        confirmDeleteBtn.disabled =
+            true;
+
+
+        confirmDeleteBtn.textContent =
+            "Deleting...";
+
+
+        try {
+
+            const {
+                error
+            } = await supabase
+                .from("students")
+                .delete()
+                .eq(
+                    "id",
+                    deleteStudentId
+                );
+
+
+            if (error) {
+
+                console.error(
+                    "DELETE STUDENT ERROR:",
+                    error
+                );
+
+                alert(
+                    "Unable to delete student: " +
+                    error.message
+                );
+
+                return;
+            }
+
+
+            const deletedClass =
+                selectedClass;
+
+
+            closeDeleteStudentModal();
+
+
+            await loadStudents();
+
+
+            if (deletedClass) {
+
+                selectClass(
+                    deletedClass
+                );
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "DELETE STUDENT ERROR:",
+                error
             );
 
+            alert(
+                error.message ||
+                "Unable to delete student."
+            );
+
+        } finally {
+
+            confirmDeleteBtn.disabled =
+                false;
+
+            confirmDeleteBtn.textContent =
+                "Delete Student";
+        }
     }
 
 
     /* =====================================================
-       EVENTS
-    ===================================================== */
+       EVENT DELEGATION
+    ====================================================== */
 
-    backToClassesButton?.addEventListener(
-        "click",
-        backToClasses
-    );
+    if (classesGrid) {
 
-
-    addStudentButton?.addEventListener(
-        "click",
-        openAddStudentModal
-    );
-
-
-    emptyAddStudentButton?.addEventListener(
-        "click",
-        openAddStudentModal
-    );
-
-
-    addStudentForm?.addEventListener(
-        "submit",
-        saveNewStudent
-    );
-
-
-    document
-        .getElementById(
-            "closeAddStudentModal"
-        )
-        ?.addEventListener(
+        classesGrid.addEventListener(
             "click",
-            closeAddStudentModal
+            (event) => {
+
+                const card =
+                    event.target.closest(
+                        ".class-card"
+                    );
+
+
+                if (!card) {
+                    return;
+                }
+
+
+                selectClass(
+                    card.dataset.class
+                );
+            }
         );
+    }
 
 
-    document
-        .getElementById(
-            "cancelAddStudent"
-        )
-        ?.addEventListener(
+    if (studentsGrid) {
+
+        studentsGrid.addEventListener(
             "click",
-            closeAddStudentModal
+            (event) => {
+
+                const editButton =
+                    event.target.closest(
+                        ".edit-student-btn"
+                    );
+
+
+                const deleteButton =
+                    event.target.closest(
+                        ".delete-student-btn"
+                    );
+
+
+                if (editButton) {
+
+                    openEditStudentModal(
+                        editButton.dataset.id
+                    );
+
+                    return;
+                }
+
+
+                if (deleteButton) {
+
+                    openDeleteStudentModal(
+                        deleteButton.dataset.id
+                    );
+                }
+            }
         );
+    }
 
 
-    document
-        .getElementById(
-            "closeSuccessButton"
-        )
-        ?.addEventListener(
+    /* =====================================================
+       BUTTON EVENTS
+    ====================================================== */
+
+    if (addStudentTopBtn) {
+
+        addStudentTopBtn.addEventListener(
             "click",
-            closeAddStudentModal
+            openAddStudentModal
         );
+    }
 
 
-    editStudentForm?.addEventListener(
-        "submit",
-        updateStudent
-    );
+    if (addStudentBtn) {
 
-
-    document
-        .getElementById(
-            "closeEditStudentModal"
-        )
-        ?.addEventListener(
+        addStudentBtn.addEventListener(
             "click",
-            closeEditStudentModal
+            openAddStudentModal
         );
+    }
 
 
-    document
-        .getElementById(
-            "cancelEditStudent"
-        )
-        ?.addEventListener(
+    if (emptyAddStudentBtn) {
+
+        emptyAddStudentBtn.addEventListener(
             "click",
-            closeEditStudentModal
+            openAddStudentModal
         );
+    }
 
 
-    document
-        .getElementById(
-            "closeDeleteStudentModal"
-        )
-        ?.addEventListener(
+    if (closeStudentModal) {
+
+        closeStudentModal.addEventListener(
+            "click",
+            closeStudentModalWindow
+        );
+    }
+
+
+    if (cancelStudentBtn) {
+
+        cancelStudentBtn.addEventListener(
+            "click",
+            closeStudentModalWindow
+        );
+    }
+
+
+    if (studentModalOverlay) {
+
+        studentModalOverlay.addEventListener(
+            "click",
+            closeStudentModalWindow
+        );
+    }
+
+
+    if (generatePasswordBtn) {
+
+        generatePasswordBtn.addEventListener(
+            "click",
+            generatePassword
+        );
+    }
+
+
+    if (studentNameInput) {
+
+        studentNameInput.addEventListener(
+            "blur",
+            () => {
+
+                if (
+                    !editingStudentId.value &&
+                    !studentNumberInput.value.trim()
+                ) {
+
+                    generateStudentNumber();
+                }
+            }
+        );
+    }
+
+
+    if (studentForm) {
+
+        studentForm.addEventListener(
+            "submit",
+            saveStudent
+        );
+    }
+
+
+    if (closeDeleteModal) {
+
+        closeDeleteModal.addEventListener(
             "click",
             closeDeleteStudentModal
         );
+    }
 
 
-    document
-        .getElementById(
-            "cancelDeleteStudent"
-        )
-        ?.addEventListener(
+    if (cancelDeleteBtn) {
+
+        cancelDeleteBtn.addEventListener(
             "click",
             closeDeleteStudentModal
         );
+    }
 
 
-    document
-        .getElementById(
-            "confirmDeleteStudent"
-        )
-        ?.addEventListener(
+    if (deleteModalOverlay) {
+
+        deleteModalOverlay.addEventListener(
+            "click",
+            closeDeleteStudentModal
+        );
+    }
+
+
+    if (confirmDeleteBtn) {
+
+        confirmDeleteBtn.addEventListener(
             "click",
             deleteStudent
         );
+    }
 
 
     /* =====================================================
-       BACKDROP
-    ===================================================== */
-
-    [
-        addStudentModal,
-        editStudentModal,
-        deleteStudentModal
-    ].forEach(
-        function (modal) {
-
-            if (!modal) {
-                return;
-            }
-
-
-            modal.addEventListener(
-                "click",
-                function (event) {
-
-                    if (
-                        event.target ===
-                        modal
-                    ) {
-
-                        modal.hidden =
-                            true;
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       ESC
-    ===================================================== */
+       ESCAPE KEY
+    ====================================================== */
 
     document.addEventListener(
         "keydown",
-        function (event) {
+        (event) => {
 
             if (
-                event.key !==
-                "Escape"
+                event.key === "Escape"
             ) {
 
-                return;
+                if (
+                    studentModal &&
+                    !studentModal.classList.contains(
+                        "hidden"
+                    )
+                ) {
 
+                    closeStudentModalWindow();
+                }
+
+
+                if (
+                    deleteModal &&
+                    !deleteModal.classList.contains(
+                        "hidden"
+                    )
+                ) {
+
+                    closeDeleteStudentModal();
+                }
             }
-
-
-            if (
-                addStudentModal &&
-                !addStudentModal.hidden
-            ) {
-
-                closeAddStudentModal();
-
-            }
-
-
-            if (
-                editStudentModal &&
-                !editStudentModal.hidden
-            ) {
-
-                closeEditStudentModal();
-
-            }
-
-
-            if (
-                deleteStudentModal &&
-                !deleteStudentModal.hidden
-            ) {
-
-                closeDeleteStudentModal();
-
-            }
-
         }
     );
 
 
     /* =====================================================
-       AUTO STUDENT ID
-    ===================================================== */
+       INITIAL LOAD
+    ====================================================== */
 
-    studentFullName?.addEventListener(
-        "input",
-        function () {
+    renderClasses();
 
-            if (!selectedClass) {
-                return;
-            }
-
-
-            studentIdPreview.value =
-                generateStudentId(
-                    selectedClass.form_number
-                );
-
-        }
-    );
-
-
-    console.log(
-        "FCA Students: ready."
-    );
+    loadStudents();
 
 });

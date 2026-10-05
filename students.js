@@ -10,56 +10,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("FCA Students: starting...");
 
-    const db = window.fcaSupabase;
-
-    if (!db) {
-        console.error("FCA Supabase client not found.");
-        showPageError(
-            "Database connection is not available."
-        );
-        return;
-    }
-
-    console.log("FCA Supabase client found");
-
-
     /* =====================================================
        CONFIGURATION
     ===================================================== */
 
     const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
 
-    const DEFAULT_ACADEMIC_YEAR =
-        new Date().getFullYear();
-
-    const STANDARD_SUBJECTS = [
-        "Agriculture",
-        "Bible Knowledge",
-        "Biology",
-        "Chemistry",
-        "Chichewa",
-        "English",
-        "Geography",
-        "History",
-        "Life Skills",
-        "Mathematics",
-        "Physics",
-        "Social Studies"
-    ];
-
-
-    /* =====================================================
-       STATE
-    ===================================================== */
+    const db = window.fcaSupabase;
 
     let currentFormNumber = null;
     let currentClass = null;
 
     let students = [];
-    let subjects = [];
-
+    let selectedStudentId = null;
     let editingStudentId = null;
-    let deletingStudentId = null;
 
 
     /* =====================================================
@@ -69,8 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const databaseStatus =
         document.getElementById("databaseStatus");
 
-    const studentsContainer =
-        document.getElementById("studentsContainer");
+    const pageTitle =
+        document.getElementById("pageTitle");
+
+    const pageDescription =
+        document.getElementById("pageDescription");
+
+    const addStudentBtn =
+        document.getElementById("addStudentBtn");
 
     const studentCount =
         document.getElementById("studentCount");
@@ -81,22 +51,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const academicYearStat =
         document.getElementById("academicYearStat");
 
-    const pageTitle =
-        document.getElementById("pageTitle");
-
-    const pageDescription =
-        document.getElementById("pageDescription");
-
     const studentListDescription =
-        document.getElementById(
-            "studentListDescription"
-        );
+        document.getElementById("studentListDescription");
 
-    const studentClass =
-        document.getElementById("studentClass");
+    const studentList =
+        document.getElementById("studentList");
 
-    const academicYear =
-        document.getElementById("academicYear");
+    const studentFormPanel =
+        document.getElementById("studentFormPanel");
+
+    const studentForm =
+        document.getElementById("studentForm");
+
+    const formTitle =
+        document.getElementById("formTitle");
 
     const firstName =
         document.getElementById("firstName");
@@ -107,82 +75,190 @@ document.addEventListener("DOMContentLoaded", function () {
     const gender =
         document.getElementById("gender");
 
+    const academicYear =
+        document.getElementById("academicYear");
+
+    const studentClass =
+        document.getElementById("studentClass");
+
     const studentId =
         document.getElementById("studentId");
+
+    const generatedStudentId =
+        document.getElementById("generatedStudentId");
 
     const accessPassword =
         document.getElementById("accessPassword");
 
-    const subjectsContainer =
-        document.getElementById(
-            "subjectsContainer"
-        );
+    const passwordToggle =
+        document.getElementById("passwordToggle");
 
-    const studentForm =
-        document.getElementById("studentForm");
+    const selectAllSubjectsBtn =
+        document.getElementById("selectAllSubjectsBtn");
 
-    const formTitle =
-        document.getElementById("formTitle");
+    const clearSubjectsBtn =
+        document.getElementById("clearSubjectsBtn");
 
-    const submitStudentButton =
-        document.getElementById(
-            "submitStudentButton"
-        );
+    const subjectCheckboxes =
+        document.getElementById("subjectCheckboxes");
 
-    const cancelEditButton =
-        document.getElementById(
-            "cancelEditButton"
-        );
+    const cancelBtn =
+        document.getElementById("cancelBtn");
 
-    const generatedCredentials =
-        document.getElementById(
-            "generatedCredentials"
-        );
-
-    const generatedStudentId =
-        document.getElementById(
-            "generatedStudentId"
-        );
-
-    const generatedPassword =
-        document.getElementById(
-            "generatedPassword"
-        );
+    const studentMessage =
+        document.getElementById("studentMessage");
 
 
     /* =====================================================
-       START
+       DELETE MODAL ELEMENTS
     ===================================================== */
 
-    setupPage();
+    const deleteModal =
+        document.getElementById("deleteModal");
+
+    const deleteStudentName =
+        document.getElementById("deleteStudentName");
+
+    const adminDeletePassword =
+        document.getElementById("adminDeletePassword");
+
+    const adminPasswordToggle =
+        document.getElementById("adminPasswordToggle");
+
+    const deleteError =
+        document.getElementById("deleteError");
+
+    const deleteCancelBtn =
+        document.getElementById("deleteCancelBtn");
+
+    const deleteConfirmBtn =
+        document.getElementById("deleteConfirmBtn");
 
 
     /* =====================================================
-       SETUP PAGE
+       INITIAL CHECK
     ===================================================== */
 
-    async function setupPage() {
+    if (!db) {
 
-        setupEvents();
+        console.error(
+            "FCA Supabase client not found."
+        );
 
-        setAcademicYear();
+        showDatabaseStatus(
+            "Database connection unavailable",
+            false
+        );
+
+        showStudentListError(
+            "The FCA database connection could not be found."
+        );
+
+        return;
+    }
+
+    console.log(
+        "FCA Supabase client found."
+    );
+
+    showDatabaseStatus(
+        "Database connected",
+        true
+    );
+
+
+    /* =====================================================
+       GET FORM NUMBER FROM URL
+    ===================================================== */
+
+    function getFormNumberFromUrl() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const form =
+            parseInt(
+                params.get("form"),
+                10
+            );
+
+        if (
+            Number.isInteger(form) &&
+            form >= 1 &&
+            form <= 4
+        ) {
+
+            return form;
+        }
+
+        return null;
+    }
+
+
+    /* =====================================================
+       DATABASE STATUS
+    ===================================================== */
+
+    function showDatabaseStatus(
+        message,
+        connected
+    ) {
+
+        if (!databaseStatus) {
+            return;
+        }
+
+        databaseStatus.textContent =
+            message;
+
+        databaseStatus.classList.toggle(
+            "connected",
+            connected
+        );
+
+        databaseStatus.classList.toggle(
+            "error",
+            !connected
+        );
+    }
+
+
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
+
+    async function initialize() {
 
         currentFormNumber =
-            getFormNumberFromURL();
-
-        console.log(
-            "Current form number:",
-            currentFormNumber
-        );
+            getFormNumberFromUrl();
 
         if (!currentFormNumber) {
 
-            showPageError(
-                "No class was selected. Please return to Classes and select a class."
+            showStudentListError(
+                "No valid class was selected."
             );
+
+            if (pageTitle) {
+
+                pageTitle.textContent =
+                    "Students";
+            }
+
+            if (pageDescription) {
+
+                pageDescription.textContent =
+                    "Select a valid FCA class to manage students.";
+            }
 
             return;
         }
+
+        console.log(
+            "Selected Form:",
+            currentFormNumber
+        );
 
         await loadClass();
 
@@ -190,51 +266,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        await loadSubjects();
+        updatePageInformation();
 
         await loadStudents();
     }
 
 
     /* =====================================================
-       GET FORM NUMBER FROM URL
-    ===================================================== */
-
-    function getFormNumberFromURL() {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-        const value =
-            params.get("form");
-
-        if (!value) {
-            return null;
-        }
-
-        const number =
-            Number(value);
-
-        if (
-            !Number.isInteger(number) ||
-            number < 1 ||
-            number > 4
-        ) {
-            return null;
-        }
-
-        return number;
-    }
-
-
-    /* =====================================================
        LOAD CLASS
-       
-       IMPORTANT:
-       The FCA classes table DOES NOT contain
-       an academic_year column.
     ===================================================== */
 
     async function loadClass() {
@@ -242,25 +281,26 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
 
             console.log(
-                "Loading FCA Form:",
+                "Loading Form",
                 currentFormNumber
             );
 
-            const { data, error } =
-                await db
-                    .from("classes")
-                    .select(`
-                        id,
-                        class_name,
-                        class_code,
-                        form_number
-                    `)
-                    .eq(
-                        "form_number",
-                        currentFormNumber
-                    )
-                    .maybeSingle();
-
+            const {
+                data,
+                error
+            } = await db
+                .from("classes")
+                .select(`
+                    id,
+                    class_name,
+                    class_code,
+                    form_number
+                `)
+                .eq(
+                    "form_number",
+                    currentFormNumber
+                )
+                .maybeSingle();
 
             if (error) {
 
@@ -269,79 +309,34 @@ document.addEventListener("DOMContentLoaded", function () {
                     error
                 );
 
-                showPageError(
-                    error.message ||
-                    "Unable to load the selected class."
+                showStudentListError(
+                    "Unable to load class. " +
+                    error.message
                 );
 
                 return;
             }
-
 
             if (!data) {
 
-                showPageError(
-                    "This class does not exist in the FCA database."
+                console.warn(
+                    "No class found for Form",
+                    currentFormNumber
+                );
+
+                showStudentListError(
+                    `Form ${currentFormNumber} has not been created yet.`
                 );
 
                 return;
             }
 
-
-            currentClass = data;
+            currentClass =
+                data;
 
             console.log(
-                "Current class:",
+                "Class loaded:",
                 currentClass
-            );
-
-
-            const className =
-                data.class_name ||
-                `Form ${currentFormNumber}`;
-
-
-            document.title =
-                `FCA | ${className} Students`;
-
-
-            if (pageTitle) {
-
-                pageTitle.textContent =
-                    `${className} Students`;
-            }
-
-
-            if (pageDescription) {
-
-                pageDescription.textContent =
-                    `Manage students registered in ${className}.`;
-            }
-
-
-            if (classNameStat) {
-
-                classNameStat.textContent =
-                    className;
-            }
-
-
-            if (studentClass) {
-
-                studentClass.value =
-                    className;
-            }
-
-
-            if (studentListDescription) {
-
-                studentListDescription.textContent =
-                    `Students registered in ${className}.`;
-            }
-
-
-            setAcademicYear(
-                DEFAULT_ACADEMIC_YEAR
             );
 
         } catch (error) {
@@ -351,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-            showPageError(
+            showStudentListError(
                 "An unexpected error occurred while loading the class."
             );
         }
@@ -359,246 +354,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       SET ACADEMIC YEAR
+       UPDATE PAGE INFORMATION
     ===================================================== */
 
-    function setAcademicYear(value) {
+    function updatePageInformation() {
 
-        const year =
-            value ||
-            DEFAULT_ACADEMIC_YEAR;
-
-
-        if (academicYear) {
-
-            academicYear.value =
-                year;
+        if (!currentClass) {
+            return;
         }
 
+        const className =
+            currentClass.class_name ||
+            `Form ${currentFormNumber}`;
+
+        const classCode =
+            currentClass.class_code ||
+            `FCA-F${currentFormNumber}`;
+
+        if (pageTitle) {
+
+            pageTitle.textContent =
+                `${className} Students`;
+        }
+
+        if (pageDescription) {
+
+            pageDescription.textContent =
+                `Manage students enrolled in ${className}.`;
+        }
+
+        if (classNameStat) {
+
+            classNameStat.textContent =
+                className;
+        }
+
+        if (studentClass) {
+
+            studentClass.value =
+                `${className} (${classCode})`;
+        }
+
+        if (studentListDescription) {
+
+            studentListDescription.textContent =
+                `Students enrolled in ${className}.`;
+        }
+
+        const year =
+            new Date().getFullYear();
 
         if (academicYearStat) {
 
             academicYearStat.textContent =
                 year;
         }
-    }
-
-
-    /* =====================================================
-       GET ACADEMIC YEAR
-    ===================================================== */
-
-    function getAcademicYear() {
-
-        if (academicYear) {
-
-            const value =
-                Number(
-                    academicYear.value
-                );
-
-            if (
-                Number.isInteger(value) &&
-                value > 2000
-            ) {
-                return value;
-            }
-        }
-
 
         if (
-            currentClass &&
-            currentClass.academic_year
+            academicYear &&
+            !academicYear.value
         ) {
 
-            const value =
-                Number(
-                    currentClass.academic_year
-                );
-
-            if (
-                Number.isInteger(value) &&
-                value > 2000
-            ) {
-                return value;
-            }
+            academicYear.value =
+                year;
         }
-
-
-        return DEFAULT_ACADEMIC_YEAR;
-    }
-
-
-    /* =====================================================
-       LOAD SUBJECTS
-    ===================================================== */
-
-    async function loadSubjects() {
-
-        try {
-
-            if (subjectsContainer) {
-
-                subjectsContainer.innerHTML =
-                    `
-                    <div class="loading-message">
-                        Loading subjects...
-                    </div>
-                    `;
-            }
-
-
-            const { data, error } =
-                await db
-                    .from("subjects")
-                    .select("*")
-                    .order(
-                        "name",
-                        {
-                            ascending: true
-                        }
-                    );
-
-
-            if (error) {
-
-                console.warn(
-                    "Subjects table could not be loaded:",
-                    error.message
-                );
-
-                subjects =
-                    STANDARD_SUBJECTS.map(
-                        function (name) {
-                            return {
-                                name: name
-                            };
-                        }
-                    );
-
-            } else {
-
-                subjects =
-                    Array.isArray(data)
-                        ? data
-                        : [];
-            }
-
-
-            if (!subjects.length) {
-
-                subjects =
-                    STANDARD_SUBJECTS.map(
-                        function (name) {
-                            return {
-                                name: name
-                            };
-                        }
-                    );
-            }
-
-
-            renderSubjects();
-
-        } catch (error) {
-
-            console.error(
-                "Subjects loading error:",
-                error
-            );
-
-
-            subjects =
-                STANDARD_SUBJECTS.map(
-                    function (name) {
-                        return {
-                            name: name
-                        };
-                    }
-                );
-
-
-            renderSubjects();
-        }
-    }
-
-
-    /* =====================================================
-       RENDER SUBJECTS
-    ===================================================== */
-
-    function renderSubjects() {
-
-        if (!subjectsContainer) {
-            return;
-        }
-
-
-        subjectsContainer.innerHTML = "";
-
-
-        subjects.forEach(
-            function (subject, index) {
-
-                const subjectName =
-                    subject.name ||
-                    subject.subject_name ||
-                    subject.title ||
-                    STANDARD_SUBJECTS[index] ||
-                    `Subject ${index + 1}`;
-
-
-                const wrapper =
-                    document.createElement("label");
-
-
-                wrapper.className =
-                    "subject-checkbox";
-
-
-                const checkbox =
-                    document.createElement("input");
-
-
-                checkbox.type =
-                    "checkbox";
-
-
-                checkbox.name =
-                    "subjects";
-
-
-                checkbox.value =
-                    subjectName;
-
-
-                checkbox.dataset.subject =
-                    subjectName;
-
-
-                const text =
-                    document.createElement("span");
-
-
-                text.textContent =
-                    subjectName;
-
-
-                wrapper.appendChild(
-                    checkbox
-                );
-
-
-                wrapper.appendChild(
-                    text
-                );
-
-
-                subjectsContainer.appendChild(
-                    wrapper
-                );
-            }
-        );
     }
 
 
@@ -608,18 +427,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function loadStudents() {
 
+        showStudentListLoading();
+
         try {
 
-            setDatabaseStatus(
-                "Loading students...",
-                "loading"
-            );
-
-
-            let result =
-                await db
+            let query =
+                db
                     .from("students")
-                    .select("*")
+                    .select(`
+                        id,
+                        full_name,
+                        student_id,
+                        access_password,
+                        class_id,
+                        form_number,
+                        subjects,
+                        gender,
+                        academic_year,
+                        updated_at
+                    `)
                     .eq(
                         "form_number",
                         currentFormNumber
@@ -631,27 +457,41 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     );
 
+            let {
+                data,
+                error
+            } = await query;
+
 
             /*
-                If form_number filtering fails,
-                try class_id instead.
-            */
+             * Some older records may not have
+             * form_number.
+             *
+             * If the first query returns no
+             * students, try class_id.
+             */
 
             if (
-                result.error &&
-                currentClass &&
-                currentClass.id
+                !error &&
+                (!data || data.length === 0) &&
+                currentClass
             ) {
 
-                console.warn(
-                    "Form number query failed. Trying class_id..."
-                );
-
-
-                result =
+                const fallback =
                     await db
                         .from("students")
-                        .select("*")
+                        .select(`
+                            id,
+                            full_name,
+                            student_id,
+                            access_password,
+                            class_id,
+                            form_number,
+                            subjects,
+                            gender,
+                            academic_year,
+                            updated_at
+                        `)
                         .eq(
                             "class_id",
                             currentClass.id
@@ -662,52 +502,42 @@ document.addEventListener("DOMContentLoaded", function () {
                                 ascending: true
                             }
                         );
+
+                data =
+                    fallback.data;
+
+                error =
+                    fallback.error;
             }
 
-
-            if (result.error) {
+            if (error) {
 
                 console.error(
                     "Students loading error:",
-                    result.error
+                    error
                 );
-
 
                 showStudentListError(
-                    result.error.message ||
-                    "Unable to load students."
-                );
-
-
-                setDatabaseStatus(
-                    "Database error",
-                    "error"
+                    "Unable to load students. " +
+                    error.message
                 );
 
                 return;
             }
 
-
             students =
-                Array.isArray(result.data)
-                    ? result.data
+                Array.isArray(data)
+                    ? data
                     : [];
 
-
-            students.sort(
-                compareStudentsAlphabetically
+            console.log(
+                "Students loaded:",
+                students.length
             );
 
+            updateStudentCount();
 
             renderStudents();
-
-            updateStudentStats();
-
-
-            setDatabaseStatus(
-                "Database connected",
-                "success"
-            );
 
         } catch (error) {
 
@@ -716,119 +546,84 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-
             showStudentListError(
                 "An unexpected error occurred while loading students."
             );
-
-
-            setDatabaseStatus(
-                "Database error",
-                "error"
-            );
         }
     }
 
 
     /* =====================================================
-       SORT STUDENTS
+       LOADING STATE
     ===================================================== */
 
-    function compareStudentsAlphabetically(
-        a,
-        b
-    ) {
+    function showStudentListLoading() {
 
-        const nameA =
-            getStudentFullName(a)
-                .toLowerCase();
+        if (!studentList) {
+            return;
+        }
 
-        const nameB =
-            getStudentFullName(b)
-                .toLowerCase();
+        studentList.innerHTML = `
+            <div class="empty-state">
 
+                <div class="empty-icon">
+                    S
+                </div>
 
-        return nameA.localeCompare(
-            nameB
-        );
+                <strong>
+                    Loading students...
+                </strong>
+
+                <p>
+                    Connecting to the FCA database.
+                </p>
+
+            </div>
+        `;
     }
 
 
     /* =====================================================
-       GET FULL NAME
+       ERROR STATE
     ===================================================== */
 
-    function getStudentFullName(
-        student
-    ) {
+    function showStudentListError(message) {
 
-        if (!student) {
-            return "";
+        if (!studentList) {
+            return;
         }
 
+        studentList.innerHTML = `
+            <div class="empty-state">
 
-        return (
-            student.full_name ||
-            ""
-        ).trim();
+                <div class="empty-icon">
+                    !
+                </div>
+
+                <strong>
+                    Unable to load students
+                </strong>
+
+                <p>
+                    ${escapeHtml(message)}
+                </p>
+
+            </div>
+        `;
     }
 
 
     /* =====================================================
-       GET FIRST NAME
+       UPDATE STUDENT COUNT
     ===================================================== */
 
-    function getStudentFirstName(
-        student
-    ) {
+    function updateStudentCount() {
 
-        const fullName =
-            getStudentFullName(
-                student
-            );
+        if (studentCount) {
 
-
-        if (!fullName) {
-            return "";
+            studentCount.textContent =
+                students.length;
         }
-
-
-        return fullName
-            .split(/\s+/)[0];
-    }
-
-
-    /* =====================================================
-       GET LAST NAME
-    ===================================================== */
-
-    function getStudentLastName(
-        student
-    ) {
-
-        const fullName =
-            getStudentFullName(
-                student
-            );
-
-
-        if (!fullName) {
-            return "";
-        }
-
-
-        const parts =
-            fullName.split(/\s+/);
-
-
-        if (parts.length <= 1) {
-            return "";
-        }
-
-
-        return parts
-            .slice(1)
-            .join(" ");
     }
 
 
@@ -838,146 +633,250 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderStudents() {
 
-        if (!studentsContainer) {
+        if (!studentList) {
             return;
         }
 
+        if (students.length === 0) {
 
-        studentsContainer.innerHTML = "";
-
-
-        if (!students.length) {
-
-            studentsContainer.innerHTML =
-                `
+            studentList.innerHTML = `
                 <div class="empty-state">
-                    <h3>No Students Yet</h3>
+
+                    <div class="empty-icon">
+                        S
+                    </div>
+
+                    <strong>
+                        No students yet
+                    </strong>
+
                     <p>
-                        No students have been registered
-                        in this class.
+                        Add the first student to this class.
                     </p>
+
                 </div>
-                `;
+            `;
 
             return;
         }
 
+        studentList.innerHTML =
+            students
+                .map(function (student) {
 
-        students.forEach(
-            function (student, index) {
-
-                const card =
-                    document.createElement("article");
-
-
-                card.className =
-                    "student-card";
-
-
-                const fullName =
-                    getStudentFullName(
+                    return createStudentCard(
                         student
                     );
 
-
-                const genderText =
-                    student.gender ||
-                    "Not specified";
-
-
-                const studentNumber =
-                    student.student_id ||
-                    "Not assigned";
+                })
+                .join("");
+    }
 
 
-                card.innerHTML =
-                    `
-                    <div class="student-card-header">
+    /* =====================================================
+       CREATE STUDENT CARD
+       
+       MATCHES THE CURRENT STUDENTS.CSS
+    ===================================================== */
 
-                        <div class="student-avatar">
-                            ${getInitials(fullName)}
-                        </div>
+    function createStudentCard(student) {
 
-                        <div class="student-card-name">
+        const name =
+            student.full_name ||
+            "Unnamed Student";
+
+        const id =
+            student.student_id ||
+            "No Student ID";
+
+        const genderText =
+            student.gender ||
+            "Not specified";
+
+        const year =
+            student.academic_year ||
+            "—";
+
+        const subjects =
+            Array.isArray(student.subjects)
+                ? student.subjects
+                : [];
+
+        return `
+            <div
+                class="student-card"
+                data-id="${escapeHtml(student.id)}"
+            >
+
+                <!-- STUDENT MAIN -->
+
+                <div class="student-main">
+
+                    <!-- AVATAR -->
+
+                    <div class="student-avatar">
+                        ${escapeHtml(
+                            getInitials(name)
+                        )}
+                    </div>
+
+
+                    <!-- STUDENT INFORMATION -->
+
+                    <div class="student-info">
+
+                        <!-- NAME + ID -->
+
+                        <div class="student-name-row">
+
                             <h3>
-                                ${escapeHTML(fullName || "Unnamed Student")}
+                                ${escapeHtml(name)}
                             </h3>
 
-                            <span>
-                                Student ${index + 1}
+                            <span class="student-id">
+                                ${escapeHtml(id)}
                             </span>
+
+                        </div>
+
+
+                        <!-- DETAILS -->
+
+                        <div class="student-details">
+
+                            <div class="detail-item">
+
+                                <span>
+                                    Gender
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        genderText
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-item">
+
+                                <span>
+                                    Academic Year
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        String(year)
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-item">
+
+                                <span>
+                                    Class
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(
+                                        currentClass
+                                            ? currentClass.class_name
+                                            : `Form ${currentFormNumber}`
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="detail-item">
+
+                                <span>
+                                    Student ID
+                                </span>
+
+                                <strong>
+                                    ${escapeHtml(id)}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SUBJECTS -->
+
+                        <div class="student-subjects">
+
+                            <strong>
+                                Subjects
+                            </strong>
+
+                            <div class="tags">
+
+                                ${
+                                    subjects.length > 0
+
+                                        ? subjects
+                                            .map(function (subject) {
+
+                                                return `
+                                                    <span
+                                                        class="tag subject-tag"
+                                                    >
+                                                        ${escapeHtml(
+                                                            subject
+                                                        )}
+                                                    </span>
+                                                `;
+
+                                            })
+                                            .join("")
+
+                                        : `
+                                            <span class="none">
+                                                No subjects selected
+                                            </span>
+                                        `
+                                }
+
+                            </div>
+
                         </div>
 
                     </div>
 
-
-                    <div class="student-card-details">
-
-                        <div class="student-detail">
-                            <span class="detail-label">
-                                Student ID
-                            </span>
-
-                            <strong>
-                                ${escapeHTML(studentNumber)}
-                            </strong>
-                        </div>
+                </div>
 
 
-                        <div class="student-detail">
-                            <span class="detail-label">
-                                Gender
-                            </span>
+                <!-- ACTIONS -->
 
-                            <strong>
-                                ${escapeHTML(genderText)}
-                            </strong>
-                        </div>
+                <div class="student-actions">
 
+                    <button
+                        type="button"
+                        class="edit-btn"
+                        data-action="edit"
+                        data-id="${escapeHtml(student.id)}"
+                    >
+                        Edit
+                    </button>
 
-                        <div class="student-detail">
-                            <span class="detail-label">
-                                Academic Year
-                            </span>
+                    <button
+                        type="button"
+                        class="delete-btn"
+                        data-action="delete"
+                        data-id="${escapeHtml(student.id)}"
+                    >
+                        Delete
+                    </button>
 
-                            <strong>
-                                ${student.academic_year || getAcademicYear()}
-                            </strong>
-                        </div>
+                </div>
 
-                    </div>
-
-
-                    <div class="student-card-actions">
-
-                        <button
-                            type="button"
-                            class="edit-student-button"
-                            data-action="edit"
-                            data-id="${student.id}"
-                        >
-                            Edit Student
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="delete-student-button"
-                            data-action="delete"
-                            data-id="${student.id}"
-                        >
-                            Delete Student
-                        </button>
-
-                    </div>
-                    `;
-
-
-                studentsContainer.appendChild(
-                    card
-                );
-            }
-        );
+            </div>
+        `;
     }
 
 
@@ -985,490 +884,71 @@ document.addEventListener("DOMContentLoaded", function () {
        INITIALS
     ===================================================== */
 
-    function getInitials(
-        name
-    ) {
+    function getInitials(name) {
 
-        if (!name) {
-            return "ST";
-        }
+        return name
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(function (part) {
 
+                return part.charAt(0);
 
-        const parts =
-            name
-                .trim()
-                .split(/\s+/)
-                .filter(Boolean);
-
-
-        if (parts.length === 1) {
-
-            return parts[0]
-                .substring(0, 2)
-                .toUpperCase();
-        }
-
-
-        return (
-            parts[0][0] +
-            parts[parts.length - 1][0]
-        ).toUpperCase();
+            })
+            .join("")
+            .toUpperCase();
     }
 
 
     /* =====================================================
-       UPDATE STATS
-    ===================================================== */
-
-    function updateStudentStats() {
-
-        if (studentCount) {
-
-            studentCount.textContent =
-                students.length;
-        }
-
-
-        if (classNameStat && currentClass) {
-
-            classNameStat.textContent =
-                currentClass.class_name ||
-                `Form ${currentFormNumber}`;
-        }
-
-
-        if (academicYearStat) {
-
-            academicYearStat.textContent =
-                getAcademicYear();
-        }
-    }
-
-
-    /* =====================================================
-       SETUP EVENTS
-    ===================================================== */
-
-    function setupEvents() {
-
-        if (studentForm) {
-
-            studentForm.addEventListener(
-                "submit",
-                handleStudentSubmit
-            );
-        }
-
-
-        if (cancelEditButton) {
-
-            cancelEditButton.addEventListener(
-                "click",
-                cancelEdit
-            );
-        }
-
-
-        if (studentsContainer) {
-
-            studentsContainer.addEventListener(
-                "click",
-                function (event) {
-
-                    const button =
-                        event.target.closest(
-                            "button[data-action]"
-                        );
-
-
-                    if (!button) {
-                        return;
-                    }
-
-
-                    const id =
-                        button.dataset.id;
-
-
-                    if (
-                        button.dataset.action ===
-                        "edit"
-                    ) {
-
-                        editStudent(id);
-                    }
-
-
-                    if (
-                        button.dataset.action ===
-                        "delete"
-                    ) {
-
-                        deleteStudent(id);
-                    }
-                }
-            );
-        }
-
-
-        if (firstName) {
-
-            firstName.addEventListener(
-                "input",
-                generatePreviewCredentials
-            );
-        }
-
-
-        if (lastName) {
-
-            lastName.addEventListener(
-                "input",
-                generatePreviewCredentials
-            );
-        }
-
-
-        if (gender) {
-
-            gender.addEventListener(
-                "change",
-                generatePreviewCredentials
-            );
-        }
-
-
-        if (academicYear) {
-
-            academicYear.addEventListener(
-                "change",
-                function () {
-
-                    updateStudentStats();
-
-                    generatePreviewCredentials();
-                }
-            );
-        }
-    }
-
-
-    /* =====================================================
-       SUBMIT STUDENT
-    ===================================================== */
-
-    async function handleStudentSubmit(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        if (!currentClass) {
-
-            alert(
-                "No FCA class is currently selected."
-            );
-
-            return;
-        }
-
-
-        const first =
-            firstName
-                ? firstName.value.trim()
-                : "";
-
-
-        const last =
-            lastName
-                ? lastName.value.trim()
-                : "";
-
-
-        const selectedGender =
-            gender
-                ? gender.value
-                : "";
-
-
-        const year =
-            getAcademicYear();
-
-
-        if (!first) {
-
-            alert(
-                "Please enter the student's first name."
-            );
-
-            return;
-        }
-
-
-        if (!last) {
-
-            alert(
-                "Please enter the student's last name."
-            );
-
-            return;
-        }
-
-
-        const selectedSubjects =
-            getSelectedSubjects();
-
-
-        if (!selectedSubjects.length) {
-
-            alert(
-                "Please select at least one subject."
-            );
-
-            return;
-        }
-
-
-        try {
-
-            setDatabaseStatus(
-                editingStudentId
-                    ? "Updating student..."
-                    : "Creating student...",
-                "loading"
-            );
-
-
-            const studentData = {
-
-                firstName: first,
-
-                lastName: last,
-
-                gender: selectedGender,
-
-                academicYear: year,
-
-                subjects: selectedSubjects
-            };
-
-
-            let existingStudent =
-                null;
-
-
-            if (editingStudentId) {
-
-                existingStudent =
-                    students.find(
-                        function (student) {
-
-                            return String(
-                                student.id
-                            ) === String(
-                                editingStudentId
-                            );
-                        }
-                    );
-            }
-
-
-            let generatedID =
-                existingStudent &&
-                existingStudent.student_id
-                    ? existingStudent.student_id
-                    : null;
-
-
-            let generatedAccessPassword =
-                existingStudent &&
-                existingStudent.access_password
-                    ? existingStudent.access_password
-                    : null;
-
-
-            if (!generatedID) {
-
-                generatedID =
-                    await generateStudentId(
-                        studentData
-                    );
-            }
-
-
-            if (!generatedAccessPassword) {
-
-                generatedAccessPassword =
-                    generateAccessPassword();
-            }
-
-
-            const payload =
-                buildStudentPayload(
-                    studentData,
-                    generatedID,
-                    generatedAccessPassword
-                );
-
-
-            let result;
-
-
-            if (editingStudentId) {
-
-                result =
-                    await db
-                        .from("students")
-                        .update(payload)
-                        .eq(
-                            "id",
-                            editingStudentId
-                        )
-                        .select()
-                        .single();
-
-            } else {
-
-                result =
-                    await db
-                        .from("students")
-                        .insert(payload)
-                        .select()
-                        .single();
-            }
-
-
-            if (result.error) {
-
-                console.error(
-                    "Student save error:",
-                    result.error
-                );
-
-
-                alert(
-                    result.error.message ||
-                    "Unable to save student."
-                );
-
-
-                setDatabaseStatus(
-                    "Database error",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "Student saved:",
-                result.data
-            );
-
-
-            if (editingStudentId) {
-
-                alert(
-                    "Student updated successfully."
-                );
-
-            } else {
-
-                showGeneratedCredentials(
-                    generatedID,
-                    generatedAccessPassword
-                );
-
-                alert(
-                    "Student created successfully."
-                );
-            }
-
-
-            resetStudentForm();
-
-            await loadStudents();
-
-
-            setDatabaseStatus(
-                "Database connected",
-                "success"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Unexpected save error:",
-                error
-            );
-
-
-            alert(
-                "An unexpected error occurred while saving the student."
-            );
-
-
-            setDatabaseStatus(
-                "Database error",
-                "error"
-            );
-        }
-    }
-
-
-    /* =====================================================
-       BUILD STUDENT PAYLOAD
+       SUBJECT CHECKBOXES
        
-       Matches actual students table:
-       - full_name
-       - student_id
-       - access_password
-       - class_id
-       - form_number
-       - subjects
-       - gender
-       - academic_year
-       - updated_at
+       IMPORTANT:
+       Subjects are STATIC in students.html,
+       matching the Teachers page.
     ===================================================== */
 
-    function buildStudentPayload(
-        studentData,
-        studentIdValue,
-        accessPasswordValue
-    ) {
+    function getSubjectCheckboxes() {
 
-        return {
+        if (!subjectCheckboxes) {
+            return [];
+        }
 
-            full_name:
-                `${studentData.firstName} ${studentData.lastName}`
-                    .trim(),
+        return Array.from(
+            subjectCheckboxes.querySelectorAll(
+                'input[type="checkbox"][name="subjects"]'
+            )
+        );
+    }
 
-            gender:
-                studentData.gender || null,
 
-            student_id:
-                studentIdValue,
+    /* =====================================================
+       SELECT ALL SUBJECTS
+    ===================================================== */
 
-            access_password:
-                accessPasswordValue,
+    function selectAllSubjects() {
 
-            subjects:
-                studentData.subjects,
+        getSubjectCheckboxes()
+            .forEach(function (checkbox) {
 
-            academic_year:
-                studentData.academicYear,
+                checkbox.checked =
+                    true;
+            });
+    }
 
-            class_id:
-                currentClass.id,
 
-            form_number:
-                currentFormNumber,
+    /* =====================================================
+       CLEAR SUBJECTS
+    ===================================================== */
 
-            updated_at:
-                new Date().toISOString()
-        };
+    function clearSubjects() {
+
+        getSubjectCheckboxes()
+            .forEach(function (checkbox) {
+
+                checkbox.checked =
+                    false;
+            });
     }
 
 
@@ -1478,25 +958,282 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function getSelectedSubjects() {
 
-        if (!subjectsContainer) {
-            return [];
-        }
+        return getSubjectCheckboxes()
+            .filter(function (checkbox) {
 
+                return checkbox.checked;
 
-        const checked =
-            subjectsContainer.querySelectorAll(
-                'input[type="checkbox"]:checked'
-            );
-
-
-        return Array.from(
-            checked
-        ).map(
-            function (checkbox) {
+            })
+            .map(function (checkbox) {
 
                 return checkbox.value;
-            }
+
+            });
+    }
+
+
+    /* =====================================================
+       SET STUDENT SUBJECTS
+    ===================================================== */
+
+    function setStudentSubjects(
+        selectedSubjects
+    ) {
+
+        const selected =
+            Array.isArray(selectedSubjects)
+                ? selectedSubjects
+                : [];
+
+        getSubjectCheckboxes()
+            .forEach(function (checkbox) {
+
+                checkbox.checked =
+                    selected.includes(
+                        checkbox.value
+                    );
+            });
+    }
+
+
+    /* =====================================================
+       OPEN ADD STUDENT FORM
+    ===================================================== */
+
+    function openAddStudentForm() {
+
+        editingStudentId =
+            null;
+
+        if (studentForm) {
+            studentForm.reset();
+        }
+
+        if (formTitle) {
+
+            formTitle.textContent =
+                "Add Student";
+        }
+
+        const year =
+            new Date().getFullYear();
+
+        if (academicYear) {
+
+            academicYear.value =
+                year;
+        }
+
+        if (
+            studentClass &&
+            currentClass
+        ) {
+
+            const className =
+                currentClass.class_name ||
+                `Form ${currentFormNumber}`;
+
+            const classCode =
+                currentClass.class_code ||
+                `FCA-F${currentFormNumber}`;
+
+            studentClass.value =
+                `${className} (${classCode})`;
+        }
+
+        if (studentId) {
+            studentId.value = "";
+        }
+
+        if (generatedStudentId) {
+            generatedStudentId.value = "";
+        }
+
+        if (accessPassword) {
+            accessPassword.value = "";
+        }
+
+        clearSubjects();
+
+        clearStudentMessage();
+
+        if (studentFormPanel) {
+
+            studentFormPanel.classList.add(
+                "active"
+            );
+        }
+
+        if (firstName) {
+            firstName.focus();
+        }
+    }
+
+
+    /* =====================================================
+       CLOSE STUDENT FORM
+    ===================================================== */
+
+    function closeStudentForm() {
+
+        editingStudentId =
+            null;
+
+        if (studentFormPanel) {
+
+            studentFormPanel.classList.remove(
+                "active"
+            );
+        }
+
+        clearStudentMessage();
+    }
+
+
+    /* =====================================================
+       EDIT STUDENT
+    ===================================================== */
+
+    function editStudent(id) {
+
+        const student =
+            students.find(function (item) {
+
+                return item.id === id;
+
+            });
+
+        if (!student) {
+            return;
+        }
+
+        editingStudentId =
+            student.id;
+
+        if (formTitle) {
+
+            formTitle.textContent =
+                "Edit Student";
+        }
+
+        const nameParts =
+            splitFullName(
+                student.full_name || ""
+            );
+
+        if (firstName) {
+
+            firstName.value =
+                nameParts.firstName;
+        }
+
+        if (lastName) {
+
+            lastName.value =
+                nameParts.lastName;
+        }
+
+        if (gender) {
+
+            gender.value =
+                student.gender || "";
+        }
+
+        if (academicYear) {
+
+            academicYear.value =
+                student.academic_year ||
+                new Date().getFullYear();
+        }
+
+        if (
+            studentClass &&
+            currentClass
+        ) {
+
+            const className =
+                currentClass.class_name ||
+                `Form ${currentFormNumber}`;
+
+            const classCode =
+                currentClass.class_code ||
+                `FCA-F${currentFormNumber}`;
+
+            studentClass.value =
+                `${className} (${classCode})`;
+        }
+
+        if (studentId) {
+
+            studentId.value =
+                student.student_id || "";
+        }
+
+        if (generatedStudentId) {
+
+            generatedStudentId.value =
+                student.student_id || "";
+        }
+
+        if (accessPassword) {
+
+            accessPassword.value =
+                student.access_password || "";
+        }
+
+        setStudentSubjects(
+            student.subjects
         );
+
+        clearStudentMessage();
+
+        if (studentFormPanel) {
+
+            studentFormPanel.classList.add(
+                "active"
+            );
+        }
+
+        if (firstName) {
+            firstName.focus();
+        }
+    }
+
+
+    /* =====================================================
+       SPLIT FULL NAME
+    ===================================================== */
+
+    function splitFullName(fullName) {
+
+        const parts =
+            fullName
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+        if (parts.length === 0) {
+
+            return {
+                firstName: "",
+                lastName: ""
+            };
+        }
+
+        if (parts.length === 1) {
+
+            return {
+                firstName: parts[0],
+                lastName: ""
+            };
+        }
+
+        return {
+            firstName: parts[0],
+            lastName: parts
+                .slice(1)
+                .join(" ")
+        };
     }
 
 
@@ -1505,93 +1242,104 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     async function generateStudentId(
-        studentData
+        first,
+        last,
+        year
     ) {
 
-        const academicYear =
-            studentData.academicYear ||
-            getAcademicYear();
-
-
-        const surname =
-            studentData.lastName
+        const safeFirst =
+            (first || "")
                 .trim()
-                .split(/\s+/)
-                .filter(Boolean)
-                .pop() ||
-            "STUDENT";
-
-
-        const prefix =
-            surname
-                .substring(0, 3)
                 .toUpperCase();
 
+        const safeLast =
+            (last || "")
+                .trim()
+                .toUpperCase();
 
-        let position =
-            students.length + 1;
+        let prefix =
+            safeLast
+                .replace(/[^A-Z]/g, "")
+                .substring(0, 3);
 
+        if (prefix.length < 3) {
 
-        /*
-           Temporary student object uses
-           full_name because the students
-           table has no surname column.
-        */
-
-        const temporaryStudent = {
-
-            full_name:
-                surname
-        };
-
-
-        try {
-
-            const { count, error } =
-                await db
-                    .from("students")
-                    .select(
-                        "id",
-                        {
-                            count: "exact",
-                            head: true
-                        }
+            prefix =
+                (
+                    safeFirst +
+                    prefix
+                )
+                    .replace(
+                        /[^A-Z]/g,
+                        ""
                     )
-                    .eq(
-                        "form_number",
-                        currentFormNumber
+                    .padEnd(
+                        3,
+                        "X"
+                    )
+                    .substring(
+                        0,
+                        3
                     );
+        }
 
+        const academicYearValue =
+            parseInt(
+                year,
+                10
+            ) ||
+            new Date().getFullYear();
 
-            if (!error && typeof count === "number") {
+        const basePrefix =
+            `FCA-${academicYearValue}-${prefix}`;
 
-                position =
-                    count + 1;
-            }
+        const {
+            data,
+            error
+        } = await db
+            .from("students")
+            .select("student_id")
+            .ilike(
+                "student_id",
+                `${basePrefix}-%`
+            );
 
-        } catch (error) {
+        if (error) {
 
-            console.warn(
-                "Unable to calculate student count:",
+            console.error(
+                "Student ID lookup error:",
                 error
             );
+
+            throw error;
         }
 
+        const existingIds =
+            new Set(
+                (data || [])
+                    .map(function (item) {
 
-        /*
-           Keep this reference so the variable
-           is intentionally based on the actual
-           students table structure.
-        */
+                        return item.student_id;
 
-        if (!temporaryStudent.full_name) {
-            position = students.length + 1;
-        }
+                    })
+                    .filter(Boolean)
+            );
 
+        let number = 1;
+        let newId = "";
 
-        return (
-            `FCA-${academicYear}-${prefix}-${String(position).padStart(3, "0")}`
+        do {
+
+            newId =
+                `${basePrefix}-${String(number).padStart(3, "0")}`;
+
+            number++;
+
+        } while (
+            existingIds.has(newId)
         );
+
+        return newId;
     }
 
 
@@ -1604,553 +1352,347 @@ document.addEventListener("DOMContentLoaded", function () {
         const letters =
             "abcdefghijklmnopqrstuvwxyz";
 
-        let randomLetters = "";
+        const numbers =
+            "0123456789";
 
+        let password =
+            "fca@";
 
-        for (let i = 0; i < 3; i++) {
+        for (
+            let i = 0;
+            i < 3;
+            i++
+        ) {
 
-            randomLetters +=
-                letters[
+            password +=
+                letters.charAt(
                     Math.floor(
                         Math.random() *
                         letters.length
                     )
-                ];
-        }
-
-
-        const numbers =
-            Math.floor(
-                100 +
-                Math.random() * 900
-            );
-
-
-        return (
-            `fca@${randomLetters}${numbers}`
-        );
-    }
-
-
-    /* =====================================================
-       GENERATE PREVIEW CREDENTIALS
-    ===================================================== */
-
-    function generatePreviewCredentials() {
-
-        if (
-            !firstName ||
-            !lastName ||
-            !studentId
-        ) {
-            return;
-        }
-
-
-        const first =
-            firstName.value.trim();
-
-
-        const last =
-            lastName.value.trim();
-
-
-        if (!first || !last) {
-            return;
-        }
-
-
-        /*
-           Do not overwrite an existing student ID
-           during editing.
-        */
-
-        if (editingStudentId) {
-            return;
-        }
-
-
-        const surname =
-            last
-                .split(/\s+/)
-                .filter(Boolean)
-                .pop() ||
-            "STUDENT";
-
-
-        const prefix =
-            surname
-                .substring(0, 3)
-                .toUpperCase();
-
-
-        const year =
-            getAcademicYear();
-
-
-        const position =
-            students.length + 1;
-
-
-        studentId.value =
-            `FCA-${year}-${prefix}-${String(position).padStart(3, "0")}`;
-    }
-
-
-    /* =====================================================
-       SHOW GENERATED CREDENTIALS
-    ===================================================== */
-
-    function showGeneratedCredentials(
-        generatedID,
-        generatedPasswordValue
-    ) {
-
-        if (generatedStudentId) {
-
-            generatedStudentId.textContent =
-                generatedID;
-        }
-
-
-        if (generatedPassword) {
-
-            generatedPassword.textContent =
-                generatedPasswordValue;
-        }
-
-
-        if (generatedCredentials) {
-
-            generatedCredentials.style.display =
-                "block";
-        }
-    }
-
-
-    /* =====================================================
-       EDIT STUDENT
-    ===================================================== */
-
-    function editStudent(
-        id
-    ) {
-
-        const student =
-            students.find(
-                function (item) {
-
-                    return String(item.id) ===
-                        String(id);
-                }
-            );
-
-
-        if (!student) {
-
-            alert(
-                "Student could not be found."
-            );
-
-            return;
-        }
-
-
-        editingStudentId =
-            student.id;
-
-
-        const first =
-            getStudentFirstName(
-                student
-            );
-
-
-        const last =
-            getStudentLastName(
-                student
-            );
-
-
-        if (firstName) {
-            firstName.value =
-                first;
-        }
-
-
-        if (lastName) {
-            lastName.value =
-                last;
-        }
-
-
-        if (gender) {
-            gender.value =
-                student.gender || "";
-        }
-
-
-        if (academicYear) {
-
-            academicYear.value =
-                student.academic_year ||
-                DEFAULT_ACADEMIC_YEAR;
-        }
-
-
-        if (studentId) {
-
-            studentId.value =
-                student.student_id || "";
-        }
-
-
-        if (accessPassword) {
-
-            accessPassword.value =
-                student.access_password || "";
-        }
-
-
-        setSelectedSubjects(
-            student.subjects
-        );
-
-
-        if (formTitle) {
-
-            formTitle.textContent =
-                "Edit Student";
-        }
-
-
-        if (submitStudentButton) {
-
-            submitStudentButton.textContent =
-                "Update Student";
-        }
-
-
-        if (cancelEditButton) {
-
-            cancelEditButton.style.display =
-                "inline-flex";
-        }
-
-
-        if (generatedCredentials) {
-
-            generatedCredentials.style.display =
-                "none";
-        }
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    }
-
-
-    /* =====================================================
-       SET SELECTED SUBJECTS
-    ===================================================== */
-
-    function setSelectedSubjects(
-        selected
-    ) {
-
-        if (!subjectsContainer) {
-            return;
-        }
-
-
-        let selectedSubjects = [];
-
-
-        if (Array.isArray(selected)) {
-
-            selectedSubjects =
-                selected;
-
-        } else if (
-            typeof selected === "string"
-        ) {
-
-            try {
-
-                const parsed =
-                    JSON.parse(selected);
-
-                if (Array.isArray(parsed)) {
-
-                    selectedSubjects =
-                        parsed;
-                }
-
-            } catch (error) {
-
-                selectedSubjects =
-                    selected
-                        .split(",")
-                        .map(
-                            function (item) {
-                                return item.trim();
-                            }
-                        )
-                        .filter(Boolean);
-            }
-        }
-
-
-        const checkboxes =
-            subjectsContainer.querySelectorAll(
-                'input[type="checkbox"]'
-            );
-
-
-        checkboxes.forEach(
-            function (checkbox) {
-
-                checkbox.checked =
-                    selectedSubjects.includes(
-                        checkbox.value
-                    );
-            }
-        );
-    }
-
-
-    /* =====================================================
-       CANCEL EDIT
-    ===================================================== */
-
-    function cancelEdit() {
-
-        editingStudentId =
-            null;
-
-
-        resetStudentForm();
-    }
-
-
-    /* =====================================================
-       RESET FORM
-    ===================================================== */
-
-    function resetStudentForm() {
-
-        if (studentForm) {
-
-            studentForm.reset();
-        }
-
-
-        editingStudentId =
-            null;
-
-
-        if (studentClass && currentClass) {
-
-            studentClass.value =
-                currentClass.class_name ||
-                `Form ${currentFormNumber}`;
-        }
-
-
-        setAcademicYear(
-            DEFAULT_ACADEMIC_YEAR
-        );
-
-
-        if (studentId) {
-
-            studentId.value = "";
-        }
-
-
-        if (accessPassword) {
-
-            accessPassword.value = "";
-        }
-
-
-        if (formTitle) {
-
-            formTitle.textContent =
-                "Add Student";
-        }
-
-
-        if (submitStudentButton) {
-
-            submitStudentButton.textContent =
-                "Add Student";
-        }
-
-
-        if (cancelEditButton) {
-
-            cancelEditButton.style.display =
-                "none";
-        }
-
-
-        if (generatedCredentials) {
-
-            generatedCredentials.style.display =
-                "none";
-        }
-
-
-        if (subjectsContainer) {
-
-            const checkboxes =
-                subjectsContainer.querySelectorAll(
-                    'input[type="checkbox"]'
                 );
-
-
-            checkboxes.forEach(
-                function (checkbox) {
-
-                    checkbox.checked =
-                        false;
-                }
-            );
         }
+
+        for (
+            let i = 0;
+            i < 3;
+            i++
+        ) {
+
+            password +=
+                numbers.charAt(
+                    Math.floor(
+                        Math.random() *
+                        numbers.length
+                    )
+                );
+        }
+
+        return password;
     }
 
 
     /* =====================================================
-       DELETE STUDENT
+       SAVE STUDENT
     ===================================================== */
 
-    async function deleteStudent(
-        id
-    ) {
+    async function saveStudent() {
 
-        const student =
-            students.find(
-                function (item) {
+        clearStudentMessage();
 
-                    return String(item.id) ===
-                        String(id);
-                }
+        const first =
+            firstName
+                ? firstName.value.trim()
+                : "";
+
+        const last =
+            lastName
+                ? lastName.value.trim()
+                : "";
+
+        const selectedGender =
+            gender
+                ? gender.value
+                : "";
+
+        const selectedYear =
+            academicYear
+                ? parseInt(
+                    academicYear.value,
+                    10
+                )
+                : new Date().getFullYear();
+
+
+        if (!first) {
+
+            showStudentMessage(
+                "Please enter the student's first name.",
+                "error"
             );
 
+            if (firstName) {
+                firstName.focus();
+            }
 
-        if (!student) {
+            return;
+        }
 
-            alert(
-                "Student could not be found."
+
+        if (!last) {
+
+            showStudentMessage(
+                "Please enter the student's last name.",
+                "error"
+            );
+
+            if (lastName) {
+                lastName.focus();
+            }
+
+            return;
+        }
+
+
+        if (!selectedYear) {
+
+            showStudentMessage(
+                "Please enter the academic year.",
+                "error"
             );
 
             return;
         }
 
 
-        const fullName =
-            getStudentFullName(
-                student
+        if (!currentClass) {
+
+            showStudentMessage(
+                "No class is currently selected.",
+                "error"
             );
 
-
-        const confirmed =
-            confirm(
-                `Are you sure you want to delete ${fullName}?\n\nThis action cannot be undone.`
-            );
-
-
-        if (!confirmed) {
             return;
         }
 
 
-        deletingStudentId =
-            student.id;
+        const subjects =
+            getSelectedSubjects();
 
 
         try {
 
-            setDatabaseStatus(
-                "Deleting student...",
-                "loading"
-            );
+            let generatedId =
+                studentId
+                    ? studentId.value.trim()
+                    : "";
+
+            let password =
+                accessPassword
+                    ? accessPassword.value.trim()
+                    : "";
 
 
-            const { error } =
-                await db
-                    .from("students")
-                    .delete()
-                    .eq(
-                        "id",
-                        deletingStudentId
+            /* =================================================
+               GENERATE CREDENTIALS FOR NEW STUDENT
+            ================================================= */
+
+            if (!editingStudentId) {
+
+                generatedId =
+                    await generateStudentId(
+                        first,
+                        last,
+                        selectedYear
                     );
 
+                password =
+                    generateAccessPassword();
 
-            if (error) {
+            } else {
 
-                console.error(
-                    "Delete student error:",
-                    error
-                );
+                /*
+                 * Keep existing credentials when
+                 * editing unless missing.
+                 */
 
+                if (!generatedId) {
 
-                alert(
-                    error.message ||
-                    "Unable to delete student."
-                );
+                    generatedId =
+                        await generateStudentId(
+                            first,
+                            last,
+                            selectedYear
+                        );
+                }
 
+                if (!password) {
 
-                setDatabaseStatus(
-                    "Database error",
-                    "error"
-                );
-
-                return;
+                    password =
+                        generateAccessPassword();
+                }
             }
 
 
-            alert(
-                "Student deleted successfully."
-            );
+            const fullName =
+                `${first} ${last}`.trim();
 
 
-            deletingStudentId =
-                null;
+            const payload = {
+
+                full_name:
+                    fullName,
+
+                student_id:
+                    generatedId,
+
+                access_password:
+                    password,
+
+                class_id:
+                    currentClass.id,
+
+                form_number:
+                    currentFormNumber,
+
+                subjects:
+                    subjects,
+
+                gender:
+                    selectedGender || null,
+
+                academic_year:
+                    selectedYear,
+
+                updated_at:
+                    new Date().toISOString()
+            };
+
+
+            /* =================================================
+               UPDATE EXISTING STUDENT
+            ================================================= */
+
+            if (editingStudentId) {
+
+                const {
+                    error
+                } = await db
+                    .from("students")
+                    .update(payload)
+                    .eq(
+                        "id",
+                        editingStudentId
+                    );
+
+                if (error) {
+
+                    console.error(
+                        "Student update error:",
+                        error
+                    );
+
+                    showStudentMessage(
+                        "Unable to update student. " +
+                        error.message,
+                        "error"
+                    );
+
+                    return;
+                }
+
+                showStudentMessage(
+                    "Student updated successfully.",
+                    "success"
+                );
+
+            }
+
+
+            /* =================================================
+               INSERT NEW STUDENT
+            ================================================= */
+
+            else {
+
+                const {
+                    error
+                } = await db
+                    .from("students")
+                    .insert(payload);
+
+                if (error) {
+
+                    console.error(
+                        "Student insert error:",
+                        error
+                    );
+
+                    showStudentMessage(
+                        "Unable to add student. " +
+                        error.message,
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Show generated credentials
+                 * before closing.
+                 */
+
+                if (studentId) {
+
+                    studentId.value =
+                        generatedId;
+                }
+
+                if (generatedStudentId) {
+
+                    generatedStudentId.value =
+                        generatedId;
+                }
+
+                if (accessPassword) {
+
+                    accessPassword.value =
+                        password;
+                }
+
+                showStudentMessage(
+                    "Student added successfully.",
+                    "success"
+                );
+            }
 
 
             await loadStudents();
 
 
-            await recalculateStudentIds();
+            /*
+             * Close form after successful save.
+             */
 
+            setTimeout(
+                function () {
 
-            await loadStudents();
+                    closeStudentForm();
 
-
-            setDatabaseStatus(
-                "Database connected",
-                "success"
+                },
+                700
             );
 
         } catch (error) {
 
             console.error(
-                "Unexpected delete error:",
+                "Save student error:",
                 error
             );
 
-
-            alert(
-                "An unexpected error occurred while deleting the student."
-            );
-
-
-            setDatabaseStatus(
-                "Database error",
+            showStudentMessage(
+                "An unexpected error occurred while saving the student.",
                 "error"
             );
         }
@@ -2158,29 +1700,230 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
-       RECALCULATE STUDENT IDS
+       STUDENT MESSAGE
     ===================================================== */
 
-    async function recalculateStudentIds() {
+    function showStudentMessage(
+        message,
+        type
+    ) {
+
+        if (!studentMessage) {
+            return;
+        }
+
+        studentMessage.textContent =
+            message;
+
+        studentMessage.className =
+            "student-message " +
+            (type || "");
+    }
+
+
+    function clearStudentMessage() {
+
+        if (!studentMessage) {
+            return;
+        }
+
+        studentMessage.textContent =
+            "";
+
+        studentMessage.className =
+            "student-message";
+    }
+
+
+    /* =====================================================
+       OPEN DELETE STUDENT MODAL
+    ===================================================== */
+
+    function openDeleteStudentModal(id) {
+
+        const student =
+            students.find(function (item) {
+
+                return item.id === id;
+
+            });
+
+        if (!student) {
+            return;
+        }
+
+        selectedStudentId =
+            student.id;
+
+        if (deleteStudentName) {
+
+            deleteStudentName.textContent =
+                student.full_name ||
+                "this student";
+        }
+
+        if (adminDeletePassword) {
+
+            adminDeletePassword.value =
+                "";
+
+            adminDeletePassword.type =
+                "password";
+        }
+
+        if (deleteError) {
+
+            deleteError.textContent =
+                "";
+        }
+
+        if (deleteModal) {
+
+            deleteModal.classList.add(
+                "active"
+            );
+        }
+
+        if (adminDeletePassword) {
+
+            adminDeletePassword.focus();
+        }
+    }
+
+
+    /* =====================================================
+       CLOSE DELETE MODAL
+    ===================================================== */
+
+    function closeDeleteModal() {
+
+        selectedStudentId =
+            null;
+
+        if (deleteModal) {
+
+            deleteModal.classList.remove(
+                "active"
+            );
+        }
+
+        if (adminDeletePassword) {
+
+            adminDeletePassword.value =
+                "";
+
+            adminDeletePassword.type =
+                "password";
+        }
+
+        if (deleteError) {
+
+            deleteError.textContent =
+                "";
+        }
+
+        /*
+         * Reset administrator eye icon.
+         */
+
+        updatePasswordEye(
+            adminPasswordToggle,
+            false
+        );
+    }
+
+
+    /* =====================================================
+       CONFIRM DELETE STUDENT
+    ===================================================== */
+
+    async function confirmDeleteStudent() {
+
+        if (!selectedStudentId) {
+            return;
+        }
+
+        const password =
+            adminDeletePassword
+                ? adminDeletePassword.value.trim()
+                : "";
+
+        if (!password) {
+
+            showDeleteError(
+                "Please enter the administrator password."
+            );
+
+            return;
+        }
+
+        if (deleteConfirmBtn) {
+
+            deleteConfirmBtn.disabled =
+                true;
+
+            deleteConfirmBtn.textContent =
+                "Deleting...";
+        }
 
         try {
 
-            const { data, error } =
+            /*
+             * Re-authenticate administrator.
+             */
+
+            const {
+                error: authError
+            } =
+                await db.auth.signInWithPassword({
+                    email:
+                        FCA_ADMIN_EMAIL,
+
+                    password:
+                        password
+                });
+
+
+            if (authError) {
+
+                console.error(
+                    "Admin authentication error:",
+                    authError
+                );
+
+                showDeleteError(
+                    "Administrator password is incorrect."
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               DELETE STUDENT
+            ================================================= */
+
+            const {
+                error
+            } =
                 await db
                     .from("students")
-                    .select(
-                        "id, full_name, academic_year"
-                    )
+                    .delete()
                     .eq(
-                        "form_number",
-                        currentFormNumber
+                        "id",
+                        selectedStudentId
                     );
 
 
             if (error) {
 
-                console.warn(
-                    "Unable to recalculate IDs:",
+                console.error(
+                    "Student deletion error:",
+                    error
+                );
+
+                showDeleteError(
+                    "Unable to delete student. " +
                     error.message
                 );
 
@@ -2188,225 +1931,407 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            if (!Array.isArray(data)) {
+            console.log(
+                "Student deleted successfully."
+            );
+
+
+            closeDeleteModal();
+
+            await loadStudents();
+
+        } catch (error) {
+
+            console.error(
+                "Delete student error:",
+                error
+            );
+
+            showDeleteError(
+                "An unexpected error occurred while deleting the student."
+            );
+
+        } finally {
+
+            if (deleteConfirmBtn) {
+
+                deleteConfirmBtn.disabled =
+                    false;
+
+                deleteConfirmBtn.textContent =
+                    "Delete Student";
+            }
+        }
+    }
+
+
+    /* =====================================================
+       DELETE ERROR
+    ===================================================== */
+
+    function showDeleteError(message) {
+
+        if (!deleteError) {
+            return;
+        }
+
+        deleteError.textContent =
+            message;
+    }
+
+
+    /* =====================================================
+       PASSWORD TOGGLE
+       
+       STUDENT PASSWORD
+    ===================================================== */
+
+    function togglePassword() {
+
+        if (!accessPassword) {
+            return;
+        }
+
+        const isPassword =
+            accessPassword.type ===
+            "password";
+
+        accessPassword.type =
+            isPassword
+                ? "text"
+                : "password";
+
+        updatePasswordEye(
+            passwordToggle,
+            isPassword
+        );
+    }
+
+
+    /* =====================================================
+       ADMIN PASSWORD TOGGLE
+    ===================================================== */
+
+    function toggleAdminDeletePassword() {
+
+        if (!adminDeletePassword) {
+            return;
+        }
+
+        const isPassword =
+            adminDeletePassword.type ===
+            "password";
+
+        adminDeletePassword.type =
+            isPassword
+                ? "text"
+                : "password";
+
+        updatePasswordEye(
+            adminPasswordToggle,
+            isPassword
+        );
+    }
+
+
+    /* =====================================================
+       PASSWORD EYE ICON
+    ===================================================== */
+
+    function updatePasswordEye(
+        button,
+        showingPassword
+    ) {
+
+        if (!button) {
+            return;
+        }
+
+        const openEye = `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                />
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                />
+
+            </svg>
+        `;
+
+
+        const closedEye = `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+
+                <path
+                    d="M3 3l18 18"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                />
+
+                <path
+                    d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a17.4 17.4 0 0 1-3.3 3.8M6.2 6.8C3.7 8.3 2 12 2 12s3.5 6 10 6c1.6 0 3-.3 4.2-.8"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+            </svg>
+        `;
+
+
+        button.innerHTML =
+            showingPassword
+                ? closedEye
+                : openEye;
+
+
+        button.setAttribute(
+            "aria-label",
+            showingPassword
+                ? "Hide password"
+                : "Show password"
+        );
+    }
+
+
+    /* =====================================================
+       EVENT HANDLERS
+    ===================================================== */
+
+    if (addStudentBtn) {
+
+        addStudentBtn.addEventListener(
+            "click",
+            openAddStudentForm
+        );
+    }
+
+
+    if (cancelBtn) {
+
+        cancelBtn.addEventListener(
+            "click",
+            closeStudentForm
+        );
+    }
+
+
+    if (studentForm) {
+
+        studentForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                saveStudent();
+            }
+        );
+    }
+
+
+    /* =====================================================
+       SUBJECT BUTTONS
+    ===================================================== */
+
+    if (selectAllSubjectsBtn) {
+
+        selectAllSubjectsBtn.addEventListener(
+            "click",
+            selectAllSubjects
+        );
+    }
+
+
+    if (clearSubjectsBtn) {
+
+        clearSubjectsBtn.addEventListener(
+            "click",
+            clearSubjects
+        );
+    }
+
+
+    /* =====================================================
+       PASSWORD BUTTONS
+    ===================================================== */
+
+    if (passwordToggle) {
+
+        passwordToggle.addEventListener(
+            "click",
+            togglePassword
+        );
+    }
+
+
+    if (adminPasswordToggle) {
+
+        adminPasswordToggle.addEventListener(
+            "click",
+            toggleAdminDeletePassword
+        );
+    }
+
+
+    /* =====================================================
+       DELETE MODAL BUTTONS
+    ===================================================== */
+
+    if (deleteCancelBtn) {
+
+        deleteCancelBtn.addEventListener(
+            "click",
+            closeDeleteModal
+        );
+    }
+
+
+    if (deleteConfirmBtn) {
+
+        deleteConfirmBtn.addEventListener(
+            "click",
+            confirmDeleteStudent
+        );
+    }
+
+
+    /* =====================================================
+       STUDENT LIST EVENTS
+       
+       Event delegation keeps Edit/Delete working
+       for dynamically rendered cards.
+    ===================================================== */
+
+    if (studentList) {
+
+        studentList.addEventListener(
+            "click",
+            function (event) {
+
+                const button =
+                    event.target.closest(
+                        "button[data-action]"
+                    );
+
+                if (!button) {
+                    return;
+                }
+
+                const action =
+                    button.dataset.action;
+
+                const id =
+                    button.dataset.id;
+
+                if (!id) {
+                    return;
+                }
+
+                if (action === "edit") {
+
+                    editStudent(id);
+
+                } else if (
+                    action === "delete"
+                ) {
+
+                    openDeleteStudentModal(id);
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       CLOSE MODAL WHEN CLICKING BACKDROP
+    ===================================================== */
+
+    if (deleteModal) {
+
+        deleteModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    deleteModal
+                ) {
+
+                    closeDeleteModal();
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       ESCAPE KEY
+    ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key !== "Escape") {
                 return;
             }
 
 
-            data.sort(
-                function (a, b) {
-
-                    return (
-                        getStudentFullName(a)
-                            .localeCompare(
-                                getStudentFullName(b)
-                            )
-                    );
-                }
-            );
-
-
-            for (
-                let index = 0;
-                index < data.length;
-                index++
+            if (
+                deleteModal &&
+                deleteModal.classList.contains(
+                    "active"
+                )
             ) {
 
-                const student =
-                    data[index];
+                closeDeleteModal();
 
-
-                const surname =
-                    getStudentLastName(
-                        student
-                    )
-                    .split(/\s+/)
-                    .filter(Boolean)
-                    .pop() ||
-                    getStudentFirstName(
-                        student
-                    ) ||
-                    "STUDENT";
-
-
-                const prefix =
-                    surname
-                        .substring(0, 3)
-                        .toUpperCase();
-
-
-                const year =
-                    student.academic_year ||
-                    DEFAULT_ACADEMIC_YEAR;
-
-
-                const newId =
-                    `FCA-${year}-${prefix}-${String(index + 1).padStart(3, "0")}`;
-
-
-                await db
-                    .from("students")
-                    .update({
-                        student_id:
-                            newId,
-
-                        updated_at:
-                            new Date().toISOString()
-                    })
-                    .eq(
-                        "id",
-                        student.id
-                    );
+                return;
             }
 
-        } catch (error) {
 
-            console.warn(
-                "ID recalculation error:",
-                error
-            );
+            if (
+                studentFormPanel &&
+                studentFormPanel.classList.contains(
+                    "active"
+                )
+            ) {
+
+                closeStudentForm();
+            }
         }
-    }
+    );
 
 
     /* =====================================================
-       DATABASE STATUS
+       HTML ESCAPE
     ===================================================== */
 
-    function setDatabaseStatus(
-        message,
-        type
-    ) {
+    function escapeHtml(value) {
 
-        if (!databaseStatus) {
-            return;
-        }
-
-
-        databaseStatus.textContent =
-            message;
-
-
-        databaseStatus.classList.remove(
-            "loading",
-            "success",
-            "error"
-        );
-
-
-        if (type) {
-
-            databaseStatus.classList.add(
-                type
-            );
-        }
-    }
-
-
-    /* =====================================================
-       PAGE ERROR
-    ===================================================== */
-
-    function showPageError(
-        message
-    ) {
-
-        const existing =
-            document.getElementById(
-                "pageError"
-            );
-
-
-        if (existing) {
-
-            existing.textContent =
-                message;
-
-            return;
-        }
-
-
-        const errorBox =
-            document.createElement("div");
-
-
-        errorBox.id =
-            "pageError";
-
-
-        errorBox.className =
-            "page-error";
-
-
-        errorBox.innerHTML =
-            `
-            <strong>
-                Unable to load class
-            </strong>
-
-            <p>
-                ${escapeHTML(message)}
-            </p>
-            `;
-
-
-        const container =
-            document.querySelector(
-                ".main-content"
-            ) ||
-            document.querySelector(
-                "main"
-            ) ||
-            document.body;
-
-
-        container.prepend(
-            errorBox
-        );
-    }
-
-
-    /* =====================================================
-       STUDENT LIST ERROR
-    ===================================================== */
-
-    function showStudentListError(
-        message
-    ) {
-
-        if (!studentsContainer) {
-            return;
-        }
-
-
-        studentsContainer.innerHTML =
-            `
-            <div class="empty-state error-state">
-
-                <h3>
-                    Unable to load students
-                </h3>
-
-                <p>
-                    ${escapeHTML(message)}
-                </p>
-
-            </div>
-            `;
-    }
-
-
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
-    function escapeHTML(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        )
+        return String(value ?? "")
             .replace(
                 /&/g,
                 "&amp;"
@@ -2428,5 +2353,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 "&#039;"
             );
     }
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    initialize();
 
 });

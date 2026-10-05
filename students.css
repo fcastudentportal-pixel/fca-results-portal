@@ -783,16 +783,6 @@ input[readonly]{
   font-size:13px;
 }
 
-.subjects-loading{
-  grid-column:1/-1;
-  padding:18px;
-  color:var(--muted);
-  text-align:center;
-  background:#fafafa;
-  border:1px dashed #ddd8d2;
-  border-radius:9px;
-}
-
 
 /* =====================================================
    FORM ACTIONS

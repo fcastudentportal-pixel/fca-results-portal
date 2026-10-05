@@ -3,687 +3,788 @@
 
 <head>
 
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-    <meta
-        name="description"
-        content="FCA Portal Students Management"
-    >
+  <meta
+    name="description"
+    content="FCA Portal Students Management"
+  >
 
-    <title>Students | FCA Portal</title>
+  <title>FCA | Students</title>
 
-    <link
-        rel="stylesheet"
-        href="students.css"
-    >
+  <link
+    rel="stylesheet"
+    href="students.css"
+  >
 
 </head>
 
-
 <body>
-
 
 <div class="shell">
 
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
 
-    <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+  <aside class="sidebar">
 
-    <aside class="sidebar">
+    <div class="brand">
+
+      <a
+        class="brand-mark"
+        href="admin.html"
+      >
+
+        <img
+          src="fca-logo.png"
+          alt="First Class Academy"
+        >
+
+      </a>
+
+      <div>
+
+        <b>FCA Portal</b>
+
+        <small>Administration</small>
+
+      </div>
+
+    </div>
 
 
-        <!-- BRAND -->
+    <!-- ===================================================
+         NAVIGATION
+    ==================================================== -->
 
-        <div class="brand">
+    <nav>
 
-            <a
-                class="brand-mark"
-                href="index.html"
-            >
+      <a
+        class="nav"
+        href="admin.html"
+      >
+        Dashboard
+      </a>
 
-                <img
-                    src="fca-logo.png"
-                    alt="First Class Academy"
-                >
+      <a
+        class="nav"
+        href="teachers.html"
+      >
+        Teachers
+      </a>
 
-            </a>
+      <a
+        class="nav"
+        href="classes.html"
+      >
+        Classes
+      </a>
+
+      <a
+        class="nav active"
+        href="students.html"
+      >
+        Students
+      </a>
+
+      <a
+        class="nav"
+        href="subjects.html"
+      >
+        Subjects
+      </a>
+
+      <a
+        class="nav"
+        href="results.html"
+      >
+        Results
+      </a>
+
+    </nav>
 
 
-            <div>
+    <!-- SETTINGS -->
 
-                <b>
-                    FCA Portal
-                </b>
+    <a
+      class="settings-button"
+      href="settings.html"
+    >
+      ⚙ Settings
+    </a>
 
-                <small>
-                    Administration
-                </small>
+  </aside>
 
-            </div>
+
+  <!-- =====================================================
+       MAIN CONTENT
+  ====================================================== -->
+
+  <div class="view">
+
+    <!-- ===================================================
+         PAGE HEADING
+    ==================================================== -->
+
+    <section class="page-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          STUDENT MANAGEMENT
+        </span>
+
+        <h2 id="pageTitle">
+          Students
+        </h2>
+
+        <p id="pageDescription">
+          Manage students registered in this FCA class.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        id="addStudentBtn"
+        class="add-btn"
+      >
+        + Add Student
+      </button>
+
+    </section>
+
+
+    <!-- ===================================================
+         CLASS INFORMATION
+    ==================================================== -->
+
+    <section class="student-stats">
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          S
+        </div>
+
+        <div>
+
+          <strong id="studentCount">
+            0
+          </strong>
+
+          <span>
+            Students
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon class-icon">
+          C
+        </div>
+
+        <div>
+
+          <strong id="classNameStat">
+            —
+          </strong>
+
+          <span>
+            Class
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div class="stat-icon year-icon">
+          Y
+        </div>
+
+        <div>
+
+          <strong id="academicYearStat">
+            2026
+          </strong>
+
+          <span>
+            Academic Year
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STUDENT LIST
+    ==================================================== -->
+
+    <section class="panel">
+
+      <div class="panel-heading">
+
+        <div>
+
+          <span class="eyebrow">
+            STUDENTS
+          </span>
+
+          <h2>
+            Student List
+          </h2>
+
+          <p id="studentListDescription">
+            Students registered in this class.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="studentList"
+        class="student-list"
+      >
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            S
+          </div>
+
+          <strong>
+            Loading students...
+          </strong>
+
+          <p>
+            Connecting to the FCA database.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         ADD / EDIT STUDENT FORM
+    ==================================================== -->
+
+    <section
+      id="studentFormPanel"
+      class="panel form-panel"
+    >
+
+      <div class="panel-heading">
+
+        <div>
+
+          <span class="eyebrow">
+            STUDENT ACCOUNT
+          </span>
+
+          <h2 id="formTitle">
+            Add Student
+          </h2>
+
+          <p>
+            Create or update a student account.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <form id="studentForm">
+
+        <!-- =================================================
+             PERSONAL INFORMATION
+        ================================================== -->
+
+        <div class="section-title">
+
+          <h3>
+            Personal Information
+          </h3>
+
+          <p>
+            Enter the student's basic information.
+          </p>
 
         </div>
 
 
-        <!-- NAVIGATION -->
+        <div class="form-grid">
 
-        <nav>
+          <label>
 
-            <a
-                class="nav"
-                href="admin.html"
+            First Name
+
+            <input
+              type="text"
+              id="firstName"
+              placeholder="e.g. John"
+              autocomplete="given-name"
+              required
             >
-                Dashboard
-            </a>
+
+          </label>
 
 
-            <a
-                class="nav"
-                href="teachers.html"
+          <label>
+
+            Last Name
+
+            <input
+              type="text"
+              id="lastName"
+              placeholder="e.g. Banda"
+              autocomplete="family-name"
+              required
             >
-                Teachers
-            </a>
+
+          </label>
 
 
-            <a
-                class="nav"
-                href="classes.html"
+          <label>
+
+            Gender
+
+            <select
+              id="gender"
+              required
             >
-                Classes
-            </a>
+
+              <option value="">
+                Select gender
+              </option>
+
+              <option value="Male">
+                Male
+              </option>
+
+              <option value="Female">
+                Female
+              </option>
+
+            </select>
+
+          </label>
 
 
-            <a
-                class="nav active"
-                href="students.html"
+          <label>
+
+            Academic Year
+
+            <input
+              type="number"
+              id="academicYear"
+              min="2000"
+              max="2100"
+              value="2026"
+              required
             >
-                Students
-            </a>
+
+          </label>
 
 
-            <a
-                class="nav"
-                href="subjects.html"
+          <label>
+
+            Class
+
+            <input
+              type="text"
+              id="studentClass"
+              readonly
             >
-                Subjects
-            </a>
+
+          </label>
 
 
-            <a
-                class="nav"
-                href="results.html"
+          <label>
+
+            Student ID
+
+            <input
+              type="text"
+              id="studentId"
+              readonly
+              placeholder="Automatically generated"
             >
-                Results
-            </a>
 
-        </nav>
+          </label>
 
-
-        <!-- SETTINGS -->
-
-        <a
-            class="nav settings-link"
-            href="settings.html"
-        >
-            ⚙ Settings
-        </a>
-
-
-    </aside>
-
-
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
-
-    <main class="main">
-
-
-        <!-- HEADER -->
-
-        <header>
-
-            <div>
-
-                <small>
-                    ADMINISTRATION
-                </small>
-
-                <h1>
-                    Students
-                </h1>
-
-            </div>
-
-
-            <div class="pill">
-                Administrator
-            </div>
-
-        </header>
+        </div>
 
 
         <!-- =================================================
-             STUDENTS VIEW
-        ================================================= -->
+             ACCESS PASSWORD
+        ================================================== -->
 
-        <section class="view active">
+        <div class="section-title">
 
+          <h3>
+            Student Access
+          </h3>
 
-            <div class="students-container">
-
-
-                <!-- INTRO -->
-
-                <div class="page-intro">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            STUDENT MANAGEMENT
-                        </span>
-
-                        <h2 id="classTitle">
-                            Students
-                        </h2>
-
-                        <p id="classDescription">
-                            Manage students for this class.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="addStudentButton"
-                        class="primary-button"
-                    >
-                        + Add Student
-                    </button>
-
-                </div>
-
-
-                <!-- DATABASE STATUS -->
-
-                <div
-                    id="databaseStatus"
-                    class="database-status"
-                >
-                    Connecting to database...
-                </div>
-
-
-                <!-- SUMMARY -->
-
-                <div class="summary-grid">
-
-
-                    <div class="summary-card">
-
-                        <span>
-                            Class
-                        </span>
-
-                        <strong id="summaryClass">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="summary-card">
-
-                        <span>
-                            Academic Year
-                        </span>
-
-                        <strong id="summaryYear">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="summary-card">
-
-                        <span>
-                            Total Students
-                        </span>
-
-                        <strong id="studentCount">
-                            0
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-                <!-- SEARCH -->
-
-                <div class="search-card">
-
-                    <input
-                        type="search"
-                        id="studentSearch"
-                        placeholder="Search students by name or student ID..."
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-                <!-- STUDENTS -->
-
-                <div
-                    id="studentsContainer"
-                    class="students-grid"
-                ></div>
-
-
-                <!-- EMPTY STATE -->
-
-                <div
-                    id="emptyState"
-                    class="empty-state hidden"
-                >
-
-                    <div class="empty-icon">
-                        +
-                    </div>
-
-                    <h3>
-                        No Students Yet
-                    </h3>
-
-                    <p>
-                        There are no students registered in this class.
-                    </p>
-
-                    <button
-                        type="button"
-                        id="emptyAddButton"
-                        class="primary-button"
-                    >
-                        Add Student
-                    </button>
-
-                </div>
-
-
-            </div>
-
-
-        </section>
-
-
-    </main>
-
-
-</div>
-
-
-<!-- =====================================================
-     ADD / EDIT STUDENT MODAL
-====================================================== -->
-
-<div
-    id="studentModal"
-    class="modal hidden"
-    aria-hidden="true"
->
-
-    <div class="modal-overlay"></div>
-
-
-    <div
-        class="modal-box"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="studentModalTitle"
-    >
-
-
-        <div class="modal-header">
-
-            <div>
-
-                <small>
-                    STUDENT MANAGEMENT
-                </small>
-
-                <h2 id="studentModalTitle">
-                    Add Student
-                </h2>
-
-            </div>
-
-
-            <button
-                type="button"
-                id="closeStudentModal"
-                class="modal-close"
-                aria-label="Close"
-            >
-                ×
-            </button>
+          <p>
+            The student's access password is generated automatically.
+          </p>
 
         </div>
 
 
-        <form id="studentForm">
+        <div class="credential-box">
 
+          <div class="credential-item">
 
-            <div class="form-grid">
+            <span>
+              Student ID
+            </span>
 
+            <strong id="generatedStudentId">
+              Will be generated automatically
+            </strong>
 
-                <!-- FIRST NAME -->
+          </div>
 
-                <label>
 
-                    First Name
+          <div class="credential-item">
 
-                    <input
-                        type="text"
-                        id="firstName"
-                        placeholder="Enter first name"
-                        required
-                    >
+            <span>
+              Access Password
+            </span>
 
-                </label>
+            <div class="generated-password">
 
+              <input
+                type="password"
+                id="accessPassword"
+                readonly
+                placeholder="Will be generated automatically"
+              >
 
-                <!-- SURNAME -->
-
-                <label>
-
-                    Surname
-
-                    <input
-                        type="text"
-                        id="lastName"
-                        placeholder="Enter surname"
-                        required
-                    >
-
-                </label>
-
-
-                <!-- GENDER -->
-
-                <label>
-
-                    Gender
-
-                    <select
-                        id="gender"
-                        required
-                    >
-
-                        <option value="">
-                            Select gender
-                        </option>
-
-                        <option value="Male">
-                            Male
-                        </option>
-
-                        <option value="Female">
-                            Female
-                        </option>
-
-                    </select>
-
-                </label>
-
-
-                <!-- ACADEMIC YEAR -->
-
-                <label>
-
-                    Academic Year
-
-                    <select
-                        id="academicYear"
-                        required
-                    >
-
-                        <option value="2026">
-                            2026
-                        </option>
-
-                        <option value="2027">
-                            2027
-                        </option>
-
-                        <option value="2028">
-                            2028
-                        </option>
-
-                        <option value="2029">
-                            2029
-                        </option>
-
-                        <option value="2030">
-                            2030
-                        </option>
-
-                    </select>
-
-                </label>
-
-
-            </div>
-
-
-            <!-- CLASS -->
-
-            <label>
-
-                Class
-
-                <input
-                    type="text"
-                    id="studentClass"
-                    readonly
-                >
-
-            </label>
-
-
-            <!-- SUBJECTS -->
-
-            <div class="subjects-field">
-
-                <div class="field-label">
-                    Subjects Taken
-                </div>
-
-                <div
-                    id="subjectsContainer"
-                    class="subjects-list"
-                >
-                    Loading subjects...
-                </div>
-
-            </div>
-
-
-            <!-- GENERATED CREDENTIALS -->
-
-            <div
-                id="credentialsBox"
-                class="credentials-box hidden"
-            >
-
-                <div class="credential">
-
-                    <small>
-                        Student ID
-                    </small>
-
-                    <strong id="generatedStudentId">
-                        —
-                    </strong>
-
-                </div>
-
-
-                <div class="credential">
-
-                    <small>
-                        Access Password
-                    </small>
-
-                    <strong id="generatedPassword">
-                        —
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- MESSAGE -->
-
-            <div
-                id="studentMessage"
-                class="form-message"
-                role="status"
-                aria-live="polite"
-            ></div>
-
-
-            <!-- ACTIONS -->
-
-            <div class="modal-actions">
-
-                <button
-                    type="button"
-                    id="cancelStudentButton"
-                    class="secondary-button"
-                >
-                    Cancel
-                </button>
-
-
-                <button
-                    type="submit"
-                    id="saveStudentButton"
-                    class="primary-button"
-                >
-                    Save Student
-                </button>
-
-            </div>
-
-
-        </form>
-
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     DELETE MODAL
-====================================================== -->
-
-<div
-    id="deleteModal"
-    class="modal hidden"
-    aria-hidden="true"
->
-
-    <div class="modal-overlay"></div>
-
-
-    <div
-        class="modal-box small-modal"
-        role="dialog"
-        aria-modal="true"
-    >
-
-
-        <div class="modal-header">
-
-            <div>
-
-                <small>
-                    CONFIRMATION
-                </small>
-
-                <h2>
-                    Delete Student
-                </h2>
-
-            </div>
-
-
-            <button
+              <button
                 type="button"
-                id="closeDeleteModal"
-                class="modal-close"
-                aria-label="Close"
-            >
-                ×
-            </button>
+                id="passwordToggle"
+                class="password-toggle"
+                aria-label="Show password"
+                title="Show password"
+                aria-pressed="false"
+              >
+
+                <svg
+                  class="eye-icon eye-open"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+
+                  <path
+                    d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                  />
+
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="3"
+                  />
+
+                </svg>
+
+
+                <svg
+                  class="eye-icon eye-closed"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+
+                  <path d="M3 3l18 18"/>
+
+                  <path
+                    d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
+                  />
+
+                  <path
+                    d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"
+                  />
+
+                  <path
+                    d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"
+                  />
+
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
 
 
-        <p class="warning-text">
+        <!-- =================================================
+             SUBJECTS
+        ================================================== -->
 
-            Are you sure you want to delete
-            <strong id="deleteStudentName">
-                this student
-            </strong>?
+        <div class="section-title">
 
-            This will also remove the student's
-            subject assignments.
+          <h3>
+            Subjects Taken
+          </h3>
 
-        </p>
+          <p>
+            Select all subjects this student takes.
+          </p>
+
+        </div>
+
+
+        <div class="select-actions">
+
+          <button
+            type="button"
+            class="small-btn"
+            id="selectAllSubjectsBtn"
+          >
+            Select All
+          </button>
+
+          <button
+            type="button"
+            class="small-btn light"
+            id="clearSubjectsBtn"
+          >
+            Clear
+          </button>
+
+        </div>
 
 
         <div
-            id="deleteMessage"
-            class="form-message"
-            role="status"
-        ></div>
+          id="subjectCheckboxes"
+          class="checkbox-grid"
+        >
 
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                id="cancelDeleteButton"
-                class="secondary-button"
-            >
-                Cancel
-            </button>
-
-
-            <button
-                type="button"
-                id="confirmDeleteButton"
-                class="danger-button"
-            >
-                Delete Student
-            </button>
+          <div class="subjects-loading">
+            Loading subjects...
+          </div>
 
         </div>
 
 
+        <!-- =================================================
+             FORM ACTIONS
+        ================================================== -->
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-btn"
+            id="cancelBtn"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="save-btn"
+          >
+            Save Student
+          </button>
+
+        </div>
+
+
+        <p
+          id="studentMessage"
+          class="message"
+        ></p>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     DELETE STUDENT MODAL
+====================================================== -->
+
+<div
+  id="deleteModal"
+  class="delete-modal"
+>
+
+  <div class="delete-modal-box">
+
+    <div class="delete-modal-header">
+
+      <div class="delete-modal-icon">
+        !
+      </div>
+
+      <div>
+
+        <h3>
+          Delete Student
+        </h3>
+
+        <p id="deleteStudentName">
+          Confirm student deletion.
+        </p>
+
+      </div>
+
     </div>
+
+
+    <div class="delete-modal-body">
+
+      <p>
+        Enter the administrator password to permanently
+        delete this student.
+      </p>
+
+
+      <div class="admin-password-wrapper">
+
+        <input
+          type="password"
+          id="adminDeletePassword"
+          placeholder="Administrator password"
+          autocomplete="current-password"
+        >
+
+
+        <button
+          type="button"
+          id="adminPasswordToggle"
+          class="password-toggle"
+          aria-label="Show password"
+          title="Show password"
+          aria-pressed="false"
+        >
+
+          <svg
+            class="eye-icon eye-open"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+            />
+
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+            />
+
+          </svg>
+
+
+          <svg
+            class="eye-icon eye-closed"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+
+            <path d="M3 3l18 18"/>
+
+            <path
+              d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
+            />
+
+            <path
+              d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"
+            />
+
+            <path
+              d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <p
+        id="deleteError"
+        class="delete-error"
+      ></p>
+
+    </div>
+
+
+    <div class="delete-modal-actions">
+
+      <button
+        type="button"
+        id="deleteCancelBtn"
+        class="delete-cancel-btn"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        id="deleteConfirmBtn"
+        class="delete-confirm-btn"
+      >
+        Delete Student
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
@@ -697,7 +798,6 @@
 <script src="config.js"></script>
 
 <script src="students.js"></script>
-
 
 </body>
 

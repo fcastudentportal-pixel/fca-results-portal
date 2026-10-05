@@ -280,6 +280,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =====================================================
+       STUDENT PAGE ACTION BUTTON
+    ===================================================== */
+
+    function setupStudentPageActionButton() {
+
+        if (!addStudentBtn) {
+            return;
+        }
+
+
+        /*
+         * A valid form number means the administrator
+         * arrived from the Classes page and is viewing
+         * a specific class.
+         *
+         * Example:
+         * students.html?form=4
+         *
+         * Therefore show + Add Student.
+         */
+
+        if (currentFormNumber) {
+
+            addStudentBtn.textContent =
+                "+ Add Student";
+
+
+            addStudentBtn.setAttribute(
+                "href",
+                "#"
+            );
+
+
+            /*
+             * Remove any previous click handler.
+             */
+
+            addStudentBtn.onclick =
+                null;
+
+
+            addStudentBtn.addEventListener(
+                "click",
+                function handleAddStudentClick(event) {
+
+                    event.preventDefault();
+
+                    openAddStudentForm();
+                }
+            );
+
+        }
+
+
+        /*
+         * No valid class was selected.
+         *
+         * Therefore show Go to Classes.
+         */
+
+        else {
+
+            addStudentBtn.textContent =
+                "Go to Classes";
+
+
+            addStudentBtn.setAttribute(
+                "href",
+                "classes.html"
+            );
+        }
+    }
+
+
+    /* =====================================================
        INITIALIZE
     ===================================================== */
 
@@ -287,6 +362,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         currentFormNumber =
             getFormNumberFromUrl();
+
+
+        /*
+         * Set the correct top-right button AFTER
+         * currentFormNumber has been determined.
+         */
+
+        setupStudentPageActionButton();
+
 
         if (!currentFormNumber) {
 
@@ -309,18 +393,23 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         console.log(
             "Selected Form:",
             currentFormNumber
         );
 
+
         await loadClass();
+
 
         if (!currentClass) {
             return;
         }
 
+
         updatePageInformation();
+
 
         await loadStudents();
     }
@@ -356,6 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
                 .maybeSingle();
 
+
             if (error) {
 
                 console.error(
@@ -371,6 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+
             if (!data) {
 
                 console.warn(
@@ -385,8 +476,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+
             currentClass =
                 data;
+
 
             console.log(
                 "Class loaded:",
@@ -417,9 +510,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         const className =
             currentClass.class_name ||
             `Form ${currentFormNumber}`;
+
 
         if (pageTitle) {
 
@@ -427,17 +522,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 `${className} Students`;
         }
 
+
         if (pageDescription) {
 
             pageDescription.textContent =
                 `Manage students enrolled in ${className}.`;
         }
 
+
         if (classNameStat) {
 
             classNameStat.textContent =
                 className;
         }
+
 
         /*
          * Only show the class name.
@@ -455,6 +553,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 className;
         }
 
+
         if (studentListDescription) {
 
             studentListDescription.textContent =
@@ -470,11 +569,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const year =
             new Date().getFullYear();
 
+
         if (academicYearStat) {
 
             academicYearStat.textContent =
                 year;
         }
+
 
         if (academicYear) {
 
@@ -491,6 +592,7 @@ document.addEventListener("DOMContentLoaded", function () {
     async function loadStudents() {
 
         showStudentListLoading();
+
 
         try {
 
@@ -519,6 +621,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             ascending: true
                         }
                     );
+
 
             let {
                 data,
@@ -564,12 +667,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         );
 
+
                 data =
                     fallback.data;
 
                 error =
                     fallback.error;
             }
+
 
             if (error) {
 
@@ -586,15 +691,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+
             students =
                 Array.isArray(data)
                     ? data
                     : [];
 
+
             console.log(
                 "Students loaded:",
                 students.length
             );
+
 
             updateStudentCount();
 
@@ -698,6 +806,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         if (students.length === 0) {
 
             studentList.innerHTML = `
@@ -721,6 +830,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         studentList.innerHTML =
             students
                 .map(function (student) {
@@ -736,7 +846,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        CREATE STUDENT CARD
-       
+
        DISPLAYED:
        - Student name
        - Student ID
@@ -755,27 +865,33 @@ document.addEventListener("DOMContentLoaded", function () {
             student.full_name ||
             "Unnamed Student";
 
+
         const id =
             student.student_id ||
             "No Student ID";
 
+
         const genderText =
             student.gender ||
             "Not specified";
+
 
         const className =
             currentClass
                 ? currentClass.class_name
                 : `Form ${currentFormNumber}`;
 
+
         const password =
             student.access_password ||
             "Not available";
+
 
         const subjects =
             Array.isArray(student.subjects)
                 ? student.subjects
                 : [];
+
 
         return `
             <div
@@ -791,6 +907,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         )}
                     </div>
 
+
                     <div class="student-info">
 
                         <div class="student-name-row">
@@ -798,6 +915,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <h3>
                                 ${escapeHtml(name)}
                             </h3>
+
 
                             <span class="student-id">
                                 ${escapeHtml(id)}
@@ -860,6 +978,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <strong>
                                 Subjects
                             </strong>
+
 
                             <div class="tags">
 
@@ -1009,6 +1128,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ? selectedSubjects
                 : [];
 
+
         getSubjectCheckboxes()
             .forEach(function (checkbox) {
 
@@ -1028,9 +1148,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         editingStudentId = null;
 
+
         if (studentForm) {
+
             studentForm.reset();
         }
+
 
         if (formTitle) {
 
@@ -1045,6 +1168,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const year =
             new Date().getFullYear();
+
 
         if (academicYear) {
 
@@ -1074,11 +1198,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 "";
         }
 
+
         if (generatedStudentId) {
 
             generatedStudentId.textContent =
                 "Automatically generated";
         }
+
 
         if (accessPassword) {
 
@@ -1123,20 +1249,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
         editingStudentId = null;
 
+
         hideStudentForm();
+
 
         if (studentForm) {
 
             studentForm.reset();
         }
 
+
         clearStudentMessage();
+
 
         if (generatedStudentId) {
 
             generatedStudentId.textContent =
                 "Automatically generated";
         }
+
 
         if (accessPassword) {
 
@@ -1146,6 +1277,7 @@ document.addEventListener("DOMContentLoaded", function () {
             accessPassword.type =
                 "password";
         }
+
 
         updatePasswordEye(
             passwordToggle,
@@ -1165,6 +1297,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 return item.id === id;
             });
+
 
         if (!student) {
 
@@ -1307,6 +1440,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .split(/\s+/)
                 .filter(Boolean);
 
+
         if (parts.length === 0) {
 
             return {
@@ -1315,6 +1449,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
         }
 
+
         if (parts.length === 1) {
 
             return {
@@ -1322,6 +1457,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 lastName: ""
             };
         }
+
 
         return {
 
@@ -1359,6 +1495,7 @@ document.addEventListener("DOMContentLoaded", function () {
             (last || "")
                 .trim()
                 .toUpperCase();
+
 
         const safeFirst =
             (first || "")
@@ -1526,6 +1663,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const numbers =
             "0123456789";
 
+
         let password =
             "fca@";
 
@@ -1609,9 +1747,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 "error"
             );
 
+
             if (firstName) {
+
                 firstName.focus();
             }
+
 
             return;
         }
@@ -1624,9 +1765,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 "error"
             );
 
+
             if (lastName) {
+
                 lastName.focus();
             }
+
 
             return;
         }
@@ -1639,6 +1783,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "error"
             );
 
+
             return;
         }
 
@@ -1649,6 +1794,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "No class is currently selected.",
                 "error"
             );
+
 
             return;
         }
@@ -1783,11 +1929,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         error
                     );
 
+
                     showStudentMessage(
                         "Unable to update student. " +
                         error.message,
                         "error"
                     );
+
 
                     return;
                 }
@@ -1820,11 +1968,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         error
                     );
 
+
                     showStudentMessage(
                         "Unable to add student. " +
                         error.message,
                         "error"
                     );
+
 
                     return;
                 }
@@ -1881,6 +2031,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+
             showStudentMessage(
                 "An unexpected error occurred while saving the student.",
                 "error"
@@ -1902,8 +2053,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         studentMessage.textContent =
             message;
+
 
         studentMessage.className =
             "student-message " +
@@ -1917,8 +2070,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         studentMessage.textContent =
             "";
+
 
         studentMessage.className =
             "student-message";
@@ -2120,10 +2275,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Please enter the administrator password."
             );
 
+
             if (adminDeletePassword) {
 
                 adminDeletePassword.focus();
             }
+
 
             return;
         }
@@ -2166,9 +2323,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     authError
                 );
 
+
                 showDeleteError(
                     "Administrator password is incorrect."
                 );
+
 
                 return;
             }
@@ -2201,10 +2360,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     error
                 );
 
+
                 showDeleteError(
                     "Unable to delete student. " +
                     error.message
                 );
+
 
                 return;
             }
@@ -2237,6 +2398,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+
             showDeleteError(
                 error.message ||
                 "An unexpected error occurred while deleting the student."
@@ -2266,8 +2428,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         deleteError.textContent =
             message;
+
 
         deleteError.style.display =
             "block";
@@ -2434,6 +2598,19 @@ document.addEventListener("DOMContentLoaded", function () {
        EVENT HANDLERS
     ===================================================== */
 
+    /*
+     * IMPORTANT:
+     *
+     * The Add Student / Go to Classes button is handled
+     * by setupStudentPageActionButton().
+     *
+     * DO NOT add another addStudentBtn listener here.
+     */
+
+
+    /* =====================================================
+       CANCEL BUTTON
+    ===================================================== */
 
     if (cancelBtn) {
 
@@ -2448,6 +2625,10 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
+
+    /* =====================================================
+       STUDENT FORM
+    ===================================================== */
 
     if (studentForm) {
 
@@ -2563,6 +2744,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const action =
                     button.dataset.action;
+
 
                 const id =
                     button.dataset.id;

@@ -270,12 +270,42 @@ function setupEvents(){
 function getFormNumberFromURL(){
 
   const params =
-    new URLSearchParams(window.location.search);
+    new URLSearchParams(
+      window.location.search
+    );
 
-  const form =
+  /*
+    Classes page currently sends:
+
+    students.html?form=1
+    students.html?form=2
+    students.html?form=3
+    students.html?form=4
+  */
+
+  let form =
     params.get("form");
 
+
+  /*
+    Clean the value in case the URL contains
+    accidental spaces.
+  */
+
+  if(form){
+
+    form =
+      String(form).trim();
+
+  }
+
+
   if(!form){
+
+    console.error(
+      "FCA Students: No 'form' parameter found in URL.",
+      window.location.href
+    );
 
     return null;
 
@@ -285,15 +315,27 @@ function getFormNumberFromURL(){
   const number =
     Number(form);
 
+
   if(
     !Number.isInteger(number) ||
     number < 1 ||
     number > 4
   ){
 
+    console.error(
+      "FCA Students: Invalid form number:",
+      form
+    );
+
     return null;
 
   }
+
+
+  console.log(
+    "FCA Students: Selected Form:",
+    number
+  );
 
 
   return number;
@@ -746,7 +788,7 @@ async function loadStudents(){
           currentFormNumber
         )
         .order(
-          "last_name",
+          "surname",
           {
             ascending:true
           }

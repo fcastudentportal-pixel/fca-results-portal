@@ -287,11 +287,16 @@
 
     <!-- ===================================================
          ADD / EDIT STUDENT FORM
+         
+         Hidden by default.
+         JavaScript opens it when:
+         + Add Student OR Edit is clicked.
     ==================================================== -->
 
     <section
       id="studentFormPanel"
       class="panel form-panel"
+      style="display: none;"
     >
 
       <div class="panel-heading">
@@ -392,20 +397,16 @@
           </label>
 
 
-          <label>
+          <!--
+            Academic Year remains available to JavaScript
+            and Supabase, but is hidden from the interface.
+          -->
 
-            Academic Year
-
-            <input
-              type="number"
-              id="academicYear"
-              min="2000"
-              max="2100"
-              value="2026"
-              required
-            >
-
-          </label>
+          <input
+            type="hidden"
+            id="academicYear"
+            value="2026"
+          >
 
 
           <label>
@@ -420,25 +421,11 @@
 
           </label>
 
-
-          <label>
-
-            Student ID
-
-            <input
-              type="text"
-              id="studentId"
-              readonly
-              placeholder="Automatically generated"
-            >
-
-          </label>
-
         </div>
 
 
         <!-- =================================================
-             ACCESS PASSWORD
+             STUDENT ACCESS
         ================================================== -->
 
         <div class="section-title">
@@ -554,6 +541,16 @@
 
 
         <!-- =================================================
+             HIDDEN STUDENT ID FIELD
+        ================================================== -->
+
+        <input
+          type="hidden"
+          id="studentId"
+        >
+
+
+        <!-- =================================================
              SUBJECTS
         ================================================== -->
 
@@ -592,71 +589,119 @@
 
 
         <div
-  id="subjectCheckboxes"
-  class="checkbox-grid"
->
+          id="subjectCheckboxes"
+          class="checkbox-grid"
+        >
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Agriculture">
-    <span>Agriculture</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Agriculture"
+            >
+            <span>Agriculture</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Bible Knowledge">
-    <span>Bible Knowledge</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Bible Knowledge"
+            >
+            <span>Bible Knowledge</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Biology">
-    <span>Biology</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Biology"
+            >
+            <span>Biology</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Chemistry">
-    <span>Chemistry</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Chemistry"
+            >
+            <span>Chemistry</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Chichewa">
-    <span>Chichewa</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Chichewa"
+            >
+            <span>Chichewa</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="English">
-    <span>English</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="English"
+            >
+            <span>English</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Geography">
-    <span>Geography</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Geography"
+            >
+            <span>Geography</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="History">
-    <span>History</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="History"
+            >
+            <span>History</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Life Skills">
-    <span>Life Skills</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Life Skills"
+            >
+            <span>Life Skills</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Mathematics">
-    <span>Mathematics</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Mathematics"
+            >
+            <span>Mathematics</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Physics">
-    <span>Physics</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Physics"
+            >
+            <span>Physics</span>
+          </label>
 
-  <label class="check-option">
-    <input type="checkbox" name="subjects" value="Social Studies">
-    <span>Social Studies</span>
-  </label>
+          <label class="check-option">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="Social Studies"
+            >
+            <span>Social Studies</span>
+          </label>
 
-</div>
+        </div>
 
 
         <!-- =================================================
@@ -704,6 +749,7 @@
 <div
   id="deleteModal"
   class="delete-modal"
+  aria-hidden="true"
 >
 
   <div class="delete-modal-box">
@@ -853,7 +899,7 @@
 
 <script src="config.js"></script>
 
-<script src="students.js"></script>
+<script src="students.js?v=20261005"></script>
 
 </body>
 

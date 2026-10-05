@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentClass = null;
 
     let students = [];
+
     let selectedStudentId = null;
     let editingStudentId = null;
 
@@ -134,6 +135,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const deleteConfirmBtn =
         document.getElementById("deleteConfirmBtn");
+
+
+    /* =====================================================
+       HIDE FORM IMMEDIATELY
+    ===================================================== */
+
+    function hideStudentForm() {
+
+        if (!studentFormPanel) {
+            return;
+        }
+
+        studentFormPanel.style.display =
+            "none";
+
+        studentFormPanel.classList.remove(
+            "active"
+        );
+
+        studentFormPanel.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+
+    function showStudentForm() {
+
+        if (!studentFormPanel) {
+            return;
+        }
+
+        studentFormPanel.style.display =
+            "block";
+
+        studentFormPanel.classList.add(
+            "active"
+        );
+
+        studentFormPanel.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+    }
+
+
+    /*
+     * Make sure the form is hidden as soon
+     * as JavaScript starts.
+     */
+
+    hideStudentForm();
 
 
     /* =====================================================
@@ -368,10 +421,6 @@ document.addEventListener("DOMContentLoaded", function () {
             currentClass.class_name ||
             `Form ${currentFormNumber}`;
 
-        const classCode =
-            currentClass.class_code ||
-            `FCA-F${currentFormNumber}`;
-
         if (pageTitle) {
 
             pageTitle.textContent =
@@ -390,10 +439,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 className;
         }
 
+        /*
+         * Only show the class name.
+         *
+         * Example:
+         * Form 4
+         *
+         * NOT:
+         * Form 4 (FCA-F4)
+         */
+
         if (studentClass) {
 
             studentClass.value =
-                `${className} (${classCode})`;
+                className;
         }
 
         if (studentListDescription) {
@@ -401,6 +460,12 @@ document.addEventListener("DOMContentLoaded", function () {
             studentListDescription.textContent =
                 `Students enrolled in ${className}.`;
         }
+
+
+        /*
+         * Academic year remains part of the
+         * database/form logic.
+         */
 
         const year =
             new Date().getFullYear();
@@ -411,10 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 year;
         }
 
-        if (
-            academicYear &&
-            !academicYear.value
-        ) {
+        if (academicYear) {
 
             academicYear.value =
                 year;
@@ -674,6 +736,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        CREATE STUDENT CARD
+       
+       DISPLAYED:
+       - Student name
+       - Student ID
+       - Gender
+       - Class
+       - Access Password
+       - Subjects
+
+       NOT DISPLAYED:
+       - Academic Year
     ===================================================== */
 
     function createStudentCard(student) {
@@ -690,9 +763,14 @@ document.addEventListener("DOMContentLoaded", function () {
             student.gender ||
             "Not specified";
 
-        const year =
-            student.academic_year ||
-            "—";
+        const className =
+            currentClass
+                ? currentClass.class_name
+                : `Form ${currentFormNumber}`;
+
+        const password =
+            student.access_password ||
+            "Not available";
 
         const subjects =
             Array.isArray(student.subjects)
@@ -727,56 +805,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         </div>
 
+
                         <div class="student-details">
 
-    <div class="detail-item">
+                            <div class="detail-item">
 
-        <span>
-            Gender
-        </span>
+                                <span>
+                                    Gender
+                                </span>
 
-        <strong>
-            ${escapeHtml(
-                genderText
-            )}
-        </strong>
+                                <strong>
+                                    ${escapeHtml(
+                                        genderText
+                                    )}
+                                </strong>
 
-    </div>
-
-
-    <div class="detail-item">
-
-        <span>
-            Class
-        </span>
-
-        <strong>
-            ${escapeHtml(
-                currentClass
-                    ? currentClass.class_name
-                    : `Form ${currentFormNumber}`
-            )}
-        </strong>
-
-    </div>
+                            </div>
 
 
-    <div class="detail-item">
+                            <div class="detail-item">
 
-        <span>
-            Access Password
-        </span>
+                                <span>
+                                    Class
+                                </span>
 
-        <strong class="password-value">
-            ${escapeHtml(
-                student.access_password ||
-                "Not available"
-            )}
-        </strong>
+                                <strong>
+                                    ${escapeHtml(
+                                        className
+                                    )}
+                                </strong>
 
-    </div>
+                            </div>
 
-</div>
+
+                            <div class="detail-item">
+
+                                <span>
+                                    Access Password
+                                </span>
+
+                                <strong class="password-value">
+                                    ${escapeHtml(
+                                        password
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
 
                         <div class="student-subjects">
 
@@ -820,6 +897,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 </div>
 
+
                 <div class="student-actions">
 
                     <button
@@ -830,6 +908,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     >
                         Edit
                     </button>
+
 
                     <button
                         type="button"
@@ -954,62 +1033,83 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (formTitle) {
+
             formTitle.textContent =
                 "Add Student";
         }
+
+
+        /*
+         * Keep academic year internally.
+         */
 
         const year =
             new Date().getFullYear();
 
         if (academicYear) {
-            academicYear.value = year;
+
+            academicYear.value =
+                year;
         }
+
+
+        /*
+         * Display class name only.
+         */
 
         if (
             studentClass &&
             currentClass
         ) {
 
-            const className =
+            studentClass.value =
                 currentClass.class_name ||
                 `Form ${currentFormNumber}`;
-
-            const classCode =
-                currentClass.class_code ||
-                `FCA-F${currentFormNumber}`;
-
-            studentClass.value =
-                `${className} (${classCode})`;
         }
 
+
         if (studentId) {
-            studentId.value = "";
+
+            studentId.value =
+                "";
         }
 
         if (generatedStudentId) {
-            generatedStudentId.value = "";
+
+            generatedStudentId.textContent =
+                "Automatically generated";
         }
 
         if (accessPassword) {
-            accessPassword.value = "";
-            accessPassword.type = "password";
+
+            accessPassword.value =
+                "";
+
+            accessPassword.type =
+                "password";
         }
 
+
         clearSubjects();
+
         clearStudentMessage();
+
 
         updatePasswordEye(
             passwordToggle,
             false
         );
 
-        if (studentFormPanel) {
-            studentFormPanel.classList.add(
-                "active"
-            );
-        }
+
+        /*
+         * SHOW FORM
+         */
+
+        showStudentForm();
+
 
         if (firstName) {
+
             firstName.focus();
         }
     }
@@ -1023,14 +1123,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
         editingStudentId = null;
 
-        if (studentFormPanel) {
+        hideStudentForm();
 
-            studentFormPanel.classList.remove(
-                "active"
-            );
+        if (studentForm) {
+
+            studentForm.reset();
         }
 
         clearStudentMessage();
+
+        if (generatedStudentId) {
+
+            generatedStudentId.textContent =
+                "Automatically generated";
+        }
+
+        if (accessPassword) {
+
+            accessPassword.value =
+                "";
+
+            accessPassword.type =
+                "password";
+        }
+
+        updatePasswordEye(
+            passwordToggle,
+            false
+        );
     }
 
 
@@ -1047,15 +1167,19 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
         if (!student) {
+
             console.error(
                 "Student not found:",
                 id
             );
+
             return;
         }
 
+
         editingStudentId =
             student.id;
+
 
         if (formTitle) {
 
@@ -1063,58 +1187,75 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Edit Student";
         }
 
+
         const nameParts =
             splitFullName(
                 student.full_name || ""
             );
 
+
         if (firstName) {
+
             firstName.value =
                 nameParts.firstName;
         }
 
+
         if (lastName) {
+
             lastName.value =
                 nameParts.lastName;
         }
 
+
         if (gender) {
+
             gender.value =
                 student.gender || "";
         }
 
+
+        /*
+         * Academic year is kept internally.
+         */
+
         if (academicYear) {
+
             academicYear.value =
                 student.academic_year ||
                 new Date().getFullYear();
         }
+
+
+        /*
+         * Display only Form 4.
+         */
 
         if (
             studentClass &&
             currentClass
         ) {
 
-            const className =
+            studentClass.value =
                 currentClass.class_name ||
                 `Form ${currentFormNumber}`;
-
-            const classCode =
-                currentClass.class_code ||
-                `FCA-F${currentFormNumber}`;
-
-            studentClass.value =
-                `${className} (${classCode})`;
         }
 
+
         if (studentId) {
+
             studentId.value =
                 student.student_id || "";
         }
 
+
         if (generatedStudentId) {
-            generatedStudentId.value =
-                student.student_id || "";
+
+            generatedStudentId.textContent =
+                student.student_id ||
+                "Automatically generated";
         }
+
 
         if (accessPassword) {
 
@@ -1125,25 +1266,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 "password";
         }
 
+
         setStudentSubjects(
             student.subjects
         );
 
+
         clearStudentMessage();
+
 
         updatePasswordEye(
             passwordToggle,
             false
         );
 
-        if (studentFormPanel) {
 
-            studentFormPanel.classList.add(
-                "active"
-            );
-        }
+        /*
+         * SHOW FORM
+         */
+
+        showStudentForm();
+
 
         if (firstName) {
+
             firstName.focus();
         }
     }
@@ -1178,10 +1324,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         return {
-            firstName: parts[0],
-            lastName: parts
-                .slice(1)
-                .join(" ")
+
+            firstName:
+                parts[0],
+
+            lastName:
+                parts
+                    .slice(1)
+                    .join(" ")
         };
     }
 
@@ -1197,7 +1347,6 @@ document.addEventListener("DOMContentLoaded", function () {
        FCA-2026-NG-10
 
        NG = first 2 letters of surname
-       Number = next available number
     ===================================================== */
 
     async function generateStudentId(
@@ -1219,13 +1368,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let prefix =
             safeLast
-                .replace(/[^A-Z]/g, "")
-                .substring(0, 2);
+                .replace(
+                    /[^A-Z]/g,
+                    ""
+                )
+                .substring(
+                    0,
+                    2
+                );
 
 
         /*
          * If surname has fewer than 2 letters,
-         * use the first name to complete prefix.
+         * complete prefix using first name.
          */
 
         if (prefix.length < 2) {
@@ -1234,15 +1389,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 (
                     prefix +
                     safeFirst
-                        .replace(/[^A-Z]/g, "")
+                        .replace(
+                            /[^A-Z]/g,
+                            ""
+                        )
                 )
-                    .padEnd(2, "X")
-                    .substring(0, 2);
+                    .padEnd(
+                        2,
+                        "X"
+                    )
+                    .substring(
+                        0,
+                        2
+                    );
         }
 
 
         const academicYearValue =
-            parseInt(year, 10) ||
+            parseInt(
+                year,
+                10
+            ) ||
             new Date().getFullYear();
 
 
@@ -1273,73 +1440,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        /*
-         * Store all existing numbers.
-         */
-
         const usedNumbers =
             new Set();
 
 
-        (data || []).forEach(function (student) {
+        (data || [])
+            .forEach(function (student) {
 
-            const existingId =
-                String(
-                    student.student_id || ""
-                ).toUpperCase();
+                const existingId =
+                    String(
+                        student.student_id ||
+                        ""
+                    ).toUpperCase();
 
-            const escapedPrefix =
-                basePrefix.replace(
-                    /[-/\\^$*+?.()|[\]{}]/g,
-                    "\\$&"
-                );
 
-            const match =
-                existingId.match(
-                    new RegExp(
-                        "^" +
-                        escapedPrefix +
-                        "-(\\d+)$"
-                    )
-                );
-
-            if (match) {
-
-                const number =
-                    parseInt(
-                        match[1],
-                        10
+                const escapedPrefix =
+                    basePrefix.replace(
+                        /[-/\\^$*+?.()|[\]{}]/g,
+                        "\\$&"
                     );
 
-                if (
-                    Number.isInteger(number) &&
-                    number > 0
-                ) {
 
-                    usedNumbers.add(
-                        number
+                const match =
+                    existingId.match(
+                        new RegExp(
+                            "^" +
+                            escapedPrefix +
+                            "-(\\d+)$"
+                        )
                     );
+
+
+                if (match) {
+
+                    const number =
+                        parseInt(
+                            match[1],
+                            10
+                        );
+
+
+                    if (
+                        Number.isInteger(number) &&
+                        number > 0
+                    ) {
+
+                        usedNumbers.add(
+                            number
+                        );
+                    }
                 }
-            }
-        });
 
+            });
 
-        /*
-         * Find the first unused number.
-         *
-         * Example:
-         *
-         * NG-1 exists
-         * NG-2 exists
-         * NG-3 exists
-         *
-         * Next = NG-4
-         */
 
         let nextNumber = 1;
 
+
         while (
-            usedNumbers.has(nextNumber)
+            usedNumbers.has(
+                nextNumber
+            )
         ) {
 
             nextNumber++;
@@ -1368,6 +1529,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let password =
             "fca@";
 
+
         for (
             let i = 0;
             i < 3;
@@ -1382,6 +1544,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     )
                 );
         }
+
 
         for (
             let i = 0;
@@ -1398,6 +1561,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
         }
 
+
         return password;
     }
 
@@ -1410,20 +1574,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clearStudentMessage();
 
+
         const first =
             firstName
                 ? firstName.value.trim()
                 : "";
+
 
         const last =
             lastName
                 ? lastName.value.trim()
                 : "";
 
+
         const selectedGender =
             gender
                 ? gender.value
                 : "";
+
 
         const selectedYear =
             academicYear
@@ -1497,6 +1665,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? studentId.value.trim()
                     : "";
 
+
             let password =
                 accessPassword
                     ? accessPassword.value.trim()
@@ -1516,16 +1685,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         selectedYear
                     );
 
+
                 password =
                     generateAccessPassword();
-
             }
 
 
             /*
-             * EDITING:
-             * Keep existing Student ID and password.
-             * Generate only if either is missing.
+             * EDITING
+             *
+             * Keep existing ID/password.
              */
 
             else {
@@ -1539,6 +1708,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             selectedYear
                         );
                 }
+
 
                 if (!password) {
 
@@ -1573,7 +1743,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     subjects,
 
                 gender:
-                    selectedGender || null,
+                    selectedGender ||
+                    null,
+
+                /*
+                 * Academic year remains
+                 * in the database.
+                 */
 
                 academic_year:
                     selectedYear,
@@ -1599,6 +1775,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         editingStudentId
                     );
 
+
                 if (error) {
 
                     console.error(
@@ -1614,6 +1791,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     return;
                 }
+
 
                 showStudentMessage(
                     "Student updated successfully.",
@@ -1634,6 +1812,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .from("students")
                     .insert(payload);
 
+
                 if (error) {
 
                     console.error(
@@ -1650,20 +1829,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+
                 if (studentId) {
+
                     studentId.value =
                         generatedId;
                 }
 
+
                 if (generatedStudentId) {
-                    generatedStudentId.value =
+
+                    generatedStudentId.textContent =
                         generatedId;
                 }
 
+
                 if (accessPassword) {
+
                     accessPassword.value =
                         password;
                 }
+
 
                 showStudentMessage(
                     "Student added successfully.",
@@ -1674,6 +1860,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             await loadStudents();
 
+
+            /*
+             * Close form after successful save.
+             */
 
             setTimeout(
                 function () {
@@ -1747,6 +1937,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return item.id === id;
             });
 
+
         if (!student) {
 
             console.error(
@@ -1757,13 +1948,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         selectedStudentId =
             student.id;
-
-        console.log(
-            "Selected student for deletion:",
-            selectedStudentId
-        );
 
 
         if (deleteStudentName) {
@@ -1803,13 +1990,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Delete Student";
         }
 
-
-        /*
-         * Add BOTH classes.
-         *
-         * This makes the modal work with CSS
-         * using either .active or .show.
-         */
 
         if (deleteModal) {
 
@@ -1920,10 +2100,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!selectedStudentId) {
 
-            console.error(
-                "No student selected for deletion."
-            );
-
             showDeleteError(
                 "No student was selected."
             );
@@ -1945,6 +2121,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             if (adminDeletePassword) {
+
                 adminDeletePassword.focus();
             }
 
@@ -1964,13 +2141,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
 
-            console.log(
-                "Authenticating administrator..."
-            );
-
-
             /*
-             * RE-AUTHENTICATE ADMIN
+             * Authenticate administrator.
              */
 
             const {
@@ -2002,24 +2174,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            console.log(
-                "Administrator authenticated."
-            );
-
-
-            /*
-             * DELETE STUDENT
-             */
-
             const studentIdToDelete =
                 selectedStudentId;
 
 
-            console.log(
-                "Deleting student:",
-                studentIdToDelete
-            );
-
+            /*
+             * Delete student.
+             */
 
             const {
                 error
@@ -2049,14 +2210,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            console.log(
-                "Student deleted successfully."
-            );
-
-
             /*
-             * Remove the deleted student
-             * immediately from local data.
+             * Remove locally.
              */
 
             students =
@@ -2129,14 +2284,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         const isPassword =
             accessPassword.type ===
             "password";
+
 
         accessPassword.type =
             isPassword
                 ? "text"
                 : "password";
+
 
         updatePasswordEye(
             passwordToggle,
@@ -2155,14 +2313,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+
         const isPassword =
             adminDeletePassword.type ===
             "password";
+
 
         adminDeletePassword.type =
             isPassword
                 ? "text"
                 : "password";
+
 
         updatePasswordEye(
             adminPasswordToggle,
@@ -2183,6 +2344,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!button) {
             return;
         }
+
 
         const openEye = `
             <svg
@@ -2249,6 +2411,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 ? "Hide password"
                 : "Show password"
         );
+
+
+        button.setAttribute(
+            "title",
+            showingPassword
+                ? "Hide password"
+                : "Show password"
+        );
+
+
+        button.setAttribute(
+            "aria-pressed",
+            showingPassword
+                ? "true"
+                : "false"
+        );
     }
 
 
@@ -2269,7 +2447,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         cancelBtn.addEventListener(
             "click",
-            closeStudentForm
+            function (event) {
+
+                event.preventDefault();
+
+                closeStudentForm();
+            }
         );
     }
 
@@ -2366,7 +2549,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        STUDENT LIST EVENTS
-       
        EVENT DELEGATION
     ===================================================== */
 
@@ -2380,6 +2562,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     event.target.closest(
                         "button[data-action]"
                     );
+
 
                 if (!button) {
                     return;
@@ -2401,14 +2584,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     return;
                 }
-
-
-                console.log(
-                    "Student action:",
-                    action,
-                    "Student:",
-                    id
-                );
 
 
                 if (action === "edit") {
@@ -2486,8 +2661,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (
                 studentFormPanel &&
-                studentFormPanel.classList.contains(
-                    "active"
+                (
+                    studentFormPanel.classList.contains(
+                        "active"
+                    ) ||
+                    studentFormPanel.style.display ===
+                        "block"
                 )
             ) {
 

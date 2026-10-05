@@ -4,12 +4,12 @@
    FCA TEACHERS MANAGEMENT
    SUPABASE VERSION
 
-   - Add Teacher form hidden by default
-   - Opens only when + Add Teacher is clicked
-   - Opens when Edit is clicked
-   - Closes on Cancel
-   - Closes after successful Add/Edit
-   - Administrator password required for teacher deletion
+   - Teacher form hidden by default
+   - Add Teacher opens form
+   - Edit opens form
+   - Cancel closes form
+   - Successful save closes form
+   - Administrator password required for deletion
 ============================================================ */
 
 
@@ -87,11 +87,6 @@ const clearClassesBtn =
 const passwordToggle =
     document.getElementById("passwordToggle");
 
-
-/* ============================================================
-   TEACHER FORM PANEL
-============================================================ */
-
 const addTeacherSection =
     document.getElementById("addTeacher");
 
@@ -100,7 +95,7 @@ const addTeacherBtn =
 
 
 /* ============================================================
-   DELETE MODAL
+   DELETE MODAL ELEMENTS
 ============================================================ */
 
 const deleteModal =
@@ -126,19 +121,224 @@ const adminPasswordToggle =
 
 
 /* ============================================================
-   HIDE FORM ON INITIAL PAGE LOAD
+   FORM VISIBILITY
 ============================================================ */
 
-if(addTeacherSection){
+/*
+ * Use !important so teachers.css cannot accidentally
+ * override the form visibility.
+ */
 
-    addTeacherSection.style.display =
-        "none";
+function hideTeacherForm(){
+
+    if(!addTeacherSection){
+
+        console.error(
+            "FCA: addTeacher section was not found."
+        );
+
+        return;
+
+    }
+
+
+    addTeacherSection.style.setProperty(
+        "display",
+        "none",
+        "important"
+    );
 
 }
 
 
 /* ============================================================
-   SUPABASE CLIENT CHECK
+   SHOW TEACHER FORM
+============================================================ */
+
+function showTeacherForm(){
+
+    if(!addTeacherSection){
+
+        console.error(
+            "FCA: addTeacher section was not found."
+        );
+
+        return;
+
+    }
+
+
+    addTeacherSection.style.setProperty(
+        "display",
+        "block",
+        "important"
+    );
+
+
+    /*
+     * Scroll to the form after it becomes visible.
+     */
+
+    setTimeout(
+        function(){
+
+            addTeacherSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        },
+        50
+    );
+
+}
+
+
+/* ============================================================
+   OPEN NEW TEACHER FORM
+============================================================ */
+
+function openAddTeacherForm(){
+
+    /*
+     * Make sure we are not editing an existing teacher.
+     */
+
+    editingTeacherId = null;
+
+
+    /*
+     * Clear the form first.
+     */
+
+    if(teacherForm){
+
+        teacherForm.reset();
+
+    }
+
+
+    if(formTitle){
+
+        formTitle.textContent =
+            "Add Teacher";
+
+    }
+
+
+    if(passwordInput){
+
+        passwordInput.value = "";
+
+        passwordInput.type =
+            "password";
+
+        passwordInput.placeholder =
+            "Enter password";
+
+    }
+
+
+    if(passwordToggle){
+
+        passwordToggle.classList.remove(
+            "is-visible"
+        );
+
+        passwordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+        passwordToggle.setAttribute(
+            "title",
+            "Show password"
+        );
+
+        passwordToggle.setAttribute(
+            "aria-pressed",
+            "false"
+        );
+
+    }
+
+
+    if(teacherMessage){
+
+        teacherMessage.textContent =
+            "";
+
+        teacherMessage.className =
+            "message";
+
+    }
+
+
+    const saveButton =
+        teacherForm
+            ? teacherForm.querySelector(
+                ".save-btn"
+            )
+            : null;
+
+
+    if(saveButton){
+
+        saveButton.textContent =
+            "Save Teacher";
+
+    }
+
+
+    /*
+     * Open the form.
+     */
+
+    showTeacherForm();
+
+
+    /*
+     * Focus first field.
+     */
+
+    setTimeout(
+        function(){
+
+            if(firstNameInput){
+
+                firstNameInput.focus();
+
+            }
+
+        },
+        250
+    );
+
+}
+
+
+/* ============================================================
+   TOP ADD TEACHER BUTTON
+============================================================ */
+
+if(addTeacherBtn){
+
+    addTeacherBtn.addEventListener(
+        "click",
+        function(event){
+
+            event.preventDefault();
+
+            openAddTeacherForm();
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   SUPABASE CLIENT
 ============================================================ */
 
 function getSupabaseClient(){
@@ -150,6 +350,7 @@ function getSupabaseClient(){
         );
 
     }
+
 
     return window.fcaSupabase;
 
@@ -618,7 +819,6 @@ async function loadTeachers(){
 
         displayTeachers();
 
-
     }
 
     catch(error){
@@ -746,7 +946,7 @@ function displayTeachers(){
 
                 <a
                     href="#addTeacher"
-                    class="add-btn"
+                    class="add-btn empty-add-teacher"
                 >
                     + Add Teacher
                 </a>
@@ -817,24 +1017,20 @@ function displayTeachers(){
                                         </h3>
 
                                         <span class="teacher-id">
-
                                             ${escapeHtml(
                                                 teacher.teacher_number ||
                                                 "No ID"
                                             )}
-
                                         </span>
 
                                     </div>
 
 
                                     <p class="username">
-
                                         @${escapeHtml(
                                             teacher.username ||
                                             "No username"
                                         )}
-
                                     </p>
 
 
@@ -929,7 +1125,8 @@ function displayTeachers(){
                                 <button
                                     class="edit-btn"
                                     type="button"
-                                    onclick="editTeacher('${escapeHtml(teacher.id)}')"
+                                    data-action="edit"
+                                    data-id="${escapeHtml(teacher.id)}"
                                 >
                                     Edit
                                 </button>
@@ -938,7 +1135,8 @@ function displayTeachers(){
                                 <button
                                     class="delete-btn"
                                     type="button"
-                                    onclick="deleteTeacher('${escapeHtml(teacher.id)}')"
+                                    data-action="delete"
+                                    data-id="${escapeHtml(teacher.id)}"
                                 >
                                     Delete
                                 </button>
@@ -957,94 +1155,7 @@ function displayTeachers(){
 
 
 /* ============================================================
-   SHOW TEACHER FORM
-============================================================ */
-
-function showTeacherForm(){
-
-    if(!addTeacherSection){
-
-        return;
-
-    }
-
-
-    addTeacherSection.style.display =
-        "block";
-
-
-    addTeacherSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-}
-
-
-/* ============================================================
-   HIDE TEACHER FORM
-============================================================ */
-
-function hideTeacherForm(){
-
-    if(!addTeacherSection){
-
-        return;
-
-    }
-
-
-    addTeacherSection.style.display =
-        "none";
-
-}
-
-
-/* ============================================================
-   ADD TEACHER BUTTON
-============================================================ */
-
-if(addTeacherBtn){
-
-    addTeacherBtn.addEventListener(
-        "click",
-        function(event){
-
-            event.preventDefault();
-
-
-            resetForm();
-
-
-            /*
-             * resetForm() hides the form.
-             * Open it again for a new teacher.
-             */
-
-            showTeacherForm();
-
-
-            if(firstNameInput){
-
-                setTimeout(
-                    function(){
-
-                        firstNameInput.focus();
-
-                    },
-                    250
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   EMPTY LIST ADD TEACHER BUTTON
+   TEACHER LIST CLICK HANDLER
 ============================================================ */
 
 if(teacherList){
@@ -1053,38 +1164,77 @@ if(teacherList){
         "click",
         function(event){
 
-            const button =
-                event.target.closest(
-                    'a[href="#addTeacher"]'
+            const target =
+                event.target;
+
+
+            /*
+             * Empty state Add Teacher
+             */
+
+            const addButton =
+                target.closest(
+                    ".empty-add-teacher"
                 );
 
 
-            if(!button){
+            if(addButton){
+
+                event.preventDefault();
+
+                openAddTeacherForm();
 
                 return;
 
             }
 
 
-            event.preventDefault();
+            /*
+             * Edit button
+             */
 
-
-            resetForm();
-
-
-            showTeacherForm();
-
-
-            if(firstNameInput){
-
-                setTimeout(
-                    function(){
-
-                        firstNameInput.focus();
-
-                    },
-                    250
+            const editButton =
+                target.closest(
+                    '[data-action="edit"]'
                 );
+
+
+            if(editButton){
+
+                event.preventDefault();
+
+                const id =
+                    editButton.dataset.id;
+
+
+                editTeacher(id);
+
+                return;
+
+            }
+
+
+            /*
+             * Delete button
+             */
+
+            const deleteButton =
+                target.closest(
+                    '[data-action="delete"]'
+                );
+
+
+            if(deleteButton){
+
+                event.preventDefault();
+
+                const id =
+                    deleteButton.dataset.id;
+
+
+                deleteTeacher(id);
+
+                return;
 
             }
 
@@ -1226,44 +1376,40 @@ function clearClasses(){
 
 if(selectAllSubjectsBtn){
 
-    selectAllSubjectsBtn
-        .addEventListener(
-            "click",
-            selectAllSubjects
-        );
+    selectAllSubjectsBtn.addEventListener(
+        "click",
+        selectAllSubjects
+    );
 
 }
 
 
 if(clearSubjectsBtn){
 
-    clearSubjectsBtn
-        .addEventListener(
-            "click",
-            clearSubjects
-        );
+    clearSubjectsBtn.addEventListener(
+        "click",
+        clearSubjects
+    );
 
 }
 
 
 if(selectAllClassesBtn){
 
-    selectAllClassesBtn
-        .addEventListener(
-            "click",
-            selectAllClasses
-        );
+    selectAllClassesBtn.addEventListener(
+        "click",
+        selectAllClasses
+    );
 
 }
 
 
 if(clearClassesBtn){
 
-    clearClassesBtn
-        .addEventListener(
-            "click",
-            clearClasses
-        );
+    clearClassesBtn.addEventListener(
+        "click",
+        clearClasses
+    );
 
 }
 
@@ -1639,10 +1785,22 @@ if(teacherForm){
                     }
 
 
+                    /*
+                     * Close form after successful update.
+                     */
+
+                    resetForm();
+
+
+                    await loadTeachers();
+
+
                     showMessage(
                         "Teacher updated successfully.",
                         "success"
                     );
+
+                    return;
 
                 }
 
@@ -1651,79 +1809,73 @@ if(teacherForm){
                    ADD TEACHER
                 ======================================== */
 
-                else{
-
-                    const passwordHash =
-                        await hashPassword(
-                            password
-                        );
+                const passwordHash =
+                    await hashPassword(
+                        password
+                    );
 
 
-                    const teacherNumber =
-                        generateTeacherNumber();
+                const teacherNumber =
+                    generateTeacherNumber();
 
 
-                    const {
-                        error
-                    } =
-                        await supabase
-                            .from("teachers")
-                            .insert({
+                const {
+                    error
+                } =
+                    await supabase
+                        .from("teachers")
+                        .insert({
 
-                                first_name:
-                                    firstName,
+                            first_name:
+                                firstName,
 
-                                last_name:
-                                    lastName,
+                            last_name:
+                                lastName,
 
-                                full_name:
-                                    `${firstName} ${lastName}`,
+                            full_name:
+                                `${firstName} ${lastName}`,
 
-                                username:
-                                    username,
+                            username:
+                                username,
 
-                                password_hash:
-                                    passwordHash,
+                            password_hash:
+                                passwordHash,
 
-                                teacher_number:
-                                    teacherNumber,
+                            teacher_number:
+                                teacherNumber,
 
-                                subjects:
-                                    subjects,
+                            subjects:
+                                subjects,
 
-                                classes:
-                                    classes
+                            classes:
+                                classes
 
-                            });
-
-
-                    if(error){
-
-                        throw new Error(
-                            error.message
-                        );
-
-                    }
+                        });
 
 
-                    showMessage(
-                        "Teacher added successfully.",
-                        "success"
+                if(error){
+
+                    throw new Error(
+                        error.message
                     );
 
                 }
 
 
                 /*
-                 * Save completed.
-                 *
-                 * Reset closes the form.
+                 * Close form after successful addition.
                  */
 
                 resetForm();
 
 
                 await loadTeachers();
+
+
+                showMessage(
+                    "Teacher added successfully.",
+                    "success"
+                );
 
             }
 
@@ -1938,9 +2090,10 @@ function editTeacher(id){
     }
 
 
-    /* ========================================================
-       OPEN EDIT FORM
-    ======================================================== */
+    /*
+     * IMPORTANT:
+     * Open the form after all edit data has been loaded.
+     */
 
     showTeacherForm();
 
@@ -1951,6 +2104,15 @@ function editTeacher(id){
     );
 
 }
+
+
+/*
+ * Make editTeacher globally available in case
+ * another part of the page calls it.
+ */
+
+window.editTeacher =
+    editTeacher;
 
 
 /* ============================================================
@@ -2056,6 +2218,10 @@ function deleteTeacher(id){
     );
 
 }
+
+
+window.deleteTeacher =
+    deleteTeacher;
 
 
 /* ============================================================
@@ -2293,10 +2459,6 @@ if(deleteConfirmBtn){
                 }
 
 
-                /* ========================================
-                   DELETE TEACHER
-                ======================================== */
-
                 deleteConfirmBtn.textContent =
                     "Deleting...";
 
@@ -2340,10 +2502,6 @@ if(deleteConfirmBtn){
                 }
 
 
-                /* ========================================
-                   GET TEACHER NAME
-                ======================================== */
-
                 const deletedTeacher =
                     teachers.find(
                         item =>
@@ -2357,10 +2515,6 @@ if(deleteConfirmBtn){
                         ? `${deletedTeacher.first_name || ""} ${deletedTeacher.last_name || ""}`.trim()
                         : "Teacher";
 
-
-                /* ========================================
-                   VERIFY PERMANENT DELETION
-                ======================================== */
 
                 const {
                     data: remainingTeacher,
@@ -2394,10 +2548,6 @@ if(deleteConfirmBtn){
                 }
 
 
-                /* ========================================
-                   UPDATE LOCAL LIST
-                ======================================== */
-
                 teachers =
                     teachers.filter(
                         item =>
@@ -2412,13 +2562,13 @@ if(deleteConfirmBtn){
                 displayTeachers();
 
 
+                await loadTeachers();
+
+
                 showMessage(
                     `${name || "Teacher"} deleted successfully.`,
                     "success"
                 );
-
-
-                await loadTeachers();
 
             }
 
@@ -2505,7 +2655,7 @@ if(adminDeletePassword){
 
 
 /* ============================================================
-   CLICK OUTSIDE MODAL
+   CLICK OUTSIDE DELETE MODAL
 ============================================================ */
 
 if(deleteModal){
@@ -2573,6 +2723,9 @@ function resetForm(){
         passwordInput.placeholder =
             "Enter password";
 
+        passwordInput.value =
+            "";
+
     }
 
 
@@ -2617,7 +2770,8 @@ function resetForm(){
 
 
     /*
-     * Always hide the form after reset.
+     * IMPORTANT:
+     * Reset always hides the form.
      */
 
     hideTeacherForm();
@@ -2748,7 +2902,7 @@ async function initializeTeachersPage(){
 
 
     /*
-     * Make absolutely sure the form starts hidden.
+     * Always hide form when page first opens.
      */
 
     hideTeacherForm();

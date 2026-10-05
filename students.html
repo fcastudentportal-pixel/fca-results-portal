@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,454 +17,419 @@
 
     <title>Students | FCA Portal</title>
 
-    <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="students.css">
+    <link
+        rel="stylesheet"
+        href="students.css"
+    >
+
 </head>
+
 
 <body>
 
+
+<div class="shell">
+
+
     <!-- =====================================================
-         FCA HEADER
+         SIDEBAR
     ====================================================== -->
 
-    <header class="student-header">
+    <aside class="sidebar">
 
-        <a
-            href="index.html"
-            class="student-header-logo"
-            aria-label="First Class Academy"
-        >
-            <img
-                src="fca-logo.png"
-                alt="First Class Academy Logo"
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <a
+                class="brand-mark"
+                href="index.html"
             >
-        </a>
 
-        <div class="student-header-content">
+                <img
+                    src="fca-logo.png"
+                    alt="First Class Academy"
+                >
 
-            <div class="student-eyebrow">
-                FCA PORTAL
+            </a>
+
+
+            <div>
+
+                <b>
+                    FCA Portal
+                </b>
+
+                <small>
+                    Administration
+                </small>
+
             </div>
-
-            <h1>
-                STUDENTS MANAGEMENT
-            </h1>
-
-            <p>
-                Manage FCA students and their academic records
-            </p>
 
         </div>
 
-    </header>
+
+        <!-- NAVIGATION -->
+
+        <nav>
+
+            <a
+                class="nav"
+                href="admin.html"
+            >
+                Dashboard
+            </a>
+
+
+            <a
+                class="nav"
+                href="teachers.html"
+            >
+                Teachers
+            </a>
+
+
+            <a
+                class="nav"
+                href="classes.html"
+            >
+                Classes
+            </a>
+
+
+            <a
+                class="nav active"
+                href="students.html"
+            >
+                Students
+            </a>
+
+
+            <a
+                class="nav"
+                href="subjects.html"
+            >
+                Subjects
+            </a>
+
+
+            <a
+                class="nav"
+                href="results.html"
+            >
+                Results
+            </a>
+
+        </nav>
+
+
+        <!-- SETTINGS -->
+
+        <a
+            class="nav settings-link"
+            href="settings.html"
+        >
+            ⚙ Settings
+        </a>
+
+
+    </aside>
 
 
     <!-- =====================================================
          MAIN
     ====================================================== -->
 
-    <main class="students-container">
+    <main class="main">
 
-        <!-- PAGE INTRO -->
 
-        <section class="students-intro">
+        <!-- HEADER -->
+
+        <header>
 
             <div>
-                <span class="section-eyebrow">
+
+                <small>
                     ADMINISTRATION
-                </span>
+                </small>
 
-                <h2>
+                <h1>
                     Students
-                </h2>
-
-                <p>
-                    Select a class to view and manage its students.
-                </p>
-            </div>
-
-            <button
-                type="button"
-                class="primary-button"
-                id="addStudentButton"
-            >
-                + Add Student
-            </button>
-
-        </section>
-
-
-        <!-- =================================================
-             CLASS CARDS
-        ================================================== -->
-
-        <section class="classes-section">
-
-            <div class="classes-grid">
-
-                <!-- FORM 1 -->
-
-                <article
-                    class="class-card"
-                    data-form="1"
-                >
-
-                    <div class="class-card-top">
-                        <span class="class-label">
-                            FORM
-                        </span>
-
-                        <span class="class-number">
-                            1
-                        </span>
-                    </div>
-
-                    <h3>
-                        Form 1
-                    </h3>
-
-                    <p>
-                        View and manage Form 1 students.
-                    </p>
-
-                    <div class="class-card-bottom">
-
-                        <span
-                            class="student-count"
-                            id="count-form-1"
-                        >
-                            0 Students
-                        </span>
-
-                        <button
-                            type="button"
-                            class="view-class-button"
-                            data-form="1"
-                        >
-                            View Students
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- FORM 2 -->
-
-                <article
-                    class="class-card"
-                    data-form="2"
-                >
-
-                    <div class="class-card-top">
-                        <span class="class-label">
-                            FORM
-                        </span>
-
-                        <span class="class-number">
-                            2
-                        </span>
-                    </div>
-
-                    <h3>
-                        Form 2
-                    </h3>
-
-                    <p>
-                        View and manage Form 2 students.
-                    </p>
-
-                    <div class="class-card-bottom">
-
-                        <span
-                            class="student-count"
-                            id="count-form-2"
-                        >
-                            0 Students
-                        </span>
-
-                        <button
-                            type="button"
-                            class="view-class-button"
-                            data-form="2"
-                        >
-                            View Students
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- FORM 3 -->
-
-                <article
-                    class="class-card"
-                    data-form="3"
-                >
-
-                    <div class="class-card-top">
-                        <span class="class-label">
-                            FORM
-                        </span>
-
-                        <span class="class-number">
-                            3
-                        </span>
-                    </div>
-
-                    <h3>
-                        Form 3
-                    </h3>
-
-                    <p>
-                        View and manage Form 3 students.
-                    </p>
-
-                    <div class="class-card-bottom">
-
-                        <span
-                            class="student-count"
-                            id="count-form-3"
-                        >
-                            0 Students
-                        </span>
-
-                        <button
-                            type="button"
-                            class="view-class-button"
-                            data-form="3"
-                        >
-                            View Students
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- FORM 4 -->
-
-                <article
-                    class="class-card"
-                    data-form="4"
-                >
-
-                    <div class="class-card-top">
-                        <span class="class-label">
-                            FORM
-                        </span>
-
-                        <span class="class-number">
-                            4
-                        </span>
-                    </div>
-
-                    <h3>
-                        Form 4
-                    </h3>
-
-                    <p>
-                        View and manage Form 4 students.
-                    </p>
-
-                    <div class="class-card-bottom">
-
-                        <span
-                            class="student-count"
-                            id="count-form-4"
-                        >
-                            0 Students
-                        </span>
-
-                        <button
-                            type="button"
-                            class="view-class-button"
-                            data-form="4"
-                        >
-                            View Students
-                        </button>
-
-                    </div>
-
-                </article>
+                </h1>
 
             </div>
 
-        </section>
+
+            <div class="pill">
+                Administrator
+            </div>
+
+        </header>
 
 
         <!-- =================================================
-             STUDENTS SECTION
-        ================================================== -->
+             STUDENTS VIEW
+        ================================================= -->
 
-        <section
-            class="students-list-section hidden"
-            id="studentsListSection"
-        >
+        <section class="view active">
 
-            <div class="students-list-header">
 
-                <div>
+            <div class="students-container">
 
-                    <span class="section-eyebrow">
-                        STUDENTS
-                    </span>
 
-                    <h2 id="selectedClassTitle">
-                        Form 1
-                    </h2>
+                <!-- INTRO -->
 
-                    <p id="selectedClassDescription">
-                        Students in this class.
-                    </p>
+                <div class="page-intro">
 
-                </div>
+                    <div>
 
-                <div class="students-list-actions">
+                        <span class="eyebrow">
+                            STUDENT MANAGEMENT
+                        </span>
 
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="backToClassesButton"
-                    >
-                        ← Back to Classes
-                    </button>
+                        <h2 id="classTitle">
+                            Students
+                        </h2>
+
+                        <p id="classDescription">
+                            Manage students for this class.
+                        </p>
+
+                    </div>
+
 
                     <button
                         type="button"
+                        id="addStudentButton"
                         class="primary-button"
-                        id="addStudentFromListButton"
                     >
                         + Add Student
                     </button>
 
                 </div>
 
-            </div>
 
+                <!-- DATABASE STATUS -->
 
-            <div
-                class="students-grid"
-                id="studentsGrid"
-            ></div>
-
-
-            <div
-                class="empty-students"
-                id="emptyStudents"
-            >
-
-                <div class="empty-icon">
-                    +
+                <div
+                    id="databaseStatus"
+                    class="database-status"
+                >
+                    Connecting to database...
                 </div>
 
-                <h3>
-                    No Students Yet
-                </h3>
 
-                <p>
-                    There are no students registered in this class.
-                </p>
+                <!-- SUMMARY -->
 
-                <button
-                    type="button"
-                    class="primary-button"
-                    id="emptyAddStudentButton"
+                <div class="summary-grid">
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Class
+                        </span>
+
+                        <strong id="summaryClass">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Academic Year
+                        </span>
+
+                        <strong id="summaryYear">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-card">
+
+                        <span>
+                            Total Students
+                        </span>
+
+                        <strong id="studentCount">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="search-card">
+
+                    <input
+                        type="search"
+                        id="studentSearch"
+                        placeholder="Search students by name or student ID..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- STUDENTS -->
+
+                <div
+                    id="studentsContainer"
+                    class="students-grid"
+                ></div>
+
+
+                <!-- EMPTY STATE -->
+
+                <div
+                    id="emptyState"
+                    class="empty-state hidden"
                 >
-                    Add Student
-                </button>
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <h3>
+                        No Students Yet
+                    </h3>
+
+                    <p>
+                        There are no students registered in this class.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="emptyAddButton"
+                        class="primary-button"
+                    >
+                        Add Student
+                    </button>
+
+                </div>
+
 
             </div>
 
+
         </section>
+
 
     </main>
 
 
-    <!-- =====================================================
-         ADD / EDIT STUDENT MODAL
-    ====================================================== -->
+</div>
+
+
+<!-- =====================================================
+     ADD / EDIT STUDENT MODAL
+====================================================== -->
+
+<div
+    id="studentModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-overlay"></div>
+
 
     <div
-        class="modal-overlay hidden"
-        id="studentModal"
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="studentModalTitle"
     >
 
-        <div
-            class="modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="studentModalTitle"
-        >
 
-            <button
-                type="button"
-                class="modal-close"
-                id="closeStudentModal"
-                aria-label="Close"
-            >
-                ×
-            </button>
+        <div class="modal-header">
 
-            <div class="modal-heading">
+            <div>
 
-                <span class="section-eyebrow">
-                    STUDENT
-                </span>
+                <small>
+                    STUDENT MANAGEMENT
+                </small>
 
                 <h2 id="studentModalTitle">
                     Add Student
                 </h2>
 
-                <p>
-                    Enter the student's details below.
-                </p>
-
             </div>
 
 
-            <form id="studentForm">
+            <button
+                type="button"
+                id="closeStudentModal"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
 
-                <input
-                    type="hidden"
-                    id="editingStudentId"
-                >
+        </div>
 
 
-                <!-- NAME -->
+        <form id="studentForm">
 
-                <div class="form-group">
 
-                    <label for="studentFullName">
-                        Student Name
-                    </label>
+            <div class="form-grid">
+
+
+                <!-- FIRST NAME -->
+
+                <label>
+
+                    First Name
 
                     <input
                         type="text"
-                        id="studentFullName"
-                        placeholder="Enter full name"
-                        autocomplete="name"
+                        id="firstName"
+                        placeholder="Enter first name"
                         required
                     >
 
-                </div>
+                </label>
+
+
+                <!-- SURNAME -->
+
+                <label>
+
+                    Surname
+
+                    <input
+                        type="text"
+                        id="lastName"
+                        placeholder="Enter surname"
+                        required
+                    >
+
+                </label>
 
 
                 <!-- GENDER -->
 
-                <div class="form-group">
+                <label>
 
-                    <label for="studentGender">
-                        Gender
-                    </label>
+                    Gender
 
                     <select
-                        id="studentGender"
+                        id="gender"
+                        required
                     >
 
                         <option value="">
-                            Not specified
+                            Select gender
                         </option>
 
                         <option value="Male">
@@ -475,260 +442,263 @@
 
                     </select>
 
-                </div>
+                </label>
 
 
-                <!-- STUDENT ID -->
+                <!-- ACADEMIC YEAR -->
 
-                <div class="form-group">
+                <label>
 
-                    <label for="studentId">
-                        Student Number
-                    </label>
-
-                    <div class="input-with-button">
-
-                        <input
-                            type="text"
-                            id="studentId"
-                            placeholder="FCA-2026-01-001"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            class="small-button"
-                            id="generateStudentIdButton"
-                        >
-                            Generate
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PASSWORD -->
-
-                <div class="form-group">
-
-                    <label for="accessPassword">
-                        Access Password
-                    </label>
-
-                    <div class="password-wrapper">
-
-                        <input
-                            type="password"
-                            id="accessPassword"
-                            placeholder="Enter access password"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            class="password-toggle"
-                            id="studentPasswordToggle"
-                            aria-label="Show password"
-                        >
-
-                            <svg
-                                class="eye-open"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                />
-
-                                <circle
-                                    cx="12"
-                                    cy="12"
-                                    r="3"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                />
-                            </svg>
-
-
-                            <svg
-                                class="eye-closed hidden"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M3 3l18 18"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                />
-
-                                <path
-                                    d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.1 3.8M6.1 6.8C3.5 8.6 2 12 2 12s3.5 6 10 6c1.3 0 2.5-.2 3.6-.7"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                />
-                            </svg>
-
-                        </button>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="generate-password-button"
-                        id="generatePasswordButton"
-                    >
-                        Generate Password
-                    </button>
-
-                </div>
-
-
-                <!-- CLASS -->
-
-                <div class="form-group">
-
-                    <label for="studentFormNumber">
-                        Class
-                    </label>
+                    Academic Year
 
                     <select
-                        id="studentFormNumber"
+                        id="academicYear"
                         required
                     >
 
-                        <option value="">
-                            Select class
+                        <option value="2026">
+                            2026
                         </option>
 
-                        <option value="1">
-                            Form 1
+                        <option value="2027">
+                            2027
                         </option>
 
-                        <option value="2">
-                            Form 2
+                        <option value="2028">
+                            2028
                         </option>
 
-                        <option value="3">
-                            Form 3
+                        <option value="2029">
+                            2029
                         </option>
 
-                        <option value="4">
-                            Form 4
+                        <option value="2030">
+                            2030
                         </option>
 
                     </select>
 
-                </div>
+                </label>
 
 
-                <div
-                    class="form-message"
-                    id="studentFormMessage"
-                ></div>
-
-
-                <div class="modal-actions">
-
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="cancelStudentButton"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="saveStudentButton"
-                    >
-                        Save Student
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         DELETE MODAL
-    ====================================================== -->
-
-    <div
-        class="modal-overlay hidden"
-        id="deleteModal"
-    >
-
-        <div
-            class="modal-card delete-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="deleteModalTitle"
-        >
-
-            <button
-                type="button"
-                class="modal-close"
-                id="closeDeleteModal"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-            <div class="delete-icon">
-                !
             </div>
 
-            <h2 id="deleteModalTitle">
-                Delete Student?
-            </h2>
 
-            <p id="deleteStudentMessage">
-                This action cannot be undone.
-            </p>
+            <!-- CLASS -->
+
+            <label>
+
+                Class
+
+                <input
+                    type="text"
+                    id="studentClass"
+                    readonly
+                >
+
+            </label>
+
+
+            <!-- SUBJECTS -->
+
+            <div class="subjects-field">
+
+                <div class="field-label">
+                    Subjects Taken
+                </div>
+
+                <div
+                    id="subjectsContainer"
+                    class="subjects-list"
+                >
+                    Loading subjects...
+                </div>
+
+            </div>
+
+
+            <!-- GENERATED CREDENTIALS -->
+
+            <div
+                id="credentialsBox"
+                class="credentials-box hidden"
+            >
+
+                <div class="credential">
+
+                    <small>
+                        Student ID
+                    </small>
+
+                    <strong id="generatedStudentId">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="credential">
+
+                    <small>
+                        Access Password
+                    </small>
+
+                    <strong id="generatedPassword">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="studentMessage"
+                class="form-message"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+
+            <!-- ACTIONS -->
 
             <div class="modal-actions">
 
                 <button
                     type="button"
+                    id="cancelStudentButton"
                     class="secondary-button"
-                    id="cancelDeleteButton"
                 >
                     Cancel
                 </button>
 
+
                 <button
-                    type="button"
-                    class="delete-button"
-                    id="confirmDeleteButton"
+                    type="submit"
+                    id="saveStudentButton"
+                    class="primary-button"
                 >
-                    Delete Student
+                    Save Student
                 </button>
 
             </div>
 
-        </div>
+
+        </form>
+
 
     </div>
 
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="students.js"></script>
+
+<!-- =====================================================
+     DELETE MODAL
+====================================================== -->
+
+<div
+    id="deleteModal"
+    class="modal hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-overlay"></div>
+
+
+    <div
+        class="modal-box small-modal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <small>
+                    CONFIRMATION
+                </small>
+
+                <h2>
+                    Delete Student
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="closeDeleteModal"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p class="warning-text">
+
+            Are you sure you want to delete
+            <strong id="deleteStudentName">
+                this student
+            </strong>?
+
+            This will also remove the student's
+            subject assignments.
+
+        </p>
+
+
+        <div
+            id="deleteMessage"
+            class="form-message"
+            role="status"
+        ></div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                id="cancelDeleteButton"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                id="confirmDeleteButton"
+                class="danger-button"
+            >
+                Delete Student
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="config.js"></script>
+
+<script src="students.js"></script>
+
 
 </body>
+
 </html>

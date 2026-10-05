@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("FCA Students: starting...");
 
+
     /* =====================================================
        CONFIGURATION
     ===================================================== */
@@ -464,11 +465,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /*
+             * FALLBACK:
              * Some older records may not have
              * form_number.
-             *
-             * If the first query returns no
-             * students, try class_id.
              */
 
             if (
@@ -675,8 +674,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        CREATE STUDENT CARD
-       
-       MATCHES THE CURRENT STUDENTS.CSS
     ===================================================== */
 
     function createStudentCard(student) {
@@ -708,11 +705,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 data-id="${escapeHtml(student.id)}"
             >
 
-                <!-- STUDENT MAIN -->
-
                 <div class="student-main">
-
-                    <!-- AVATAR -->
 
                     <div class="student-avatar">
                         ${escapeHtml(
@@ -720,12 +713,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         )}
                     </div>
 
-
-                    <!-- STUDENT INFORMATION -->
-
                     <div class="student-info">
-
-                        <!-- NAME + ID -->
 
                         <div class="student-name-row">
 
@@ -738,9 +726,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             </span>
 
                         </div>
-
-
-                        <!-- DETAILS -->
 
                         <div class="student-details">
 
@@ -758,7 +743,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             </div>
 
-
                             <div class="detail-item">
 
                                 <span>
@@ -772,7 +756,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </strong>
 
                             </div>
-
 
                             <div class="detail-item">
 
@@ -790,23 +773,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             </div>
 
-
-                            <div class="detail-item">
-
-                                <span>
-                                    Student ID
-                                </span>
-
-                                <strong>
-                                    ${escapeHtml(id)}
-                                </strong>
-
-                            </div>
-
                         </div>
-
-
-                        <!-- SUBJECTS -->
 
                         <div class="student-subjects">
 
@@ -849,9 +816,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
 
                 </div>
-
-
-                <!-- ACTIONS -->
 
                 <div class="student-actions">
 
@@ -902,10 +866,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        SUBJECT CHECKBOXES
-       
-       IMPORTANT:
-       Subjects are STATIC in students.html,
-       matching the Teachers page.
     ===================================================== */
 
     function getSubjectCheckboxes() {
@@ -922,39 +882,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       SELECT ALL SUBJECTS
-    ===================================================== */
-
     function selectAllSubjects() {
 
         getSubjectCheckboxes()
             .forEach(function (checkbox) {
 
-                checkbox.checked =
-                    true;
+                checkbox.checked = true;
             });
     }
 
-
-    /* =====================================================
-       CLEAR SUBJECTS
-    ===================================================== */
 
     function clearSubjects() {
 
         getSubjectCheckboxes()
             .forEach(function (checkbox) {
 
-                checkbox.checked =
-                    false;
+                checkbox.checked = false;
             });
     }
 
-
-    /* =====================================================
-       GET SELECTED SUBJECTS
-    ===================================================== */
 
     function getSelectedSubjects() {
 
@@ -971,10 +917,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-
-    /* =====================================================
-       SET STUDENT SUBJECTS
-    ===================================================== */
 
     function setStudentSubjects(
         selectedSubjects
@@ -1002,15 +944,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function openAddStudentForm() {
 
-        editingStudentId =
-            null;
+        editingStudentId = null;
 
         if (studentForm) {
             studentForm.reset();
         }
 
         if (formTitle) {
-
             formTitle.textContent =
                 "Add Student";
         }
@@ -1019,9 +959,7 @@ document.addEventListener("DOMContentLoaded", function () {
             new Date().getFullYear();
 
         if (academicYear) {
-
-            academicYear.value =
-                year;
+            academicYear.value = year;
         }
 
         if (
@@ -1051,14 +989,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (accessPassword) {
             accessPassword.value = "";
+            accessPassword.type = "password";
         }
 
         clearSubjects();
-
         clearStudentMessage();
 
-        if (studentFormPanel) {
+        updatePasswordEye(
+            passwordToggle,
+            false
+        );
 
+        if (studentFormPanel) {
             studentFormPanel.classList.add(
                 "active"
             );
@@ -1076,8 +1018,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function closeStudentForm() {
 
-        editingStudentId =
-            null;
+        editingStudentId = null;
 
         if (studentFormPanel) {
 
@@ -1100,10 +1041,13 @@ document.addEventListener("DOMContentLoaded", function () {
             students.find(function (item) {
 
                 return item.id === id;
-
             });
 
         if (!student) {
+            console.error(
+                "Student not found:",
+                id
+            );
             return;
         }
 
@@ -1122,25 +1066,21 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
         if (firstName) {
-
             firstName.value =
                 nameParts.firstName;
         }
 
         if (lastName) {
-
             lastName.value =
                 nameParts.lastName;
         }
 
         if (gender) {
-
             gender.value =
                 student.gender || "";
         }
 
         if (academicYear) {
-
             academicYear.value =
                 student.academic_year ||
                 new Date().getFullYear();
@@ -1164,13 +1104,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (studentId) {
-
             studentId.value =
                 student.student_id || "";
         }
 
         if (generatedStudentId) {
-
             generatedStudentId.value =
                 student.student_id || "";
         }
@@ -1179,6 +1117,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             accessPassword.value =
                 student.access_password || "";
+
+            accessPassword.type =
+                "password";
         }
 
         setStudentSubjects(
@@ -1186,6 +1127,11 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         clearStudentMessage();
+
+        updatePasswordEye(
+            passwordToggle,
+            false
+        );
 
         if (studentFormPanel) {
 
@@ -1239,6 +1185,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================================
        GENERATE STUDENT ID
+
+       FORMAT:
+
+       FCA-2026-NG-1
+       FCA-2026-NG-2
+       FCA-2026-NG-3
+       FCA-2026-NG-10
+
+       NG = first 2 letters of surname
+       Number = next available number
     ===================================================== */
 
     async function generateStudentId(
@@ -1247,51 +1203,49 @@ document.addEventListener("DOMContentLoaded", function () {
         year
     ) {
 
-        const safeFirst =
-            (first || "")
-                .trim()
-                .toUpperCase();
-
         const safeLast =
             (last || "")
                 .trim()
                 .toUpperCase();
 
+        const safeFirst =
+            (first || "")
+                .trim()
+                .toUpperCase();
+
+
         let prefix =
             safeLast
                 .replace(/[^A-Z]/g, "")
-                .substring(0, 3);
+                .substring(0, 2);
 
-        if (prefix.length < 3) {
+
+        /*
+         * If surname has fewer than 2 letters,
+         * use the first name to complete prefix.
+         */
+
+        if (prefix.length < 2) {
 
             prefix =
                 (
-                    safeFirst +
-                    prefix
+                    prefix +
+                    safeFirst
+                        .replace(/[^A-Z]/g, "")
                 )
-                    .replace(
-                        /[^A-Z]/g,
-                        ""
-                    )
-                    .padEnd(
-                        3,
-                        "X"
-                    )
-                    .substring(
-                        0,
-                        3
-                    );
+                    .padEnd(2, "X")
+                    .substring(0, 2);
         }
 
+
         const academicYearValue =
-            parseInt(
-                year,
-                10
-            ) ||
+            parseInt(year, 10) ||
             new Date().getFullYear();
+
 
         const basePrefix =
             `FCA-${academicYearValue}-${prefix}`;
+
 
         const {
             data,
@@ -1304,6 +1258,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 `${basePrefix}-%`
             );
 
+
         if (error) {
 
             console.error(
@@ -1314,37 +1269,89 @@ document.addEventListener("DOMContentLoaded", function () {
             throw error;
         }
 
-        const existingIds =
-            new Set(
-                (data || [])
-                    .map(function (item) {
 
-                        return item.student_id;
+        /*
+         * Store all existing numbers.
+         */
 
-                    })
-                    .filter(Boolean)
-            );
+        const usedNumbers =
+            new Set();
 
-        let number = 1;
-        let newId = "";
 
-        do {
+        (data || []).forEach(function (student) {
 
-            newId =
-                `${basePrefix}-${String(number).padStart(3, "0")}`;
+            const existingId =
+                String(
+                    student.student_id || ""
+                ).toUpperCase();
 
-            number++;
+            const escapedPrefix =
+                basePrefix.replace(
+                    /[-/\\^$*+?.()|[\]{}]/g,
+                    "\\$&"
+                );
 
-        } while (
-            existingIds.has(newId)
-        );
+            const match =
+                existingId.match(
+                    new RegExp(
+                        "^" +
+                        escapedPrefix +
+                        "-(\\d+)$"
+                    )
+                );
 
-        return newId;
+            if (match) {
+
+                const number =
+                    parseInt(
+                        match[1],
+                        10
+                    );
+
+                if (
+                    Number.isInteger(number) &&
+                    number > 0
+                ) {
+
+                    usedNumbers.add(
+                        number
+                    );
+                }
+            }
+        });
+
+
+        /*
+         * Find the first unused number.
+         *
+         * Example:
+         *
+         * NG-1 exists
+         * NG-2 exists
+         * NG-3 exists
+         *
+         * Next = NG-4
+         */
+
+        let nextNumber = 1;
+
+        while (
+            usedNumbers.has(nextNumber)
+        ) {
+
+            nextNumber++;
+        }
+
+
+        return `${basePrefix}-${nextNumber}`;
     }
 
 
     /* =====================================================
        GENERATE ACCESS PASSWORD
+
+       FORMAT:
+       fca@abc123
     ===================================================== */
 
     function generateAccessPassword() {
@@ -1493,9 +1500,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "";
 
 
-            /* =================================================
-               GENERATE CREDENTIALS FOR NEW STUDENT
-            ================================================= */
+            /*
+             * NEW STUDENT
+             */
 
             if (!editingStudentId) {
 
@@ -1509,12 +1516,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 password =
                     generateAccessPassword();
 
-            } else {
+            }
 
-                /*
-                 * Keep existing credentials when
-                 * editing unless missing.
-                 */
+
+            /*
+             * EDITING:
+             * Keep existing Student ID and password.
+             * Generate only if either is missing.
+             */
+
+            else {
 
                 if (!generatedId) {
 
@@ -1605,7 +1616,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Student updated successfully.",
                     "success"
                 );
-
             }
 
 
@@ -1637,26 +1647,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-
-                /*
-                 * Show generated credentials
-                 * before closing.
-                 */
-
                 if (studentId) {
-
                     studentId.value =
                         generatedId;
                 }
 
                 if (generatedStudentId) {
-
                     generatedStudentId.value =
                         generatedId;
                 }
 
                 if (accessPassword) {
-
                     accessPassword.value =
                         password;
                 }
@@ -1670,10 +1671,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             await loadStudents();
 
-
-            /*
-             * Close form after successful save.
-             */
 
             setTimeout(
                 function () {
@@ -1745,15 +1742,26 @@ document.addEventListener("DOMContentLoaded", function () {
             students.find(function (item) {
 
                 return item.id === id;
-
             });
 
         if (!student) {
+
+            console.error(
+                "Student not found for deletion:",
+                id
+            );
+
             return;
         }
 
         selectedStudentId =
             student.id;
+
+        console.log(
+            "Selected student for deletion:",
+            selectedStudentId
+        );
+
 
         if (deleteStudentName) {
 
@@ -1761,6 +1769,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 student.full_name ||
                 "this student";
         }
+
 
         if (adminDeletePassword) {
 
@@ -1771,22 +1780,67 @@ document.addEventListener("DOMContentLoaded", function () {
                 "password";
         }
 
+
         if (deleteError) {
 
             deleteError.textContent =
                 "";
+
+            deleteError.style.display =
+                "none";
         }
+
+
+        if (deleteConfirmBtn) {
+
+            deleteConfirmBtn.disabled =
+                false;
+
+            deleteConfirmBtn.textContent =
+                "Delete Student";
+        }
+
+
+        /*
+         * Add BOTH classes.
+         *
+         * This makes the modal work with CSS
+         * using either .active or .show.
+         */
 
         if (deleteModal) {
 
             deleteModal.classList.add(
                 "active"
             );
+
+            deleteModal.classList.add(
+                "show"
+            );
+
+            deleteModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
         }
+
+
+        updatePasswordEye(
+            adminPasswordToggle,
+            false
+        );
+
 
         if (adminDeletePassword) {
 
-            adminDeletePassword.focus();
+            setTimeout(
+                function () {
+
+                    adminDeletePassword.focus();
+
+                },
+                50
+            );
         }
     }
 
@@ -1800,12 +1854,23 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedStudentId =
             null;
 
+
         if (deleteModal) {
 
             deleteModal.classList.remove(
                 "active"
             );
+
+            deleteModal.classList.remove(
+                "show"
+            );
+
+            deleteModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
         }
+
 
         if (adminDeletePassword) {
 
@@ -1816,15 +1881,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 "password";
         }
 
+
         if (deleteError) {
 
             deleteError.textContent =
                 "";
+
+            deleteError.style.display =
+                "none";
         }
 
-        /*
-         * Reset administrator eye icon.
-         */
+
+        if (deleteConfirmBtn) {
+
+            deleteConfirmBtn.disabled =
+                false;
+
+            deleteConfirmBtn.textContent =
+                "Delete Student";
+        }
+
 
         updatePasswordEye(
             adminPasswordToggle,
@@ -1840,13 +1916,24 @@ document.addEventListener("DOMContentLoaded", function () {
     async function confirmDeleteStudent() {
 
         if (!selectedStudentId) {
+
+            console.error(
+                "No student selected for deletion."
+            );
+
+            showDeleteError(
+                "No student was selected."
+            );
+
             return;
         }
+
 
         const password =
             adminDeletePassword
                 ? adminDeletePassword.value.trim()
                 : "";
+
 
         if (!password) {
 
@@ -1854,8 +1941,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Please enter the administrator password."
             );
 
+            if (adminDeletePassword) {
+                adminDeletePassword.focus();
+            }
+
             return;
         }
+
 
         if (deleteConfirmBtn) {
 
@@ -1866,21 +1958,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Deleting...";
         }
 
+
         try {
 
+            console.log(
+                "Authenticating administrator..."
+            );
+
+
             /*
-             * Re-authenticate administrator.
+             * RE-AUTHENTICATE ADMIN
              */
 
             const {
                 error: authError
             } =
                 await db.auth.signInWithPassword({
+
                     email:
                         FCA_ADMIN_EMAIL,
 
                     password:
                         password
+
                 });
 
 
@@ -1899,9 +1999,24 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            /* =================================================
-               DELETE STUDENT
-            ================================================= */
+            console.log(
+                "Administrator authenticated."
+            );
+
+
+            /*
+             * DELETE STUDENT
+             */
+
+            const studentIdToDelete =
+                selectedStudentId;
+
+
+            console.log(
+                "Deleting student:",
+                studentIdToDelete
+            );
+
 
             const {
                 error
@@ -1911,7 +2026,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .delete()
                     .eq(
                         "id",
-                        selectedStudentId
+                        studentIdToDelete
                     );
 
 
@@ -1936,9 +2051,26 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-            closeDeleteModal();
+            /*
+             * Remove the deleted student
+             * immediately from local data.
+             */
 
-            await loadStudents();
+            students =
+                students.filter(
+                    function (student) {
+
+                        return student.id !==
+                            studentIdToDelete;
+                    }
+                );
+
+
+            updateStudentCount();
+
+            renderStudents();
+
+            closeDeleteModal();
 
         } catch (error) {
 
@@ -1948,6 +2080,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             showDeleteError(
+                error.message ||
                 "An unexpected error occurred while deleting the student."
             );
 
@@ -1977,13 +2110,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         deleteError.textContent =
             message;
+
+        deleteError.style.display =
+            "block";
     }
 
 
     /* =====================================================
-       PASSWORD TOGGLE
-       
-       STUDENT PASSWORD
+       STUDENT PASSWORD TOGGLE
     ===================================================== */
 
     function togglePassword() {
@@ -2203,7 +2337,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         deleteCancelBtn.addEventListener(
             "click",
-            closeDeleteModal
+            function (event) {
+
+                event.preventDefault();
+
+                closeDeleteModal();
+            }
         );
     }
 
@@ -2212,7 +2351,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         deleteConfirmBtn.addEventListener(
             "click",
-            confirmDeleteStudent
+            function (event) {
+
+                event.preventDefault();
+
+                confirmDeleteStudent();
+            }
         );
     }
 
@@ -2220,8 +2364,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =====================================================
        STUDENT LIST EVENTS
        
-       Event delegation keeps Edit/Delete working
-       for dynamically rendered cards.
+       EVENT DELEGATION
     ===================================================== */
 
     if (studentList) {
@@ -2239,33 +2382,54 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+
                 const action =
                     button.dataset.action;
 
                 const id =
                     button.dataset.id;
 
+
                 if (!id) {
+
+                    console.error(
+                        "Student action button has no data-id."
+                    );
+
                     return;
                 }
+
+
+                console.log(
+                    "Student action:",
+                    action,
+                    "Student:",
+                    id
+                );
+
 
                 if (action === "edit") {
 
                     editStudent(id);
 
-                } else if (
-                    action === "delete"
-                ) {
+                    return;
+                }
+
+
+                if (action === "delete") {
 
                     openDeleteStudentModal(id);
+
+                    return;
                 }
+
             }
         );
     }
 
 
     /* =====================================================
-       CLOSE MODAL WHEN CLICKING BACKDROP
+       DELETE MODAL BACKDROP
     ===================================================== */
 
     if (deleteModal) {
@@ -2301,8 +2465,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (
                 deleteModal &&
-                deleteModal.classList.contains(
-                    "active"
+                (
+                    deleteModal.classList.contains(
+                        "active"
+                    ) ||
+                    deleteModal.classList.contains(
+                        "show"
+                    )
                 )
             ) {
 

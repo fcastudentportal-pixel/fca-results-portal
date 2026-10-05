@@ -1,7 +1,15 @@
+"use strict";
+
 /* ============================================================
    FCA TEACHERS MANAGEMENT
    SUPABASE VERSION
-   Administrator password required for teacher deletion
+
+   - Add Teacher form hidden by default
+   - Opens only when + Add Teacher is clicked
+   - Opens when Edit is clicked
+   - Closes on Cancel
+   - Closes after successful Add/Edit
+   - Administrator password required for teacher deletion
 ============================================================ */
 
 
@@ -81,6 +89,17 @@ const passwordToggle =
 
 
 /* ============================================================
+   TEACHER FORM PANEL
+============================================================ */
+
+const addTeacherSection =
+    document.getElementById("addTeacher");
+
+const addTeacherBtn =
+    document.getElementById("addTeacherBtn");
+
+
+/* ============================================================
    DELETE MODAL
 ============================================================ */
 
@@ -104,6 +123,18 @@ const deleteConfirmBtn =
 
 const adminPasswordToggle =
     document.getElementById("adminPasswordToggle");
+
+
+/* ============================================================
+   HIDE FORM ON INITIAL PAGE LOAD
+============================================================ */
+
+if(addTeacherSection){
+
+    addTeacherSection.style.display =
+        "none";
+
+}
 
 
 /* ============================================================
@@ -309,13 +340,6 @@ async function verifyAdministratorPassword(
 
     }
 
-
-    /*
-       Re-authenticate the administrator.
-
-       This confirms that the person performing
-       the deletion knows the administrator password.
-    */
 
     const {
         data,
@@ -933,6 +957,144 @@ function displayTeachers(){
 
 
 /* ============================================================
+   SHOW TEACHER FORM
+============================================================ */
+
+function showTeacherForm(){
+
+    if(!addTeacherSection){
+
+        return;
+
+    }
+
+
+    addTeacherSection.style.display =
+        "block";
+
+
+    addTeacherSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* ============================================================
+   HIDE TEACHER FORM
+============================================================ */
+
+function hideTeacherForm(){
+
+    if(!addTeacherSection){
+
+        return;
+
+    }
+
+
+    addTeacherSection.style.display =
+        "none";
+
+}
+
+
+/* ============================================================
+   ADD TEACHER BUTTON
+============================================================ */
+
+if(addTeacherBtn){
+
+    addTeacherBtn.addEventListener(
+        "click",
+        function(event){
+
+            event.preventDefault();
+
+
+            resetForm();
+
+
+            /*
+             * resetForm() hides the form.
+             * Open it again for a new teacher.
+             */
+
+            showTeacherForm();
+
+
+            if(firstNameInput){
+
+                setTimeout(
+                    function(){
+
+                        firstNameInput.focus();
+
+                    },
+                    250
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   EMPTY LIST ADD TEACHER BUTTON
+============================================================ */
+
+if(teacherList){
+
+    teacherList.addEventListener(
+        "click",
+        function(event){
+
+            const button =
+                event.target.closest(
+                    'a[href="#addTeacher"]'
+                );
+
+
+            if(!button){
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            resetForm();
+
+
+            showTeacherForm();
+
+
+            if(firstNameInput){
+
+                setTimeout(
+                    function(){
+
+                        firstNameInput.focus();
+
+                    },
+                    250
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
    SELECTED SUBJECTS
 ============================================================ */
 
@@ -1125,10 +1287,6 @@ if(
 
             if(isVisible){
 
-                /* =========================================
-                   HIDE PASSWORD
-                ========================================= */
-
                 passwordInput.type =
                     "password";
 
@@ -1154,10 +1312,6 @@ if(
             }
 
             else{
-
-                /* =========================================
-                   SHOW PASSWORD
-                ========================================= */
 
                 passwordInput.type =
                     "text";
@@ -1560,7 +1714,14 @@ if(teacherForm){
                 }
 
 
+                /*
+                 * Save completed.
+                 *
+                 * Reset closes the form.
+                 */
+
                 resetForm();
+
 
                 await loadTeachers();
 
@@ -1651,39 +1812,39 @@ function editTeacher(id){
 
     if(passwordInput){
 
-    passwordInput.value = "";
+        passwordInput.value = "";
 
-    passwordInput.type =
-        "password";
+        passwordInput.type =
+            "password";
 
-    passwordInput.placeholder =
-        "Enter current password to confirm";
+        passwordInput.placeholder =
+            "Enter current password to confirm";
 
-}
+    }
 
 
-if(passwordToggle){
+    if(passwordToggle){
 
-    passwordToggle.classList.remove(
-        "is-visible"
-    );
+        passwordToggle.classList.remove(
+            "is-visible"
+        );
 
-    passwordToggle.setAttribute(
-        "aria-label",
-        "Show password"
-    );
+        passwordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
 
-    passwordToggle.setAttribute(
-        "title",
-        "Show password"
-    );
+        passwordToggle.setAttribute(
+            "title",
+            "Show password"
+        );
 
-    passwordToggle.setAttribute(
-        "aria-pressed",
-        "false"
-    );
+        passwordToggle.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
-}
+    }
 
 
     clearSubjects();
@@ -1777,21 +1938,11 @@ if(passwordToggle){
     }
 
 
-    const addTeacherSection =
-        document.getElementById(
-            "addTeacher"
-        );
+    /* ========================================================
+       OPEN EDIT FORM
+    ======================================================== */
 
-
-    if(addTeacherSection){
-
-        addTeacherSection
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    }
+    showTeacherForm();
 
 
     showMessage(
@@ -1993,10 +2144,6 @@ if(
 
             if(isVisible){
 
-                /* =========================================
-                   HIDE ADMIN PASSWORD
-                ========================================= */
-
                 adminDeletePassword.type =
                     "password";
 
@@ -2022,10 +2169,6 @@ if(
             }
 
             else{
-
-                /* =========================================
-                   SHOW ADMIN PASSWORD
-                ========================================= */
 
                 adminDeletePassword.type =
                     "text";
@@ -2096,10 +2239,6 @@ if(deleteConfirmBtn){
                 }
 
 
-                /* ========================================
-                   REQUIRE ADMIN PASSWORD
-                ======================================== */
-
                 const password =
                     adminDeletePassword
                         ? adminDeletePassword.value
@@ -2114,6 +2253,13 @@ if(deleteConfirmBtn){
                             "Administrator password is required.";
 
                     }
+
+
+                    deleteConfirmBtn.disabled =
+                        false;
+
+                    deleteConfirmBtn.textContent =
+                        "Delete Teacher";
 
                     return;
 
@@ -2134,6 +2280,13 @@ if(deleteConfirmBtn){
                             "Incorrect administrator password. Teacher was not deleted.";
 
                     }
+
+
+                    deleteConfirmBtn.disabled =
+                        false;
+
+                    deleteConfirmBtn.textContent =
+                        "Delete Teacher";
 
                     return;
 
@@ -2174,14 +2327,6 @@ if(deleteConfirmBtn){
 
                 }
 
-
-                /*
-                   Supabase must return the deleted row.
-
-                   If zero rows are returned, the delete
-                   was blocked by RLS or the teacher no
-                   longer exists.
-                */
 
                 if(
                     !Array.isArray(deletedRows) ||
@@ -2449,26 +2594,33 @@ function resetForm(){
 
     if(passwordToggle){
 
-    passwordToggle.classList.remove(
-        "is-visible"
-    );
+        passwordToggle.classList.remove(
+            "is-visible"
+        );
 
-    passwordToggle.setAttribute(
-        "aria-label",
-        "Show password"
-    );
+        passwordToggle.setAttribute(
+            "aria-label",
+            "Show password"
+        );
 
-    passwordToggle.setAttribute(
-        "title",
-        "Show password"
-    );
+        passwordToggle.setAttribute(
+            "title",
+            "Show password"
+        );
 
-    passwordToggle.setAttribute(
-        "aria-pressed",
-        "false"
-    );
+        passwordToggle.setAttribute(
+            "aria-pressed",
+            "false"
+        );
 
-}
+    }
+
+
+    /*
+     * Always hide the form after reset.
+     */
+
+    hideTeacherForm();
 
 }
 
@@ -2593,6 +2745,13 @@ async function initializeTeachersPage(){
     console.log(
         "FCA Teachers page initializing..."
     );
+
+
+    /*
+     * Make absolutely sure the form starts hidden.
+     */
+
+    hideTeacherForm();
 
 
     const authorized =

@@ -1,0 +1,1292 @@
+/* =========================================================
+   FCA SUBJECTS PAGE
+========================================================= */
+
+:root {
+
+    --fca-maroon: #650d22;
+    --fca-dark: #3e0714;
+    --fca-gold: #d5b15a;
+    --fca-bg: #f4f2ee;
+
+    --fca-white: #ffffff;
+
+    --fca-border: #e5e1da;
+
+    --fca-text: #241b1d;
+    --fca-muted: #756b6e;
+
+    --fca-green: #16794c;
+    --fca-red: #b42318;
+
+}
+
+
+/* =========================================================
+   PAGE HEADING
+========================================================= */
+
+.page-heading {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.page-kicker,
+.form-kicker,
+.section-kicker {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--fca-gold);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.page-heading h1 {
+
+    margin: 0 0 8px;
+
+    color: var(--fca-dark);
+
+    font-size: 32px;
+
+    font-weight: 800;
+
+}
+
+
+.page-heading p {
+
+    margin: 0;
+
+    color: var(--fca-muted);
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.add-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 0 20px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: var(--fca-maroon);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+
+}
+
+
+.add-btn:hover {
+
+    background: var(--fca-dark);
+
+    transform: translateY(-1px);
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.stat-card {
+
+    padding: 20px;
+
+    background: var(--fca-white);
+
+    border: 1px solid var(--fca-border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 5px 18px rgba(62, 7, 20, .05);
+
+}
+
+
+.stat-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--fca-muted);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.stat-value {
+
+    color: var(--fca-dark);
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   DATABASE STATUS
+========================================================= */
+
+.database-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    margin-bottom: 20px;
+
+    border-radius: 999px;
+
+    background: #f1eee8;
+
+    color: var(--fca-muted);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.database-status.connected {
+
+    background: #e8f6ef;
+
+    color: var(--fca-green);
+
+}
+
+
+.database-status.error {
+
+    background: #fcebea;
+
+    color: var(--fca-red);
+
+}
+
+
+/* =========================================================
+   ACADEMIC SECTION
+========================================================= */
+
+.academic-section {
+
+    margin-bottom: 28px;
+
+    padding: 24px;
+
+    background: var(--fca-white);
+
+    border: 1px solid var(--fca-border);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 18px rgba(62, 7, 20, .05);
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.section-heading h2 {
+
+    margin: 0 0 5px;
+
+    color: var(--fca-dark);
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+}
+
+
+.section-heading p {
+
+    margin: 0;
+
+    color: var(--fca-muted);
+
+    font-size: 13px;
+
+}
+
+
+.section-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    border-radius: 999px;
+
+    background: #f4ead0;
+
+    color: var(--fca-maroon);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.section-badge.senior {
+
+    background: #eee2e6;
+
+}
+
+
+/* =========================================================
+   SUBJECT GRID
+========================================================= */
+
+.subjects-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+}
+
+
+/* =========================================================
+   SUBJECT CARD
+========================================================= */
+
+.subject-card {
+
+    padding: 18px;
+
+    border: 1px solid var(--fca-border);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+
+}
+
+
+.subject-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color:
+        rgba(101, 13, 34, .25);
+
+    box-shadow:
+        0 8px 22px rgba(62, 7, 20, .08);
+
+}
+
+
+.subject-card-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+
+}
+
+
+.subject-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: #f4ead0;
+
+    color: var(--fca-maroon);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.subject-code {
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    background: #f7f3ea;
+
+    color: var(--fca-maroon);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+}
+
+
+.subject-name {
+
+    margin: 0 0 4px;
+
+    color: var(--fca-dark);
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+}
+
+
+.subject-forms {
+
+    margin: 0 0 15px;
+
+    color: var(--fca-muted);
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   PAPER STRUCTURE
+========================================================= */
+
+.paper-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid var(--fca-border);
+
+}
+
+
+.paper-heading span:first-child {
+
+    color: var(--fca-dark);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .7px;
+
+}
+
+
+.total-marks {
+
+    color: var(--fca-maroon);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.paper-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+}
+
+
+.paper-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    min-height: 34px;
+
+    padding: 6px 9px;
+
+    border-radius: 7px;
+
+    background: #f8f6f2;
+
+}
+
+
+.paper-name {
+
+    color: #51484b;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+.paper-marks {
+
+    color: var(--fca-dark);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.no-paper {
+
+    color: var(--fca-muted);
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.subject-total {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 12px;
+
+    padding-top: 12px;
+
+    border-top: 1px dashed var(--fca-border);
+
+}
+
+
+.subject-total span:first-child {
+
+    color: var(--fca-muted);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+.subject-total strong {
+
+    color: var(--fca-maroon);
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   SUBJECT ACTIONS
+========================================================= */
+
+.subject-actions {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+}
+
+
+.subject-actions button {
+
+    flex: 1;
+
+    min-height: 36px;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.edit-subject-btn {
+
+    border: 1px solid #d9c7a0;
+
+    background: #fffaf0;
+
+    color: var(--fca-maroon);
+
+}
+
+
+.delete-subject-btn {
+
+    border: 1px solid #efc8c4;
+
+    background: #fff7f6;
+
+    color: var(--fca-red);
+
+}
+
+
+/* =========================================================
+   FORM PANEL
+========================================================= */
+
+.form-panel {
+
+    scroll-margin-top: 25px;
+
+}
+
+
+.panel-header {
+
+    margin-bottom: 22px;
+
+}
+
+
+.panel-header h2 {
+
+    margin: 0 0 6px;
+
+    color: var(--fca-dark);
+
+    font-size: 21px;
+
+}
+
+
+.panel-header p {
+
+    margin: 0;
+
+    color: var(--fca-muted);
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group {
+
+    margin-bottom: 20px;
+
+}
+
+
+.form-group > label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--fca-dark);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    min-height: 46px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d9d3cd;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: var(--fca-text);
+
+    font-size: 14px;
+
+    outline: none;
+
+}
+
+
+.form-group input:focus {
+
+    border-color: var(--fca-maroon);
+
+    box-shadow:
+        0 0 0 3px rgba(101,13,34,.08);
+
+}
+
+
+/* =========================================================
+   SECTION OPTIONS
+========================================================= */
+
+.section-options {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+}
+
+
+.radio-card {
+
+    display: flex;
+
+    align-items: center;
+
+    min-height: 48px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--fca-border);
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+}
+
+
+.radio-card input {
+
+    margin-right: 9px;
+
+    accent-color: var(--fca-maroon);
+
+}
+
+
+.radio-card span {
+
+    color: var(--fca-text);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   FORM INFORMATION
+========================================================= */
+
+.form-info-box {
+
+    margin-bottom: 20px;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    background: #f7f3ea;
+
+}
+
+
+.form-info-box strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--fca-maroon);
+
+    font-size: 12px;
+
+}
+
+
+.form-info-box p {
+
+    margin: 0;
+
+    color: var(--fca-muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.form-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+}
+
+
+.cancel-btn,
+.save-btn {
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.cancel-btn {
+
+    border: 1px solid #d8d1ca;
+
+    background: #ffffff;
+
+    color: #5c5356;
+
+}
+
+
+.save-btn {
+
+    border: 0;
+
+    background: var(--fca-maroon);
+
+    color: #ffffff;
+
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.form-message {
+
+    margin: 12px 0;
+
+    padding: 11px 13px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.form-message.error {
+
+    background: #fcebea;
+
+    color: var(--fca-red);
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+}
+
+
+.modal.show {
+
+    display: flex;
+
+}
+
+
+.modal-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(34,10,17,.58);
+
+}
+
+
+.modal-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 500px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.2);
+
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid var(--fca-border);
+
+}
+
+
+.modal-header h2 {
+
+    margin: 0;
+
+    color: var(--fca-dark);
+
+    font-size: 19px;
+
+}
+
+
+.modal-close {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: #665d60;
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+}
+
+
+.modal-body {
+
+    padding: 22px;
+
+}
+
+
+.modal-body p {
+
+    color: var(--fca-text);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+.warning-text {
+
+    padding: 11px;
+
+    border-radius: 8px;
+
+    background: #fff7e5;
+
+    color: #765800 !important;
+
+    font-size: 12px !important;
+
+}
+
+
+.admin-password-wrapper {
+
+    position: relative;
+
+}
+
+
+.admin-password-wrapper input {
+
+    padding-right: 50px !important;
+
+}
+
+
+.password-toggle {
+
+    position: absolute;
+
+    top: 50%;
+
+    right: 8px;
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    border: 0;
+
+    background: transparent;
+
+    color: #6d6266;
+
+    cursor: pointer;
+
+}
+
+
+.password-toggle svg {
+
+    width: 20px;
+
+    height: 20px;
+
+}
+
+
+.modal-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 16px 22px 20px;
+
+    border-top: 1px solid var(--fca-border);
+
+}
+
+
+.delete-confirm-btn {
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border: 0;
+
+    border-radius: 9px;
+
+    background: var(--fca-red);
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .subjects-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+@media (max-width: 750px) {
+
+    .page-heading {
+
+        flex-direction: column;
+
+    }
+
+
+    .page-heading .add-btn {
+
+        width: 100%;
+
+    }
+
+
+    .stats-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .subjects-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-options {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .academic-section {
+
+        padding: 18px;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .subject-actions {
+
+        flex-direction: column;
+
+    }
+
+
+    .subject-actions button {
+
+        width: 100%;
+
+    }
+
+
+    .form-actions {
+
+        flex-direction: column-reverse;
+
+    }
+
+
+    .cancel-btn,
+    .save-btn {
+
+        width: 100%;
+
+    }
+
+}

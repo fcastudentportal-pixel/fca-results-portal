@@ -2434,14 +2434,6 @@ document.addEventListener("DOMContentLoaded", function () {
        EVENT HANDLERS
     ===================================================== */
 
-    if (addStudentBtn) {
-
-        addStudentBtn.addEventListener(
-            "click",
-            openAddStudentForm
-        );
-    }
-
 
     if (cancelBtn) {
 

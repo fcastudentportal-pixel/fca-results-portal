@@ -729,51 +729,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         <div class="student-details">
 
-                            <div class="detail-item">
+    <div class="detail-item">
 
-                                <span>
-                                    Gender
-                                </span>
+        <span>
+            Gender
+        </span>
 
-                                <strong>
-                                    ${escapeHtml(
-                                        genderText
-                                    )}
-                                </strong>
+        <strong>
+            ${escapeHtml(
+                genderText
+            )}
+        </strong>
 
-                            </div>
+    </div>
 
-                            <div class="detail-item">
 
-                                <span>
-                                    Academic Year
-                                </span>
+    <div class="detail-item">
 
-                                <strong>
-                                    ${escapeHtml(
-                                        String(year)
-                                    )}
-                                </strong>
+        <span>
+            Class
+        </span>
 
-                            </div>
+        <strong>
+            ${escapeHtml(
+                currentClass
+                    ? currentClass.class_name
+                    : `Form ${currentFormNumber}`
+            )}
+        </strong>
 
-                            <div class="detail-item">
+    </div>
 
-                                <span>
-                                    Class
-                                </span>
 
-                                <strong>
-                                    ${escapeHtml(
-                                        currentClass
-                                            ? currentClass.class_name
-                                            : `Form ${currentFormNumber}`
-                                    )}
-                                </strong>
+    <div class="detail-item">
 
-                            </div>
+        <span>
+            Access Password
+        </span>
 
-                        </div>
+        <strong class="password-value">
+            ${escapeHtml(
+                student.access_password ||
+                "Not available"
+            )}
+        </strong>
+
+    </div>
+
+</div>
 
                         <div class="student-subjects">
 

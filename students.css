@@ -1127,3 +1127,55 @@ input[readonly]{
   }
 
 }
+.students-class-required {
+    display: block;
+    text-align: center;
+    padding: 50px 25px;
+    margin: 30px auto;
+    max-width: 650px;
+    background: #ffffff;
+    border: 1px solid #e5e1dc;
+    border-radius: 16px;
+}
+
+.students-class-required-icon {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f4ead0;
+    color: #650d22;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.students-class-required h2 {
+    margin: 0 0 10px;
+    color: #430817;
+}
+
+.students-class-required p {
+    margin: 0 auto 25px;
+    max-width: 500px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.go-to-classes-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 8px;
+    background: #650d22;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.go-to-classes-button:hover {
+    background: #430817;
+}

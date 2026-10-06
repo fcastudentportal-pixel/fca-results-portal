@@ -1,7 +1,6 @@
-/* =========================================================
-   FCA RESULTS
-   RESULTS MANAGEMENT
-========================================================= */
+/* =====================================================
+   FCA RESULTS PAGE
+===================================================== */
 
 *{
   box-sizing:border-box;
@@ -9,34 +8,33 @@
 
 :root{
   --maroon:#650d22;
-  --dark-maroon:#450817;
+  --dark:#3e0714;
   --gold:#d5b15a;
 
   --bg:#f4f2ee;
-  --white:#ffffff;
+  --white:#fff;
 
   --text:#1d2430;
   --muted:#6c7480;
 
   --border:#ddd8d2;
-  --soft:#faf9f7;
 
-  --green:#16794c;
-  --green-bg:#eaf7f0;
+  --green:#18794e;
+  --green-bg:#e8f5ee;
 
   --red:#b42318;
-  --red-bg:#fff0ee;
+  --red-bg:#fff1f0;
 
   --orange:#a85d00;
   --orange-bg:#fff5df;
 
-  --shadow:0 8px 25px rgba(0,0,0,.06);
+  --soft:#f8f7f4;
 }
 
 
-/* =========================================================
+/* =====================================================
    BODY
-========================================================= */
+===================================================== */
 
 body{
   margin:0;
@@ -49,36 +47,163 @@ body{
   background:var(--bg);
 
   color:var(--text);
-
-  font-size:14px;
 }
 
 
-/* =========================================================
+/* =====================================================
+   SHELL
+===================================================== */
+
+.shell{
+  min-height:100vh;
+
+  display:flex;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar{
+  width:245px;
+
+  min-height:100vh;
+
+  background:var(--dark);
+
+  color:#fff;
+
+  padding:22px 15px;
+
+  display:flex;
+
+  flex-direction:column;
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand{
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  padding:5px 8px 25px;
+}
+
+.brand-mark{
+  width:90px;
+  height:90px;
+
+  display:block;
+
+  margin-right:18px;
+
+  flex-shrink:0;
+
+  border-radius:50%;
+
+  overflow:hidden;
+}
+
+.brand-mark img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+  border-radius:50%;
+}
+
+.brand b{
+  display:block;
+
+  font-size:17px;
+}
+
+.brand small{
+  color:#d8c9cd;
+
+  display:block;
+
+  margin-top:3px;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+nav{
+  flex:1;
+}
+
+.nav{
+  width:100%;
+
+  display:block;
+
+  text-align:left;
+
+  padding:13px 15px;
+
+  margin:5px 0;
+
+  border:0;
+
+  border-radius:8px;
+
+  background:transparent;
+
+  color:#fff;
+
+  cursor:pointer;
+
+  font-size:15px;
+
+  text-decoration:none;
+}
+
+.nav:hover,
+.nav.active{
+  background:var(--maroon);
+}
+
+a.nav{
+  text-decoration:none;
+
+  color:#fff;
+}
+
+
+/* =====================================================
    MAIN
-========================================================= */
+===================================================== */
 
-.results-page{
-  width:min(1180px,94%);
+.main{
+  flex:1;
 
-  margin:
-    30px auto
-    45px;
+  min-width:0;
 }
 
 
-/* =========================================================
-   PAGE HEADER
-========================================================= */
+/* =====================================================
+   HEADER
+===================================================== */
 
-.page-header{
-  background:var(--white);
+header{
+  background:#fff;
 
-  border:1px solid var(--border);
+  border-bottom:1px solid var(--border);
 
-  border-radius:14px;
-
-  padding:24px 28px;
+  padding:22px 30px;
 
   display:flex;
 
@@ -87,66 +212,63 @@ body{
   align-items:center;
 
   gap:20px;
-
-  box-shadow:var(--shadow);
-
-  margin-bottom:16px;
 }
 
-.page-eyebrow{
+header small{
   color:var(--maroon);
-
-  font-size:10px;
 
   font-weight:700;
 
   letter-spacing:3px;
-
-  margin-bottom:5px;
 }
 
-.page-header h1{
-  margin:0;
+header h1{
+  margin:5px 0 0;
+
+  font:
+    30px Georgia,
+    serif;
+
+  color:var(--maroon);
+}
+
+.pill{
+  background:#f4e9ec;
 
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
+  padding:9px 14px;
 
-  font-size:32px;
+  border-radius:20px;
 
-  font-weight:500;
-}
+  font-size:14px;
 
-.page-header p{
-  margin:7px 0 0;
-
-  color:var(--muted);
-
-  font-size:13px;
-}
-
-.page-logo{
-  width:70px;
-  height:70px;
-
-  object-fit:cover;
-
-  border-radius:50%;
-
-  border:2px solid var(--gold);
-
-  background:#fff;
-
-  flex-shrink:0;
+  font-weight:700;
 }
 
 
-/* =========================================================
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.view{
+  display:block;
+
+  padding:30px;
+}
+
+.results-container{
+  width:100%;
+
+  max-width:1200px;
+
+  margin:0 auto;
+}
+
+
+/* =====================================================
    DATABASE STATUS
-========================================================= */
+===================================================== */
 
 .database-status{
   display:inline-flex;
@@ -155,15 +277,15 @@ body{
 
   gap:8px;
 
-  padding:7px 11px;
+  padding:9px 13px;
 
   border-radius:20px;
 
-  font-size:11px;
+  font-size:12px;
 
   font-weight:700;
 
-  margin-bottom:18px;
+  margin-bottom:20px;
 
   border:1px solid transparent;
 }
@@ -192,7 +314,7 @@ body{
 
   color:var(--green);
 
-  border-color:#c8e8d7;
+  border-color:#c9e7d6;
 }
 
 .database-status.connected .status-dot{
@@ -204,7 +326,7 @@ body{
 
   color:var(--red);
 
-  border-color:#f2c5c0;
+  border-color:#efcaca;
 }
 
 .database-status.error .status-dot{
@@ -212,9 +334,9 @@ body{
 }
 
 
-/* =========================================================
+/* =====================================================
    VIEWS
-========================================================= */
+===================================================== */
 
 .results-view{
   animation:fadeIn .2s ease;
@@ -228,23 +350,25 @@ body{
 
   from{
     opacity:0;
+
     transform:translateY(4px);
   }
 
   to{
     opacity:1;
+
     transform:translateY(0);
   }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    SECTION HEADINGS
-========================================================= */
+===================================================== */
 
 .section-heading{
-  margin-bottom:15px;
+  margin-bottom:18px;
 }
 
 .section-eyebrow{
@@ -252,7 +376,7 @@ body{
 
   color:var(--maroon);
 
-  font-size:9px;
+  font-size:10px;
 
   font-weight:700;
 
@@ -260,7 +384,7 @@ body{
 
   text-transform:uppercase;
 
-  margin-bottom:4px;
+  margin-bottom:5px;
 }
 
 .section-heading h2,
@@ -269,29 +393,26 @@ body{
 
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    24px Georgia,
     serif;
-
-  font-size:25px;
 
   font-weight:500;
 }
 
 .section-heading p,
 .selected-class-title p{
-  margin:5px 0 0;
+  margin:6px 0 0;
 
   color:var(--muted);
 
-  font-size:12px;
+  font-size:13px;
 }
 
 
-/* =========================================================
+/* =====================================================
    CLASS CARDS
-========================================================= */
+===================================================== */
 
 .classes-grid{
   display:grid;
@@ -307,27 +428,24 @@ body{
 
   border:1px solid var(--border);
 
-  border-radius:12px;
+  border-radius:16px;
 
-  padding:20px;
+  padding:22px;
 
-  box-shadow:var(--shadow);
+  box-shadow:0 5px 18px #00000008;
 
   cursor:pointer;
 
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease;
+  transition:.2s ease;
 }
 
 .class-result-card:hover{
-  transform:translateY(-3px);
+  transform:translateY(-2px);
 
   border-color:var(--maroon);
 
   box-shadow:
-    0 12px 30px rgba(101,13,34,.10);
+    0 10px 25px rgba(101,13,34,.10);
 }
 
 .class-card-top{
@@ -351,9 +469,10 @@ body{
   display:flex;
 
   align-items:center;
+
   justify-content:center;
 
-  background:#f8ecef;
+  background:#f4e9ec;
 
   color:var(--maroon);
 
@@ -369,8 +488,6 @@ body{
 
   font-weight:700;
 
-  text-transform:uppercase;
-
   letter-spacing:1px;
 
   text-align:right;
@@ -381,12 +498,9 @@ body{
 
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    22px Georgia,
     serif;
-
-  font-size:22px;
 
   font-weight:500;
 }
@@ -394,7 +508,7 @@ body{
 .class-code{
   color:var(--muted);
 
-  font-size:11px;
+  font-size:12px;
 
   margin-bottom:16px;
 }
@@ -428,9 +542,9 @@ body{
 }
 
 
-/* =========================================================
+/* =====================================================
    TOOLBAR
-========================================================= */
+===================================================== */
 
 .view-toolbar{
   display:flex;
@@ -439,21 +553,21 @@ body{
 
   gap:18px;
 
-  margin-bottom:16px;
+  margin-bottom:18px;
 }
 
 .back-button{
   border:1px solid var(--border);
 
-  background:var(--white);
+  background:#f4f2ee;
 
   color:var(--maroon);
 
-  border-radius:7px;
+  border-radius:8px;
 
-  padding:9px 13px;
+  padding:12px 18px;
 
-  font-size:12px;
+  font-size:13px;
 
   font-weight:700;
 
@@ -465,15 +579,15 @@ body{
 }
 
 .back-button:hover{
-  background:#f7edef;
+  background:#f4e9ec;
 
   border-color:var(--maroon);
 }
 
 
-/* =========================================================
+/* =====================================================
    STUDENTS
-========================================================= */
+===================================================== */
 
 .students-grid{
   display:grid;
@@ -481,7 +595,7 @@ body{
   grid-template-columns:
     repeat(2,minmax(0,1fr));
 
-  gap:14px;
+  gap:15px;
 }
 
 .student-result-card{
@@ -489,11 +603,11 @@ body{
 
   border:1px solid var(--border);
 
-  border-radius:12px;
+  border-radius:16px;
 
-  padding:17px;
+  padding:20px;
 
-  box-shadow:var(--shadow);
+  box-shadow:0 5px 18px #00000008;
 }
 
 .student-card-main{
@@ -505,14 +619,14 @@ body{
 }
 
 .student-avatar{
-  width:48px;
-  height:48px;
+  width:50px;
+  height:50px;
 
   flex-shrink:0;
 
   border-radius:50%;
 
-  background:#f8ecef;
+  background:#f4e9ec;
 
   border:1px solid #ead1d8;
 
@@ -521,6 +635,7 @@ body{
   display:flex;
 
   align-items:center;
+
   justify-content:center;
 
   font-weight:700;
@@ -533,13 +648,13 @@ body{
 
   color:var(--maroon);
 
-  font-size:16px;
+  font-size:17px;
 }
 
 .student-id{
   color:var(--muted);
 
-  font-size:11px;
+  font-size:12px;
 }
 
 .student-card-details{
@@ -555,27 +670,27 @@ body{
 .student-chip{
   background:var(--soft);
 
-  border:1px solid #ebe7e2;
+  border:1px solid var(--border);
 
-  border-radius:5px;
+  border-radius:8px;
 
-  padding:5px 8px;
+  padding:7px 9px;
 
   color:#555;
 
-  font-size:10px;
+  font-size:11px;
 }
 
 .student-card-actions{
   display:flex;
 
-  gap:7px;
+  gap:8px;
 
   flex-wrap:wrap;
 
-  margin-top:15px;
+  margin-top:16px;
 
-  padding-top:13px;
+  padding-top:14px;
 
   border-top:1px solid #eee9e5;
 }
@@ -585,9 +700,9 @@ body{
 }
 
 
-/* =========================================================
+/* =====================================================
    BUTTONS
-========================================================= */
+===================================================== */
 
 .primary-button,
 .secondary-button,
@@ -595,11 +710,11 @@ body{
 .secondary{
   border:0;
 
-  border-radius:7px;
+  border-radius:8px;
 
-  padding:10px 15px;
+  padding:12px 18px;
 
-  font-size:12px;
+  font-size:13px;
 
   font-weight:700;
 
@@ -617,7 +732,7 @@ body{
 
 .primary-button:hover,
 .primary:hover{
-  background:var(--dark-maroon);
+  background:var(--dark);
 }
 
 .primary-button:disabled,
@@ -629,52 +744,56 @@ body{
 
 .secondary-button,
 .secondary{
-  background:#e9e7e4;
+  background:#f4f2ee;
 
-  color:#222;
+  color:var(--maroon);
+
+  border:1px solid var(--border);
 }
 
 .secondary-button:hover,
 .secondary:hover{
-  background:#ddd9d5;
+  background:#f4e9ec;
+
+  border-color:var(--maroon);
 }
 
 .small-button{
-  padding:8px 11px;
+  padding:10px 14px;
 
-  font-size:11px;
+  font-size:12px;
 }
 
 
-/* =========================================================
+/* =====================================================
    STUDENT INFORMATION
-========================================================= */
+===================================================== */
 
 .student-info-card{
   background:var(--white);
 
   border:1px solid var(--border);
 
-  border-radius:12px;
+  border-radius:16px;
 
-  padding:18px;
+  padding:20px;
 
   display:flex;
 
-  gap:15px;
+  gap:16px;
 
   align-items:center;
 
-  box-shadow:var(--shadow);
+  box-shadow:0 5px 18px #00000008;
 
-  margin-bottom:16px;
+  margin-bottom:20px;
 }
 
 .student-info-card .student-avatar{
-  width:60px;
-  height:60px;
+  width:62px;
+  height:62px;
 
-  font-size:15px;
+  font-size:16px;
 }
 
 .student-info-main{
@@ -686,12 +805,9 @@ body{
 
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    23px Georgia,
     serif;
-
-  font-size:23px;
 
   font-weight:500;
 }
@@ -703,7 +819,7 @@ body{
 
   gap:20px;
 
-  margin-top:9px;
+  margin-top:10px;
 }
 
 .student-info-meta span{
@@ -711,13 +827,13 @@ body{
 
   flex-direction:column;
 
-  gap:2px;
+  gap:3px;
 }
 
 .student-info-meta small{
   color:var(--muted);
 
-  font-size:9px;
+  font-size:10px;
 
   text-transform:uppercase;
 
@@ -727,28 +843,28 @@ body{
 .student-info-meta strong{
   color:var(--text);
 
-  font-size:11px;
+  font-size:12px;
 }
 
 
-/* =========================================================
+/* =====================================================
    ENTRY CARD
-========================================================= */
+===================================================== */
 
 .entry-card{
   background:var(--white);
 
   border:1px solid var(--border);
 
-  border-radius:12px;
+  border-radius:16px;
 
-  box-shadow:var(--shadow);
+  box-shadow:0 5px 18px #00000008;
 
   overflow:hidden;
 }
 
 .entry-card-header{
-  padding:20px;
+  padding:25px;
 
   display:flex;
 
@@ -756,7 +872,7 @@ body{
 
   gap:20px;
 
-  border-bottom:1px solid #eee9e5;
+  border-bottom:1px solid var(--border);
 }
 
 .entry-card-header h3{
@@ -764,34 +880,33 @@ body{
 
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    24px Georgia,
     serif;
-
-  font-size:22px;
 
   font-weight:500;
 }
 
 .entry-card-header p{
-  margin:5px 0 0;
+  margin:7px 0 0;
 
   color:var(--muted);
 
-  font-size:11px;
+  font-size:12px;
+
+  line-height:1.5;
 }
 
 .entry-count{
-  min-width:70px;
+  min-width:75px;
 
   text-align:center;
 
-  background:#f8ecef;
+  background:#f4e9ec;
 
-  border-radius:8px;
+  border-radius:10px;
 
-  padding:9px;
+  padding:10px;
 }
 
 .entry-count strong{
@@ -799,7 +914,7 @@ body{
 
   color:var(--maroon);
 
-  font-size:21px;
+  font-size:22px;
 }
 
 .entry-count span{
@@ -813,16 +928,49 @@ body{
 }
 
 
-/* =========================================================
+/* =====================================================
+   GRADING INFORMATION
+===================================================== */
+
+.grading-information{
+  padding:12px 20px;
+
+  background:#f8f7f4;
+
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  color:var(--muted);
+
+  font-size:11px;
+
+  line-height:1.5;
+}
+
+.grading-information strong{
+  color:var(--maroon);
+
+  text-transform:uppercase;
+
+  letter-spacing:.5px;
+}
+
+
+/* =====================================================
    MARKING INSTRUCTION
-========================================================= */
+===================================================== */
 
 .marks-instruction{
-  padding:10px 20px;
+  padding:11px 20px;
 
   background:#fffaf0;
 
-  border-bottom:1px solid #eee9e5;
+  border-bottom:1px solid var(--border);
 
   display:flex;
 
@@ -846,9 +994,9 @@ body{
 }
 
 
-/* =========================================================
+/* =====================================================
    TABLE
-========================================================= */
+===================================================== */
 
 .table-wrap{
   width:100%;
@@ -900,9 +1048,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
-   SUBJECT NAME
-========================================================= */
+/* =====================================================
+   SUBJECT
+===================================================== */
 
 .subject-name{
   color:var(--maroon);
@@ -913,9 +1061,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    PAPER INPUTS
-========================================================= */
+===================================================== */
 
 .paper-list{
   display:flex;
@@ -958,24 +1106,26 @@ tbody tr:hover{
 .paper-mark-input{
   width:70px;
 
-  border:1px solid #cfc9c4;
+  border:1px solid #ccd1da;
 
-  border-radius:6px;
+  border-radius:8px;
 
-  padding:7px;
+  padding:8px;
 
   font-size:12px;
 
   outline:none;
 
   background:#fff;
+
+  color:var(--text);
 }
 
 .paper-mark-input:focus{
   border-color:var(--maroon);
 
   box-shadow:
-    0 0 0 2px rgba(101,13,34,.08);
+    0 0 0 3px #650d2212;
 }
 
 .paper-mark-input.invalid{
@@ -995,12 +1145,12 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    PERCENTAGE
-========================================================= */
+===================================================== */
 
 .percentage-cell{
-  min-width:90px;
+  min-width:85px;
 }
 
 .percentage-value{
@@ -1024,41 +1174,39 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
-   REMARK
-========================================================= */
+/* =====================================================
+   GRADE
+===================================================== */
 
-.remark-input{
-  width:130px;
+.grade-value{
+  color:var(--maroon);
 
-  border:1px solid #cfc9c4;
+  font-size:16px;
 
-  border-radius:6px;
+  font-weight:700;
 
-  padding:8px;
+  white-space:nowrap;
+}
+
+
+/* =====================================================
+   CLASSIFICATION
+===================================================== */
+
+.classification-value{
+  color:var(--maroon);
 
   font-size:11px;
 
-  outline:none;
-}
-
-.remark-input:focus{
-  border-color:var(--maroon);
-
-  box-shadow:
-    0 0 0 2px rgba(101,13,34,.06);
-}
-
-.remark-text{
-  color:var(--maroon);
-
   font-weight:700;
+
+  min-width:145px;
 }
 
 
-/* =========================================================
+/* =====================================================
    STATUS
-========================================================= */
+===================================================== */
 
 .result-status{
   display:inline-flex;
@@ -1069,9 +1217,9 @@ tbody tr:hover{
 
   min-width:58px;
 
-  border-radius:15px;
+  border-radius:20px;
 
-  padding:5px 8px;
+  padding:6px 9px;
 
   font-size:9px;
 
@@ -1105,32 +1253,34 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    ENTRY ACTIONS
-========================================================= */
+===================================================== */
 
 .entry-actions{
   display:flex;
 
-  gap:8px;
+  gap:10px;
 
   flex-wrap:wrap;
 
-  padding:17px 20px;
+  padding:18px 20px;
 
-  border-top:1px solid #eee9e5;
+  border-top:1px solid var(--border);
 }
 
 .save-message{
   margin:0 20px 18px;
 
-  padding:10px 12px;
+  padding:12px 15px;
 
-  border-radius:7px;
+  border-radius:8px;
 
-  font-size:11px;
+  font-size:12px;
 
   font-weight:700;
+
+  line-height:1.4;
 }
 
 .save-message.success{
@@ -1138,7 +1288,7 @@ tbody tr:hover{
 
   background:var(--green-bg);
 
-  border:1px solid #c8e8d7;
+  border:1px solid #c9e7d6;
 }
 
 .save-message.error{
@@ -1146,13 +1296,13 @@ tbody tr:hover{
 
   background:var(--red-bg);
 
-  border:1px solid #f2c5c0;
+  border:1px solid #efcaca;
 }
 
 
-/* =========================================================
+/* =====================================================
    OVERALL TOOLBAR
-========================================================= */
+===================================================== */
 
 .overall-toolbar{
   display:flex;
@@ -1163,30 +1313,30 @@ tbody tr:hover{
 
   gap:10px;
 
-  margin-bottom:12px;
+  margin-bottom:15px;
 }
 
 
-/* =========================================================
-   RESULTS DOCUMENT
-========================================================= */
+/* =====================================================
+   RESULTS CARD
+===================================================== */
 
 .results-card{
   background:var(--white);
 
   border:1px solid var(--border);
 
-  border-radius:14px;
+  border-radius:16px;
 
-  padding:24px;
+  padding:25px;
 
-  box-shadow:var(--shadow);
+  box-shadow:0 5px 18px #00000008;
 }
 
 
-/* =========================================================
+/* =====================================================
    RESULTS TITLE
-========================================================= */
+===================================================== */
 
 .results-title{
   display:flex;
@@ -1199,7 +1349,7 @@ tbody tr:hover{
 
   margin-bottom:20px;
 
-  padding-bottom:14px;
+  padding-bottom:15px;
 
   border-bottom:2px solid var(--maroon);
 }
@@ -1209,18 +1359,15 @@ tbody tr:hover{
 }
 
 .results-title h2{
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    30px Georgia,
     serif;
-
-  font-size:30px;
 
   font-weight:500;
 
   color:var(--maroon);
 
-  margin:4px 0 0;
+  margin:5px 0 0;
 }
 
 .eyebrow{
@@ -1258,9 +1405,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    STUDENT DETAILS
-========================================================= */
+===================================================== */
 
 .student-details{
   display:grid;
@@ -1268,19 +1415,19 @@ tbody tr:hover{
   grid-template-columns:
     repeat(3,1fr);
 
-  gap:10px;
+  gap:12px;
 
   margin-bottom:20px;
 }
 
 .student-details > div{
-  background:#faf9f7;
+  background:#f8f7f4;
 
   border:1px solid var(--border);
 
-  border-radius:8px;
+  border-radius:10px;
 
-  padding:12px 14px;
+  padding:13px 15px;
 }
 
 .student-details span{
@@ -1306,9 +1453,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
-   OVERALL RESULTS TABLE
-========================================================= */
+/* =====================================================
+   OVERALL TABLE
+===================================================== */
 
 #resultsTable th,
 #resultsTable td{
@@ -1349,35 +1496,55 @@ tbody tr:hover{
   white-space:nowrap;
 }
 
-.remark{
+.overall-grade{
   color:var(--maroon);
 
   font-weight:700;
+
+  white-space:nowrap;
+}
+
+.overall-classification{
+  color:var(--maroon);
+
+  font-weight:700;
+
+  min-width:140px;
 }
 
 
-/* =========================================================
+/* =====================================================
    OVERALL RESULT
-========================================================= */
+===================================================== */
 
 .overall-result{
-  margin-top:16px;
+  margin-top:18px;
 
-  padding:13px 16px;
+  padding:15px 17px;
 
-  background:#faf9f7;
+  background:#f8f7f4;
 
   border:1px solid var(--border);
 
   border-left:4px solid var(--maroon);
 
-  border-radius:7px;
+  border-radius:8px;
 
   display:flex;
 
   justify-content:space-between;
 
   align-items:center;
+
+  gap:15px;
+}
+
+.overall-result > div{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:4px;
 }
 
 .overall-result span{
@@ -1392,26 +1559,31 @@ tbody tr:hover{
   text-transform:uppercase;
 }
 
+.overall-result small{
+  color:var(--muted);
+
+  font-size:11px;
+}
+
 .overall-result strong{
   color:var(--maroon);
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    22px Georgia,
     serif;
 
-  font-size:22px;
+  text-align:right;
 }
 
 
-/* =========================================================
+/* =====================================================
    RESULTS ACTIONS
-========================================================= */
+===================================================== */
 
 .results-actions{
   display:flex;
 
-  gap:8px;
+  gap:10px;
 
   flex-wrap:wrap;
 
@@ -1419,9 +1591,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    LOADING
-========================================================= */
+===================================================== */
 
 .loading-card{
   grid-column:1/-1;
@@ -1430,7 +1602,7 @@ tbody tr:hover{
 
   border:1px solid var(--border);
 
-  border-radius:12px;
+  border-radius:16px;
 
   padding:40px;
 
@@ -1471,9 +1643,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    EMPTY STATE
-========================================================= */
+===================================================== */
 
 .empty-state{
   grid-column:1/-1;
@@ -1482,7 +1654,7 @@ tbody tr:hover{
 
   border:1px dashed #cfc7c1;
 
-  border-radius:12px;
+  border-radius:16px;
 
   padding:40px 20px;
 
@@ -1492,11 +1664,10 @@ tbody tr:hover{
 .empty-state h3{
   color:var(--maroon);
 
-  margin:0 0 5px;
+  margin:0 0 6px;
 
-  font-family:
-    Georgia,
-    "Times New Roman",
+  font:
+    22px Georgia,
     serif;
 }
 
@@ -1506,12 +1677,14 @@ tbody tr:hover{
   font-size:12px;
 
   margin:0;
+
+  line-height:1.5;
 }
 
 
-/* =========================================================
+/* =====================================================
    GLOBAL MESSAGE
-========================================================= */
+===================================================== */
 
 .global-message{
   position:fixed;
@@ -1526,7 +1699,7 @@ tbody tr:hover{
 
   max-width:min(500px,90%);
 
-  padding:12px 16px;
+  padding:13px 17px;
 
   border-radius:8px;
 
@@ -1550,9 +1723,9 @@ tbody tr:hover{
 }
 
 
-/* =========================================================
+/* =====================================================
    FOOTER
-========================================================= */
+===================================================== */
 
 footer{
   text-align:center;
@@ -1565,9 +1738,48 @@ footer{
 }
 
 
-/* =========================================================
+/* =====================================================
+   SETTINGS BUTTON
+===================================================== */
+
+.settings-button{
+  width:100%;
+
+  display:block;
+
+  padding:12px;
+
+  border:1px solid #ffffff30;
+
+  border-radius:8px;
+
+  background:transparent;
+
+  color:#fff;
+
+  cursor:pointer;
+
+  text-decoration:none;
+
+  text-align:center;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  transition:.2s ease;
+}
+
+.settings-button:hover{
+  background:var(--maroon);
+
+  border-color:var(--maroon);
+}
+
+
+/* =====================================================
    MOBILE
-========================================================= */
+===================================================== */
 
 @media(max-width:900px){
 
@@ -1584,30 +1796,74 @@ footer{
 }
 
 
-@media(max-width:650px){
+/* =====================================================
+   TABLET / MOBILE
+===================================================== */
 
-  .results-page{
-    width:94%;
+@media(max-width:800px){
 
-    margin:
-      16px auto
-      30px;
+  .shell{
+    display:block;
   }
 
-  .page-header{
+  .sidebar{
+    width:100%;
+
+    min-height:auto;
+
+    padding:12px;
+  }
+
+  .brand{
+    padding-bottom:12px;
+  }
+
+  nav{
+    display:flex;
+
+    overflow-x:auto;
+
+    gap:5px;
+
+    padding-bottom:4px;
+  }
+
+  .nav{
+    min-width:120px;
+
+    text-align:center;
+
+    white-space:nowrap;
+  }
+
+  .settings-button{
+    margin-top:8px;
+  }
+
+  header{
     padding:18px;
 
-    border-radius:10px;
+    align-items:flex-start;
+
+    flex-direction:column;
   }
 
-  .page-header h1{
-    font-size:25px;
+  .view{
+    padding:18px;
   }
 
-  .page-logo{
-    width:55px;
-    height:55px;
+  .results-container{
+    width:100%;
   }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:650px){
 
   .classes-grid,
   .students-grid{
@@ -1625,7 +1881,7 @@ footer{
   .student-info-card{
     align-items:flex-start;
 
-    padding:14px;
+    padding:16px;
   }
 
   .student-info-meta{
@@ -1633,33 +1889,34 @@ footer{
   }
 
   .entry-card-header{
-    padding:15px;
+    padding:20px;
 
     align-items:flex-start;
   }
 
   .entry-card-header h3{
-    font-size:19px;
+    font-size:21px;
   }
 
   .entry-count{
-    min-width:58px;
+    min-width:60px;
   }
 
-  .marks-instruction{
+  .marks-instruction,
+  .grading-information{
     padding:10px 14px;
   }
 
   .entry-actions{
     display:block;
 
-    padding:14px;
+    padding:15px;
   }
 
   .entry-actions button{
     width:100%;
 
-    margin-bottom:7px;
+    margin-bottom:8px;
   }
 
   .overall-toolbar{
@@ -1669,9 +1926,9 @@ footer{
   }
 
   .results-card{
-    padding:16px;
+    padding:17px;
 
-    border-radius:10px;
+    border-radius:12px;
   }
 
   .results-title{
@@ -1679,11 +1936,11 @@ footer{
 
     margin-bottom:16px;
 
-    padding-bottom:11px;
+    padding-bottom:12px;
   }
 
   .results-title h2{
-    font-size:24px;
+    font-size:25px;
   }
 
   .results-logo{
@@ -1704,7 +1961,7 @@ footer{
   .results-actions button{
     width:100%;
 
-    margin-bottom:7px;
+    margin-bottom:8px;
   }
 
   .overall-result{
@@ -1714,20 +1971,65 @@ footer{
   .overall-result strong{
     display:block;
 
-    margin-top:6px;
-  }
+    margin-top:8px;
 
-  th,
-  td{
-    padding:8px;
+    text-align:left;
   }
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media(max-width:450px){
+
+  .brand-mark{
+    width:70px;
+    height:70px;
+
+    margin-right:8px;
+  }
+
+  .brand b{
+    font-size:15px;
+  }
+
+  .brand small{
+    font-size:12px;
+  }
+
+  header h1{
+    font-size:26px;
+  }
+
+  .pill{
+    font-size:12px;
+  }
+
+  .view{
+    padding:14px;
+  }
+
+  .entry-card-header{
+    flex-direction:column;
+  }
+
+  .entry-count{
+    align-self:flex-start;
+  }
+
+  .student-info-main h3{
+    font-size:20px;
+  }
+
+}
+
+
+/* =====================================================
    PRINT
-========================================================= */
+===================================================== */
 
 @page{
   size:A4 portrait;
@@ -1744,6 +2046,7 @@ footer{
     min-height:100%;
 
     margin:0;
+
     padding:0;
 
     background:#fff !important;
@@ -1753,12 +2056,27 @@ footer{
     font-size:10px;
   }
 
+  .shell{
+    display:block;
+  }
+
+  .sidebar,
+  header{
+    display:none !important;
+  }
+
+  .view{
+    padding:0;
+  }
+
   .results-page{
     width:100%;
+  }
 
-    margin:0;
+  .results-container{
+    width:100%;
 
-    padding:0;
+    max-width:none;
   }
 
   .page-header,
@@ -1766,7 +2084,8 @@ footer{
   .results-view:not(#overallView),
   .overall-toolbar,
   .results-actions,
-  footer{
+  footer,
+  .global-message{
     display:none !important;
   }
 
@@ -1913,6 +2232,10 @@ footer{
   }
 
   .overall-result span{
+    font-size:7px;
+  }
+
+  .overall-result small{
     font-size:7px;
   }
 

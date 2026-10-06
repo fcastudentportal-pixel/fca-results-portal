@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <meta
     name="description"
@@ -13,598 +19,746 @@
 
   <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="results.css">
+
 </head>
+
 
 <body>
 
-  <main class="results-page">
+  <div class="shell">
 
     <!-- =====================================================
-         PAGE HEADER
+         SIDEBAR
     ====================================================== -->
 
-    <section class="page-header">
+    <aside class="sidebar">
 
-      <div>
-        <div class="page-eyebrow">FIRST CLASS ACADEMY</div>
+      <div class="brand">
 
-        <h1>Student Results</h1>
+        <div class="brand-mark">
 
-        <p id="pageDescription">
-          Select a class to manage student academic results.
-        </p>
-      </div>
+          <img
+            src="fca-logo.png"
+            alt="First Class Academy"
+          >
 
-      <img
-        src="fca-logo.png"
-        alt="First Class Academy"
-        class="page-logo"
-      >
-
-    </section>
-
-
-    <!-- =====================================================
-         DATABASE STATUS
-    ====================================================== -->
-
-    <div
-      id="databaseStatus"
-      class="database-status checking"
-    >
-      <span class="status-dot"></span>
-      Checking database...
-    </div>
-
-
-    <!-- =====================================================
-         VIEW 1 — CLASSES
-    ====================================================== -->
-
-    <section
-      id="classesView"
-      class="results-view"
-    >
-
-      <div class="section-heading">
+        </div>
 
         <div>
-          <span class="section-eyebrow">STEP 1</span>
 
-          <h2>Select Class</h2>
+          <b>FCA Portal</b>
 
-          <p>
-            Choose a class to view its students.
-          </p>
+          <small>Administration</small>
+
         </div>
 
       </div>
 
 
-      <div
-        id="classesGrid"
-        class="classes-grid"
+      <nav>
+
+        <a
+          class="nav"
+          href="admin.html"
+        >
+          Dashboard
+        </a>
+
+
+        <a
+          class="nav"
+          href="teachers.html"
+        >
+          Teachers
+        </a>
+
+
+        <a
+          class="nav"
+          href="classes.html"
+        >
+          Classes
+        </a>
+
+
+        <a
+          class="nav"
+          href="students.html"
+        >
+          Students
+        </a>
+
+
+        <a
+          class="nav"
+          href="subjects.html"
+        >
+          Subjects
+        </a>
+
+
+        <a
+          class="nav active"
+          href="results.html"
+        >
+          Results
+        </a>
+
+      </nav>
+
+
+      <a
+        class="settings-button"
+        href="settings.html"
       >
+        Settings
+      </a>
 
-        <div class="loading-card">
-
-          <div class="loading-spinner"></div>
-
-          <p>
-            Loading classes...
-          </p>
-
-        </div>
-
-      </div>
-
-    </section>
+    </aside>
 
 
     <!-- =====================================================
-         VIEW 2 — STUDENTS
+         MAIN
     ====================================================== -->
 
-    <section
-      id="studentsView"
-      class="results-view hidden"
-    >
-
-      <div class="view-toolbar">
-
-        <button
-          id="backToClassesBtn"
-          class="back-button"
-          type="button"
-        >
-          ← Classes
-        </button>
-
-
-        <div class="selected-class-title">
-
-          <span class="section-eyebrow">
-            STEP 2
-          </span>
-
-          <h2 id="selectedClassTitle">
-            Students
-          </h2>
-
-          <p id="selectedClassDescription">
-            Students in this class
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div
-        id="studentsGrid"
-        class="students-grid"
-      >
-
-        <div class="loading-card">
-
-          <div class="loading-spinner"></div>
-
-          <p>
-            Loading students...
-          </p>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         VIEW 3 — ENTER RESULTS
-    ====================================================== -->
-
-    <section
-      id="entryView"
-      class="results-view hidden"
-    >
-
-      <div class="view-toolbar">
-
-        <button
-          id="backToStudentsBtn"
-          class="back-button"
-          type="button"
-        >
-          ← Students
-        </button>
-
-
-        <div class="selected-class-title">
-
-          <span class="section-eyebrow">
-            STEP 3
-          </span>
-
-          <h2>
-            Enter Results
-          </h2>
-
-          <p id="entryStudentSubtitle">
-            Enter academic results for the student.
-          </p>
-
-        </div>
-
-      </div>
+    <main class="main">
 
 
       <!-- ===================================================
-           STUDENT INFORMATION
+           HEADER
       ==================================================== -->
 
-      <div class="student-info-card">
+      <header>
 
-        <div
-          class="student-avatar"
-          id="entryStudentAvatar"
-        >
-          ST
-        </div>
+        <div>
 
+          <small>
+            FIRST CLASS ACADEMY
+          </small>
 
-        <div class="student-info-main">
-
-          <h3 id="entryStudentName">
-            Student Name
-          </h3>
-
-
-          <div class="student-info-meta">
-
-            <span>
-              <small>Student ID</small>
-              <strong id="entryStudentId">—</strong>
-            </span>
-
-
-            <span>
-              <small>Class</small>
-              <strong id="entryStudentClass">—</strong>
-            </span>
-
-
-            <span>
-              <small>Gender</small>
-              <strong id="entryStudentGender">—</strong>
-            </span>
-
-          </div>
+          <h1>
+            Student Results
+          </h1>
 
         </div>
 
-      </div>
+
+        <div class="pill">
+          Results Management
+        </div>
+
+      </header>
 
 
       <!-- ===================================================
-           RESULTS ENTRY
+           CONTENT
       ==================================================== -->
 
-      <div class="entry-card">
-
-        <div class="entry-card-header">
-
-          <div>
-
-            <span class="section-eyebrow">
-              ACADEMIC RECORD
-            </span>
-
-            <h3>
-              Subjects & Marks
-            </h3>
-
-            <p>
-              Enter the mark obtained for each paper.
-              The subject percentage is calculated automatically.
-            </p>
-
-          </div>
+      <div class="view">
 
 
-          <div class="entry-count">
-
-            <strong id="subjectCount">
-              0
-            </strong>
-
-            <span>
-              Subjects
-            </span>
-
-          </div>
-
-        </div>
+        <div class="results-container">
 
 
-        <div class="marks-instruction">
+          <!-- =================================================
+               DATABASE STATUS
+          ================================================== -->
 
-          <strong>
-            Marking structure
-          </strong>
-
-          <span>
-            Enter marks according to the maximum mark
-            shown beside each paper.
-          </span>
-
-        </div>
-
-
-        <div class="table-wrap">
-
-          <table class="entry-table">
-
-            <thead>
-
-              <tr>
-
-                <th>#</th>
-
-                <th>
-                  Subject
-                </th>
-
-                <th>
-                  Papers & Marks
-                </th>
-
-                <th>
-                  Percentage
-                </th>
-
-                <th>
-                  Remark
-                </th>
-
-                <th>
-                  Status
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody id="resultsEntryBody">
-
-              <tr>
-
-                <td colspan="6">
-
-                  <div class="table-loading">
-                    Loading subjects...
-                  </div>
-
-                </td>
-
-              </tr>
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-
-        <div class="entry-actions">
-
-          <button
-            id="saveResultsBtn"
-            class="primary-button"
-            type="button"
+          <div
+            id="databaseStatus"
+            class="database-status checking"
           >
-            Save Results
-          </button>
+
+            <span class="status-dot"></span>
+
+            Checking database...
+
+          </div>
 
 
-          <button
-            id="viewOverallFromEntryBtn"
-            class="secondary-button"
-            type="button"
+          <!-- =================================================
+               VIEW 1 — CLASSES
+          ================================================== -->
+
+          <section
+            id="classesView"
+            class="results-view"
           >
-            View Overall Results
-          </button>
 
-        </div>
+            <div class="section-heading">
 
+              <div>
 
-        <div
-          id="saveMessage"
-          class="save-message hidden"
-        ></div>
+                <span class="section-eyebrow">
+                  STEP 1
+                </span>
 
-      </div>
+                <h2>
+                  Select Class
+                </h2>
 
-    </section>
+                <p>
+                  Choose a class to view its students.
+                </p>
 
+              </div>
 
-    <!-- =====================================================
-         VIEW 4 — OVERALL RESULTS
-    ====================================================== -->
-
-    <section
-      id="overallView"
-      class="results-view hidden"
-    >
-
-      <div class="overall-toolbar">
-
-        <button
-          id="backToEntryBtn"
-          class="back-button"
-          type="button"
-        >
-          ← Results
-        </button>
-
-
-        <button
-          id="backToStudentsFromOverallBtn"
-          class="secondary-button small-button"
-          type="button"
-        >
-          Back to Students
-        </button>
-
-      </div>
-
-
-      <!-- ===================================================
-           PRINTABLE RESULT
-      ==================================================== -->
-
-      <section
-        id="printableResult"
-        class="card results-card"
-      >
-
-        <div class="results-title">
-
-          <div class="results-title-text">
-
-            <div class="eyebrow">
-              ACADEMIC PERFORMANCE
             </div>
 
-            <h2>
-              Student Results
-            </h2>
 
-          </div>
-
-
-          <div class="results-logo">
-
-            <img
-              src="fca-logo.png"
-              alt="FCA Logo"
+            <div
+              id="classesGrid"
+              class="classes-grid"
             >
 
-          </div>
+              <div class="loading-card">
 
-        </div>
+                <div class="loading-spinner"></div>
 
+                <p>
+                  Loading classes...
+                </p>
 
-        <!-- STUDENT DETAILS -->
+              </div>
 
-        <div class="student-details">
+            </div>
 
-          <div>
-            <span>Full Name</span>
-            <strong id="studentName">—</strong>
-          </div>
-
-
-          <div>
-            <span>Student ID</span>
-            <strong id="studentId">—</strong>
-          </div>
+          </section>
 
 
-          <div>
-            <span>Class</span>
-            <strong id="studentClass">—</strong>
-          </div>
+          <!-- =================================================
+               VIEW 2 — STUDENTS
+          ================================================== -->
+
+          <section
+            id="studentsView"
+            class="results-view hidden"
+          >
+
+            <div class="view-toolbar">
+
+              <button
+                id="backToClassesBtn"
+                class="back-button"
+                type="button"
+              >
+                ← Classes
+              </button>
 
 
-          <div>
-            <span>Gender</span>
-            <strong id="studentGender">—</strong>
-          </div>
+              <div class="selected-class-title">
+
+                <span class="section-eyebrow">
+                  STEP 2
+                </span>
+
+                <h2 id="selectedClassTitle">
+                  Students
+                </h2>
+
+                <p id="selectedClassDescription">
+                  Students in this class
+                </p>
+
+              </div>
+
+            </div>
 
 
-          <div>
-            <span>Subjects Taken</span>
-            <strong id="studentSubjectCount">—</strong>
-          </div>
+            <div
+              id="studentsGrid"
+              class="students-grid"
+            >
+
+              <div class="loading-card">
+
+                <div class="loading-spinner"></div>
+
+                <p>
+                  Loading students...
+                </p>
+
+              </div>
+
+            </div>
+
+          </section>
 
 
-          <div>
-            <span>Average Percentage</span>
-            <strong id="studentAverage">—</strong>
-          </div>
+          <!-- =================================================
+               VIEW 3 — ENTER RESULTS
+          ================================================== -->
 
-        </div>
+          <section
+            id="entryView"
+            class="results-view hidden"
+          >
 
+            <div class="view-toolbar">
 
-        <!-- RESULTS TABLE -->
-
-        <div class="table-wrap">
-
-          <table id="resultsTable">
-
-            <thead>
-
-              <tr>
-
-                <th>#</th>
-
-                <th>
-                  Subject
-                </th>
-
-                <th>
-                  Papers
-                </th>
-
-                <th>
-                  Percentage
-                </th>
-
-                <th>
-                  Remark
-                </th>
-
-              </tr>
-
-            </thead>
+              <button
+                id="backToStudentsBtn"
+                class="back-button"
+                type="button"
+              >
+                ← Students
+              </button>
 
 
-            <tbody id="overallResultsBody">
+              <div class="selected-class-title">
 
-              <tr>
+                <span class="section-eyebrow">
+                  STEP 3
+                </span>
 
-                <td colspan="5">
+                <h2>
+                  Enter Results
+                </h2>
 
-                  <div class="table-loading">
-                    Loading results...
+                <p id="entryStudentSubtitle">
+                  Enter academic results for the student.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- STUDENT INFORMATION -->
+
+            <div class="student-info-card">
+
+              <div
+                class="student-avatar"
+                id="entryStudentAvatar"
+              >
+                ST
+              </div>
+
+
+              <div class="student-info-main">
+
+                <h3 id="entryStudentName">
+                  Student Name
+                </h3>
+
+
+                <div class="student-info-meta">
+
+                  <span>
+                    <small>Student ID</small>
+                    <strong id="entryStudentId">—</strong>
+                  </span>
+
+
+                  <span>
+                    <small>Class</small>
+                    <strong id="entryStudentClass">—</strong>
+                  </span>
+
+
+                  <span>
+                    <small>Gender</small>
+                    <strong id="entryStudentGender">—</strong>
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- RESULTS ENTRY -->
+
+            <div class="entry-card">
+
+              <div class="entry-card-header">
+
+                <div>
+
+                  <span class="section-eyebrow">
+                    ACADEMIC RECORD
+                  </span>
+
+                  <h3>
+                    Subjects & Marks
+                  </h3>
+
+                  <p>
+                    Enter every paper mark. The percentage,
+                    grade and classification are calculated
+                    automatically.
+                  </p>
+
+                </div>
+
+
+                <div class="entry-count">
+
+                  <strong id="subjectCount">
+                    0
+                  </strong>
+
+                  <span>
+                    Subjects
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="grading-information">
+
+                <strong>
+                  Grading
+                </strong>
+
+                <span id="gradingInformation">
+                  Select a student to view the applicable grading system.
+                </span>
+
+              </div>
+
+
+              <div class="marks-instruction">
+
+                <strong>
+                  Marking structure
+                </strong>
+
+                <span>
+                  Enter marks according to the maximum mark
+                  shown beside each paper.
+                </span>
+
+              </div>
+
+
+              <div class="table-wrap">
+
+                <table class="entry-table">
+
+                  <thead>
+
+                    <tr>
+
+                      <th>#</th>
+
+                      <th>
+                        Subject
+                      </th>
+
+                      <th>
+                        Papers & Marks
+                      </th>
+
+                      <th>
+                        Percentage
+                      </th>
+
+                      <th>
+                        Grade
+                      </th>
+
+                      <th>
+                        Classification
+                      </th>
+
+                      <th>
+                        Status
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+
+                  <tbody id="resultsEntryBody">
+
+                    <tr>
+
+                      <td colspan="7">
+
+                        <div class="table-loading">
+                          Loading subjects...
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+
+              <div class="entry-actions">
+
+                <button
+                  id="saveResultsBtn"
+                  class="primary-button"
+                  type="button"
+                >
+                  Save Results
+                </button>
+
+
+                <button
+                  id="viewOverallFromEntryBtn"
+                  class="secondary-button"
+                  type="button"
+                >
+                  View Overall Results
+                </button>
+
+              </div>
+
+
+              <div
+                id="saveMessage"
+                class="save-message hidden"
+              ></div>
+
+            </div>
+
+          </section>
+
+
+          <!-- =================================================
+               VIEW 4 — OVERALL RESULTS
+          ================================================== -->
+
+          <section
+            id="overallView"
+            class="results-view hidden"
+          >
+
+            <div class="overall-toolbar">
+
+              <button
+                id="backToEntryBtn"
+                class="back-button"
+                type="button"
+              >
+                ← Results
+              </button>
+
+
+              <button
+                id="backToStudentsFromOverallBtn"
+                class="secondary-button small-button"
+                type="button"
+              >
+                Back to Students
+              </button>
+
+            </div>
+
+
+            <!-- PRINTABLE RESULT -->
+
+            <section
+              id="printableResult"
+              class="results-card"
+            >
+
+              <div class="results-title">
+
+                <div class="results-title-text">
+
+                  <div class="eyebrow">
+                    ACADEMIC PERFORMANCE
                   </div>
 
-                </td>
+                  <h2>
+                    Student Results
+                  </h2>
 
-              </tr>
+                </div>
 
-            </tbody>
 
-          </table>
+                <div class="results-logo">
+
+                  <img
+                    src="fca-logo.png"
+                    alt="FCA Logo"
+                  >
+
+                </div>
+
+              </div>
+
+
+              <!-- STUDENT DETAILS -->
+
+              <div class="student-details">
+
+                <div>
+                  <span>Full Name</span>
+                  <strong id="studentName">—</strong>
+                </div>
+
+
+                <div>
+                  <span>Student ID</span>
+                  <strong id="studentId">—</strong>
+                </div>
+
+
+                <div>
+                  <span>Class</span>
+                  <strong id="studentClass">—</strong>
+                </div>
+
+
+                <div>
+                  <span>Gender</span>
+                  <strong id="studentGender">—</strong>
+                </div>
+
+
+                <div>
+                  <span>Subjects Taken</span>
+                  <strong id="studentSubjectCount">—</strong>
+                </div>
+
+
+                <div>
+                  <span>Average Percentage</span>
+                  <strong id="studentAverage">—</strong>
+                </div>
+
+              </div>
+
+
+              <!-- RESULTS TABLE -->
+
+              <div class="table-wrap">
+
+                <table id="resultsTable">
+
+                  <thead>
+
+                    <tr>
+
+                      <th>#</th>
+
+                      <th>
+                        Subject
+                      </th>
+
+                      <th>
+                        Papers
+                      </th>
+
+                      <th>
+                        Percentage
+                      </th>
+
+                      <th>
+                        Grade
+                      </th>
+
+                      <th>
+                        Classification
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+
+                  <tbody id="overallResultsBody">
+
+                    <tr>
+
+                      <td colspan="6">
+
+                        <div class="table-loading">
+                          Loading results...
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+
+              <!-- OVERALL RESULT -->
+
+              <div class="overall-result">
+
+                <div>
+
+                  <span>
+                    OVERALL RESULT
+                  </span>
+
+                  <small id="overallResultDetails">
+                    —
+                  </small>
+
+                </div>
+
+
+                <strong id="overallResult">
+                  —
+                </strong>
+
+              </div>
+
+
+              <!-- ACTIONS -->
+
+              <div class="results-actions">
+
+                <button
+                  id="downloadPdfBtn"
+                  class="primary"
+                  type="button"
+                >
+                  Download Results PDF
+                </button>
+
+
+                <button
+                  id="overallBackBtn"
+                  class="secondary"
+                  type="button"
+                >
+                  Back to Students
+                </button>
+
+              </div>
+
+            </section>
+
+          </section>
+
+
+          <!-- GLOBAL MESSAGE -->
+
+          <div
+            id="globalMessage"
+            class="global-message hidden"
+          ></div>
 
         </div>
 
+      </div>
 
-        <!-- OVERALL RESULT -->
+    </main>
 
-        <div class="overall-result">
-
-          <span>
-            OVERALL RESULT
-          </span>
-
-          <strong id="overallResult">
-            —
-          </strong>
-
-        </div>
-
-
-        <!-- ACTIONS -->
-
-        <div class="results-actions">
-
-          <button
-            id="downloadPdfBtn"
-            class="primary"
-            type="button"
-          >
-            Download Results PDF
-          </button>
-
-
-          <button
-            id="overallBackBtn"
-            class="secondary"
-            type="button"
-          >
-            Back to Students
-          </button>
-
-        </div>
-
-      </section>
-
-    </section>
-
-
-    <!-- =====================================================
-         GLOBAL MESSAGE
-    ====================================================== -->
-
-    <div
-      id="globalMessage"
-      class="global-message hidden"
-    ></div>
-
-  </main>
+  </div>
 
 
   <footer>
@@ -612,27 +766,22 @@
   </footer>
 
 
-  <!-- =====================================================
-       SUPABASE
-  ====================================================== -->
+  <!-- SUPABASE -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script src="config.js"></script>
 
 
-  <!-- =====================================================
-       PDF LIBRARY
-  ====================================================== -->
+  <!-- PDF -->
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 
-  <!-- =====================================================
-       RESULTS JAVASCRIPT
-  ====================================================== -->
+  <!-- RESULTS -->
 
   <script src="results.js"></script>
 
 </body>
+
 </html>

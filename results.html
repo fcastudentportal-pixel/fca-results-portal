@@ -27,7 +27,9 @@
 
       <div>
         <div class="page-eyebrow">FIRST CLASS ACADEMY</div>
+
         <h1>Student Results</h1>
+
         <p id="pageDescription">
           Select a class to manage student academic results.
         </p>
@@ -46,7 +48,10 @@
          DATABASE STATUS
     ====================================================== -->
 
-    <div id="databaseStatus" class="database-status checking">
+    <div
+      id="databaseStatus"
+      class="database-status checking"
+    >
       <span class="status-dot"></span>
       Checking database...
     </div>
@@ -56,21 +61,39 @@
          VIEW 1 — CLASSES
     ====================================================== -->
 
-    <section id="classesView" class="results-view">
+    <section
+      id="classesView"
+      class="results-view"
+    >
 
       <div class="section-heading">
+
         <div>
           <span class="section-eyebrow">STEP 1</span>
+
           <h2>Select Class</h2>
-          <p>Choose a class to view its students.</p>
+
+          <p>
+            Choose a class to view its students.
+          </p>
         </div>
+
       </div>
 
-      <div id="classesGrid" class="classes-grid">
+
+      <div
+        id="classesGrid"
+        class="classes-grid"
+      >
 
         <div class="loading-card">
+
           <div class="loading-spinner"></div>
-          <p>Loading classes...</p>
+
+          <p>
+            Loading classes...
+          </p>
+
         </div>
 
       </div>
@@ -97,22 +120,39 @@
           ← Classes
         </button>
 
+
         <div class="selected-class-title">
-          <span class="section-eyebrow">STEP 2</span>
-          <h2 id="selectedClassTitle">Students</h2>
+
+          <span class="section-eyebrow">
+            STEP 2
+          </span>
+
+          <h2 id="selectedClassTitle">
+            Students
+          </h2>
+
           <p id="selectedClassDescription">
             Students in this class
           </p>
+
         </div>
 
       </div>
 
 
-      <div id="studentsGrid" class="students-grid">
+      <div
+        id="studentsGrid"
+        class="students-grid"
+      >
 
         <div class="loading-card">
+
           <div class="loading-spinner"></div>
-          <p>Loading students...</p>
+
+          <p>
+            Loading students...
+          </p>
+
         </div>
 
       </div>
@@ -139,30 +179,46 @@
           ← Students
         </button>
 
+
         <div class="selected-class-title">
-          <span class="section-eyebrow">STEP 3</span>
-          <h2>Enter Results</h2>
+
+          <span class="section-eyebrow">
+            STEP 3
+          </span>
+
+          <h2>
+            Enter Results
+          </h2>
+
           <p id="entryStudentSubtitle">
             Enter academic results for the student.
           </p>
+
         </div>
 
       </div>
 
 
-      <!-- STUDENT INFORMATION -->
+      <!-- ===================================================
+           STUDENT INFORMATION
+      ==================================================== -->
 
       <div class="student-info-card">
 
-        <div class="student-avatar" id="entryStudentAvatar">
+        <div
+          class="student-avatar"
+          id="entryStudentAvatar"
+        >
           ST
         </div>
+
 
         <div class="student-info-main">
 
           <h3 id="entryStudentName">
             Student Name
           </h3>
+
 
           <div class="student-info-meta">
 
@@ -171,10 +227,12 @@
               <strong id="entryStudentId">—</strong>
             </span>
 
+
             <span>
               <small>Class</small>
               <strong id="entryStudentClass">—</strong>
             </span>
+
 
             <span>
               <small>Gender</small>
@@ -188,25 +246,57 @@
       </div>
 
 
-      <!-- RESULTS ENTRY -->
+      <!-- ===================================================
+           RESULTS ENTRY
+      ==================================================== -->
 
       <div class="entry-card">
 
         <div class="entry-card-header">
 
           <div>
-            <span class="section-eyebrow">ACADEMIC RECORD</span>
-            <h3>Subjects & Marks</h3>
+
+            <span class="section-eyebrow">
+              ACADEMIC RECORD
+            </span>
+
+            <h3>
+              Subjects & Marks
+            </h3>
+
             <p>
-              Enter a mark for each subject taken by this student.
-              Remarks are generated automatically but can be edited.
+              Enter the mark obtained for each paper.
+              The subject percentage is calculated automatically.
             </p>
+
           </div>
 
+
           <div class="entry-count">
-            <strong id="subjectCount">0</strong>
-            <span>Subjects</span>
+
+            <strong id="subjectCount">
+              0
+            </strong>
+
+            <span>
+              Subjects
+            </span>
+
           </div>
+
+        </div>
+
+
+        <div class="marks-instruction">
+
+          <strong>
+            Marking structure
+          </strong>
+
+          <span>
+            Enter marks according to the maximum mark
+            shown beside each paper.
+          </span>
 
         </div>
 
@@ -216,23 +306,48 @@
           <table class="entry-table">
 
             <thead>
+
               <tr>
+
                 <th>#</th>
-                <th>Subject</th>
-                <th>Mark</th>
-                <th>Remark</th>
-                <th>Status</th>
+
+                <th>
+                  Subject
+                </th>
+
+                <th>
+                  Papers & Marks
+                </th>
+
+                <th>
+                  Percentage
+                </th>
+
+                <th>
+                  Remark
+                </th>
+
+                <th>
+                  Status
+                </th>
+
               </tr>
+
             </thead>
+
 
             <tbody id="resultsEntryBody">
 
               <tr>
-                <td colspan="5">
+
+                <td colspan="6">
+
                   <div class="table-loading">
                     Loading subjects...
                   </div>
+
                 </td>
+
               </tr>
 
             </tbody>
@@ -252,6 +367,7 @@
             Save Results
           </button>
 
+
           <button
             id="viewOverallFromEntryBtn"
             class="secondary-button"
@@ -261,6 +377,7 @@
           </button>
 
         </div>
+
 
         <div
           id="saveMessage"
@@ -291,6 +408,7 @@
           ← Results
         </button>
 
+
         <button
           id="backToStudentsFromOverallBtn"
           class="secondary-button small-button"
@@ -302,9 +420,9 @@
       </div>
 
 
-      <!-- =================================================
-           PDF / RESULT DOCUMENT
-      ================================================== -->
+      <!-- ===================================================
+           PRINTABLE RESULT
+      ==================================================== -->
 
       <section
         id="printableResult"
@@ -319,9 +437,12 @@
               ACADEMIC PERFORMANCE
             </div>
 
-            <h2>Student Results</h2>
+            <h2>
+              Student Results
+            </h2>
 
           </div>
+
 
           <div class="results-logo">
 
@@ -344,28 +465,33 @@
             <strong id="studentName">—</strong>
           </div>
 
+
           <div>
             <span>Student ID</span>
             <strong id="studentId">—</strong>
           </div>
+
 
           <div>
             <span>Class</span>
             <strong id="studentClass">—</strong>
           </div>
 
+
           <div>
             <span>Gender</span>
             <strong id="studentGender">—</strong>
           </div>
+
 
           <div>
             <span>Subjects Taken</span>
             <strong id="studentSubjectCount">—</strong>
           </div>
 
+
           <div>
-            <span>Average Mark</span>
+            <span>Average Percentage</span>
             <strong id="studentAverage">—</strong>
           </div>
 
@@ -381,22 +507,42 @@
             <thead>
 
               <tr>
+
                 <th>#</th>
-                <th>Subject</th>
-                <th>Marks</th>
-                <th>Remark</th>
+
+                <th>
+                  Subject
+                </th>
+
+                <th>
+                  Papers
+                </th>
+
+                <th>
+                  Percentage
+                </th>
+
+                <th>
+                  Remark
+                </th>
+
               </tr>
 
             </thead>
 
+
             <tbody id="overallResultsBody">
 
               <tr>
-                <td colspan="4">
+
+                <td colspan="5">
+
                   <div class="table-loading">
                     Loading results...
                   </div>
+
                 </td>
+
               </tr>
 
             </tbody>
@@ -410,7 +556,9 @@
 
         <div class="overall-result">
 
-          <span>OVERALL RESULT</span>
+          <span>
+            OVERALL RESULT
+          </span>
 
           <strong id="overallResult">
             —
@@ -431,6 +579,7 @@
             Download Results PDF
           </button>
 
+
           <button
             id="overallBackBtn"
             class="secondary"
@@ -447,7 +596,7 @@
 
 
     <!-- =====================================================
-         GLOBAL EMPTY / ERROR MESSAGE
+         GLOBAL MESSAGE
     ====================================================== -->
 
     <div
@@ -469,7 +618,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Your existing FCA Supabase configuration -->
   <script src="config.js"></script>
 
 

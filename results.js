@@ -3,15 +3,25 @@
 /* =========================================================
    FIRST CLASS ACADEMY
    RESULTS MANAGEMENT
-   CLASS → STUDENTS → RESULTS → OVERALL RESULTS
+
+   CLASS
+      ↓
+   STUDENTS
+      ↓
+   ENTER RESULTS
+      ↓
+   OVERALL RESULTS
+
+   PAPER-BASED MARKING
 ========================================================= */
 
 
 /* =========================================================
-   GLOBAL CONFIGURATION
+   FALLBACK SUBJECTS
 ========================================================= */
 
 const SUBJECTS_FALLBACK = [
+
   "Agriculture",
   "Bible Knowledge",
   "Biology",
@@ -24,7 +34,141 @@ const SUBJECTS_FALLBACK = [
   "Mathematics",
   "Physics",
   "Social Studies"
+
 ];
+
+
+/* =========================================================
+   DEFAULT PAPER STRUCTURE
+========================================================= */
+
+const DEFAULT_PAPER_STRUCTURES = {
+
+  "English":{
+    junior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:50 }
+    ],
+    senior:[
+      { name:"Paper I", max:70 },
+      { name:"Paper II", max:60 },
+      { name:"Paper III", max:70 }
+    ]
+  },
+
+  "Chichewa":{
+    junior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:50 }
+    ],
+    senior:[
+      { name:"Paper I", max:70 },
+      { name:"Paper II", max:60 },
+      { name:"Paper III", max:70 }
+    ]
+  },
+
+  "Mathematics":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:100 }
+    ]
+  },
+
+  "Geography":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:100 }
+    ]
+  },
+
+  "Biology":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:40 }
+    ]
+  },
+
+  "Agriculture":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:40 }
+    ]
+  },
+
+  "Chemistry":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:40 }
+    ]
+  },
+
+  "Physics":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:100 },
+      { name:"Paper II", max:40 }
+    ]
+  },
+
+  "History":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:120 }
+    ]
+  },
+
+  "Bible Knowledge":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:120 }
+    ]
+  },
+
+  "Social Studies":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:100 }
+    ]
+  },
+
+  "Life Skills":{
+    junior:[
+      { name:"Paper I", max:100 }
+    ],
+    senior:[
+      { name:"Paper I", max:50 },
+      { name:"Paper II", max:100 }
+    ]
+  }
+
+};
 
 
 /* =========================================================
@@ -43,28 +187,37 @@ let selectedStudent = null;
 
 let currentStudentResults = [];
 
-
-/* =========================================================
-   DOM
-========================================================= */
-
 const dom = {};
 
-
-document.addEventListener("DOMContentLoaded", init);
+let globalMessageTimer = null;
 
 
 /* =========================================================
    INITIALIZATION
 ========================================================= */
 
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
 async function init(){
 
   cacheDom();
 
-  console.log("FCA Results: starting...");
+  console.log(
+    "FCA Results: starting..."
+  );
 
-  db = window.fcaSupabase;
+
+  db =
+    window.fcaSupabase;
+
 
   if(!db){
 
@@ -79,6 +232,7 @@ async function init(){
     );
 
     return;
+
   }
 
 
@@ -95,10 +249,12 @@ async function init(){
 
     await testDatabase();
 
+
     setDatabaseStatus(
       "connected",
       "Database connected"
     );
+
 
     await loadInitialData();
 
@@ -109,10 +265,12 @@ async function init(){
       error
     );
 
+
     setDatabaseStatus(
       "error",
       "Database connection failed"
     );
+
 
     showGlobalMessage(
       getErrorMessage(error),
@@ -131,30 +289,46 @@ async function init(){
 function cacheDom(){
 
   dom.databaseStatus =
-    document.getElementById("databaseStatus");
+    document.getElementById(
+      "databaseStatus"
+    );
 
   dom.classesView =
-    document.getElementById("classesView");
+    document.getElementById(
+      "classesView"
+    );
 
   dom.studentsView =
-    document.getElementById("studentsView");
+    document.getElementById(
+      "studentsView"
+    );
 
   dom.entryView =
-    document.getElementById("entryView");
+    document.getElementById(
+      "entryView"
+    );
 
   dom.overallView =
-    document.getElementById("overallView");
+    document.getElementById(
+      "overallView"
+    );
 
 
   dom.classesGrid =
-    document.getElementById("classesGrid");
+    document.getElementById(
+      "classesGrid"
+    );
 
   dom.studentsGrid =
-    document.getElementById("studentsGrid");
+    document.getElementById(
+      "studentsGrid"
+    );
 
 
   dom.selectedClassTitle =
-    document.getElementById("selectedClassTitle");
+    document.getElementById(
+      "selectedClassTitle"
+    );
 
   dom.selectedClassDescription =
     document.getElementById(
@@ -270,7 +444,9 @@ function cacheDom(){
 function attachEvents(){
 
   document
-    .getElementById("backToClassesBtn")
+    .getElementById(
+      "backToClassesBtn"
+    )
     .addEventListener(
       "click",
       showClasses
@@ -278,7 +454,9 @@ function attachEvents(){
 
 
   document
-    .getElementById("backToStudentsBtn")
+    .getElementById(
+      "backToStudentsBtn"
+    )
     .addEventListener(
       "click",
       showStudents
@@ -286,7 +464,9 @@ function attachEvents(){
 
 
   document
-    .getElementById("backToEntryBtn")
+    .getElementById(
+      "backToEntryBtn"
+    )
     .addEventListener(
       "click",
       showEntry
@@ -304,7 +484,9 @@ function attachEvents(){
 
 
   document
-    .getElementById("overallBackBtn")
+    .getElementById(
+      "overallBackBtn"
+    )
     .addEventListener(
       "click",
       showStudents
@@ -338,13 +520,17 @@ function attachEvents(){
   dom.saveResultsBtn.addEventListener(
     "click",
     function(){
+
       saveResults(true);
+
     }
   );
 
 
   document
-    .getElementById("downloadPdfBtn")
+    .getElementById(
+      "downloadPdfBtn"
+    )
     .addEventListener(
       "click",
       downloadResult
@@ -359,10 +545,12 @@ function attachEvents(){
 
 async function testDatabase(){
 
-  const result = await db
-    .from("classes")
-    .select("id")
-    .limit(1);
+  const result =
+    await db
+      .from("classes")
+      .select("id")
+      .limit(1);
+
 
   if(result.error){
 
@@ -374,17 +562,23 @@ async function testDatabase(){
 
 
 /* =========================================================
-   LOAD INITIAL DATA
+   INITIAL DATA
 ========================================================= */
 
 async function loadInitialData(){
 
   await Promise.all([
+
     loadClasses(),
+
     loadStudents(),
+
     loadSubjects(),
+
     loadResults()
+
   ]);
+
 
   renderClasses();
 
@@ -397,16 +591,17 @@ async function loadInitialData(){
 
 async function loadClasses(){
 
-  const result = await db
-    .from("classes")
-    .select("*")
-    .order(
-      "form_number",
-      {
-        ascending:true,
-        nullsFirst:false
-      }
-    );
+  const result =
+    await db
+      .from("classes")
+      .select("*")
+      .order(
+        "form_number",
+        {
+          ascending:true,
+          nullsFirst:false
+        }
+      );
 
 
   if(result.error){
@@ -416,7 +611,9 @@ async function loadClasses(){
   }
 
 
-  allClasses = result.data || [];
+  allClasses =
+    result.data || [];
+
 
   console.log(
     "FCA Results classes:",
@@ -432,9 +629,10 @@ async function loadClasses(){
 
 async function loadStudents(){
 
-  const result = await db
-    .from("students")
-    .select("*");
+  const result =
+    await db
+      .from("students")
+      .select("*");
 
 
   if(result.error){
@@ -444,7 +642,9 @@ async function loadStudents(){
   }
 
 
-  allStudents = result.data || [];
+  allStudents =
+    result.data || [];
+
 
   console.log(
     "FCA Results students:",
@@ -460,55 +660,66 @@ async function loadStudents(){
 
 async function loadSubjects(){
 
-  const result = await db
-    .from("subjects")
-    .select("*")
-    .order("subject_name", {
-      ascending:true
-    });
-
-
-  if(result.error){
-
-    /*
-      Some installations may use "name"
-      rather than "subject_name".
-    */
-
-    console.warn(
-      "Could not load subjects using subject_name.",
-      result.error
-    );
-
-    const fallback =
-      await db
-        .from("subjects")
-        .select("*")
-        .order("name", {
+  const result =
+    await db
+      .from("subjects")
+      .select("*")
+      .order(
+        "subject_name",
+        {
           ascending:true
-        });
-
-
-    if(fallback.error){
-
-      console.warn(
-        "Subjects table could not be loaded.",
-        fallback.error
+        }
       );
 
-      allSubjects = [];
 
-      return;
-    }
+  if(!result.error){
 
-
-    allSubjects = fallback.data || [];
+    allSubjects =
+      result.data || [];
 
     return;
+
   }
 
 
-  allSubjects = result.data || [];
+  console.warn(
+    "Could not order subjects by subject_name.",
+    result.error
+  );
+
+
+  const fallback =
+    await db
+      .from("subjects")
+      .select("*");
+
+
+  if(fallback.error){
+
+    console.warn(
+      "Subjects table could not be loaded.",
+      fallback.error
+    );
+
+    allSubjects = [];
+
+    return;
+
+  }
+
+
+  allSubjects =
+    (fallback.data || [])
+      .sort(
+        function(a,b){
+
+          return getSubjectName(a)
+            .localeCompare(
+              getSubjectName(b)
+            );
+
+        }
+      );
 
 }
 
@@ -519,18 +730,13 @@ async function loadSubjects(){
 
 async function loadResults(){
 
-  const result = await db
-    .from("results")
-    .select("*");
+  const result =
+    await db
+      .from("results")
+      .select("*");
 
 
   if(result.error){
-
-    /*
-      Results table may not exist yet.
-      We keep the interface usable and allow
-      saving once the table is created.
-    */
 
     console.warn(
       "Results could not be loaded:",
@@ -540,10 +746,12 @@ async function loadResults(){
     allResults = [];
 
     return;
+
   }
 
 
-  allResults = result.data || [];
+  allResults =
+    result.data || [];
 
 }
 
@@ -560,9 +768,12 @@ function renderClasses(){
   if(!allClasses.length){
 
     dom.classesGrid.innerHTML = `
+
       <div class="empty-state">
 
-        <h3>No Classes Found</h3>
+        <h3>
+          No Classes Found
+        </h3>
 
         <p>
           Create classes from the FCA Classes page
@@ -570,88 +781,112 @@ function renderClasses(){
         </p>
 
       </div>
+
     `;
 
     return;
+
   }
 
 
-  allClasses.forEach(function(classItem){
+  allClasses.forEach(
+    function(classItem){
 
-    const students =
-      getStudentsForClass(classItem);
-
-
-    const card =
-      document.createElement("article");
-
-
-    card.className =
-      "class-result-card";
+      const students =
+        getStudentsForClass(
+          classItem
+        );
 
 
-    card.innerHTML = `
+      const card =
+        document.createElement(
+          "article"
+        );
 
-      <div class="class-card-top">
 
-        <div class="class-icon">
+      card.className =
+        "class-result-card";
+
+
+      card.innerHTML = `
+
+        <div class="class-card-top">
+
+          <div class="class-icon">
+            ${escapeHtml(
+              getClassInitial(
+                classItem
+              )
+            )}
+          </div>
+
+          <div class="class-form">
+            ${escapeHtml(
+              getClassFormLabel(
+                classItem
+              )
+            )}
+          </div>
+
+        </div>
+
+
+        <h3>
           ${escapeHtml(
-            getClassInitial(classItem)
+            getClassName(
+              classItem
+            )
+          )}
+        </h3>
+
+
+        <div class="class-code">
+          ${escapeHtml(
+            getClassCode(
+              classItem
+            )
           )}
         </div>
 
-        <div class="class-form">
-          ${escapeHtml(
-            getClassFormLabel(classItem)
-          )}
+
+        <div class="class-card-bottom">
+
+          <span class="student-count">
+            ${students.length}
+            ${
+              students.length === 1
+                ? "Student"
+                : "Students"
+            }
+          </span>
+
+          <span class="open-class">
+            View Students →
+          </span>
+
         </div>
 
-      </div>
+      `;
 
 
-      <h3>
-        ${escapeHtml(
-          getClassName(classItem)
-        )}
-      </h3>
+      card.addEventListener(
+        "click",
+        function(){
+
+          openClass(
+            classItem
+          );
+
+        }
+      );
 
 
-      <div class="class-code">
-        ${escapeHtml(
-          getClassCode(classItem)
-        )}
-      </div>
+      dom.classesGrid.appendChild(
+        card
+      );
 
-
-      <div class="class-card-bottom">
-
-        <span class="student-count">
-          ${students.length}
-          ${students.length === 1 ? "Student" : "Students"}
-        </span>
-
-        <span class="open-class">
-          View Students →
-        </span>
-
-      </div>
-
-    `;
-
-
-    card.addEventListener(
-      "click",
-      function(){
-
-        openClass(classItem);
-
-      }
-    );
-
-
-    dom.classesGrid.appendChild(card);
-
-  });
+    }
+  );
 
 }
 
@@ -662,19 +897,29 @@ function renderClasses(){
 
 function openClass(classItem){
 
-  selectedClass = classItem;
+  selectedClass =
+    classItem;
+
 
   dom.selectedClassTitle.textContent =
-    getClassName(classItem);
+    getClassName(
+      classItem
+    );
+
 
   dom.selectedClassDescription.textContent =
     "Students in " +
-    getClassName(classItem);
+    getClassName(
+      classItem
+    );
 
 
   renderStudents();
 
-  showView("students");
+
+  showView(
+    "students"
+  );
 
 }
 
@@ -685,17 +930,21 @@ function openClass(classItem){
 
 function renderStudents(){
 
-  dom.studentsGrid.innerHTML = "";
+  dom.studentsGrid.innerHTML =
+    "";
 
 
   if(!selectedClass){
 
     return;
+
   }
 
 
   const students =
-    getStudentsForClass(selectedClass);
+    getStudentsForClass(
+      selectedClass
+    );
 
 
   if(!students.length){
@@ -704,12 +953,16 @@ function renderStudents(){
 
       <div class="empty-state">
 
-        <h3>No Students Found</h3>
+        <h3>
+          No Students Found
+        </h3>
 
         <p>
           There are currently no students registered
           in ${escapeHtml(
-            getClassName(selectedClass)
+            getClassName(
+              selectedClass
+            )
           )}.
         </p>
 
@@ -718,129 +971,152 @@ function renderStudents(){
     `;
 
     return;
+
   }
 
 
-  students.forEach(function(student){
+  students.forEach(
+    function(student){
 
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "student-result-card";
-
-
-    const name =
-      getStudentName(student);
-
-    const initials =
-      getInitials(name);
+      const card =
+        document.createElement(
+          "article"
+        );
 
 
-    card.innerHTML = `
+      card.className =
+        "student-result-card";
 
-      <div class="student-card-main">
 
-        <div class="student-avatar">
-          ${escapeHtml(initials)}
-        </div>
+      const name =
+        getStudentName(
+          student
+        );
 
-        <div>
 
-          <h3>
-            ${escapeHtml(name)}
-          </h3>
+      const initials =
+        getInitials(
+          name
+        );
 
-          <div class="student-id">
+
+      card.innerHTML = `
+
+        <div class="student-card-main">
+
+          <div class="student-avatar">
             ${escapeHtml(
-              getStudentId(student)
+              initials
             )}
+          </div>
+
+          <div>
+
+            <h3>
+              ${escapeHtml(
+                name
+              )}
+            </h3>
+
+            <div class="student-id">
+              ${escapeHtml(
+                getStudentId(
+                  student
+                )
+              )}
+            </div>
+
           </div>
 
         </div>
 
-      </div>
+
+        <div class="student-card-details">
+
+          <span class="student-chip">
+            Gender:
+            ${escapeHtml(
+              getStudentGender(
+                student
+              )
+            )}
+          </span>
+
+          <span class="student-chip">
+            Class:
+            ${escapeHtml(
+              getClassName(
+                selectedClass
+              )
+            )}
+          </span>
+
+        </div>
 
 
-      <div class="student-card-details">
+        <div class="student-card-actions">
 
-        <span class="student-chip">
-          Gender:
-          ${escapeHtml(
-            getStudentGender(student)
-          )}
-        </span>
+          <button
+            type="button"
+            class="primary-button enter-results-btn"
+          >
+            Enter Results
+          </button>
 
-        <span class="student-chip">
-          Class:
-          ${escapeHtml(
-            getClassName(selectedClass)
-          )}
-        </span>
+          <button
+            type="button"
+            class="secondary-button overall-results-btn"
+          >
+            Overall Results
+          </button>
 
-      </div>
+        </div>
 
-
-      <div class="student-card-actions">
-
-        <button
-          type="button"
-          class="primary-button enter-results-btn"
-        >
-          Enter Results
-        </button>
-
-        <button
-          type="button"
-          class="secondary-button overall-results-btn"
-        >
-          Overall Results
-        </button>
-
-      </div>
-
-    `;
+      `;
 
 
-    const enterButton =
-      card.querySelector(
-        ".enter-results-btn"
+      card
+        .querySelector(
+          ".enter-results-btn"
+        )
+        .addEventListener(
+          "click",
+          function(event){
+
+            event.stopPropagation();
+
+            openStudentEntry(
+              student
+            );
+
+          }
+        );
+
+
+      card
+        .querySelector(
+          ".overall-results-btn"
+        )
+        .addEventListener(
+          "click",
+          function(event){
+
+            event.stopPropagation();
+
+            openStudentOverall(
+              student
+            );
+
+          }
+        );
+
+
+      dom.studentsGrid.appendChild(
+        card
       );
 
-
-    const overallButton =
-      card.querySelector(
-        ".overall-results-btn"
-      );
-
-
-    enterButton.addEventListener(
-      "click",
-      function(event){
-
-        event.stopPropagation();
-
-        openStudentEntry(student);
-
-      }
-    );
-
-
-    overallButton.addEventListener(
-      "click",
-      function(event){
-
-        event.stopPropagation();
-
-        openStudentOverall(student);
-
-      }
-    );
-
-
-    dom.studentsGrid.appendChild(card);
-
-  });
+    }
+  );
 
 }
 
@@ -849,9 +1125,12 @@ function renderStudents(){
    OPEN STUDENT ENTRY
 ========================================================= */
 
-async function openStudentEntry(student){
+async function openStudentEntry(
+  student
+){
 
-  selectedStudent = student;
+  selectedStudent =
+    student;
 
 
   renderEntryStudentInformation();
@@ -860,17 +1139,23 @@ async function openStudentEntry(student){
   dom.resultsEntryBody.innerHTML = `
 
     <tr>
-      <td colspan="5">
+
+      <td colspan="6">
+
         <div class="table-loading">
           Loading subjects...
         </div>
+
       </td>
+
     </tr>
 
   `;
 
 
-  showView("entry");
+  showView(
+    "entry"
+  );
 
 
   try{
@@ -883,17 +1168,23 @@ async function openStudentEntry(student){
 
     console.error(error);
 
+
     dom.resultsEntryBody.innerHTML = `
 
       <tr>
-        <td colspan="5">
+
+        <td colspan="6">
+
           <div class="table-loading">
             Could not load student results.
           </div>
+
         </td>
+
       </tr>
 
     `;
+
 
     showGlobalMessage(
       getErrorMessage(error),
@@ -914,24 +1205,37 @@ function renderEntryStudentInformation(){
   if(!selectedStudent){
 
     return;
+
   }
 
 
   const name =
-    getStudentName(selectedStudent);
+    getStudentName(
+      selectedStudent
+    );
 
 
   dom.entryStudentName.textContent =
     name;
 
+
   dom.entryStudentId.textContent =
-    getStudentId(selectedStudent);
+    getStudentId(
+      selectedStudent
+    );
+
 
   dom.entryStudentGender.textContent =
-    getStudentGender(selectedStudent);
+    getStudentGender(
+      selectedStudent
+    );
+
 
   dom.entryStudentClass.textContent =
-    getClassName(selectedClass);
+    getClassName(
+      selectedClass
+    );
+
 
   dom.entryStudentSubtitle.textContent =
     "Enter academic results for " +
@@ -939,13 +1243,15 @@ function renderEntryStudentInformation(){
 
 
   dom.entryStudentAvatar.textContent =
-    getInitials(name);
+    getInitials(
+      name
+    );
 
 }
 
 
 /* =========================================================
-   LOAD CURRENT STUDENT RESULTS
+   LOAD STUDENT RESULTS
 ========================================================= */
 
 async function loadStudentResults(){
@@ -953,37 +1259,42 @@ async function loadStudentResults(){
   if(!selectedStudent){
 
     return;
+
   }
 
 
   const studentId =
-    getDatabaseId(selectedStudent);
+    getDatabaseId(
+      selectedStudent
+    );
 
 
   const localResults =
-    allResults.filter(function(result){
+    allResults.filter(
+      function(result){
 
-      return String(
-        result.student_id
-      ) === String(studentId);
+        return String(
+          result.student_id
+        ) === String(
+          studentId
+        );
 
-    });
+      }
+    );
 
 
   currentStudentResults =
     localResults;
 
 
-  /*
-    Refresh from Supabase so the page sees
-    the latest saved values.
-  */
-
   const result =
     await db
       .from("results")
       .select("*")
-      .eq("student_id", studentId);
+      .eq(
+        "student_id",
+        studentId
+      );
 
 
   if(result.error){
@@ -994,6 +1305,7 @@ async function loadStudentResults(){
     );
 
     return;
+
   }
 
 
@@ -1001,20 +1313,22 @@ async function loadStudentResults(){
     result.data || [];
 
 
-  /*
-    Keep local cache updated.
-  */
-
   allResults =
-    allResults.filter(function(item){
+    allResults
+      .filter(
+        function(item){
 
-      return String(
-        item.student_id
-      ) !== String(studentId);
+          return String(
+            item.student_id
+          ) !== String(
+            studentId
+          );
 
-    }).concat(
-      currentStudentResults
-    );
+        }
+      )
+      .concat(
+        currentStudentResults
+      );
 
 }
 
@@ -1035,7 +1349,8 @@ function renderResultEntry(){
     subjects.length;
 
 
-  dom.resultsEntryBody.innerHTML = "";
+  dom.resultsEntryBody.innerHTML =
+    "";
 
 
   if(!subjects.length){
@@ -1043,201 +1358,461 @@ function renderResultEntry(){
     dom.resultsEntryBody.innerHTML = `
 
       <tr>
-        <td colspan="5">
+
+        <td colspan="6">
+
           <div class="table-loading">
             No subjects have been assigned to this student.
           </div>
+
         </td>
+
       </tr>
 
     `;
 
     return;
+
   }
 
 
-  subjects.forEach(function(subject,index){
+  subjects.forEach(
+    function(subject,index){
 
-    const subjectId =
-      getDatabaseId(subject);
+      const subjectId =
+        getDatabaseId(
+          subject
+        );
 
 
-    const existing =
-      currentStudentResults.find(
-        function(result){
+      const existing =
+        currentStudentResults.find(
+          function(result){
 
-          return String(
-            result.subject_id
-          ) === String(subjectId);
+            return String(
+              result.subject_id
+            ) === String(
+              subjectId
+            );
+
+          }
+        );
+
+
+      const papers =
+        getPaperStructure(
+          subject,
+          selectedStudent
+        );
+
+
+      const paperValues =
+        getExistingPaperValues(
+          existing,
+          papers
+        );
+
+
+      const calculation =
+        calculateSubjectPercentage(
+          papers,
+          paperValues
+        );
+
+
+      const remark =
+        existing &&
+        existing.remark
+          ? existing.remark
+          : calculation.percentage !== null
+            ? getRemark(
+                calculation.percentage
+              )
+            : "";
+
+
+      const status =
+        calculation.percentage === null
+          ? "—"
+          : calculation.percentage >= 50
+            ? "Pass"
+            : "Fail";
+
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      row.dataset.subjectId =
+        subjectId;
+
+
+      row.innerHTML = `
+
+        <td>
+          ${index + 1}
+        </td>
+
+
+        <td class="subject-name">
+
+          ${escapeHtml(
+            getSubjectName(
+              subject
+            )
+          )}
+
+        </td>
+
+
+        <td>
+
+          <div class="paper-list">
+
+            ${papers
+              .map(
+                function(paper,paperIndex){
+
+                  const value =
+                    paperValues[
+                      paperIndex
+                    ] ?? "";
+
+                  return `
+
+                    <div class="paper-row">
+
+                      <span class="paper-label">
+                        ${escapeHtml(
+                          paper.name
+                        )}
+                      </span>
+
+                      <span class="paper-max">
+                        / ${paper.max}
+                      </span>
+
+                      <input
+                        type="number"
+                        class="paper-mark-input"
+                        data-paper-index="${paperIndex}"
+                        min="0"
+                        max="${paper.max}"
+                        step="1"
+                        value="${escapeAttribute(
+                          value
+                        )}"
+                        placeholder="0"
+                        aria-label="${escapeAttribute(
+                          paper.name +
+                          " mark"
+                        )}"
+                      >
+
+                    </div>
+
+                  `;
+
+                }
+              )
+              .join("")}
+
+            <div class="paper-total">
+
+              Total:
+              <span class="paper-obtained">
+                ${calculation.obtained}
+              </span>
+              /
+              <span class="paper-maximum">
+                ${calculation.maximum}
+              </span>
+
+            </div>
+
+          </div>
+
+        </td>
+
+
+        <td class="percentage-cell">
+
+          <div class="percentage-value">
+            ${
+              calculation.percentage === null
+                ? "—"
+                : calculation.percentage +
+                  "%"
+            }
+          </div>
+
+          <div class="percentage-detail">
+            ${
+              calculation.obtained
+            } /
+            ${
+              calculation.maximum
+            }
+          </div>
+
+        </td>
+
+
+        <td>
+
+          <input
+            type="text"
+            class="remark-input"
+            value="${escapeAttribute(
+              remark
+            )}"
+            placeholder="Remark"
+            aria-label="Remark"
+          >
+
+        </td>
+
+
+        <td>
+
+          <span
+            class="result-status ${
+              status === "Pass"
+                ? "status-pass"
+                : status === "Fail"
+                  ? "status-fail"
+                  : "status-empty"
+            }"
+          >
+            ${status}
+          </span>
+
+        </td>
+
+      `;
+
+
+      const paperInputs =
+        Array.from(
+          row.querySelectorAll(
+            ".paper-mark-input"
+          )
+        );
+
+
+      const remarkInput =
+        row.querySelector(
+          ".remark-input"
+        );
+
+
+      const percentageElement =
+        row.querySelector(
+          ".percentage-value"
+        );
+
+
+      const percentageDetail =
+        row.querySelector(
+          ".percentage-detail"
+        );
+
+
+      const obtainedElement =
+        row.querySelector(
+          ".paper-obtained"
+        );
+
+
+      const maximumElement =
+        row.querySelector(
+          ".paper-maximum"
+        );
+
+
+      const statusElement =
+        row.querySelector(
+          ".result-status"
+        );
+
+
+      paperInputs.forEach(
+        function(input){
+
+          input.addEventListener(
+            "input",
+            function(){
+
+              updateSubjectRow(
+                row,
+                papers,
+                paperInputs,
+                remarkInput,
+                percentageElement,
+                percentageDetail,
+                obtainedElement,
+                maximumElement,
+                statusElement
+              );
+
+            }
+          );
 
         }
       );
 
 
-    const mark =
-      existing &&
-      existing.mark !== null &&
-      existing.mark !== undefined
-        ? existing.mark
-        : "";
+      /*
+        Generate the remark automatically
+        if an existing result does not
+        already contain one.
+      */
 
+      if(
+        !remarkInput.value.trim() &&
+        calculation.percentage !== null
+      ){
 
-    const remark =
-      existing &&
-      existing.remark
-        ? existing.remark
-        : "";
-
-
-    const status =
-      mark === ""
-        ? "—"
-        : Number(mark) >= 50
-          ? "Pass"
-          : "Fail";
-
-
-    const row =
-      document.createElement("tr");
-
-
-    row.dataset.subjectId =
-      subjectId;
-
-
-    row.innerHTML = `
-
-      <td>
-        ${index + 1}
-      </td>
-
-      <td>
-        <strong>
-          ${escapeHtml(
-            getSubjectName(subject)
-          )}
-        </strong>
-      </td>
-
-      <td>
-
-        <input
-          type="number"
-          class="mark-input"
-          min="0"
-          max="100"
-          step="1"
-          value="${escapeAttribute(mark)}"
-          placeholder="0-100"
-          aria-label="Mark"
-        >
-
-      </td>
-
-      <td>
-
-        <input
-          type="text"
-          class="remark-input"
-          value="${escapeAttribute(remark)}"
-          placeholder="Remark"
-          aria-label="Remark"
-        >
-
-      </td>
-
-      <td>
-
-        <span
-          class="result-status ${
-            status === "Pass"
-              ? "status-pass"
-              : status === "Fail"
-                ? "status-fail"
-                : "status-empty"
-          }"
-        >
-          ${status}
-        </span>
-
-      </td>
-
-    `;
-
-
-    const markInput =
-      row.querySelector(
-        ".mark-input"
-      );
-
-
-    const remarkInput =
-      row.querySelector(
-        ".remark-input"
-      );
-
-
-    const statusElement =
-      row.querySelector(
-        ".result-status"
-      );
-
-
-    markInput.addEventListener(
-      "input",
-      function(){
-
-        updateRemarkAndStatus(
-          markInput,
-          remarkInput,
-          statusElement
-        );
+        remarkInput.value =
+          getRemark(
+            calculation.percentage
+          );
 
       }
-    );
 
 
-    /*
-      If a mark already exists but the
-      remark is empty, generate one.
-    */
-
-    if(
-      mark !== "" &&
-      !remark
-    ){
-
-      updateRemarkAndStatus(
-        markInput,
-        remarkInput,
-        statusElement
+      dom.resultsEntryBody.appendChild(
+        row
       );
 
     }
-
-
-    dom.resultsEntryBody.appendChild(row);
-
-  });
+  );
 
 }
 
 
 /* =========================================================
-   UPDATE REMARK + STATUS
+   UPDATE SUBJECT ROW
 ========================================================= */
 
-function updateRemarkAndStatus(
-  markInput,
+function updateSubjectRow(
+  row,
+  papers,
+  paperInputs,
   remarkInput,
+  percentageElement,
+  percentageDetail,
+  obtainedElement,
+  maximumElement,
   statusElement
 ){
 
-  const value =
-    markInput.value.trim();
+  let hasInvalid =
+    false;
 
 
-  if(value === ""){
+  const values =
+    paperInputs.map(
+      function(input,index){
+
+        const raw =
+          input.value.trim();
+
+
+        if(raw === ""){
+
+          input.classList.remove(
+            "invalid"
+          );
+
+          return null;
+
+        }
+
+
+        const value =
+          Number(raw);
+
+
+        if(
+          Number.isNaN(value) ||
+          value < 0 ||
+          value > papers[index].max
+        ){
+
+          input.classList.add(
+            "invalid"
+          );
+
+          hasInvalid = true;
+
+          return null;
+
+        }
+
+
+        input.classList.remove(
+          "invalid"
+        );
+
+
+        return value;
+
+      }
+    );
+
+
+  if(hasInvalid){
+
+    percentageElement.textContent =
+      "Invalid";
+
+    percentageDetail.textContent =
+      "Check paper marks";
+
+    obtainedElement.textContent =
+      "—";
+
+    maximumElement.textContent =
+      "—";
+
+    statusElement.textContent =
+      "Invalid";
+
+    statusElement.className =
+      "result-status status-invalid";
+
+    return;
+
+  }
+
+
+  const calculation =
+    calculateSubjectPercentage(
+      papers,
+      values
+    );
+
+
+  obtainedElement.textContent =
+    calculation.obtained;
+
+
+  maximumElement.textContent =
+    calculation.maximum;
+
+
+  if(
+    calculation.percentage === null
+  ){
+
+    percentageElement.textContent =
+      "—";
+
+    percentageDetail.textContent =
+      "No marks entered";
 
     statusElement.textContent =
       "—";
@@ -1246,52 +1821,36 @@ function updateRemarkAndStatus(
       "result-status status-empty";
 
     return;
+
   }
 
 
-  const mark =
-    Number(value);
+  percentageElement.textContent =
+    calculation.percentage +
+    "%";
 
 
-  if(
-    Number.isNaN(mark) ||
-    mark < 0 ||
-    mark > 100
-  ){
+  percentageDetail.textContent =
+    calculation.obtained +
+    " / " +
+    calculation.maximum;
 
-    statusElement.textContent =
-      "Invalid";
-
-    statusElement.className =
-      "result-status status-fail";
-
-    return;
-  }
-
-
-  const generated =
-    getRemark(mark);
-
-
-  /*
-    Automatically fill the remark when
-    the field is empty.
-
-    If the administrator has already
-    manually changed the remark,
-    leave it unchanged.
-  */
 
   if(
     !remarkInput.value.trim()
   ){
 
     remarkInput.value =
-      generated;
+      getRemark(
+        calculation.percentage
+      );
+
   }
 
 
-  if(mark >= 50){
+  if(
+    calculation.percentage >= 50
+  ){
 
     statusElement.textContent =
       "Pass";
@@ -1313,511 +1872,576 @@ function updateRemarkAndStatus(
 
 
 /* =========================================================
-   SAVE RESULTS
+   CALCULATE SUBJECT PERCENTAGE
 ========================================================= */
 
-async function saveResults(showMessage = true){
+function calculateSubjectPercentage(
+  papers,
+  values
+){
 
-  if(!selectedStudent){
+  const maximum =
+    papers.reduce(
+      function(total,paper){
 
-    throw new Error(
-      "No student has been selected."
+        return total +
+          Number(
+            paper.max
+          );
+
+      },
+      0
     );
+
+
+  const enteredValues =
+    values.filter(
+      function(value){
+
+        return (
+          value !== null &&
+          value !== undefined &&
+          !Number.isNaN(
+            Number(value)
+          )
+        );
+
+      }
+    );
+
+
+  if(!enteredValues.length){
+
+    return {
+
+      obtained:0,
+
+      maximum:maximum,
+
+      percentage:null
+
+    };
 
   }
 
 
-  const rows =
-    Array.from(
-      dom.resultsEntryBody.querySelectorAll("tr[data-subject-id]")
+  const obtained =
+    enteredValues.reduce(
+      function(total,value){
+
+        return total +
+          Number(value);
+
+      },
+      0
     );
 
 
-  if(!rows.length){
+  /*
+    Only calculate a complete percentage
+    when all papers have a value.
+  */
 
-    if(showMessage){
+  if(
+    enteredValues.length !==
+    papers.length
+  ){
 
-      showSaveMessage(
-        "There are no subjects to save.",
-        "error"
-      );
+    return {
+
+      obtained:obtained,
+
+      maximum:maximum,
+
+      percentage:null
+
+    };
+
+  }
+
+
+  const percentage =
+    maximum > 0
+      ? (
+          obtained /
+          maximum *
+          100
+        )
+      : 0;
+
+
+  return {
+
+    obtained:obtained,
+
+    maximum:maximum,
+
+    percentage:Number(
+      percentage.toFixed(2)
+    )
+
+  };
+
+}
+
+
+/* =========================================================
+   GET PAPER STRUCTURE
+========================================================= */
+
+function getPaperStructure(
+  subject,
+  student
+){
+
+  /*
+    First use the paper structure saved
+    by the Subjects page.
+  */
+
+  const stored =
+    extractStoredPapers(
+      subject
+    );
+
+
+  if(stored.length){
+
+    return stored;
+
+  }
+
+
+  /*
+    Otherwise use the FCA default
+    Form 1–2 / Form 3–4 structure.
+  */
+
+  const subjectName =
+    getSubjectName(
+      subject
+    );
+
+
+  const form =
+    getStudentFormNumber(
+      student
+    );
+
+
+  const structure =
+    DEFAULT_PAPER_STRUCTURES[
+      subjectName
+    ];
+
+
+  if(structure){
+
+    if(form >= 3){
+
+      return structure.senior;
 
     }
 
-    return;
+
+    return structure.junior;
 
   }
 
 
-  dom.saveResultsBtn.disabled =
-    true;
+  /*
+    Generic fallback.
+  */
 
-  dom.saveResultsBtn.textContent =
-    "Saving...";
+  return [
 
+    {
+      name:"Paper I",
+      max:100
+    }
 
-  const studentId =
-    getDatabaseId(selectedStudent);
+  ];
 
-
-  const records = [];
-
-
-  for(const row of rows){
-
-    const subjectId =
-      row.dataset.subjectId;
+}
 
 
-    const markInput =
-      row.querySelector(
-        ".mark-input"
-      );
+/* =========================================================
+   EXTRACT STORED PAPERS
+========================================================= */
+
+function extractStoredPapers(
+  subject
+){
+
+  if(!subject){
+
+    return [];
+
+  }
 
 
-    const remarkInput =
-      row.querySelector(
-        ".remark-input"
-      );
+  const possibleFields = [
+
+    "papers",
+    "paper_structure",
+    "paper_marks",
+    "mark_structure",
+    "paper_config",
+    "assessment_structure"
+
+  ];
 
 
-    const rawMark =
-      markInput.value.trim();
+  for(
+    const field of possibleFields
+  ){
 
-
-    const remark =
-      remarkInput.value.trim();
-
-
-    /*
-      Empty mark = no result for that subject.
-      We do not insert an empty result.
-    */
-
-    if(rawMark === ""){
+    if(
+      subject[field] === null ||
+      subject[field] === undefined
+    ){
 
       continue;
 
     }
 
 
-    const mark =
-      Number(rawMark);
+    let value =
+      subject[field];
 
 
-    if(
-      Number.isNaN(mark) ||
-      mark < 0 ||
-      mark > 100
-    ){
+    if(typeof value === "string"){
 
-      dom.saveResultsBtn.disabled =
-        false;
+      try{
 
-      dom.saveResultsBtn.textContent =
-        "Save Results";
+        value =
+          JSON.parse(value);
 
+      }catch(error){
 
-      showSaveMessage(
-        "Every mark must be between 0 and 100.",
-        "error"
-      );
-
-
-      throw new Error(
-        "Invalid mark entered."
-      );
-
-    }
-
-
-    records.push({
-
-      student_id: studentId,
-
-      subject_id: subjectId,
-
-      mark: mark,
-
-      remark:
-        remark ||
-        getRemark(mark)
-
-    });
-
-  }
-
-
-  try{
-
-    /*
-      Save each subject using upsert.
-
-      This assumes the results table has
-      a unique constraint for:
-      student_id + subject_id
-    */
-
-    if(records.length){
-
-      const result =
-        await db
-          .from("results")
-          .upsert(
-            records,
-            {
-              onConflict:
-                "student_id,subject_id"
-            }
-          );
-
-
-      if(result.error){
-
-        throw result.error;
+        continue;
 
       }
 
     }
 
 
-    /*
-      Refresh results after saving.
-    */
+    if(!Array.isArray(value)){
 
-    await loadStudentResults();
-
-
-    if(showMessage){
-
-      showSaveMessage(
-        "Student results saved successfully.",
-        "success"
-      );
-
-      showGlobalMessage(
-        "Results saved successfully.",
-        "success"
-      );
+      continue;
 
     }
 
 
-    return true;
+    const normalized =
+      value
+        .map(
+          function(item,index){
 
-  }catch(error){
+            if(
+              item === null ||
+              item === undefined
+            ){
 
-    console.error(
-      "Save results error:",
-      error
-    );
-
-
-    if(showMessage){
-
-      showSaveMessage(
-        getErrorMessage(error),
-        "error"
-      );
-
-    }
-
-
-    throw error;
-
-  }finally{
-
-    dom.saveResultsBtn.disabled =
-      false;
-
-    dom.saveResultsBtn.textContent =
-      "Save Results";
-
-  }
-
-}
-
-
-/* =========================================================
-   OPEN OVERALL RESULTS
-========================================================= */
-
-async function openStudentOverall(student){
-
-  selectedStudent =
-    student;
-
-
-  try{
-
-    await loadStudentResults();
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-
-  renderOverallResults();
-
-  showView("overall");
-
-}
-
-
-/* =========================================================
-   RENDER OVERALL RESULTS
-========================================================= */
-
-function renderOverallResults(){
-
-  if(!selectedStudent){
-
-    return;
-  }
-
-
-  const name =
-    getStudentName(selectedStudent);
-
-
-  const subjects =
-    getSubjectsForStudent(
-      selectedStudent
-    );
-
-
-  const resultRows =
-    subjects.map(function(subject){
-
-      const subjectId =
-        getDatabaseId(subject);
-
-
-      return {
-
-        subject:subject,
-
-        result:
-          currentStudentResults.find(
-            function(item){
-
-              return String(
-                item.subject_id
-              ) === String(subjectId);
+              return null;
 
             }
-          )
-
-      };
-
-    });
 
 
-  dom.studentName.textContent =
-    name;
+            if(
+              typeof item === "number"
+            ){
 
-  dom.studentId.textContent =
-    getStudentId(selectedStudent);
+              return {
 
-  dom.studentClass.textContent =
-    getClassName(selectedClass);
+                name:
+                  "Paper " +
+                  romanNumber(
+                    index + 1
+                  ),
 
-  dom.studentGender.textContent =
-    getStudentGender(selectedStudent);
+                max:
+                  item
 
-  dom.studentSubjectCount.textContent =
-    subjects.length;
+              };
 
-
-  const marks =
-    resultRows
-      .map(function(item){
-
-        return item.result
-          ? Number(item.result.mark)
-          : null;
-
-      })
-      .filter(function(mark){
-
-        return (
-          mark !== null &&
-          !Number.isNaN(mark)
-        );
-
-      });
+            }
 
 
-  const average =
-    marks.length
-      ? (
-          marks.reduce(
-            function(total,mark){
-              return total + mark;
-            },
-            0
-          ) / marks.length
-        ).toFixed(1)
-      : "—";
+            if(
+              typeof item === "object"
+            ){
+
+              const max =
+                Number(
+                  item.max_marks ??
+                  item.maximum_marks ??
+                  item.max ??
+                  item.marks ??
+                  item.total ??
+                  100
+                );
 
 
-  dom.studentAverage.textContent =
-    average === "—"
-      ? "—"
-      : average + "%";
+              return {
+
+                name:
+                  item.paper_name ||
+                  item.name ||
+                  item.paper ||
+                  (
+                    "Paper " +
+                    romanNumber(
+                      index + 1
+                    )
+                  ),
+
+                max:
+                  Number.isFinite(max)
+                    ? max
+                    : 100
+
+              };
+
+            }
 
 
-  dom.overallResultsBody.innerHTML =
-    "";
+            return null;
+
+          }
+        )
+        .filter(Boolean);
 
 
-  if(!resultRows.length){
+    if(normalized.length){
 
-    dom.overallResultsBody.innerHTML = `
+      return normalized;
 
-      <tr>
-        <td colspan="4">
-          <div class="table-loading">
-            No subjects found.
-          </div>
-        </td>
-      </tr>
+    }
 
-    `;
-
-    dom.overallResult.textContent =
-      "NO RESULTS";
-
-    return;
   }
 
 
-  resultRows.forEach(
-    function(item,index){
+  return [];
 
-      const result =
-        item.result;
+}
 
 
-      const mark =
-        result &&
-        result.mark !== null &&
-        result.mark !== undefined
-          ? result.mark
-          : "—";
+/* =========================================================
+   EXISTING PAPER VALUES
+========================================================= */
+
+function getExistingPaperValues(
+  result,
+  papers
+){
+
+  if(!result){
+
+    return papers.map(
+      function(){
+
+        return "";
+
+      }
+    );
+
+  }
 
 
-      const remark =
-        result &&
-        result.remark
-          ? result.remark
-          : "Not entered";
+  const possibleFields = [
+
+    "paper_marks",
+    "papers",
+    "marks_by_paper",
+    "paper_results",
+    "paper_scores"
+
+  ];
 
 
-      const row =
-        document.createElement("tr");
+  for(
+    const field of possibleFields
+  ){
+
+    if(
+      result[field] === null ||
+      result[field] === undefined
+    ){
+
+      continue;
+
+    }
 
 
-      row.innerHTML = `
-
-        <td>
-          ${index + 1}
-        </td>
-
-        <td>
-          ${escapeHtml(
-            getSubjectName(item.subject)
-          )}
-        </td>
-
-        <td>
-          ${escapeHtml(
-            String(mark)
-          )}
-        </td>
-
-        <td class="remark">
-          ${escapeHtml(
-            remark
-          )}
-        </td>
-
-      `;
+    let value =
+      result[field];
 
 
-      dom.overallResultsBody.appendChild(
-        row
+    if(typeof value === "string"){
+
+      try{
+
+        value =
+          JSON.parse(value);
+
+      }catch(error){
+
+        continue;
+
+      }
+
+    }
+
+
+    if(Array.isArray(value)){
+
+      return papers.map(
+        function(paper,index){
+
+          const item =
+            value[index];
+
+
+          if(
+            item === null ||
+            item === undefined
+          ){
+
+            return "";
+
+          }
+
+
+          if(
+            typeof item === "number"
+          ){
+
+            return item;
+
+          }
+
+
+          if(
+            typeof item === "object"
+          ){
+
+            return (
+              item.mark ??
+              item.value ??
+              ""
+            );
+
+          }
+
+
+          return "";
+
+        }
       );
+
+    }
+
+
+    if(
+      value &&
+      typeof value === "object"
+    ){
+
+      return papers.map(
+        function(paper,index){
+
+          const possibleKeys = [
+
+            paper.name,
+
+            String(index),
+
+            String(index + 1),
+
+            "paper" +
+              (index + 1)
+
+          ];
+
+
+          for(
+            const key of possibleKeys
+          ){
+
+            if(
+              value[key] !== undefined
+            ){
+
+              return value[key];
+
+            }
+
+          }
+
+
+          return "";
+
+        }
+      );
+
+    }
+
+  }
+
+
+  /*
+    Compatibility with old results that
+    only stored one mark.
+
+    The old mark is treated as a
+    percentage only when paper detail
+    does not exist.
+  */
+
+  if(
+    result.mark !== null &&
+    result.mark !== undefined
+  ){
+
+    const oldMark =
+      Number(
+        result.mark
+      );
+
+
+    if(
+      !Number.isNaN(oldMark) &&
+      papers.length === 1
+    ){
+
+      return [
+        oldMark
+      ];
+
+    }
+
+  }
+
+
+  return papers.map(
+    function(){
+
+      return "";
 
     }
   );
 
-
-  const overall =
-    calculateOverallResult(
-      marks,
-      resultRows
-    );
-
-
-  dom.overallResult.textContent =
-    overall;
-
 }
 
 
 /* =========================================================
-   CALCULATE OVERALL RESULT
+   GET SUBJECTS FOR STUDENT
 ========================================================= */
 
-function calculateOverallResult(
-  marks,
-  resultRows
+function getSubjectsForStudent(
+  student
 ){
-
-  if(!marks.length){
-
-    return "NO RESULTS";
-
-  }
-
-
-  /*
-    If at least one entered subject is
-    below 50, overall result is FAIL.
-  */
-
-  const hasFail =
-    marks.some(function(mark){
-
-      return mark < 50;
-
-    });
-
-
-  if(hasFail){
-
-    return "FAIL";
-
-  }
-
-
-  /*
-    All entered subjects have passed.
-  */
-
-  return "PASS";
-
-}
-
-
-/* =========================================================
-   SUBJECTS FOR STUDENT
-========================================================= */
-
-function getSubjectsForStudent(student){
 
   if(!student){
 
@@ -1826,20 +2450,22 @@ function getSubjectsForStudent(student){
   }
 
 
-  /*
-    Preferred approach:
-    students has a subjects / subject_ids /
-    selected_subjects field containing
-    subject IDs.
+  const studentForm =
+    getStudentFormNumber(
+      student
+    );
 
-    The code supports several possible
-    column names so it works with the
-    existing FCA student setup.
-  */
 
   const selectedIds =
-    extractStudentSubjectIds(student);
+    extractStudentSubjectIds(
+      student
+    );
 
+
+  /*
+    If subjects are explicitly assigned
+    to the student, use those subjects.
+  */
 
   if(
     selectedIds &&
@@ -1850,16 +2476,54 @@ function getSubjectsForStudent(student){
       allSubjects.filter(
         function(subject){
 
-          return selectedIds.some(
-            function(id){
+          const matchesStudentSelection =
+            selectedIds.some(
+              function(id){
 
-              return String(id) ===
-                String(
-                  getDatabaseId(subject)
-                );
+                return String(id) ===
+                  String(
+                    getDatabaseId(
+                      subject
+                    )
+                  );
 
-            }
-          );
+              }
+            );
+
+
+          if(!matchesStudentSelection){
+
+            return false;
+
+          }
+
+
+          /*
+            If the subject has a form
+            number, make sure it matches
+            the student's form.
+          */
+
+          const subjectForm =
+            getSubjectFormNumber(
+              subject
+            );
+
+
+          if(
+            subjectForm &&
+            studentForm
+          ){
+
+            return (
+              subjectForm ===
+              studentForm
+            );
+
+          }
+
+
+          return true;
 
         }
       );
@@ -1867,7 +2531,9 @@ function getSubjectsForStudent(student){
 
     if(filtered.length){
 
-      return filtered;
+      return sortSubjects(
+        filtered
+      );
 
     }
 
@@ -1875,30 +2541,86 @@ function getSubjectsForStudent(student){
 
 
   /*
-    If there is no subject assignment
-    stored on the student, use all FCA
-    subjects as the available subjects.
+    Otherwise use all subjects belonging
+    to the student's Form.
   */
 
   if(allSubjects.length){
 
-    return allSubjects;
+    const formSubjects =
+      allSubjects.filter(
+        function(subject){
+
+          const subjectForm =
+            getSubjectFormNumber(
+              subject
+            );
+
+
+          if(
+            subjectForm &&
+            studentForm
+          ){
+
+            return (
+              subjectForm ===
+              studentForm
+            );
+
+          }
+
+
+          /*
+            If subject form is not stored,
+            keep it available.
+          */
+
+          return !subjectForm;
+
+        }
+      );
+
+
+    if(formSubjects.length){
+
+      return sortSubjects(
+        formSubjects
+      );
+
+    }
+
+
+    /*
+      If no form-specific subjects exist,
+      use the complete subject list.
+    */
+
+    return sortSubjects(
+      allSubjects
+    );
 
   }
 
 
   /*
-    Final fallback if subjects table
-    has not been populated.
+    Final fallback.
   */
 
   return SUBJECTS_FALLBACK.map(
     function(name,index){
 
       return {
-        id:"fallback-" + index,
-        subject_name:name,
-        name:name
+
+        id:
+          "fallback-" +
+          index,
+
+        subject_name:
+          name,
+
+        name:
+          name
+
       };
 
     }
@@ -1908,16 +2630,42 @@ function getSubjectsForStudent(student){
 
 
 /* =========================================================
-   EXTRACT STUDENT SUBJECT IDS
+   SORT SUBJECTS
 ========================================================= */
 
-function extractStudentSubjectIds(student){
+function sortSubjects(
+  subjects
+){
+
+  return [...subjects].sort(
+    function(a,b){
+
+      return getSubjectName(a)
+        .localeCompare(
+          getSubjectName(b)
+        );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   STUDENT SUBJECT IDS
+========================================================= */
+
+function extractStudentSubjectIds(
+  student
+){
 
   const possibleFields = [
+
     "subject_ids",
     "subjects",
     "selected_subjects",
     "subjects_taken"
+
   ];
 
 
@@ -1939,10 +2687,6 @@ function extractStudentSubjectIds(student){
       student[field];
 
 
-    /*
-      JSON stored as text.
-    */
-
     if(typeof value === "string"){
 
       try{
@@ -1952,16 +2696,16 @@ function extractStudentSubjectIds(student){
 
       }catch(error){
 
-        /*
-          Could be a comma-separated list.
-        */
-
         value =
           value
             .split(",")
-            .map(function(item){
-              return item.trim();
-            })
+            .map(
+              function(item){
+
+                return item.trim();
+
+              }
+            )
             .filter(Boolean);
 
       }
@@ -1972,29 +2716,26 @@ function extractStudentSubjectIds(student){
     if(Array.isArray(value)){
 
       return value
-        .map(function(item){
+        .map(
+          function(item){
 
-          /*
-            Supports:
-            ["1","2"]
-            [{id:1},{id:2}]
-          */
+            if(
+              item &&
+              typeof item === "object"
+            ){
 
-          if(
-            item &&
-            typeof item === "object"
-          ){
+              return (
+                item.id ||
+                item.subject_id
+              );
 
-            return (
-              item.id ||
-              item.subject_id
-            );
+            }
+
+
+            return item;
 
           }
-
-          return item;
-
-        })
+        )
         .filter(Boolean);
 
     }
@@ -2011,7 +2752,9 @@ function extractStudentSubjectIds(student){
    CLASS HELPERS
 ========================================================= */
 
-function getStudentsForClass(classItem){
+function getStudentsForClass(
+  classItem
+){
 
   if(!classItem){
 
@@ -2021,7 +2764,9 @@ function getStudentsForClass(classItem){
 
 
   const classId =
-    getDatabaseId(classItem);
+    getDatabaseId(
+      classItem
+    );
 
 
   const formNumber =
@@ -2031,11 +2776,6 @@ function getStudentsForClass(classItem){
   return allStudents.filter(
     function(student){
 
-      /*
-        First preference:
-        class_id relationship.
-      */
-
       if(
         student.class_id !== undefined &&
         student.class_id !== null
@@ -2043,15 +2783,12 @@ function getStudentsForClass(classItem){
 
         return String(
           student.class_id
-        ) === String(classId);
+        ) === String(
+          classId
+        );
 
       }
 
-
-      /*
-        Fallback:
-        form_number.
-      */
 
       if(
         student.form_number !== undefined &&
@@ -2060,26 +2797,31 @@ function getStudentsForClass(classItem){
 
         return String(
           student.form_number
-        ) === String(formNumber);
+        ) === String(
+          formNumber
+        );
 
       }
 
 
-      /*
-        Additional fallback:
-        class_name.
-      */
-
       if(
         student.class_name &&
-        getClassName(classItem)
+        getClassName(
+          classItem
+        )
       ){
 
         return (
-          String(student.class_name)
+          String(
+            student.class_name
+          )
             .toLowerCase()
             ===
-          String(getClassName(classItem))
+          String(
+            getClassName(
+              classItem
+            )
+          )
             .toLowerCase()
         );
 
@@ -2094,7 +2836,9 @@ function getStudentsForClass(classItem){
 }
 
 
-function getClassName(classItem){
+function getClassName(
+  classItem
+){
 
   if(!classItem){
 
@@ -2108,7 +2852,8 @@ function getClassName(classItem){
     classItem.name ||
     (
       classItem.form_number
-        ? "Form " + classItem.form_number
+        ? "Form " +
+          classItem.form_number
         : "Class"
     )
   );
@@ -2116,7 +2861,9 @@ function getClassName(classItem){
 }
 
 
-function getClassCode(classItem){
+function getClassCode(
+  classItem
+){
 
   if(!classItem){
 
@@ -2134,15 +2881,19 @@ function getClassCode(classItem){
 }
 
 
-function getClassFormLabel(classItem){
+function getClassFormLabel(
+  classItem
+){
 
   if(
     classItem &&
     classItem.form_number
   ){
 
-    return "FORM " +
-      classItem.form_number;
+    return (
+      "FORM " +
+      classItem.form_number
+    );
 
   }
 
@@ -2152,7 +2903,9 @@ function getClassFormLabel(classItem){
 }
 
 
-function getClassInitial(classItem){
+function getClassInitial(
+  classItem
+){
 
   const form =
     classItem &&
@@ -2161,7 +2914,9 @@ function getClassInitial(classItem){
 
   if(form){
 
-    return String(form);
+    return String(
+      form
+    );
 
   }
 
@@ -2175,7 +2930,9 @@ function getClassInitial(classItem){
    STUDENT HELPERS
 ========================================================= */
 
-function getStudentName(student){
+function getStudentName(
+  student
+){
 
   if(!student){
 
@@ -2194,6 +2951,7 @@ function getStudentName(student){
   const first =
     student.first_name ||
     "";
+
 
   const last =
     student.last_name ||
@@ -2223,7 +2981,9 @@ function getStudentName(student){
 }
 
 
-function getStudentId(student){
+function getStudentId(
+  student
+){
 
   if(!student){
 
@@ -2244,7 +3004,9 @@ function getStudentId(student){
 }
 
 
-function getStudentGender(student){
+function getStudentGender(
+  student
+){
 
   if(!student){
 
@@ -2262,10 +3024,76 @@ function getStudentGender(student){
 
 
 /* =========================================================
+   FORM HELPERS
+========================================================= */
+
+function getStudentFormNumber(
+  student
+){
+
+  if(!student){
+
+    return null;
+
+  }
+
+
+  const value =
+    student.form_number ??
+    student.form ??
+    student.class_form;
+
+
+  const number =
+    Number(
+      value
+    );
+
+
+  return Number.isFinite(number)
+    ? number
+    : null;
+
+}
+
+
+function getSubjectFormNumber(
+  subject
+){
+
+  if(!subject){
+
+    return null;
+
+  }
+
+
+  const value =
+    subject.form_number ??
+    subject.form ??
+    subject.class_form;
+
+
+  const number =
+    Number(
+      value
+    );
+
+
+  return Number.isFinite(number)
+    ? number
+    : null;
+
+}
+
+
+/* =========================================================
    SUBJECT HELPERS
 ========================================================= */
 
-function getSubjectName(subject){
+function getSubjectName(
+  subject
+){
 
   if(!subject){
 
@@ -2288,7 +3116,9 @@ function getSubjectName(subject){
    DATABASE ID
 ========================================================= */
 
-function getDatabaseId(record){
+function getDatabaseId(
+  record
+){
 
   if(!record){
 
@@ -2307,13 +3137,17 @@ function getDatabaseId(record){
 
 
 /* =========================================================
-   REMARK SYSTEM
+   REMARK
 ========================================================= */
 
-function getRemark(mark){
+function getRemark(
+  percentage
+){
 
   const value =
-    Number(mark);
+    Number(
+      percentage
+    );
 
 
   if(value >= 80){
@@ -2322,11 +3156,13 @@ function getRemark(mark){
 
   }
 
+
   if(value >= 70){
 
     return "Strong Credit";
 
   }
+
 
   if(value >= 60){
 
@@ -2334,13 +3170,951 @@ function getRemark(mark){
 
   }
 
+
   if(value >= 50){
 
     return "Pass";
 
   }
 
+
   return "Fail";
+
+}
+
+
+/* =========================================================
+   RENDER OVERALL RESULTS
+========================================================= */
+
+function renderOverallResults(){
+
+  if(!selectedStudent){
+
+    return;
+
+  }
+
+
+  const name =
+    getStudentName(
+      selectedStudent
+    );
+
+
+  const subjects =
+    getSubjectsForStudent(
+      selectedStudent
+    );
+
+
+  const resultRows =
+    subjects.map(
+      function(subject){
+
+        const subjectId =
+          getDatabaseId(
+            subject
+          );
+
+
+        const result =
+          currentStudentResults.find(
+            function(item){
+
+              return String(
+                item.subject_id
+              ) === String(
+                subjectId
+              );
+
+            }
+          );
+
+
+        const papers =
+          getPaperStructure(
+            subject,
+            selectedStudent
+          );
+
+
+        const values =
+          getExistingPaperValues(
+            result,
+            papers
+          );
+
+
+        const calculation =
+          calculateSubjectPercentage(
+            papers,
+            values
+          );
+
+
+        return {
+
+          subject:subject,
+
+          result:result,
+
+          papers:papers,
+
+          values:values,
+
+          calculation:calculation
+
+        };
+
+      }
+    );
+
+
+  dom.studentName.textContent =
+    name;
+
+
+  dom.studentId.textContent =
+    getStudentId(
+      selectedStudent
+    );
+
+
+  dom.studentClass.textContent =
+    getClassName(
+      selectedClass
+    );
+
+
+  dom.studentGender.textContent =
+    getStudentGender(
+      selectedStudent
+    );
+
+
+  dom.studentSubjectCount.textContent =
+    subjects.length;
+
+
+  const completeRows =
+    resultRows.filter(
+      function(item){
+
+        return (
+          item.calculation.percentage !==
+          null
+        );
+
+      }
+    );
+
+
+  let overallPercentage =
+    null;
+
+
+  if(completeRows.length){
+
+    let totalObtained = 0;
+    let totalMaximum = 0;
+
+
+    completeRows.forEach(
+      function(item){
+
+        totalObtained +=
+          item.calculation.obtained;
+
+        totalMaximum +=
+          item.calculation.maximum;
+
+      }
+    );
+
+
+    if(totalMaximum > 0){
+
+      overallPercentage =
+        Number(
+          (
+            totalObtained /
+            totalMaximum *
+            100
+          ).toFixed(2)
+        );
+
+    }
+
+  }
+
+
+  dom.studentAverage.textContent =
+    overallPercentage === null
+      ? "—"
+      : overallPercentage +
+        "%";
+
+
+  dom.overallResultsBody.innerHTML =
+    "";
+
+
+  if(!resultRows.length){
+
+    dom.overallResultsBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="5">
+
+          <div class="table-loading">
+            No subjects found.
+          </div>
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    dom.overallResult.textContent =
+      "NO RESULTS";
+
+
+    return;
+
+  }
+
+
+  resultRows.forEach(
+    function(item,index){
+
+      const result =
+        item.result;
+
+
+      const calculation =
+        item.calculation;
+
+
+      const remark =
+        result &&
+        result.remark
+          ? result.remark
+          : calculation.percentage !== null
+            ? getRemark(
+                calculation.percentage
+              )
+            : "Not entered";
+
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      const papersHtml =
+        item.papers
+          .map(
+            function(paper,paperIndex){
+
+              const value =
+                item.values[
+                  paperIndex
+                ];
+
+
+              return `
+
+                <div class="overall-paper">
+
+                  <strong>
+                    ${escapeHtml(
+                      paper.name
+                    )}
+                  </strong>
+
+                  <span>
+                    ${
+                      value === "" ||
+                      value === null ||
+                      value === undefined
+                        ? "—"
+                        : escapeHtml(
+                            String(value)
+                          )
+                    }
+                    /
+                    ${paper.max}
+                  </span>
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("");
+
+
+      row.innerHTML = `
+
+        <td>
+          ${index + 1}
+        </td>
+
+
+        <td>
+          <strong>
+            ${escapeHtml(
+              getSubjectName(
+                item.subject
+              )
+            )}
+          </strong>
+        </td>
+
+
+        <td>
+
+          <div class="overall-paper-list">
+            ${papersHtml}
+          </div>
+
+        </td>
+
+
+        <td class="overall-percentage">
+
+          ${
+            calculation.percentage === null
+              ? "—"
+              : calculation.percentage +
+                "%"
+          }
+
+        </td>
+
+
+        <td class="remark">
+
+          ${escapeHtml(
+            remark
+          )}
+
+        </td>
+
+      `;
+
+
+      dom.overallResultsBody.appendChild(
+        row
+      );
+
+    }
+  );
+
+
+  if(
+    overallPercentage === null
+  ){
+
+    dom.overallResult.textContent =
+      "NO RESULTS";
+
+    return;
+
+  }
+
+
+  const hasFail =
+    completeRows.some(
+      function(item){
+
+        return (
+          item.calculation.percentage <
+          50
+        );
+
+      }
+    );
+
+
+  dom.overallResult.textContent =
+    overallPercentage +
+    "% — " +
+    (
+      hasFail
+        ? "FAIL"
+        : "PASS"
+    );
+
+}
+
+
+/* =========================================================
+   SAVE RESULTS
+========================================================= */
+
+async function saveResults(
+  showMessage = true
+){
+
+  if(!selectedStudent){
+
+    throw new Error(
+      "No student has been selected."
+    );
+
+  }
+
+
+  const rows =
+    Array.from(
+      dom.resultsEntryBody
+        .querySelectorAll(
+          "tr[data-subject-id]"
+        )
+    );
+
+
+  if(!rows.length){
+
+    if(showMessage){
+
+      showSaveMessage(
+        "There are no subjects to save.",
+        "error"
+      );
+
+    }
+
+
+    return;
+
+  }
+
+
+  dom.saveResultsBtn.disabled =
+    true;
+
+
+  dom.saveResultsBtn.textContent =
+    "Saving...";
+
+
+  const studentId =
+    getDatabaseId(
+      selectedStudent
+    );
+
+
+  const records = [];
+
+
+  for(
+    const row of rows
+  ){
+
+    const subjectId =
+      row.dataset.subjectId;
+
+
+    const subject =
+      allSubjects.find(
+        function(item){
+
+          return String(
+            getDatabaseId(
+              item
+            )
+          ) === String(
+            subjectId
+          );
+
+        }
+      );
+
+
+    const papers =
+      getPaperStructure(
+        subject,
+        selectedStudent
+      );
+
+
+    const paperInputs =
+      Array.from(
+        row.querySelectorAll(
+          ".paper-mark-input"
+        )
+      );
+
+
+    const remarkInput =
+      row.querySelector(
+        ".remark-input"
+      );
+
+
+    const values = [];
+
+
+    let invalid =
+      false;
+
+
+    let hasAnyMark =
+      false;
+
+
+    paperInputs.forEach(
+      function(input,index){
+
+        const raw =
+          input.value.trim();
+
+
+        if(raw === ""){
+
+          values.push(
+            null
+          );
+
+          return;
+
+        }
+
+
+        hasAnyMark = true;
+
+
+        const value =
+          Number(
+            raw
+          );
+
+
+        if(
+          Number.isNaN(value) ||
+          value < 0 ||
+          value > papers[index].max
+        ){
+
+          invalid = true;
+
+          input.classList.add(
+            "invalid"
+          );
+
+          return;
+
+        }
+
+
+        input.classList.remove(
+          "invalid"
+        );
+
+
+        values.push(
+          value
+        );
+
+      }
+    );
+
+
+    if(invalid){
+
+      dom.saveResultsBtn.disabled =
+        false;
+
+      dom.saveResultsBtn.textContent =
+        "Save Results";
+
+
+      showSaveMessage(
+        "One or more paper marks are invalid. Check the maximum mark shown for each paper.",
+        "error"
+      );
+
+
+      throw new Error(
+        "Invalid paper mark."
+      );
+
+    }
+
+
+    /*
+      Completely empty subject:
+      do not save it.
+    */
+
+    if(!hasAnyMark){
+
+      continue;
+
+    }
+
+
+    /*
+      Every paper must be completed
+      before the subject gets a percentage.
+    */
+
+    if(
+      values.some(
+        function(value){
+
+          return (
+            value === null ||
+            value === undefined
+          );
+
+        }
+      )
+    ){
+
+      dom.saveResultsBtn.disabled =
+        false;
+
+      dom.saveResultsBtn.textContent =
+        "Save Results";
+
+
+      showSaveMessage(
+        "Please enter marks for every paper before saving the subject.",
+        "error"
+      );
+
+
+      throw new Error(
+        "Incomplete paper marks."
+      );
+
+    }
+
+
+    const calculation =
+      calculateSubjectPercentage(
+        papers,
+        values
+      );
+
+
+    if(
+      calculation.percentage === null
+    ){
+
+      throw new Error(
+        "Could not calculate subject percentage."
+      );
+
+    }
+
+
+    const remark =
+      remarkInput &&
+      remarkInput.value.trim()
+        ? remarkInput.value.trim()
+        : getRemark(
+            calculation.percentage
+          );
+
+
+    /*
+      Main result record.
+
+      `mark` stores the subject percentage
+      for compatibility with the existing
+      results table.
+
+      `paper_marks` stores the individual
+      paper marks when the database has
+      that column.
+    */
+
+    records.push({
+
+      student_id:
+        studentId,
+
+      subject_id:
+        subjectId,
+
+      mark:
+        calculation.percentage,
+
+      remark:
+        remark,
+
+      paper_marks:
+        values
+
+    });
+
+  }
+
+
+  try{
+
+    if(records.length){
+
+      await upsertResults(
+        records
+      );
+
+    }
+
+
+    await loadStudentResults();
+
+
+    if(showMessage){
+
+      showSaveMessage(
+        "Student results saved successfully.",
+        "success"
+      );
+
+
+      showGlobalMessage(
+        "Results saved successfully.",
+        "success"
+      );
+
+    }
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Save results error:",
+      error
+    );
+
+
+    if(showMessage){
+
+      showSaveMessage(
+        getErrorMessage(
+          error
+        ),
+        "error"
+      );
+
+    }
+
+
+    throw error;
+
+  }finally{
+
+    dom.saveResultsBtn.disabled =
+      false;
+
+    dom.saveResultsBtn.textContent =
+      "Save Results";
+
+  }
+
+}
+
+
+/* =========================================================
+   UPSERT RESULTS
+========================================================= */
+
+async function upsertResults(
+  records
+){
+
+  /*
+    First attempt:
+    save paper_marks as JSON/JSONB.
+
+    This is the preferred database
+    structure for the new paper system.
+  */
+
+  let result =
+    await db
+      .from("results")
+      .upsert(
+        records,
+        {
+          onConflict:
+            "student_id,subject_id"
+        }
+      );
+
+
+  if(!result.error){
+
+    return;
+
+  }
+
+
+  console.warn(
+    "Paper-mark save attempt failed:",
+    result.error
+  );
+
+
+  /*
+    Compatibility fallback for an older
+    results table that does not yet have
+    a paper_marks column.
+
+    The subject percentage and remark
+    are still saved.
+  */
+
+  const compatibilityRecords =
+    records.map(
+      function(record){
+
+        return {
+
+          student_id:
+            record.student_id,
+
+          subject_id:
+            record.subject_id,
+
+          mark:
+            record.mark,
+
+          remark:
+            record.remark
+
+        };
+
+      }
+    );
+
+
+  result =
+    await db
+      .from("results")
+      .upsert(
+        compatibilityRecords,
+        {
+          onConflict:
+            "student_id,subject_id"
+        }
+      );
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
+  showGlobalMessage(
+    "Results saved, but paper marks are not being stored because the results table does not yet have a paper_marks column.",
+    "error"
+  );
+
+}
+
+
+/* =========================================================
+   OPEN OVERALL
+========================================================= */
+
+async function openStudentOverall(
+  student
+){
+
+  selectedStudent =
+    student;
+
+
+  try{
+
+    await loadStudentResults();
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+
+  renderOverallResults();
+
+  showView(
+    "overall"
+  );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showClasses(){
+
+  showView(
+    "classes"
+  );
+
+}
+
+
+function showStudents(){
+
+  if(selectedClass){
+
+    renderStudents();
+
+  }
+
+
+  showView(
+    "students"
+  );
+
+}
+
+
+function showEntry(){
+
+  if(selectedStudent){
+
+    renderEntryStudentInformation();
+
+    renderResultEntry();
+
+  }
+
+
+  showView(
+    "entry"
+  );
+
+}
+
+
+function showOverall(){
+
+  renderOverallResults();
+
+  showView(
+    "overall"
+  );
 
 }
 
@@ -2349,7 +4123,9 @@ function getRemark(mark){
    SHOW VIEW
 ========================================================= */
 
-function showView(view){
+function showView(
+  view
+){
 
   dom.classesView.classList.add(
     "hidden"
@@ -2405,57 +4181,12 @@ function showView(view){
 
 
   window.scrollTo({
+
     top:0,
+
     behavior:"smooth"
+
   });
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-function showClasses(){
-
-  showView("classes");
-
-}
-
-
-function showStudents(){
-
-  if(selectedClass){
-
-    renderStudents();
-
-  }
-
-  showView("students");
-
-}
-
-
-function showEntry(){
-
-  if(selectedStudent){
-
-    renderEntryStudentInformation();
-
-    renderResultEntry();
-
-  }
-
-  showView("entry");
-
-}
-
-
-function showOverall(){
-
-  renderOverallResults();
-
-  showView("overall");
 
 }
 
@@ -2472,6 +4203,7 @@ function showSaveMessage(
   dom.saveMessage.textContent =
     message;
 
+
   dom.saveMessage.className =
     "save-message " +
     type;
@@ -2482,9 +4214,6 @@ function showSaveMessage(
 /* =========================================================
    GLOBAL MESSAGE
 ========================================================= */
-
-let globalMessageTimer = null;
-
 
 function showGlobalMessage(
   message,
@@ -2519,7 +4248,7 @@ function showGlobalMessage(
         );
 
       },
-      4000
+      5000
     );
 
 }
@@ -2543,7 +4272,9 @@ function setDatabaseStatus(
 
     <span class="status-dot"></span>
 
-    ${escapeHtml(message)}
+    ${escapeHtml(
+      message
+    )}
 
   `;
 
@@ -2623,8 +4354,10 @@ function downloadResult(){
   const originalWidth =
     result.style.width;
 
+
   const originalMargin =
     result.style.margin;
+
 
   const originalBoxSizing =
     result.style.boxSizing;
@@ -2633,8 +4366,10 @@ function downloadResult(){
   result.style.width =
     "190mm";
 
+
   result.style.margin =
     "0 auto";
+
 
   result.style.boxSizing =
     "border-box";
@@ -2649,14 +4384,19 @@ function downloadResult(){
       10
     ],
 
-    filename:fileName,
+    filename:
+      fileName,
 
     image:{
+
       type:"jpeg",
+
       quality:.98
+
     },
 
     html2canvas:{
+
       scale:2,
 
       useCORS:true,
@@ -2664,17 +4404,21 @@ function downloadResult(){
       scrollX:0,
 
       scrollY:0
+
     },
 
     jsPDF:{
+
       unit:"mm",
 
       format:"a4",
 
       orientation:"portrait"
+
     },
 
     pagebreak:{
+
       mode:[
         "css",
         "legacy"
@@ -2684,6 +4428,7 @@ function downloadResult(){
         "tr",
         ".overall-result"
       ]
+
     }
 
   };
@@ -2704,6 +4449,7 @@ function downloadResult(){
 
         restorePdfStyles();
 
+
         showGlobalMessage(
           "Results PDF created successfully.",
           "success"
@@ -2719,7 +4465,9 @@ function downloadResult(){
           error
         );
 
+
         restorePdfStyles();
+
 
         showGlobalMessage(
           "Could not create the PDF.",
@@ -2735,8 +4483,10 @@ function downloadResult(){
     result.style.width =
       originalWidth;
 
+
     result.style.margin =
       originalMargin;
+
 
     result.style.boxSizing =
       originalBoxSizing;
@@ -2755,10 +4505,65 @@ function downloadResult(){
 
 
 /* =========================================================
+   ROMAN NUMBERS
+========================================================= */
+
+function romanNumber(
+  number
+){
+
+  const values = [
+
+    [10,"X"],
+
+    [9,"IX"],
+
+    [5,"V"],
+
+    [4,"IV"],
+
+    [1,"I"]
+
+  ];
+
+
+  let result = "";
+
+  let value =
+    Number(number);
+
+
+  values.forEach(
+    function(item){
+
+      while(
+        value >= item[0]
+      ){
+
+        result +=
+          item[1];
+
+        value -=
+          item[0];
+
+      }
+
+    }
+  );
+
+
+  return result;
+
+}
+
+
+/* =========================================================
    ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(value){
+function escapeHtml(
+  value
+){
 
   if(
     value === null ||
@@ -2771,22 +4576,27 @@ function escapeHtml(value){
 
 
   return String(value)
+
     .replace(
       /&/g,
       "&amp;"
     )
+
     .replace(
       /</g,
       "&lt;"
     )
+
     .replace(
       />/g,
       "&gt;"
     )
+
     .replace(
       /"/g,
       "&quot;"
     )
+
     .replace(
       /'/g,
       "&#039;"
@@ -2799,7 +4609,9 @@ function escapeHtml(value){
    ESCAPE ATTRIBUTE
 ========================================================= */
 
-function escapeAttribute(value){
+function escapeAttribute(
+  value
+){
 
   if(
     value === null ||
@@ -2822,7 +4634,9 @@ function escapeAttribute(value){
    INITIALS
 ========================================================= */
 
-function getInitials(name){
+function getInitials(
+  name
+){
 
   const words =
     String(name)
@@ -2849,7 +4663,9 @@ function getInitials(name){
 
   return (
     words[0][0] +
-    words[words.length - 1][0]
+    words[
+      words.length - 1
+    ][0]
   ).toUpperCase();
 
 }
@@ -2859,7 +4675,9 @@ function getInitials(name){
    ERROR MESSAGE
 ========================================================= */
 
-function getErrorMessage(error){
+function getErrorMessage(
+  error
+){
 
   if(!error){
 

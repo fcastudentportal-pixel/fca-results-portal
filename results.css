@@ -1,6 +1,6 @@
 /* =========================================================
    FCA RESULTS
-   RESULTS MANAGEMENT + STUDENT RESULTS
+   RESULTS MANAGEMENT
 ========================================================= */
 
 *{
@@ -47,6 +47,7 @@ body{
     sans-serif;
 
   background:var(--bg);
+
   color:var(--text);
 
   font-size:14px;
@@ -54,12 +55,15 @@ body{
 
 
 /* =========================================================
-   MAIN PAGE
+   MAIN
 ========================================================= */
 
 .results-page{
   width:min(1180px,94%);
-  margin:30px auto 45px;
+
+  margin:
+    30px auto
+    45px;
 }
 
 
@@ -71,12 +75,15 @@ body{
   background:var(--white);
 
   border:1px solid var(--border);
+
   border-radius:14px;
 
   padding:24px 28px;
 
   display:flex;
+
   justify-content:space-between;
+
   align-items:center;
 
   gap:20px;
@@ -90,6 +97,7 @@ body{
   color:var(--maroon);
 
   font-size:10px;
+
   font-weight:700;
 
   letter-spacing:3px;
@@ -108,6 +116,7 @@ body{
     serif;
 
   font-size:32px;
+
   font-weight:500;
 }
 
@@ -143,6 +152,7 @@ body{
   display:inline-flex;
 
   align-items:center;
+
   gap:8px;
 
   padding:7px 11px;
@@ -150,6 +160,7 @@ body{
   border-radius:20px;
 
   font-size:11px;
+
   font-weight:700;
 
   margin-bottom:18px;
@@ -168,6 +179,7 @@ body{
 
 .database-status.checking{
   background:#f3f3f3;
+
   color:#666;
 }
 
@@ -177,6 +189,7 @@ body{
 
 .database-status.connected{
   background:var(--green-bg);
+
   color:var(--green);
 
   border-color:#c8e8d7;
@@ -188,6 +201,7 @@ body{
 
 .database-status.error{
   background:var(--red-bg);
+
   color:var(--red);
 
   border-color:#f2c5c0;
@@ -211,6 +225,7 @@ body{
 }
 
 @keyframes fadeIn{
+
   from{
     opacity:0;
     transform:translateY(4px);
@@ -220,11 +235,12 @@ body{
     opacity:1;
     transform:translateY(0);
   }
+
 }
 
 
 /* =========================================================
-   SECTION HEADING
+   SECTION HEADINGS
 ========================================================= */
 
 .section-heading{
@@ -237,6 +253,7 @@ body{
   color:var(--maroon);
 
   font-size:9px;
+
   font-weight:700;
 
   letter-spacing:2px;
@@ -258,6 +275,7 @@ body{
     serif;
 
   font-size:25px;
+
   font-weight:500;
 }
 
@@ -288,6 +306,7 @@ body{
   background:var(--white);
 
   border:1px solid var(--border);
+
   border-radius:12px;
 
   padding:20px;
@@ -315,6 +334,7 @@ body{
   display:flex;
 
   justify-content:space-between;
+
   align-items:flex-start;
 
   gap:10px;
@@ -329,6 +349,7 @@ body{
   border-radius:10px;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
@@ -337,6 +358,7 @@ body{
   color:var(--maroon);
 
   font-size:18px;
+
   font-weight:700;
 }
 
@@ -344,6 +366,7 @@ body{
   color:var(--muted);
 
   font-size:10px;
+
   font-weight:700;
 
   text-transform:uppercase;
@@ -364,6 +387,7 @@ body{
     serif;
 
   font-size:22px;
+
   font-weight:500;
 }
 
@@ -379,6 +403,7 @@ body{
   display:flex;
 
   justify-content:space-between;
+
   align-items:center;
 
   border-top:1px solid #eee9e5;
@@ -390,6 +415,7 @@ body{
   color:var(--muted);
 
   font-size:11px;
+
   font-weight:700;
 }
 
@@ -397,6 +423,7 @@ body{
   color:var(--maroon);
 
   font-size:11px;
+
   font-weight:700;
 }
 
@@ -427,6 +454,7 @@ body{
   padding:9px 13px;
 
   font-size:12px;
+
   font-weight:700;
 
   cursor:pointer;
@@ -444,7 +472,7 @@ body{
 
 
 /* =========================================================
-   STUDENTS GRID
+   STUDENTS
 ========================================================= */
 
 .students-grid{
@@ -491,10 +519,12 @@ body{
   color:var(--maroon);
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
   font-weight:700;
+
   font-size:13px;
 }
 
@@ -570,6 +600,7 @@ body{
   padding:10px 15px;
 
   font-size:12px;
+
   font-weight:700;
 
   cursor:pointer;
@@ -580,6 +611,7 @@ body{
 .primary-button,
 .primary{
   background:var(--maroon);
+
   color:#fff;
 }
 
@@ -588,9 +620,17 @@ body{
   background:var(--dark-maroon);
 }
 
+.primary-button:disabled,
+.primary:disabled{
+  opacity:.65;
+
+  cursor:not-allowed;
+}
+
 .secondary-button,
 .secondary{
   background:#e9e7e4;
+
   color:#222;
 }
 
@@ -601,18 +641,20 @@ body{
 
 .small-button{
   padding:8px 11px;
+
   font-size:11px;
 }
 
 
 /* =========================================================
-   STUDENT INFO CARD
+   STUDENT INFORMATION
 ========================================================= */
 
 .student-info-card{
   background:var(--white);
 
   border:1px solid var(--border);
+
   border-radius:12px;
 
   padding:18px;
@@ -650,6 +692,7 @@ body{
     serif;
 
   font-size:23px;
+
   font-weight:500;
 }
 
@@ -696,6 +739,7 @@ body{
   background:var(--white);
 
   border:1px solid var(--border);
+
   border-radius:12px;
 
   box-shadow:var(--shadow);
@@ -770,6 +814,39 @@ body{
 
 
 /* =========================================================
+   MARKING INSTRUCTION
+========================================================= */
+
+.marks-instruction{
+  padding:10px 20px;
+
+  background:#fffaf0;
+
+  border-bottom:1px solid #eee9e5;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  color:#6d5b32;
+
+  font-size:11px;
+}
+
+.marks-instruction strong{
+  color:var(--maroon);
+
+  text-transform:uppercase;
+
+  letter-spacing:.5px;
+}
+
+
+/* =========================================================
    TABLE
 ========================================================= */
 
@@ -792,6 +869,8 @@ td{
   border-bottom:1px solid #e8e5e1;
 
   text-align:left;
+
+  vertical-align:middle;
 }
 
 th{
@@ -822,34 +901,135 @@ tbody tr:hover{
 
 
 /* =========================================================
-   RESULT INPUTS
+   SUBJECT NAME
 ========================================================= */
 
-.mark-input{
-  width:90px;
+.subject-name{
+  color:var(--maroon);
+
+  font-weight:700;
+
+  min-width:130px;
+}
+
+
+/* =========================================================
+   PAPER INPUTS
+========================================================= */
+
+.paper-list{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:7px;
+
+  min-width:260px;
+}
+
+.paper-row{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  flex-wrap:nowrap;
+}
+
+.paper-label{
+  min-width:72px;
+
+  color:var(--text);
+
+  font-size:10px;
+
+  font-weight:700;
+}
+
+.paper-max{
+  color:var(--muted);
+
+  font-size:10px;
+
+  white-space:nowrap;
+}
+
+.paper-mark-input{
+  width:70px;
 
   border:1px solid #cfc9c4;
 
   border-radius:6px;
 
-  padding:8px;
+  padding:7px;
 
   font-size:12px;
 
   outline:none;
+
+  background:#fff;
 }
 
-.mark-input:focus{
+.paper-mark-input:focus{
   border-color:var(--maroon);
 
   box-shadow:
     0 0 0 2px rgba(101,13,34,.08);
 }
 
-.remark-input{
-  width:100%;
+.paper-mark-input.invalid{
+  border-color:var(--red);
 
-  min-width:150px;
+  background:#fff7f6;
+}
+
+.paper-total{
+  margin-top:2px;
+
+  color:var(--muted);
+
+  font-size:10px;
+
+  font-weight:700;
+}
+
+
+/* =========================================================
+   PERCENTAGE
+========================================================= */
+
+.percentage-cell{
+  min-width:90px;
+}
+
+.percentage-value{
+  color:var(--maroon);
+
+  font-size:15px;
+
+  font-weight:700;
+
+  white-space:nowrap;
+}
+
+.percentage-detail{
+  margin-top:3px;
+
+  color:var(--muted);
+
+  font-size:9px;
+
+  white-space:nowrap;
+}
+
+
+/* =========================================================
+   REMARK
+========================================================= */
+
+.remark-input{
+  width:130px;
 
   border:1px solid #cfc9c4;
 
@@ -857,14 +1037,28 @@ tbody tr:hover{
 
   padding:8px;
 
-  font-size:12px;
+  font-size:11px;
 
   outline:none;
 }
 
 .remark-input:focus{
   border-color:var(--maroon);
+
+  box-shadow:
+    0 0 0 2px rgba(101,13,34,.06);
 }
+
+.remark-text{
+  color:var(--maroon);
+
+  font-weight:700;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 .result-status{
   display:inline-flex;
@@ -880,6 +1074,7 @@ tbody tr:hover{
   padding:5px 8px;
 
   font-size:9px;
+
   font-weight:700;
 
   text-transform:uppercase;
@@ -901,6 +1096,12 @@ tbody tr:hover{
   color:#777;
 
   background:#eeeeee;
+}
+
+.status-invalid{
+  color:var(--red);
+
+  background:var(--red-bg);
 }
 
 
@@ -928,6 +1129,7 @@ tbody tr:hover{
   border-radius:7px;
 
   font-size:11px;
+
   font-weight:700;
 }
 
@@ -1114,7 +1316,37 @@ tbody tr:hover{
 }
 
 #resultsTable td{
-  font-size:12px;
+  font-size:11px;
+}
+
+.overall-paper-list{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:3px;
+}
+
+.overall-paper{
+  font-size:10px;
+}
+
+.overall-paper strong{
+  color:var(--maroon);
+
+  font-size:10px;
+}
+
+.overall-paper span{
+  color:var(--muted);
+}
+
+.overall-percentage{
+  color:var(--maroon);
+
+  font-weight:700;
+
+  white-space:nowrap;
 }
 
 .remark{
@@ -1223,9 +1455,11 @@ tbody tr:hover{
 }
 
 @keyframes spin{
+
   to{
     transform:rotate(360deg);
   }
+
 }
 
 .table-loading{
@@ -1410,6 +1644,10 @@ footer{
 
   .entry-count{
     min-width:58px;
+  }
+
+  .marks-instruction{
+    padding:10px 14px;
   }
 
   .entry-actions{
@@ -1652,7 +1890,16 @@ footer{
   }
 
   td{
-    font-size:9px;
+    font-size:8px;
+  }
+
+  .overall-paper{
+    font-size:8px;
+  }
+
+  .overall-paper strong,
+  .overall-paper span{
+    font-size:8px;
   }
 
   .overall-result{
@@ -1672,4 +1919,5 @@ footer{
   .overall-result strong{
     font-size:15px;
   }
+
 }

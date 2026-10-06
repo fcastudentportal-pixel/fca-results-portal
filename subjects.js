@@ -1,20 +1,20 @@
+/* =========================================================
+   FCA SUBJECTS MANAGEMENT
+   SUPABASE VERSION
+
+   Requires:
+   config.js
+
+   config.js must create:
+
+   window.fcaSupabase
+========================================================= */
+
 "use strict";
 
 
 /* =========================================================
-   FIRST CLASS ACADEMY
-   SUBJECTS MANAGEMENT
-
-   JUNIOR:
-   FORMS 1 & 2
-
-   SENIOR:
-   FORMS 3 & 4
-========================================================= */
-
-
-/* =========================================================
-   CONFIGURATION
+   FCA ADMIN
 ========================================================= */
 
 const FCA_ADMIN_EMAIL =
@@ -22,710 +22,204 @@ const FCA_ADMIN_EMAIL =
 
 
 /* =========================================================
-   FCA SUBJECT EXAMINATION STRUCTURE
-========================================================= */
-
-const FCA_SUBJECTS = {
-
-    English: {
-
-        code: "ENG",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 50
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 70
-            },
-
-            {
-                paper: "Paper II",
-                marks: 60
-            },
-
-            {
-                paper: "Paper III",
-                marks: 70
-            }
-
-        ]
-
-    },
-
-
-    Chichewa: {
-
-        code: "CHI",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 50
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 70
-            },
-
-            {
-                paper: "Paper II",
-                marks: 60
-            },
-
-            {
-                paper: "Paper III",
-                marks: 70
-            }
-
-        ]
-
-    },
-
-
-    Mathematics: {
-
-        code: "MATH",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 100
-            }
-
-        ]
-
-    },
-
-
-    Geography: {
-
-        code: "GEO",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 100
-            }
-
-        ]
-
-    },
-
-
-    Biology: {
-
-        code: "BIO",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 40
-            }
-
-        ]
-
-    },
-
-
-    Agriculture: {
-
-        code: "AGRI",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 40
-            }
-
-        ]
-
-    },
-
-
-    Chemistry: {
-
-        code: "CHEM",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 40
-            }
-
-        ]
-
-    },
-
-
-    Physics: {
-
-        code: "PHY",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            },
-
-            {
-                paper: "Paper II",
-                marks: 40
-            }
-
-        ]
-
-    },
-
-
-    History: {
-
-        code: "HIST",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 120
-            }
-
-        ]
-
-    },
-
-
-    "Bible Knowledge": {
-
-        code: "BK",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 120
-            }
-
-        ]
-
-    },
-
-
-    "Social Studies": {
-
-        code: "SOC",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 100
-            }
-
-        ]
-
-    },
-
-
-    "Life Skills": {
-
-        code: "LIFE",
-
-        junior: [
-
-            {
-                paper: "Paper I",
-                marks: 100
-            }
-
-        ],
-
-        senior: [
-
-            {
-                paper: "Paper I",
-                marks: 50
-            },
-
-            {
-                paper: "Paper II",
-                marks: 100
-            }
-
-        ]
-
-    }
-
-};
-
-
-/* =========================================================
-   VARIABLES
+   SUPABASE
 ========================================================= */
 
 let db = null;
+
+
+/* =========================================================
+   DATA
+========================================================= */
 
 let subjects = [];
 
 let editingSubjectId = null;
 
-let subjectToDeleteId = null;
+let selectedDeleteSubjectId = null;
+
+let paperCounter = 0;
 
 
 /* =========================================================
-   DOM ELEMENTS
+   DEFAULT SUBJECT CONFIGURATION
 ========================================================= */
 
-let addSubjectBtn;
+const DEFAULT_SUBJECTS = [
 
-let subjectFormPanel;
+    {
+        name:"Agriculture",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",40]
+            ]
+        }
+    },
 
-let subjectForm;
+    {
+        name:"Bible Knowledge",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",120]
+            ]
+        }
+    },
 
-let formTitle;
+    {
+        name:"Biology",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",40]
+            ]
+        }
+    },
 
-let subjectName;
+    {
+        name:"Chemistry",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",40]
+            ]
+        }
+    },
 
-let subjectCode;
+    {
+        name:"Chichewa",
+        junior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",50]
+            ]
+        },
+        senior:{
+            papers:[
+                [1,"Paper I",70],
+                [2,"Paper II",60],
+                [3,"Paper III",70]
+            ]
+        }
+    },
 
-let cancelBtn;
+    {
+        name:"English",
+        junior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",50]
+            ]
+        },
+        senior:{
+            papers:[
+                [1,"Paper I",70],
+                [2,"Paper II",60],
+                [3,"Paper III",70]
+            ]
+        }
+    },
 
-let saveSubjectBtn;
+    {
+        name:"Geography",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",100]
+            ]
+        }
+    },
 
-let subjectMessage;
+    {
+        name:"History",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",120]
+            ]
+        }
+    },
 
-let juniorSubjects;
+    {
+        name:"Life Skills",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",100]
+            ]
+        }
+    },
 
-let seniorSubjects;
+    {
+        name:"Mathematics",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",100]
+            ]
+        }
+    },
 
-let subjectCount;
+    {
+        name:"Physics",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",100],
+                [2,"Paper II",40]
+            ]
+        }
+    },
 
-let juniorSubjectCount;
+    {
+        name:"Social Studies",
+        junior:true,
+        senior:{
+            papers:[
+                [1,"Paper I",50],
+                [2,"Paper II",100]
+            ]
+        }
+    }
 
-let seniorSubjectCount;
-
-let databaseStatus;
-
-let deleteModal;
-
-let deleteSubjectName;
-
-let adminDeletePassword;
-
-let adminPasswordToggle;
-
-let adminEyeOpen;
-
-let adminEyeClosed;
-
-let deleteError;
-
-let deleteCancelBtn;
-
-let deleteConfirmBtn;
-
-let closeDeleteModalBtn;
+];
 
 
 /* =========================================================
-   START
+   SUPABASE CLIENT
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeSubjectsPage
-);
+function getSupabaseClient(){
 
+    if(!window.fcaSupabase){
 
-/* =========================================================
-   CACHE ELEMENTS
-========================================================= */
-
-function cacheElements() {
-
-    addSubjectBtn =
-        document.getElementById(
-            "addSubjectBtn"
+        throw new Error(
+            "FCA Supabase client is not available."
         );
 
+    }
 
-    subjectFormPanel =
-        document.getElementById(
-            "subjectFormPanel"
-        );
-
-
-    subjectForm =
-        document.getElementById(
-            "subjectForm"
-        );
-
-
-    formTitle =
-        document.getElementById(
-            "formTitle"
-        );
-
-
-    subjectName =
-        document.getElementById(
-            "subjectName"
-        );
-
-
-    subjectCode =
-        document.getElementById(
-            "subjectCode"
-        );
-
-
-    cancelBtn =
-        document.getElementById(
-            "cancelBtn"
-        );
-
-
-    saveSubjectBtn =
-        document.getElementById(
-            "saveSubjectBtn"
-        );
-
-
-    subjectMessage =
-        document.getElementById(
-            "subjectMessage"
-        );
-
-
-    juniorSubjects =
-        document.getElementById(
-            "juniorSubjects"
-        );
-
-
-    seniorSubjects =
-        document.getElementById(
-            "seniorSubjects"
-        );
-
-
-    subjectCount =
-        document.getElementById(
-            "subjectCount"
-        );
-
-
-    juniorSubjectCount =
-        document.getElementById(
-            "juniorSubjectCount"
-        );
-
-
-    seniorSubjectCount =
-        document.getElementById(
-            "seniorSubjectCount"
-        );
-
-
-    databaseStatus =
-        document.getElementById(
-            "databaseStatus"
-        );
-
-
-    deleteModal =
-        document.getElementById(
-            "deleteModal"
-        );
-
-
-    deleteSubjectName =
-        document.getElementById(
-            "deleteSubjectName"
-        );
-
-
-    adminDeletePassword =
-        document.getElementById(
-            "adminDeletePassword"
-        );
-
-
-    adminPasswordToggle =
-        document.getElementById(
-            "adminPasswordToggle"
-        );
-
-
-    adminEyeOpen =
-        document.getElementById(
-            "adminEyeOpen"
-        );
-
-
-    adminEyeClosed =
-        document.getElementById(
-            "adminEyeClosed"
-        );
-
-
-    deleteError =
-        document.getElementById(
-            "deleteError"
-        );
-
-
-    deleteCancelBtn =
-        document.getElementById(
-            "deleteCancelBtn"
-        );
-
-
-    deleteConfirmBtn =
-        document.getElementById(
-            "deleteConfirmBtn"
-        );
-
-
-    closeDeleteModalBtn =
-        document.getElementById(
-            "closeDeleteModalBtn"
-        );
+    return window.fcaSupabase;
 
 }
 
 
 /* =========================================================
-   SUPABASE
+   ELEMENTS
 ========================================================= */
 
-function getSupabaseClient() {
+function $(id){
 
-    if (window.fcaSupabase) {
-
-        return window.fcaSupabase;
-
-    }
-
-    return null;
-
-}
-
-
-/* =========================================================
-   AUTHORIZATION
-========================================================= */
-
-async function checkAdminAuthorization() {
-
-    const {
-        data,
-        error
-    } = await db.auth.getSession();
-
-
-    if (error) {
-
-        throw error;
-
-    }
-
-
-    const session =
-        data?.session;
-
-
-    if (!session) {
-
-        window.location.href =
-            "index.html";
-
-        return false;
-
-    }
-
-
-    const email =
-        String(
-            session.user.email || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    if (
-        email !==
-        FCA_ADMIN_EMAIL.toLowerCase()
-    ) {
-
-        alert(
-            "You are not authorized to access the FCA administration portal."
-        );
-
-
-        await db.auth.signOut();
-
-
-        window.location.href =
-            "index.html";
-
-
-        return false;
-
-    }
-
-
-    return true;
+    return document.getElementById(id);
 
 }
 
@@ -736,247 +230,134 @@ async function checkAdminAuthorization() {
 
 function setDatabaseStatus(
     message,
-    type = ""
-) {
+    type
+){
 
-    databaseStatus.textContent =
-        message;
+    const status =
+        $("databaseStatus");
 
+    const text =
+        $("databaseStatusText");
 
-    databaseStatus.classList.remove(
-        "connected",
-        "error"
-    );
 
-
-    if (type) {
-
-        databaseStatus.classList.add(
-            type
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   HIDE FORM
-========================================================= */
-
-function hideSubjectForm() {
-
-    if (!subjectFormPanel) return;
-
-
-    subjectFormPanel.style.setProperty(
-        "display",
-        "none",
-        "important"
-    );
-
-
-    subjectFormPanel.classList.remove(
-        "active",
-        "show"
-    );
-
-}
-
-
-/* =========================================================
-   SHOW FORM
-========================================================= */
-
-function showSubjectForm(
-    mode = "add"
-) {
-
-    if (!subjectFormPanel) return;
-
-
-    subjectFormPanel.style.setProperty(
-        "display",
-        "block",
-        "important"
-    );
-
-
-    subjectFormPanel.classList.add(
-        "active",
-        "show"
-    );
-
-
-    if (mode === "add") {
-
-        formTitle.textContent =
-            "Add Subject";
-
-
-        saveSubjectBtn.textContent =
-            "Save Subject";
-
-    } else {
-
-        formTitle.textContent =
-            "Edit Subject";
-
-
-        saveSubjectBtn.textContent =
-            "Update Subject";
-
-    }
-
-
-    requestAnimationFrame(
-        function () {
-
-            subjectFormPanel.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   PREPARE ADD
-========================================================= */
-
-function prepareAddForm() {
-
-    editingSubjectId = null;
-
-
-    subjectForm.reset();
-
-
-    clearSubjectMessage();
-
-
-    formTitle.textContent =
-        "Add Subject";
-
-
-    saveSubjectBtn.textContent =
-        "Save Subject";
-
-
-    showSubjectForm("add");
-
-
-    setTimeout(
-        function () {
-
-            subjectName.focus();
-
-        },
-        250
-    );
-
-}
-
-
-/* =========================================================
-   EDIT SUBJECT
-========================================================= */
-
-function editSubject(id) {
-
-    const subject =
-        subjects.find(
-            function (item) {
-
-                return String(item.id) ===
-                    String(id);
-
-            }
-        );
-
-
-    if (!subject) {
-
-        alert(
-            "Subject could not be found."
-        );
+    if(!status || !text){
 
         return;
 
     }
 
 
-    editingSubjectId =
-        subject.id;
+    status.className =
+        "database-status " +
+        type;
 
 
-    subjectName.value =
-        subject.name || "";
-
-
-    subjectCode.value =
-        subject.code || "";
-
-
-    clearSubjectMessage();
-
-
-    showSubjectForm("edit");
-
-
-    setTimeout(
-        function () {
-
-            subjectName.focus();
-
-        },
-        250
-    );
+    text.textContent =
+        message;
 
 }
 
 
 /* =========================================================
-   RESET FORM
+   CHECK ADMIN AUTHORIZATION
 ========================================================= */
 
-function resetSubjectForm() {
+async function checkAdminAuthorization(){
 
-    editingSubjectId = null;
+    try{
+
+        db =
+            getSupabaseClient();
 
 
-    if (subjectForm) {
+        const {
+            data,
+            error
+        } =
+            await db
+                .auth
+                .getSession();
 
-        subjectForm.reset();
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !data ||
+            !data.session ||
+            !data.session.user
+        ){
+
+            window.location.replace(
+                "admin-login.html"
+            );
+
+            return false;
+
+        }
+
+
+        const email =
+            data.session.user.email
+                ?.trim()
+                .toLowerCase();
+
+
+        if(
+            email !==
+            FCA_ADMIN_EMAIL
+        ){
+
+            await db
+                .auth
+                .signOut();
+
+
+            window.location.replace(
+                "admin-login.html"
+            );
+
+            return false;
+
+        }
+
+
+        console.log(
+            "FCA administrator authorized:",
+            email
+        );
+
+
+        return true;
 
     }
 
+    catch(error){
 
-    clearSubjectMessage();
-
-
-    formTitle.textContent =
-        "Add Subject";
-
-
-    saveSubjectBtn.textContent =
-        "Save Subject";
-
-}
+        console.error(
+            "FCA authorization error:",
+            error
+        );
 
 
-/* =========================================================
-   CANCEL
-========================================================= */
+        setDatabaseStatus(
+            "Unable to verify administrator account.",
+            "error"
+        );
 
-function cancelSubjectForm() {
 
-    resetSubjectForm();
+        window.location.replace(
+            "admin-login.html"
+        );
 
-    hideSubjectForm();
+
+        return false;
+
+    }
 
 }
 
@@ -985,176 +366,318 @@ function cancelSubjectForm() {
    LOAD SUBJECTS
 ========================================================= */
 
-async function loadSubjects() {
+async function loadSubjects(){
 
     setDatabaseStatus(
-        "Loading subjects..."
+        "Loading subjects...",
+        "loading"
     );
 
 
-    const {
-        data,
-        error
-    } = await db
-        .from("subjects")
-        .select("*")
-        .order(
-            "name",
-            {
-                ascending: true
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await db
+            .from("subjects")
+            .select(`
+                id,
+                subject_name,
+                form_number,
+                section,
+                description,
+                created_at,
+                updated_at,
+                subject_papers (
+                    id,
+                    paper_number,
+                    paper_name,
+                    max_marks,
+                    created_at,
+                    updated_at
+                )
+            `)
+            .order(
+                "form_number",
+                {
+                    ascending:true
+                }
+            )
+            .order(
+                "subject_name",
+                {
+                    ascending:true
+                }
+            );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        subjects =
+            data || [];
+
+
+        subjects.forEach(
+            subject => {
+
+                if(
+                    Array.isArray(
+                        subject.subject_papers
+                    )
+                ){
+
+                    subject.subject_papers.sort(
+                        (
+                            a,
+                            b
+                        ) =>
+                            a.paper_number -
+                            b.paper_number
+                    );
+
+                }
+
             }
         );
 
 
-    if (error) {
+        renderSubjects();
 
-        throw error;
-
-    }
+        updateSummary();
 
 
-    subjects =
-        Array.isArray(data)
-            ? data
-            : [];
+        setDatabaseStatus(
+            "Connected to FCA database.",
+            "success"
+        );
 
 
-    /*
-       If the database is empty, use the FCA
-       standard subject list for display.
-    */
-
-    if (!subjects.length) {
-
-        subjects =
-            Object.keys(
-                FCA_SUBJECTS
-            ).map(
-                function (name, index) {
-
-                    const config =
-                        FCA_SUBJECTS[name];
-
-
-                    return {
-
-                        id:
-                            `default-${index}`,
-
-                        name:
-                            name,
-
-                        code:
-                            config.code,
-
-                        is_default:
-                            true
-
-                    };
-
-                }
-            );
+        console.log(
+            "FCA subjects loaded:",
+            subjects
+        );
 
     }
 
+    catch(error){
 
-    renderSubjects();
+        console.error(
+            "FCA subject loading error:",
+            error
+        );
 
-    updateStatistics();
+
+        subjects = [];
 
 
-    setDatabaseStatus(
-        "Database connected",
-        "connected"
-    );
+        renderSubjects();
+
+        updateSummary();
+
+
+        setDatabaseStatus(
+            error.message ||
+            "Unable to load subjects.",
+            "error"
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   RENDER ALL SUBJECTS
+   RENDER SUBJECTS
 ========================================================= */
 
-function renderSubjects() {
+function renderSubjects(){
 
-    juniorSubjects.innerHTML = "";
+    const search =
+        $("subjectSearch")
+            .value
+            .trim()
+            .toLowerCase();
 
-    seniorSubjects.innerHTML = "";
+
+    const formFilter =
+        $("formFilter")
+            .value;
 
 
-    subjects.forEach(
-        function (subject) {
+    for(
+        let form = 1;
+        form <= 4;
+        form++
+    ){
 
-            const config =
-                getSubjectConfig(
-                    subject.name
+        const container =
+            $("form" + form + "Subjects");
+
+
+        if(container){
+
+            container.innerHTML = "";
+
+        }
+
+    }
+
+
+    const visibleByForm = {
+        1:0,
+        2:0,
+        3:0,
+        4:0
+    };
+
+
+    const filtered =
+        subjects.filter(
+            subject => {
+
+                const matchesSearch =
+                    !search ||
+                    subject.subject_name
+                        .toLowerCase()
+                        .includes(search);
+
+
+                const matchesForm =
+                    formFilter === "all" ||
+                    String(
+                        subject.form_number
+                    ) === formFilter;
+
+
+                return (
+                    matchesSearch &&
+                    matchesForm
                 );
 
+            }
+        );
 
-            if (!config) {
 
-                return;
+    filtered.sort(
+        (
+            a,
+            b
+        ) => {
+
+            if(
+                a.form_number !==
+                b.form_number
+            ){
+
+                return (
+                    a.form_number -
+                    b.form_number
+                );
 
             }
 
 
-            juniorSubjects.appendChild(
-                createSubjectCard(
-                    subject,
-                    "junior"
-                )
-            );
-
-
-            seniorSubjects.appendChild(
-                createSubjectCard(
-                    subject,
-                    "senior"
-                )
-            );
+            return a.subject_name
+                .localeCompare(
+                    b.subject_name
+                );
 
         }
     );
 
-}
+
+    filtered.forEach(
+        subject => {
+
+            const form =
+                Number(
+                    subject.form_number
+                );
 
 
-/* =========================================================
-   FIND SUBJECT CONFIG
-========================================================= */
-
-function getSubjectConfig(name) {
-
-    if (!name) return null;
+            visibleByForm[form]++;
 
 
-    if (
-        FCA_SUBJECTS[name]
-    ) {
+            const container =
+                $("form" + form + "Subjects");
 
-        return FCA_SUBJECTS[name];
+
+            if(container){
+
+                container.appendChild(
+                    createSubjectCard(
+                        subject
+                    )
+                );
+
+            }
+
+        }
+    );
+
+
+    for(
+        let form = 1;
+        form <= 4;
+        form++
+    ){
+
+        const container =
+            $("form" + form + "Subjects");
+
+
+        if(
+            container &&
+            visibleByForm[form] === 0
+        ){
+
+            container.innerHTML = `
+
+                <div class="empty-state">
+
+                    <strong>
+                        No subjects found
+                    </strong>
+
+                    No subjects match the
+                    current search or filter.
+
+                </div>
+
+            `;
+
+        }
+
+
+        const countElement =
+            $("form" +
+              form +
+              "VisibleCount");
+
+
+        if(countElement){
+
+            countElement.textContent =
+                visibleByForm[form] +
+                (
+                    visibleByForm[form] === 1
+                        ? " subject"
+                        : " subjects"
+                );
+
+        }
 
     }
 
 
-    const key =
-        Object.keys(
-            FCA_SUBJECTS
-        ).find(
-            function (subjectName) {
-
-                return subjectName
-                    .toLowerCase() ===
-                    String(name)
-                        .toLowerCase();
-
-            }
-        );
-
-
-    return key
-        ? FCA_SUBJECTS[key]
-        : null;
+    updateFormSectionVisibility();
 
 }
 
@@ -1164,15 +687,8 @@ function getSubjectConfig(name) {
 ========================================================= */
 
 function createSubjectCard(
-    subject,
-    section
-) {
-
-    const config =
-        getSubjectConfig(
-            subject.name
-        );
-
+    subject
+){
 
     const card =
         document.createElement(
@@ -1185,115 +701,96 @@ function createSubjectCard(
 
 
     const papers =
-        section === "junior"
-            ? config.junior
-            : config.senior;
+        Array.isArray(
+            subject.subject_papers
+        )
+            ? subject.subject_papers
+            : [];
 
 
     const totalMarks =
         papers.reduce(
-            function (total, paper) {
-
-                return total +
-                    paper.marks;
-
-            },
+            (
+                total,
+                paper
+            ) =>
+                total +
+                Number(
+                    paper.max_marks
+                ),
             0
         );
 
 
-    const forms =
-        section === "junior"
-            ? "Forms 1–2"
-            : "Forms 3–4";
+    const papersHTML =
+        papers.length
+            ? papers.map(
+                paper => `
+
+                    <div class="paper-row">
+
+                        <span class="paper-name">
+                            ${escapeHTML(
+                                paper.paper_name
+                            )}
+                        </span>
+
+                        <span class="paper-marks">
+                            ${formatMarks(
+                                paper.max_marks
+                            )} marks
+                        </span>
+
+                    </div>
+
+                `
+            ).join("")
+            : `
+
+                <div class="empty-state">
+                    No papers configured.
+                </div>
+
+            `;
 
 
-    const initial =
-        escapeHtml(
-            String(
-                subject.name || "S"
-            )
-            .trim()
-            .charAt(0)
-            .toUpperCase()
-        );
+    const description =
+        subject.description
+            ? `
+                <p class="subject-description">
+                    ${escapeHTML(
+                        subject.description
+                    )}
+                </p>
+            `
+            : "";
 
 
     card.innerHTML = `
 
         <div class="subject-card-header">
 
-            <div class="subject-icon">
-                ${initial}
-            </div>
+            <h3>
+                ${escapeHTML(
+                    subject.subject_name
+                )}
+            </h3>
 
-            <span class="subject-code">
-                ${escapeHtml(
-                    subject.code ||
-                    config.code
+            <span class="section-badge">
+                ${escapeHTML(
+                    subject.section
                 )}
             </span>
 
         </div>
 
 
-        <h3 class="subject-name">
-
-            ${escapeHtml(
-                subject.name
-            )}
-
-        </h3>
-
-
-        <p class="subject-forms">
-
-            ${forms}
-
-        </p>
-
-
-        <div class="paper-heading">
-
-            <span>
-                Examination Papers
-            </span>
-
-            <span class="total-marks">
-                ${papers.length}
-                ${papers.length === 1
-                    ? "Paper"
-                    : "Papers"}
-            </span>
-
-        </div>
+        ${description}
 
 
         <div class="paper-list">
 
-            ${papers.map(
-                function (paper) {
-
-                    return `
-
-                        <div class="paper-row">
-
-                            <span class="paper-name">
-                                ${escapeHtml(
-                                    paper.paper
-                                )}
-                            </span>
-
-                            <span class="paper-marks">
-                                ${paper.marks} marks
-                            </span>
-
-                        </div>
-
-                    `;
-
-                }
-            ).join("")}
+            ${papersHTML}
 
         </div>
 
@@ -1305,48 +802,72 @@ function createSubjectCard(
             </span>
 
             <strong>
-                ${totalMarks}
+                ${formatMarks(
+                    totalMarks
+                )}
             </strong>
 
         </div>
 
 
-        ${
-            subject.is_default
-                ? ""
-                : `
+        <div class="subject-card-actions">
 
-                <div class="subject-actions">
-
-                    <button
-                        type="button"
-                        class="edit-subject-btn"
-                        data-action="edit"
-                        data-id="${escapeHtml(
-                            subject.id
-                        )}"
-                    >
-                        Edit
-                    </button>
+            <button
+                type="button"
+                class="edit-button"
+                data-edit-id="${subject.id}"
+            >
+                Edit
+            </button>
 
 
-                    <button
-                        type="button"
-                        class="delete-subject-btn"
-                        data-action="delete"
-                        data-id="${escapeHtml(
-                            subject.id
-                        )}"
-                    >
-                        Delete
-                    </button>
+            <button
+                type="button"
+                class="card-delete-button"
+                data-delete-id="${subject.id}"
+            >
+                Delete
+            </button>
 
-                </div>
-
-            `
-        }
+        </div>
 
     `;
+
+
+    const editButton =
+        card.querySelector(
+            "[data-edit-id]"
+        );
+
+
+    const deleteButton =
+        card.querySelector(
+            "[data-delete-id]"
+        );
+
+
+    editButton.addEventListener(
+        "click",
+        function(){
+
+            openEditSubjectModal(
+                subject.id
+            );
+
+        }
+    );
+
+
+    deleteButton.addEventListener(
+        "click",
+        function(){
+
+            openDeleteSubjectModal(
+                subject.id
+            );
+
+        }
+    );
 
 
     return card;
@@ -1355,27 +876,555 @@ function createSubjectCard(
 
 
 /* =========================================================
-   STATISTICS
+   UPDATE SUMMARY
 ========================================================= */
 
-function updateStatistics() {
+function updateSummary(){
 
-    const total =
-        Object.keys(
-            FCA_SUBJECTS
-        ).length;
-
-
-    subjectCount.textContent =
-        total;
+    $("totalSubjects")
+        .textContent =
+        subjects.length;
 
 
-    juniorSubjectCount.textContent =
-        total;
+    for(
+        let form = 1;
+        form <= 4;
+        form++
+    ){
+
+        const count =
+            subjects.filter(
+                subject =>
+                    Number(
+                        subject.form_number
+                    ) === form
+            ).length;
 
 
-    seniorSubjectCount.textContent =
-        total;
+        $("form" + form + "Count")
+            .textContent =
+            count;
+
+    }
+
+}
+
+
+/* =========================================================
+   SECTION VISIBILITY
+========================================================= */
+
+function updateFormSectionVisibility(){
+
+    const formFilter =
+        $("formFilter").value;
+
+
+    for(
+        let form = 1;
+        form <= 4;
+        form++
+    ){
+
+        const section =
+            document.querySelector(
+                `.form-section[data-form="${form}"]`
+            );
+
+
+        if(!section){
+
+            continue;
+
+        }
+
+
+        if(
+            formFilter === "all" ||
+            formFilter === String(form)
+        ){
+
+            section.style.display =
+                "";
+
+        }
+
+        else{
+
+            section.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN ADD MODAL
+========================================================= */
+
+function openAddSubjectModal(){
+
+    editingSubjectId =
+        null;
+
+
+    $("subjectModalTitle")
+        .textContent =
+        "Add Subject";
+
+
+    $("subjectForm")
+        .reset();
+
+
+    $("papersContainer")
+        .innerHTML =
+        "";
+
+
+    $("subjectMessage")
+        .className =
+        "modal-message";
+
+
+    paperCounter = 0;
+
+
+    addPaper(
+        "Paper I",
+        100
+    );
+
+
+    $("subjectModal")
+        .classList
+        .add("open");
+
+
+    $("subjectModal")
+        .setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+    $("subjectName")
+        .focus();
+
+}
+
+
+/* =========================================================
+   OPEN EDIT MODAL
+========================================================= */
+
+function openEditSubjectModal(
+    subjectId
+){
+
+    const subject =
+        subjects.find(
+            item =>
+                item.id ===
+                subjectId
+        );
+
+
+    if(!subject){
+
+        return;
+
+    }
+
+
+    editingSubjectId =
+        subjectId;
+
+
+    $("subjectModalTitle")
+        .textContent =
+        "Edit Subject";
+
+
+    $("subjectName")
+        .value =
+        subject.subject_name;
+
+
+    $("subjectFormNumber")
+        .value =
+        subject.form_number;
+
+
+    $("subjectSection")
+        .value =
+        subject.section;
+
+
+    $("subjectDescription")
+        .value =
+        subject.description ||
+        "";
+
+
+    $("papersContainer")
+        .innerHTML =
+        "";
+
+
+    paperCounter = 0;
+
+
+    const papers =
+        Array.isArray(
+            subject.subject_papers
+        )
+            ? subject.subject_papers
+            : [];
+
+
+    if(papers.length){
+
+        papers.forEach(
+            paper => {
+
+                addPaper(
+                    paper.paper_name,
+                    paper.max_marks
+                );
+
+            }
+        );
+
+    }
+
+    else{
+
+        addPaper(
+            "Paper I",
+            100
+        );
+
+    }
+
+
+    clearSubjectMessage();
+
+
+    $("subjectModal")
+        .classList
+        .add("open");
+
+
+    $("subjectModal")
+        .setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+    $("subjectName")
+        .focus();
+
+}
+
+
+/* =========================================================
+   CLOSE SUBJECT MODAL
+========================================================= */
+
+function closeSubjectModal(){
+
+    $("subjectModal")
+        .classList
+        .remove("open");
+
+
+    $("subjectModal")
+        .setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+    editingSubjectId =
+        null;
+
+}
+
+
+/* =========================================================
+   ADD PAPER
+========================================================= */
+
+function addPaper(
+    paperName = "",
+    maxMarks = ""
+){
+
+    const container =
+        $("papersContainer");
+
+
+    if(
+        container.children.length >= 3
+    ){
+
+        showSubjectMessage(
+            "A subject can have a maximum of three papers.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    paperCounter++;
+
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "paper-edit-row";
+
+
+    row.dataset.paperId =
+        paperCounter;
+
+
+    const number =
+        container.children.length +
+        1;
+
+
+    const defaultName =
+        paperName ||
+        (
+            number === 1
+                ? "Paper I"
+                : number === 2
+                    ? "Paper II"
+                    : "Paper III"
+        );
+
+
+    row.innerHTML = `
+
+        <div class="paper-edit-top">
+
+
+            <label>
+
+                Paper
+
+                <input
+                    type="text"
+                    class="paper-name-input"
+                    value="${escapeAttribute(
+                        defaultName
+                    )}"
+                    maxlength="50"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Maximum Marks
+
+                <input
+                    type="number"
+                    class="paper-marks-input"
+                    value="${escapeAttribute(
+                        maxMarks
+                    )}"
+                    min="1"
+                    max="1000"
+                    step="1"
+                    required
+                >
+
+            </label>
+
+
+        </div>
+
+
+        <button
+            type="button"
+            class="paper-remove-button"
+        >
+            Remove this paper
+        </button>
+
+    `;
+
+
+    const removeButton =
+        row.querySelector(
+            ".paper-remove-button"
+        );
+
+
+    removeButton.addEventListener(
+        "click",
+        function(){
+
+            row.remove();
+
+            renumberPapers();
+
+            calculateModalTotal();
+
+        }
+    );
+
+
+    const marksInput =
+        row.querySelector(
+            ".paper-marks-input"
+        );
+
+
+    marksInput.addEventListener(
+        "input",
+        calculateModalTotal
+    );
+
+
+    container.appendChild(
+        row
+    );
+
+
+    renumberPapers();
+
+    calculateModalTotal();
+
+}
+
+
+/* =========================================================
+   RENUMBER PAPERS
+========================================================= */
+
+function renumberPapers(){
+
+    const rows =
+        document.querySelectorAll(
+            ".paper-edit-row"
+        );
+
+
+    rows.forEach(
+        (
+            row,
+            index
+        ) => {
+
+            const number =
+                index + 1;
+
+
+            const nameInput =
+                row.querySelector(
+                    ".paper-name-input"
+                );
+
+
+            if(
+                !nameInput.value.trim()
+            ){
+
+                nameInput.value =
+                    getDefaultPaperName(
+                        number
+                    );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DEFAULT PAPER NAME
+========================================================= */
+
+function getDefaultPaperName(
+    number
+){
+
+    if(number === 1){
+
+        return "Paper I";
+
+    }
+
+
+    if(number === 2){
+
+        return "Paper II";
+
+    }
+
+
+    return "Paper III";
+
+}
+
+
+/* =========================================================
+   CALCULATE TOTAL
+========================================================= */
+
+function calculateModalTotal(){
+
+    const inputs =
+        document.querySelectorAll(
+            ".paper-marks-input"
+        );
+
+
+    let total = 0;
+
+
+    inputs.forEach(
+        input => {
+
+            const value =
+                Number(
+                    input.value
+                );
+
+
+            if(
+                Number.isFinite(value)
+            ){
+
+                total += value;
+
+            }
+
+        }
+    );
+
+
+    $("totalMaxMarks")
+        .textContent =
+        formatMarks(total);
 
 }
 
@@ -1386,25 +1435,46 @@ function updateStatistics() {
 
 async function saveSubject(
     event
-) {
+){
 
     event.preventDefault();
 
 
+    clearSubjectMessage();
+
+
     const name =
-        subjectName.value.trim();
+        $("subjectName")
+            .value
+            .trim();
 
 
-    const code =
-        subjectCode.value
-            .trim()
-            .toUpperCase();
+    const formNumber =
+        Number(
+            $("subjectFormNumber")
+                .value
+        );
 
 
-    if (!name) {
+    const section =
+        $("subjectSection")
+            .value;
+
+
+    const description =
+        $("subjectDescription")
+            .value
+            .trim();
+
+
+    /* -----------------------------------------------
+       VALIDATION
+    ------------------------------------------------ */
+
+    if(!name){
 
         showSubjectMessage(
-            "Please enter the subject name.",
+            "Please enter a subject name.",
             "error"
         );
 
@@ -1413,10 +1483,14 @@ async function saveSubject(
     }
 
 
-    if (!code) {
+    if(
+        !formNumber ||
+        formNumber < 1 ||
+        formNumber > 4
+    ){
 
         showSubjectMessage(
-            "Please enter the subject code.",
+            "Please select a valid form.",
             "error"
         );
 
@@ -1425,14 +1499,13 @@ async function saveSubject(
     }
 
 
-    const config =
-        getSubjectConfig(name);
-
-
-    if (!config) {
+    if(
+        section !== "Junior" &&
+        section !== "Senior"
+    ){
 
         showSubjectMessage(
-            "This subject is not part of the FCA standard subject list.",
+            "Please select a valid section.",
             "error"
         );
 
@@ -1441,37 +1514,151 @@ async function saveSubject(
     }
 
 
-    /*
-       Prevent duplicates.
-    */
+    const rows =
+        Array.from(
+            document.querySelectorAll(
+                ".paper-edit-row"
+            )
+        );
+
+
+    if(rows.length < 1){
+
+        showSubjectMessage(
+            "A subject must have at least one paper.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(rows.length > 3){
+
+        showSubjectMessage(
+            "A subject can have a maximum of three papers.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const papers = [];
+
+
+    for(
+        let index = 0;
+        index < rows.length;
+        index++
+    ){
+
+        const row =
+            rows[index];
+
+
+        const paperName =
+            row.querySelector(
+                ".paper-name-input"
+            )
+            .value
+            .trim();
+
+
+        const maxMarks =
+            Number(
+                row.querySelector(
+                    ".paper-marks-input"
+                ).value
+            );
+
+
+        if(!paperName){
+
+            showSubjectMessage(
+                `Please enter a name for Paper ${index + 1}.`,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            !Number.isFinite(maxMarks) ||
+            maxMarks <= 0
+        ){
+
+            showSubjectMessage(
+                `Please enter valid maximum marks for Paper ${index + 1}.`,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        papers.push({
+
+            paper_number:
+                index + 1,
+
+            paper_name:
+                paperName,
+
+            max_marks:
+                maxMarks
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------
+       DUPLICATE CHECK
+    ------------------------------------------------ */
 
     const duplicate =
         subjects.find(
-            function (subject) {
+            subject => {
+
+                const sameName =
+                    subject.subject_name
+                        .trim()
+                        .toLowerCase() ===
+                    name.toLowerCase();
+
+
+                const sameForm =
+                    Number(
+                        subject.form_number
+                    ) ===
+                    formNumber;
+
+
+                const differentRecord =
+                    subject.id !==
+                    editingSubjectId;
+
 
                 return (
-                    String(
-                        subject.name || ""
-                    )
-                    .trim()
-                    .toLowerCase() ===
-                    name.toLowerCase()
-                )
-                &&
-                (
-                    !editingSubjectId ||
-                    String(subject.id) !==
-                    String(editingSubjectId)
+                    sameName &&
+                    sameForm &&
+                    differentRecord
                 );
 
             }
         );
 
 
-    if (duplicate) {
+    if(duplicate){
 
         showSubjectMessage(
-            "This subject already exists.",
+            `${name} already exists for Form ${formNumber}.`,
             "error"
         );
 
@@ -1480,102 +1667,219 @@ async function saveSubject(
     }
 
 
-    saveSubjectBtn.disabled =
+    const saveButton =
+        $("saveSubjectButton");
+
+
+    saveButton.disabled =
         true;
 
 
-    saveSubjectBtn.textContent =
-        editingSubjectId
-            ? "Updating..."
-            : "Saving...";
+    saveButton.textContent =
+        "Saving...";
 
 
-    try {
+    try{
 
-        const payload = {
-
-            name:
-                name,
-
-            code:
-                code
-
-        };
+        let subjectId =
+            editingSubjectId;
 
 
-        let result;
+        /* -------------------------------------------
+           UPDATE
+        ------------------------------------------- */
+
+        if(editingSubjectId){
+
+            const {
+                error
+            } =
+            await db
+                .from("subjects")
+                .update({
+
+                    subject_name:
+                        name,
+
+                    form_number:
+                        formNumber,
+
+                    section:
+                        section,
+
+                    description:
+                        description ||
+                        null
+
+                })
+                .eq(
+                    "id",
+                    editingSubjectId
+                );
 
 
-        /*
-           If this is an existing database record,
-           update it.
-        */
+            if(error){
 
-        if (
-            editingSubjectId &&
-            !String(
-                editingSubjectId
-            ).startsWith("default-")
-        ) {
+                throw error;
 
-            result =
-                await db
-                    .from("subjects")
-                    .update(payload)
-                    .eq(
-                        "id",
-                        editingSubjectId
-                    );
+            }
 
 
-        } else {
+            /* ---------------------------------------
+               DELETE OLD PAPERS
+            --------------------------------------- */
 
-            result =
-                await db
-                    .from("subjects")
-                    .insert(payload);
+            const {
+                error:
+                    deletePapersError
+            } =
+            await db
+                .from("subject_papers")
+                .delete()
+                .eq(
+                    "subject_id",
+                    editingSubjectId
+                );
+
+
+            if(deletePapersError){
+
+                throw deletePapersError;
+
+            }
 
         }
 
 
-        if (result.error) {
+        /* -------------------------------------------
+           INSERT
+        ------------------------------------------- */
 
-            throw result.error;
+        else{
+
+            const {
+                data,
+                error
+            } =
+            await db
+                .from("subjects")
+                .insert({
+
+                    subject_name:
+                        name,
+
+                    form_number:
+                        formNumber,
+
+                    section:
+                        section,
+
+                    description:
+                        description ||
+                        null
+
+                })
+                .select(
+                    "id"
+                )
+                .single();
+
+
+            if(error){
+
+                throw error;
+
+            }
+
+
+            subjectId =
+                data.id;
 
         }
 
 
-        resetSubjectForm();
+        /* -------------------------------------------
+           INSERT PAPERS
+        ------------------------------------------- */
 
-        hideSubjectForm();
+        const paperRows =
+            papers.map(
+                paper => ({
+
+                    subject_id:
+                        subjectId,
+
+                    paper_number:
+                        paper.paper_number,
+
+                    paper_name:
+                        paper.paper_name,
+
+                    max_marks:
+                        paper.max_marks
+
+                })
+            );
+
+
+        const {
+            error:
+                paperError
+        } =
+        await db
+            .from("subject_papers")
+            .insert(
+                paperRows
+            );
+
+
+        if(paperError){
+
+            throw paperError;
+
+        }
+
+
+        /* -------------------------------------------
+           SUCCESS
+        ------------------------------------------- */
+
+        closeSubjectModal();
+
 
         await loadSubjects();
 
 
-    } catch (error) {
+        console.log(
+            "FCA subject saved successfully."
+        );
+
+    }
+
+    catch(error){
 
         console.error(
-            "FCA Subjects save error:",
+            "FCA subject save error:",
             error
         );
 
 
         showSubjectMessage(
-            getFriendlyError(error),
+            error.message ||
+            "Unable to save subject.",
             "error"
         );
 
+    }
 
-    } finally {
+    finally{
 
-        saveSubjectBtn.disabled =
+        saveButton.disabled =
             false;
 
 
-        saveSubjectBtn.textContent =
-            editingSubjectId
-                ? "Update Subject"
-                : "Save Subject";
+        saveButton.textContent =
+            "Save Subject";
 
     }
 
@@ -1583,49 +1887,57 @@ async function saveSubject(
 
 
 /* =========================================================
-   DELETE SUBJECT
+   DELETE MODAL
 ========================================================= */
 
-function deleteSubject(id) {
+function openDeleteSubjectModal(
+    subjectId
+){
 
     const subject =
         subjects.find(
-            function (item) {
-
-                return String(item.id) ===
-                    String(id);
-
-            }
+            item =>
+                item.id ===
+                subjectId
         );
 
 
-    if (!subject) return;
+    if(!subject){
+
+        return;
+
+    }
 
 
-    subjectToDeleteId =
-        subject.id;
+    selectedDeleteSubjectId =
+        subjectId;
 
 
-    deleteSubjectName.textContent =
-        subject.name;
+    $("deleteSubjectName")
+        .textContent =
+        `${subject.subject_name} — Form ${subject.form_number}`;
 
 
-    adminDeletePassword.value =
+    $("deleteMessage")
+        .className =
+        "modal-message";
+
+
+    $("deleteMessage")
+        .textContent =
         "";
 
 
-    clearDeleteError();
+    $("deleteModal")
+        .classList
+        .add("open");
 
 
-    deleteModal.classList.add(
-        "show"
-    );
-
-
-    deleteModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+    $("deleteModal")
+        .setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
 }
 
@@ -1634,159 +1946,69 @@ function deleteSubject(id) {
    CLOSE DELETE MODAL
 ========================================================= */
 
-function closeDeleteModal() {
+function closeDeleteModal(){
 
-    subjectToDeleteId =
+    $("deleteModal")
+        .classList
+        .remove("open");
+
+
+    $("deleteModal")
+        .setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+    selectedDeleteSubjectId =
         null;
 
-
-    deleteModal.classList.remove(
-        "show"
-    );
-
-
-    deleteModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    adminDeletePassword.value =
-        "";
-
-
-    clearDeleteError();
-
 }
 
 
 /* =========================================================
-   VERIFY ADMIN PASSWORD
+   DELETE SUBJECT
 ========================================================= */
 
-async function verifyAdministratorPassword(
-    password
-) {
+async function confirmDeleteSubject(){
 
-    const {
-        data,
-        error
-    } = await db.auth.getUser();
-
-
-    if (error || !data?.user) {
-
-        throw new Error(
-            "Administrator session could not be verified."
-        );
-
-    }
-
-
-    const email =
-        String(
-            data.user.email || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    if (
-        email !==
-        FCA_ADMIN_EMAIL.toLowerCase()
-    ) {
-
-        throw new Error(
-            "You are not authorized to perform this action."
-        );
-
-    }
-
-
-    const {
-        error: signInError
-    } =
-        await db.auth.signInWithPassword({
-
-            email:
-                data.user.email,
-
-            password:
-                password
-
-        });
-
-
-    if (signInError) {
-
-        throw new Error(
-            "Incorrect administrator password."
-        );
-
-    }
-
-
-    return true;
-
-}
-
-
-/* =========================================================
-   CONFIRM DELETE
-========================================================= */
-
-async function confirmDeleteSubject() {
-
-    if (!subjectToDeleteId) {
+    if(!selectedDeleteSubjectId){
 
         return;
 
     }
 
 
-    const password =
-        adminDeletePassword.value.trim();
+    const deleteButton =
+        $("confirmDeleteButton");
 
 
-    if (!password) {
-
-        showDeleteError(
-            "Please enter the administrator password."
-        );
-
-        return;
-
-    }
-
-
-    deleteConfirmBtn.disabled =
+    deleteButton.disabled =
         true;
 
 
-    deleteConfirmBtn.textContent =
+    deleteButton.textContent =
         "Deleting...";
 
 
-    try {
+    clearDeleteMessage();
 
-        await verifyAdministratorPassword(
-            password
-        );
 
+    try{
 
         const {
             error
         } =
-            await db
-                .from("subjects")
-                .delete()
-                .eq(
-                    "id",
-                    subjectToDeleteId
-                );
+        await db
+            .from("subjects")
+            .delete()
+            .eq(
+                "id",
+                selectedDeleteSubjectId
+            );
 
 
-        if (error) {
+        if(error){
 
             throw error;
 
@@ -1799,26 +2021,35 @@ async function confirmDeleteSubject() {
         await loadSubjects();
 
 
-    } catch (error) {
+        console.log(
+            "FCA subject deleted."
+        );
+
+    }
+
+    catch(error){
 
         console.error(
-            "FCA Subjects delete error:",
+            "FCA subject deletion error:",
             error
         );
 
 
-        showDeleteError(
-            getFriendlyError(error)
+        showDeleteMessage(
+            error.message ||
+            "Unable to delete subject.",
+            "error"
         );
 
+    }
 
-    } finally {
+    finally{
 
-        deleteConfirmBtn.disabled =
+        deleteButton.disabled =
             false;
 
 
-        deleteConfirmBtn.textContent =
+        deleteButton.textContent =
             "Delete Subject";
 
     }
@@ -1827,153 +2058,120 @@ async function confirmDeleteSubject() {
 
 
 /* =========================================================
-   PASSWORD TOGGLE
-========================================================= */
-
-function toggleAdminDeletePassword() {
-
-    const showing =
-        adminDeletePassword.type ===
-        "text";
-
-
-    adminDeletePassword.type =
-        showing
-            ? "password"
-            : "text";
-
-
-    adminEyeOpen.style.display =
-        showing
-            ? "none"
-            : "block";
-
-
-    adminEyeClosed.style.display =
-        showing
-            ? "block"
-            : "none";
-
-
-    adminPasswordToggle.setAttribute(
-        "aria-label",
-        showing
-            ? "Show password"
-            : "Hide password"
-    );
-
-}
-
-
-/* =========================================================
-   MESSAGES
+   SUBJECT MESSAGE
 ========================================================= */
 
 function showSubjectMessage(
     message,
     type
-) {
+){
 
-    subjectMessage.textContent =
+    const element =
+        $("subjectMessage");
+
+
+    if(!element){
+
+        return;
+
+    }
+
+
+    element.textContent =
         message;
 
 
-    subjectMessage.className =
-        `form-message ${type}`;
-
-
-    subjectMessage.style.display =
-        "block";
+    element.className =
+        "modal-message " +
+        type;
 
 }
 
 
-function clearSubjectMessage() {
+function clearSubjectMessage(){
 
-    subjectMessage.textContent =
+    const element =
+        $("subjectMessage");
+
+
+    if(!element){
+
+        return;
+
+    }
+
+
+    element.textContent =
         "";
 
 
-    subjectMessage.style.display =
-        "none";
-
-
-    subjectMessage.className =
-        "form-message";
-
-}
-
-
-function showDeleteError(
-    message
-) {
-
-    deleteError.textContent =
-        message;
-
-
-    deleteError.style.display =
-        "block";
-
-}
-
-
-function clearDeleteError() {
-
-    deleteError.textContent =
-        "";
-
-
-    deleteError.style.display =
-        "none";
+    element.className =
+        "modal-message";
 
 }
 
 
 /* =========================================================
-   FRIENDLY ERROR
+   DELETE MESSAGE
 ========================================================= */
 
-function getFriendlyError(
-    error
-) {
+function showDeleteMessage(
+    message,
+    type
+){
 
-    const message =
-        String(
-            error?.message ||
-            error?.details ||
-            error ||
-            "An unexpected error occurred."
-        );
+    const element =
+        $("deleteMessage");
 
 
-    if (
-        message
-            .toLowerCase()
-            .includes(
-                "duplicate"
-            )
-    ) {
+    if(!element){
 
-        return "This subject already exists.";
+        return;
 
     }
 
 
-    if (
-        message
-            .toLowerCase()
-            .includes(
-                "row-level security"
-            )
-    ) {
+    element.textContent =
+        message;
 
-        return "Database security rules blocked this action.";
+
+    element.className =
+        "modal-message " +
+        type;
+
+}
+
+
+function clearDeleteMessage(){
+
+    const element =
+        $("deleteMessage");
+
+
+    if(!element){
+
+        return;
 
     }
 
 
-    return message;
+    element.textContent =
+        "";
+
+
+    element.className =
+        "modal-message";
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function handleSearch(){
+
+    renderSubjects();
 
 }
 
@@ -1982,149 +2180,414 @@ function getFriendlyError(
    ESCAPE HTML
 ========================================================= */
 
-function escapeHtml(
+function escapeHTML(
     value
-) {
+){
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
+    return String(value ?? "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   ESCAPE ATTRIBUTE
+========================================================= */
+
+function escapeAttribute(
+    value
+){
+
+    return escapeHTML(
+        value
     );
 
 }
 
 
 /* =========================================================
-   EVENT LISTENERS
+   FORMAT MARKS
 ========================================================= */
 
-function setupEventListeners() {
+function formatMarks(
+    value
+){
+
+    const number =
+        Number(value);
 
 
-    /* ADD */
+    if(
+        !Number.isFinite(number)
+    ){
 
-    addSubjectBtn.addEventListener(
-        "click",
-        prepareAddForm
-    );
+        return "0";
 
-
-    /* SUBMIT */
-
-    subjectForm.addEventListener(
-        "submit",
-        saveSubject
-    );
+    }
 
 
-    /* CANCEL */
+    return Number.isInteger(
+        number
+    )
+        ? String(number)
+        : number.toFixed(2);
 
-    cancelBtn.addEventListener(
-        "click",
-        cancelSubjectForm
-    );
-
-
-    /* JUNIOR ACTIONS */
-
-    juniorSubjects.addEventListener(
-        "click",
-        handleSubjectAction
-    );
+}
 
 
-    /* SENIOR ACTIONS */
+/* =========================================================
+   LOAD DEFAULT SUBJECTS
+=========================================================
 
-    seniorSubjects.addEventListener(
-        "click",
-        handleSubjectAction
-    );
+   This function does NOT automatically insert subjects.
 
+   It is available if you want to populate the database
+   with FCA's initial 12 subjects.
 
-    /* DELETE */
+========================================================= */
 
-    deleteConfirmBtn.addEventListener(
-        "click",
-        confirmDeleteSubject
-    );
+async function seedDefaultSubjects(){
 
+    if(!db){
 
-    deleteCancelBtn.addEventListener(
-        "click",
-        closeDeleteModal
-    );
-
-
-    closeDeleteModalBtn.addEventListener(
-        "click",
-        closeDeleteModal
-    );
-
-
-    /* PASSWORD */
-
-    adminPasswordToggle.addEventListener(
-        "click",
-        toggleAdminDeletePassword
-    );
-
-
-    /* OVERLAY */
-
-    const overlay =
-        deleteModal.querySelector(
-            ".modal-overlay"
-        );
-
-
-    if (overlay) {
-
-        overlay.addEventListener(
-            "click",
-            closeDeleteModal
+        throw new Error(
+            "Database is not connected."
         );
 
     }
 
 
-    /* ESC */
+    const existing =
+        subjects.length;
 
-    document.addEventListener(
-        "keydown",
-        function (event) {
 
-            if (
-                event.key === "Escape"
-            ) {
+    if(existing > 0){
 
-                if (
-                    deleteModal.classList.contains(
-                        "show"
-                    )
-                ) {
+        throw new Error(
+            "Subjects already exist. Default subjects were not inserted."
+        );
+
+    }
+
+
+    const records = [];
+
+
+    for(
+        let form = 1;
+        form <= 4;
+        form++
+    ){
+
+        const section =
+            form <= 2
+                ? "Junior"
+                : "Senior";
+
+
+        DEFAULT_SUBJECTS.forEach(
+            subject => {
+
+                let papers;
+
+
+                if(
+                    form <= 2
+                ){
+
+                    if(
+                        subject.junior &&
+                        typeof subject.junior === "object"
+                    ){
+
+                        papers =
+                            subject.junior.papers;
+
+                    }
+
+                    else{
+
+                        papers = [
+
+                            [
+                                1,
+                                "Paper I",
+                                100
+                            ]
+
+                        ];
+
+                    }
+
+                }
+
+                else{
+
+                    papers =
+                        subject.senior.papers;
+
+                }
+
+
+                records.push({
+
+                    subject_name:
+                        subject.name,
+
+                    form_number:
+                        form,
+
+                    section:
+                        section,
+
+                    description:
+                        null,
+
+                    papers:
+                        papers
+
+                });
+
+            }
+        );
+
+    }
+
+
+    for(
+        const record of records
+    ){
+
+        const {
+            data,
+            error
+        } =
+        await db
+            .from("subjects")
+            .insert({
+
+                subject_name:
+                    record.subject_name,
+
+                form_number:
+                    record.form_number,
+
+                section:
+                    record.section,
+
+                description:
+                    record.description
+
+            })
+            .select(
+                "id"
+            )
+            .single();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        const paperRows =
+            record.papers.map(
+                paper => ({
+
+                    subject_id:
+                        data.id,
+
+                    paper_number:
+                        paper[0],
+
+                    paper_name:
+                        paper[1],
+
+                    max_marks:
+                        paper[2]
+
+                })
+            );
+
+
+        const {
+            error:
+                paperError
+        } =
+        await db
+            .from("subject_papers")
+            .insert(
+                paperRows
+            );
+
+
+        if(paperError){
+
+            throw paperError;
+
+        }
+
+    }
+
+
+    await loadSubjects();
+
+}
+
+
+/* =========================================================
+   ATTACH EVENTS
+========================================================= */
+
+function attachEvents(){
+
+    $("addSubjectButton")
+        .addEventListener(
+            "click",
+            openAddSubjectModal
+        );
+
+
+    $("closeSubjectModal")
+        .addEventListener(
+            "click",
+            closeSubjectModal
+        );
+
+
+    $("cancelSubjectButton")
+        .addEventListener(
+            "click",
+            closeSubjectModal
+        );
+
+
+    $("subjectForm")
+        .addEventListener(
+            "submit",
+            saveSubject
+        );
+
+
+    $("addPaperButton")
+        .addEventListener(
+            "click",
+            function(){
+
+                const number =
+                    document.querySelectorAll(
+                        ".paper-edit-row"
+                    ).length + 1;
+
+
+                addPaper(
+                    getDefaultPaperName(
+                        number
+                    ),
+                    ""
+                );
+
+            }
+        );
+
+
+    $("cancelDeleteButton")
+        .addEventListener(
+            "click",
+            closeDeleteModal
+        );
+
+
+    $("confirmDeleteButton")
+        .addEventListener(
+            "click",
+            confirmDeleteSubject
+        );
+
+
+    $("subjectSearch")
+        .addEventListener(
+            "input",
+            handleSearch
+        );
+
+
+    $("formFilter")
+        .addEventListener(
+            "change",
+            handleSearch
+        );
+
+
+    $("subjectModal")
+        .addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    event.target ===
+                    $("subjectModal")
+                ){
+
+                    closeSubjectModal();
+
+                }
+
+            }
+        );
+
+
+    $("deleteModal")
+        .addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    event.target ===
+                    $("deleteModal")
+                ){
 
                     closeDeleteModal();
 
                 }
+
+            }
+        );
+
+
+    document.addEventListener(
+        "keydown",
+        function(event){
+
+            if(
+                event.key ===
+                "Escape"
+            ){
+
+                closeSubjectModal();
+
+                closeDeleteModal();
 
             }
 
@@ -2135,65 +2598,42 @@ function setupEventListeners() {
 
 
 /* =========================================================
-   SUBJECT ACTION HANDLER
+   SESSION MONITOR
 ========================================================= */
 
-function handleSubjectAction(
-    event
-) {
-
-    const button =
-        event.target.closest(
-            "button[data-action]"
-        );
-
-
-    if (!button) return;
-
-
-    const action =
-        button.dataset.action;
-
-
-    const id =
-        button.dataset.id;
-
-
-    if (
-        action === "edit"
-    ) {
-
-        editSubject(id);
-
-    }
-
-
-    if (
-        action === "delete"
-    ) {
-
-        deleteSubject(id);
-
-    }
-
-}
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-function setupAuthListener() {
+function startSessionMonitor(){
 
     db.auth.onAuthStateChange(
-        function (event) {
+        function(
+            event,
+            session
+        ){
 
-            if (
-                event === "SIGNED_OUT"
-            ) {
+            console.log(
+                "FCA Auth Event:",
+                event
+            );
 
-                window.location.href =
-                    "index.html";
+
+            if(
+                event ===
+                "SIGNED_OUT"
+            ){
+
+                window.location.replace(
+                    "admin-login.html"
+                );
+
+                return;
+
+            }
+
+
+            if(!session){
+
+                window.location.replace(
+                    "admin-login.html"
+                );
 
             }
 
@@ -2207,69 +2647,42 @@ function setupAuthListener() {
    INITIALIZE
 ========================================================= */
 
-async function initializeSubjectsPage() {
+async function initializeSubjects(){
 
-    cacheElements();
-
-
-    /*
-       Form is hidden when the page opens.
-    */
-
-    hideSubjectForm();
+    console.log(
+        "FCA Subjects initializing..."
+    );
 
 
-    /*
-       Render the official FCA structure immediately.
-       This means the academic information is visible
-       even before Supabase is connected.
-    */
-
-    renderDefaultSubjects();
-
-
-    updateStatistics();
-
-
-    setupEventListeners();
-
-
-    db =
-        getSupabaseClient();
-
-
-    if (!db) {
-
-        setDatabaseStatus(
-            "Supabase client not found.",
-            "error"
-        );
-
-        return;
-
-    }
-
-
-    try {
+    try{
 
         const authorized =
             await checkAdminAuthorization();
 
 
-        if (!authorized) {
+        if(!authorized){
 
             return;
 
         }
 
 
-        setupAuthListener();
+        attachEvents();
+
+
+        startSessionMonitor();
 
 
         await loadSubjects();
 
 
-    } catch (error) {
+        console.log(
+            "FCA Subjects initialized successfully."
+        );
+
+    }
+
+    catch(error){
 
         console.error(
             "FCA Subjects initialization error:",
@@ -2278,7 +2691,8 @@ async function initializeSubjectsPage() {
 
 
         setDatabaseStatus(
-            getFriendlyError(error),
+            error.message ||
+            "Subjects page failed to initialize.",
             "error"
         );
 
@@ -2288,57 +2702,10 @@ async function initializeSubjectsPage() {
 
 
 /* =========================================================
-   DEFAULT SUBJECT DISPLAY
+   START
 ========================================================= */
 
-function renderDefaultSubjects() {
-
-    subjects =
-        Object.keys(
-            FCA_SUBJECTS
-        ).map(
-            function (name, index) {
-
-                return {
-
-                    id:
-                        `default-${index}`,
-
-                    name:
-                        name,
-
-                    code:
-                        FCA_SUBJECTS[name].code,
-
-                    is_default:
-                        true
-
-                };
-
-            }
-        );
-
-
-    renderSubjects();
-
-}
-
-
-/* =========================================================
-   GLOBAL FUNCTIONS
-========================================================= */
-
-window.editSubject =
-    editSubject;
-
-
-window.deleteSubject =
-    deleteSubject;
-
-
-window.showSubjectForm =
-    showSubjectForm;
-
-
-window.hideSubjectForm =
-    hideSubjectForm;
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeSubjects
+);

@@ -368,12 +368,6 @@ async function checkAdminAuthorization(){
 
 async function loadSubjects(){
 
-    setDatabaseStatus(
-        "Loading subjects...",
-        "loading"
-    );
-
-
     try{
 
         const {

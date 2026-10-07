@@ -2680,161 +2680,39 @@ function getExistingPaperValues(
    GET SUBJECTS FOR STUDENT
 ========================================================= */
 
-function getSubjectsForStudent(
-  student
-){
+function getSubjectsForStudent(student){
 
   if(!student){
-
     return [];
-
   }
-
-
-  const studentForm =
-    getStudentFormNumber(
-      student
-    );
-
 
   const selectedIds =
-    extractStudentSubjectIds(
-      student
-    );
+    extractStudentSubjectIds(student);
 
-
-  if(
-    selectedIds &&
-    selectedIds.length
-  ){
-
-    const filtered =
-      allSubjects.filter(
-        function(subject){
-
-          const matchesStudentSelection =
-            selectedIds.some(
-              function(id){
-
-                return String(id) ===
-                  String(
-                    getDatabaseId(
-                      subject
-                    )
-                  );
-
-              }
-            );
-
-
-          if(!matchesStudentSelection){
-
-            return false;
-
-          }
-
-
-          const subjectForm =
-            getSubjectFormNumber(
-              subject
-            );
-
-
-          if(
-            subjectForm &&
-            studentForm
-          ){
-
-            return (
-              subjectForm ===
-              studentForm
-            );
-
-          }
-
-
-          return true;
-
-        }
-      );
-
-
-    if(filtered.length){
-
-      return sortSubjects(
-        filtered
-      );
-
-    }
-
+  /*
+    ONLY SHOW SUBJECTS EXPLICITLY ASSIGNED
+    TO THIS STUDENT.
+  */
+  if(!selectedIds.length){
+    return [];
   }
 
+  const assignedSubjects =
+    allSubjects.filter(function(subject){
 
-  if(allSubjects.length){
+      const subjectId =
+        getDatabaseId(subject);
 
-    const formSubjects =
-      allSubjects.filter(
-        function(subject){
+      return selectedIds.some(function(id){
 
-          const subjectForm =
-            getSubjectFormNumber(
-              subject
-            );
+        return String(id) === String(subjectId);
 
+      });
 
-          if(
-            subjectForm &&
-            studentForm
-          ){
+    });
 
-            return (
-              subjectForm ===
-              studentForm
-            );
-
-          }
-
-
-          return !subjectForm;
-
-        }
-      );
-
-
-    if(formSubjects.length){
-
-      return sortSubjects(
-        formSubjects
-      );
-
-    }
-
-
-    return sortSubjects(
-      allSubjects
-    );
-
-  }
-
-
-  return SUBJECTS_FALLBACK.map(
-    function(name,index){
-
-      return {
-
-        id:
-          "fallback-" +
-          index,
-
-        subject_name:
-          name,
-
-        name:
-          name
-
-      };
-
-    }
+  return sortSubjects(
+    assignedSubjects
   );
 
 }

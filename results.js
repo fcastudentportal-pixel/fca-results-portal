@@ -8,6 +8,8 @@
       ↓
    STUDENTS
       ↓
+   ASSIGNED SUBJECTS ONLY
+      ↓
    ENTER RESULTS
       ↓
    OVERALL RESULTS
@@ -19,157 +21,157 @@
 
 
 /* =========================================================
-   FALLBACK SUBJECTS
+   FALLBACK SUBJECT NAMES
+   Used only for displaying subject names when necessary.
+   IMPORTANT:
+   These are NEVER automatically assigned to a student.
 ========================================================= */
 
 const SUBJECTS_FALLBACK = [
-
-  "Agriculture",
-  "Bible Knowledge",
-  "Biology",
-  "Chemistry",
-  "Chichewa",
-  "English",
-  "Geography",
-  "History",
-  "Life Skills",
-  "Mathematics",
-  "Physics",
-  "Social Studies"
-
+    "Agriculture",
+    "Bible Knowledge",
+    "Biology",
+    "Chemistry",
+    "Chichewa",
+    "English",
+    "Geography",
+    "History",
+    "Life Skills",
+    "Mathematics",
+    "Physics",
+    "Social Studies"
 ];
 
 
 /* =========================================================
-   DEFAULT PAPER STRUCTURE
+   DEFAULT PAPER STRUCTURES
 ========================================================= */
 
 const DEFAULT_PAPER_STRUCTURES = {
 
-  "English":{
-    junior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:50}
-    ],
-    senior:[
-      {name:"Paper I",max:70},
-      {name:"Paper II",max:60},
-      {name:"Paper III",max:70}
-    ]
-  },
+    "English": {
+        junior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 50 }
+        ],
+        senior: [
+            { name: "Paper I", max: 70 },
+            { name: "Paper II", max: 60 },
+            { name: "Paper III", max: 70 }
+        ]
+    },
 
-  "Chichewa":{
-    junior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:50}
-    ],
-    senior:[
-      {name:"Paper I",max:70},
-      {name:"Paper II",max:60},
-      {name:"Paper III",max:70}
-    ]
-  },
+    "Chichewa": {
+        junior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 50 }
+        ],
+        senior: [
+            { name: "Paper I", max: 70 },
+            { name: "Paper II", max: 60 },
+            { name: "Paper III", max: 70 }
+        ]
+    },
 
-  "Mathematics":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:100}
-    ]
-  },
+    "Mathematics": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 100 }
+        ]
+    },
 
-  "Geography":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:100}
-    ]
-  },
+    "Geography": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 100 }
+        ]
+    },
 
-  "Biology":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:40}
-    ]
-  },
+    "Biology": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 40 }
+        ]
+    },
 
-  "Agriculture":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:40}
-    ]
-  },
+    "Agriculture": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 40 }
+        ]
+    },
 
-  "Chemistry":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:40}
-    ]
-  },
+    "Chemistry": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 40 }
+        ]
+    },
 
-  "Physics":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:100},
-      {name:"Paper II",max:40}
-    ]
-  },
+    "Physics": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 100 },
+            { name: "Paper II", max: 40 }
+        ]
+    },
 
-  "History":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:120}
-    ]
-  },
+    "History": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 120 }
+        ]
+    },
 
-  "Bible Knowledge":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:120}
-    ]
-  },
+    "Bible Knowledge": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 120 }
+        ]
+    },
 
-  "Social Studies":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:100}
-    ]
-  },
+    "Social Studies": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 100 }
+        ]
+    },
 
-  "Life Skills":{
-    junior:[
-      {name:"Paper I",max:100}
-    ],
-    senior:[
-      {name:"Paper I",max:50},
-      {name:"Paper II",max:100}
-    ]
-  }
-
+    "Life Skills": {
+        junior: [
+            { name: "Paper I", max: 100 }
+        ],
+        senior: [
+            { name: "Paper I", max: 50 },
+            { name: "Paper II", max: 100 }
+        ]
+    }
 };
 
 
@@ -189,7 +191,7 @@ let selectedStudent = null;
 
 let currentStudentResults = [];
 
-const dom = {};
+let dom = {};
 
 let globalMessageTimer = null;
 
@@ -198,194 +200,175 @@ let globalMessageTimer = null;
    INITIALIZATION
 ========================================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  init
-);
+document.addEventListener("DOMContentLoaded", init);
 
 
-/* =========================================================
-   INIT
-========================================================= */
+async function init() {
 
-async function init(){
+    console.log("FCA Results Management: starting...");
 
-  cacheDom();
+    cacheDom();
 
-  console.log(
-    "FCA Results: starting..."
-  );
+    db = window.fcaSupabase;
 
+    if (!db) {
+        console.error("FCA Supabase client not found.");
 
-  db =
-    window.fcaSupabase;
+        setDatabaseStatus(
+            "Database connection unavailable",
+            "error"
+        );
 
+        showGlobalMessage(
+            "Supabase client was not found. Check config.js.",
+            "error"
+        );
 
-  if(!db){
+        return;
+    }
 
-    setDatabaseStatus(
-      "error",
-      "Supabase client not found"
-    );
+    try {
 
-    showGlobalMessage(
-      "FCA Supabase client was not found. Check config.js.",
-      "error"
-    );
+        attachEvents();
 
-    return;
+        setDatabaseStatus(
+            "Connecting to database...",
+            "loading"
+        );
 
-  }
+        await testDatabase();
 
+        setDatabaseStatus(
+            "Database connected",
+            "success"
+        );
 
-  setDatabaseStatus(
-    "checking",
-    "Connecting to database..."
-  );
+        await Promise.all([
+            loadClasses(),
+            loadStudents(),
+            loadSubjects(),
+            loadResults()
+        ]);
 
+        renderClasses();
 
-  attachEvents();
+        console.log("FCA Results Management: ready.");
 
+    } catch (error) {
 
-  try{
+        console.error(
+            "Results Management initialization error:",
+            error
+        );
 
-    await testDatabase();
+        setDatabaseStatus(
+            "Database error",
+            "error"
+        );
 
-
-    setDatabaseStatus(
-      "connected",
-      "Database connected"
-    );
-
-
-    await loadInitialData();
-
-  }catch(error){
-
-    console.error(
-      "FCA Results initialization error:",
-      error
-    );
-
-
-    setDatabaseStatus(
-      "error",
-      "Database connection failed"
-    );
-
-
-    showGlobalMessage(
-      getErrorMessage(error),
-      "error"
-    );
-
-  }
-
+        showGlobalMessage(
+            getErrorMessage(error),
+            "error"
+        );
+    }
 }
 
 
 /* =========================================================
-   CACHE DOM
+   DOM CACHE
 ========================================================= */
 
-function cacheDom(){
+function cacheDom() {
 
-  dom.databaseStatus =
-    document.getElementById("databaseStatus");
+    dom.databaseStatus =
+        document.getElementById("databaseStatus");
 
-  dom.classesView =
-    document.getElementById("classesView");
+    dom.classesView =
+        document.getElementById("classesView");
 
-  dom.studentsView =
-    document.getElementById("studentsView");
+    dom.studentsView =
+        document.getElementById("studentsView");
 
-  dom.entryView =
-    document.getElementById("entryView");
+    dom.entryView =
+        document.getElementById("entryView");
 
-  dom.overallView =
-    document.getElementById("overallView");
+    dom.overallView =
+        document.getElementById("overallView");
 
+    dom.classesGrid =
+        document.getElementById("classesGrid");
 
-  dom.classesGrid =
-    document.getElementById("classesGrid");
+    dom.studentsGrid =
+        document.getElementById("studentsGrid");
 
-  dom.studentsGrid =
-    document.getElementById("studentsGrid");
+    dom.selectedClassTitle =
+        document.getElementById("selectedClassTitle");
 
+    dom.selectedClassDescription =
+        document.getElementById("selectedClassDescription");
 
-  dom.selectedClassTitle =
-    document.getElementById("selectedClassTitle");
+    dom.entryStudentAvatar =
+        document.getElementById("entryStudentAvatar");
 
-  dom.selectedClassDescription =
-    document.getElementById("selectedClassDescription");
+    dom.entryStudentName =
+        document.getElementById("entryStudentName");
 
+    dom.entryStudentId =
+        document.getElementById("entryStudentId");
 
-  dom.entryStudentAvatar =
-    document.getElementById("entryStudentAvatar");
+    dom.entryStudentClass =
+        document.getElementById("entryStudentClass");
 
-  dom.entryStudentName =
-    document.getElementById("entryStudentName");
+    dom.entryStudentGender =
+        document.getElementById("entryStudentGender");
 
-  dom.entryStudentId =
-    document.getElementById("entryStudentId");
+    dom.entryStudentSubtitle =
+        document.getElementById("entryStudentSubtitle");
 
-  dom.entryStudentClass =
-    document.getElementById("entryStudentClass");
+    dom.gradingInformation =
+        document.getElementById("gradingInformation");
 
-  dom.entryStudentGender =
-    document.getElementById("entryStudentGender");
+    dom.resultsEntryBody =
+        document.getElementById("resultsEntryBody");
 
-  dom.entryStudentSubtitle =
-    document.getElementById("entryStudentSubtitle");
+    dom.subjectCount =
+        document.getElementById("subjectCount");
 
-  dom.gradingInformation =
-    document.getElementById("gradingInformation");
+    dom.studentName =
+        document.getElementById("studentName");
 
+    dom.studentId =
+        document.getElementById("studentId");
 
-  dom.resultsEntryBody =
-    document.getElementById("resultsEntryBody");
+    dom.studentClass =
+        document.getElementById("studentClass");
 
-  dom.subjectCount =
-    document.getElementById("subjectCount");
+    dom.studentGender =
+        document.getElementById("studentGender");
 
+    dom.studentSubjectCount =
+        document.getElementById("studentSubjectCount");
 
-  dom.studentName =
-    document.getElementById("studentName");
+    dom.studentAverage =
+        document.getElementById("studentAverage");
 
-  dom.studentId =
-    document.getElementById("studentId");
+    dom.overallResultsBody =
+        document.getElementById("overallResultsBody");
 
-  dom.studentClass =
-    document.getElementById("studentClass");
+    dom.overallResult =
+        document.getElementById("overallResult");
 
-  dom.studentGender =
-    document.getElementById("studentGender");
+    dom.overallResultDetails =
+        document.getElementById("overallResultDetails");
 
-  dom.studentSubjectCount =
-    document.getElementById("studentSubjectCount");
+    dom.saveResultsBtn =
+        document.getElementById("saveResultsBtn");
 
-  dom.studentAverage =
-    document.getElementById("studentAverage");
+    dom.saveMessage =
+        document.getElementById("saveMessage");
 
-  dom.overallResultsBody =
-    document.getElementById("overallResultsBody");
-
-  dom.overallResult =
-    document.getElementById("overallResult");
-
-  dom.overallResultDetails =
-    document.getElementById("overallResultDetails");
-
-
-  dom.saveResultsBtn =
-    document.getElementById("saveResultsBtn");
-
-  dom.saveMessage =
-    document.getElementById("saveMessage");
-
-  dom.globalMessage =
-    document.getElementById("globalMessage");
-
+    dom.globalMessage =
+        document.getElementById("globalMessage");
 }
 
 
@@ -393,87 +376,64 @@ function cacheDom(){
    EVENTS
 ========================================================= */
 
-function attachEvents(){
+function attachEvents() {
 
-  document
-    .getElementById("backToClassesBtn")
-    .addEventListener(
-      "click",
-      showClasses
-    );
+    document
+        .getElementById("backToClassesBtn")
+        ?.addEventListener("click", function () {
+            showClasses();
+        });
 
+    document
+        .getElementById("backToStudentsBtn")
+        ?.addEventListener("click", function () {
+            showStudents();
+        });
 
-  document
-    .getElementById("backToStudentsBtn")
-    .addEventListener(
-      "click",
-      showStudents
-    );
+    document
+        .getElementById("backToStudentsFromOverallBtn")
+        ?.addEventListener("click", function () {
+            showStudents();
+        });
 
+    document
+        .getElementById("backToEntryBtn")
+        ?.addEventListener("click", function () {
+            showEntry();
+        });
 
-  document
-    .getElementById("backToEntryBtn")
-    .addEventListener(
-      "click",
-      showEntry
-    );
+    document
+        .getElementById("viewOverallFromEntryBtn")
+        ?.addEventListener("click", async function () {
 
+            try {
 
-  document
-    .getElementById("backToStudentsFromOverallBtn")
-    .addEventListener(
-      "click",
-      showStudents
-    );
+                await saveResults(false);
 
+                await openStudentOverall(
+                    selectedStudent
+                );
 
-  document
-    .getElementById("overallBackBtn")
-    .addEventListener(
-      "click",
-      showStudents
-    );
+            } catch (error) {
 
+                console.error(error);
 
-  document
-    .getElementById("viewOverallFromEntryBtn")
-    .addEventListener(
-      "click",
-      async function(){
+            }
+        });
 
-        try{
+    dom.saveResultsBtn
+        ?.addEventListener("click", async function () {
 
-          await saveResults(false);
+            try {
+                await saveResults(true);
+            } catch (error) {
+                console.error(error);
+            }
+        });
 
-          showOverall();
-
-        }catch(error){
-
-          console.error(error);
-
-        }
-
-      }
-    );
-
-
-  dom.saveResultsBtn.addEventListener(
-    "click",
-    function(){
-
-      saveResults(true);
-
-    }
-  );
-
-
-  document
-    .getElementById("downloadPdfBtn")
-    .addEventListener(
-      "click",
-      downloadResult
-    );
-
+    document
+        .getElementById("downloadResultBtn")
+        ?.addEventListener("click", downloadResult);
 }
 
 
@@ -481,45 +441,18 @@ function attachEvents(){
    DATABASE TEST
 ========================================================= */
 
-async function testDatabase(){
+async function testDatabase() {
 
-  const result =
-    await db
-      .from("classes")
-      .select("id")
-      .limit(1);
+    const result = await db
+        .from("classes")
+        .select("id")
+        .limit(1);
 
+    if (result.error) {
+        throw result.error;
+    }
 
-  if(result.error){
-
-    throw result.error;
-
-  }
-
-}
-
-
-/* =========================================================
-   INITIAL DATA
-========================================================= */
-
-async function loadInitialData(){
-
-  await Promise.all([
-
-    loadClasses(),
-
-    loadStudents(),
-
-    loadSubjects(),
-
-    loadResults()
-
-  ]);
-
-
-  renderClasses();
-
+    return true;
 }
 
 
@@ -527,31 +460,26 @@ async function loadInitialData(){
    LOAD CLASSES
 ========================================================= */
 
-async function loadClasses(){
+async function loadClasses() {
 
-  const result =
-    await db
-      .from("classes")
-      .select("*")
-      .order(
-        "form_number",
-        {
-          ascending:true,
-          nullsFirst:false
-        }
-      );
+    const { data, error } = await db
+        .from("classes")
+        .select("*")
+        .order("form_number", {
+            ascending: true,
+            nullsFirst: false
+        });
 
+    if (error) {
+        throw error;
+    }
 
-  if(result.error){
+    allClasses = data || [];
 
-    throw result.error;
-
-  }
-
-
-  allClasses =
-    result.data || [];
-
+    console.log(
+        "FCA Results: classes loaded:",
+        allClasses.length
+    );
 }
 
 
@@ -559,24 +487,22 @@ async function loadClasses(){
    LOAD STUDENTS
 ========================================================= */
 
-async function loadStudents(){
+async function loadStudents() {
 
-  const result =
-    await db
-      .from("students")
-      .select("*");
+    const { data, error } = await db
+        .from("students")
+        .select("*");
 
+    if (error) {
+        throw error;
+    }
 
-  if(result.error){
+    allStudents = data || [];
 
-    throw result.error;
-
-  }
-
-
-  allStudents =
-    result.data || [];
-
+    console.log(
+        "FCA Results: students loaded:",
+        allStudents.length
+    );
 }
 
 
@@ -584,63 +510,37 @@ async function loadStudents(){
    LOAD SUBJECTS
 ========================================================= */
 
-async function loadSubjects(){
+async function loadSubjects() {
 
-  const result =
-    await db
-      .from("subjects")
-      .select("*")
-      .order(
-        "subject_name",
-        {
-          ascending:true
-        }
-      );
+    let result = await db
+        .from("subjects")
+        .select("*")
+        .order("subject_name", {
+            ascending: true
+        });
 
+    if (result.error) {
 
-  if(!result.error){
+        console.warn(
+            "Could not order subjects by subject_name.",
+            result.error
+        );
 
-    allSubjects =
-      result.data || [];
+        result = await db
+            .from("subjects")
+            .select("*");
+    }
 
-    return;
+    if (result.error) {
+        throw result.error;
+    }
 
-  }
+    allSubjects = result.data || [];
 
-
-  const fallback =
-    await db
-      .from("subjects")
-      .select("*");
-
-
-  if(fallback.error){
-
-    console.warn(
-      "Subjects table could not be loaded.",
-      fallback.error
+    console.log(
+        "FCA Results: subjects loaded:",
+        allSubjects.length
     );
-
-    allSubjects = [];
-
-    return;
-
-  }
-
-
-  allSubjects =
-    (fallback.data || [])
-      .sort(
-        function(a,b){
-
-          return getSubjectName(a)
-            .localeCompare(
-              getSubjectName(b)
-            );
-
-        }
-      );
-
 }
 
 
@@ -648,31 +548,30 @@ async function loadSubjects(){
    LOAD RESULTS
 ========================================================= */
 
-async function loadResults(){
+async function loadResults() {
 
-  const result =
-    await db
-      .from("results")
-      .select("*");
+    const { data, error } = await db
+        .from("results")
+        .select("*");
 
+    if (error) {
 
-  if(result.error){
+        console.warn(
+            "Results table could not be loaded:",
+            error
+        );
 
-    console.warn(
-      "Results could not be loaded:",
-      result.error
+        allResults = [];
+
+        return;
+    }
+
+    allResults = data || [];
+
+    console.log(
+        "FCA Results: results loaded:",
+        allResults.length
     );
-
-    allResults = [];
-
-    return;
-
-  }
-
-
-  allResults =
-    result.data || [];
-
 }
 
 
@@ -680,138 +579,150 @@ async function loadResults(){
    RENDER CLASSES
 ========================================================= */
 
-function renderClasses(){
+function renderClasses() {
 
-  dom.classesGrid.innerHTML = "";
-
-
-  if(!allClasses.length){
-
-    dom.classesGrid.innerHTML = `
-
-      <div class="empty-state">
-
-        <h3>
-          No Classes Found
-        </h3>
-
-        <p>
-          Create classes from the FCA Classes page
-          before entering student results.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  allClasses.forEach(
-    function(classItem){
-
-      const students =
-        getStudentsForClass(
-          classItem
-        );
-
-
-      const card =
-        document.createElement(
-          "article"
-        );
-
-
-      card.className =
-        "class-result-card";
-
-
-      card.innerHTML = `
-
-        <div class="class-card-top">
-
-          <div class="class-icon">
-            ${escapeHtml(
-              getClassInitial(
-                classItem
-              )
-            )}
-          </div>
-
-          <div class="class-form">
-            ${escapeHtml(
-              getClassFormLabel(
-                classItem
-              )
-            )}
-          </div>
-
-        </div>
-
-
-        <h3>
-          ${escapeHtml(
-            getClassName(
-              classItem
-            )
-          )}
-        </h3>
-
-
-        <div class="class-code">
-          ${escapeHtml(
-            getClassCode(
-              classItem
-            )
-          )}
-        </div>
-
-
-        <div class="class-card-bottom">
-
-          <span class="student-count">
-
-            ${students.length}
-
-            ${
-              students.length === 1
-                ? "Student"
-                : "Students"
-            }
-
-          </span>
-
-
-          <span class="open-class">
-            View Students →
-          </span>
-
-        </div>
-
-      `;
-
-
-      card.addEventListener(
-        "click",
-        function(){
-
-          openClass(
-            classItem
-          );
-
-        }
-      );
-
-
-      dom.classesGrid.appendChild(
-        card
-      );
-
+    if (!dom.classesGrid) {
+        return;
     }
-  );
 
+    if (!allClasses.length) {
+
+        dom.classesGrid.innerHTML = `
+            <div class="empty-state">
+                <h3>No Classes Found</h3>
+                <p>Create classes from the Classes section first.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    dom.classesGrid.innerHTML = allClasses
+        .map(function (classItem) {
+
+            const students =
+                getStudentsForClass(classItem);
+
+            const formNumber =
+                getFormNumber(classItem);
+
+            const className =
+                getClassName(classItem);
+
+            const classCode =
+                classItem.class_code || "";
+
+            return `
+                <article
+                    class="class-card"
+                    data-class-id="${escapeAttribute(
+                        getDatabaseId(classItem)
+                    )}"
+                >
+
+                    <div class="class-card-icon">
+                        ${escapeHtml(
+                            formNumber
+                                ? "Form " + formNumber
+                                : "Class"
+                        )}
+                    </div>
+
+                    <div class="class-card-content">
+
+                        <h3>
+                            ${escapeHtml(className)}
+                        </h3>
+
+                        ${
+                            classCode
+                                ? `
+                                    <p class="class-code">
+                                        ${escapeHtml(classCode)}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                        <p class="class-student-count">
+                            ${students.length}
+                            ${
+                                students.length === 1
+                                    ? "student"
+                                    : "students"
+                            }
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="view-class-button"
+                        data-class-id="${escapeAttribute(
+                            getDatabaseId(classItem)
+                        )}"
+                    >
+                        View Students →
+                    </button>
+
+                </article>
+            `;
+        })
+        .join("");
+
+    dom.classesGrid
+        .querySelectorAll(".class-card")
+        .forEach(function (card) {
+
+            card.addEventListener("click", function (event) {
+
+                if (
+                    event.target.closest(
+                        ".view-class-button"
+                    )
+                ) {
+                    return;
+                }
+
+                const id =
+                    card.dataset.classId;
+
+                const classItem =
+                    allClasses.find(function (item) {
+                        return String(
+                            getDatabaseId(item)
+                        ) === String(id);
+                    });
+
+                if (classItem) {
+                    openClass(classItem);
+                }
+            });
+        });
+
+    dom.classesGrid
+        .querySelectorAll(".view-class-button")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function (event) {
+
+                event.stopPropagation();
+
+                const id =
+                    button.dataset.classId;
+
+                const classItem =
+                    allClasses.find(function (item) {
+                        return String(
+                            getDatabaseId(item)
+                        ) === String(id);
+                    });
+
+                if (classItem) {
+                    openClass(classItem);
+                }
+            });
+        });
 }
 
 
@@ -819,32 +730,34 @@ function renderClasses(){
    OPEN CLASS
 ========================================================= */
 
-function openClass(classItem){
+function openClass(classItem) {
 
-  selectedClass =
-    classItem;
+    selectedClass = classItem;
 
+    const className =
+        getClassName(classItem);
 
-  dom.selectedClassTitle.textContent =
-    getClassName(
-      classItem
-    );
+    if (dom.selectedClassTitle) {
+        dom.selectedClassTitle.textContent =
+            className;
+    }
 
+    if (dom.selectedClassDescription) {
 
-  dom.selectedClassDescription.textContent =
-    "Students in " +
-    getClassName(
-      classItem
-    );
+        const students =
+            getStudentsForClass(classItem);
 
+        dom.selectedClassDescription.textContent =
+            `${students.length} ${
+                students.length === 1
+                    ? "student"
+                    : "students"
+            }`;
+    }
 
-  renderStudents();
+    renderStudents();
 
-
-  showView(
-    "students"
-  );
-
+    showStudents();
 }
 
 
@@ -852,197 +765,164 @@ function openClass(classItem){
    RENDER STUDENTS
 ========================================================= */
 
-function renderStudents(){
+function renderStudents() {
 
-  dom.studentsGrid.innerHTML =
-    "";
-
-
-  if(!selectedClass){
-
-    return;
-
-  }
-
-
-  const students =
-    getStudentsForClass(
-      selectedClass
-    );
-
-
-  if(!students.length){
-
-    dom.studentsGrid.innerHTML = `
-
-      <div class="empty-state">
-
-        <h3>
-          No Students Found
-        </h3>
-
-        <p>
-          There are currently no students registered
-          in ${escapeHtml(
-            getClassName(
-              selectedClass
-            )
-          )}.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  students.forEach(
-    function(student){
-
-      const card =
-        document.createElement(
-          "article"
-        );
-
-
-      card.className =
-        "student-result-card";
-
-
-      const name =
-        getStudentName(
-          student
-        );
-
-
-      const initials =
-        getInitials(
-          name
-        );
-
-
-      card.innerHTML = `
-
-        <div class="student-card-main">
-
-          <div class="student-avatar">
-            ${escapeHtml(
-              initials
-            )}
-          </div>
-
-          <div>
-
-            <h3>
-              ${escapeHtml(
-                name
-              )}
-            </h3>
-
-            <div class="student-id">
-              ${escapeHtml(
-                getStudentId(
-                  student
-                )
-              )}
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="student-card-details">
-
-          <span class="student-chip">
-            Gender:
-            ${escapeHtml(
-              getStudentGender(
-                student
-              )
-            )}
-          </span>
-
-          <span class="student-chip">
-            Class:
-            ${escapeHtml(
-              getClassName(
-                selectedClass
-              )
-            )}
-          </span>
-
-        </div>
-
-
-        <div class="student-card-actions">
-
-          <button
-            type="button"
-            class="primary-button enter-results-btn"
-          >
-            Enter Results
-          </button>
-
-
-          <button
-            type="button"
-            class="secondary-button overall-results-btn"
-          >
-            Overall Results
-          </button>
-
-        </div>
-
-      `;
-
-
-      card
-        .querySelector(
-          ".enter-results-btn"
-        )
-        .addEventListener(
-          "click",
-          function(event){
-
-            event.stopPropagation();
-
-            openStudentEntry(
-              student
-            );
-
-          }
-        );
-
-
-      card
-        .querySelector(
-          ".overall-results-btn"
-        )
-        .addEventListener(
-          "click",
-          function(event){
-
-            event.stopPropagation();
-
-            openStudentOverall(
-              student
-            );
-
-          }
-        );
-
-
-      dom.studentsGrid.appendChild(
-        card
-      );
-
+    if (!dom.studentsGrid) {
+        return;
     }
-  );
 
+    if (!selectedClass) {
+        dom.studentsGrid.innerHTML = "";
+        return;
+    }
+
+    const students =
+        getStudentsForClass(selectedClass);
+
+    if (!students.length) {
+
+        dom.studentsGrid.innerHTML = `
+            <div class="empty-state">
+                <h3>No Students Found</h3>
+                <p>
+                    There are no students assigned to this class.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+    dom.studentsGrid.innerHTML =
+        students
+            .map(function (student) {
+
+                const name =
+                    getStudentName(student);
+
+                const id =
+                    getStudentId(student);
+
+                const gender =
+                    getStudentGender(student);
+
+                const initials =
+                    getInitials(name);
+
+                return `
+                    <article
+                        class="student-card"
+                        data-student-id="${escapeAttribute(id)}"
+                    >
+
+                        <div class="student-avatar">
+                            ${escapeHtml(initials)}
+                        </div>
+
+                        <div class="student-card-info">
+
+                            <h3>
+                                ${escapeHtml(name)}
+                            </h3>
+
+                            <p>
+                                ${escapeHtml(id)}
+                            </p>
+
+                            <div class="student-card-meta">
+
+                                ${
+                                    gender
+                                        ? `
+                                            <span class="student-chip">
+                                                ${escapeHtml(gender)}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+                                <span class="student-chip">
+                                    ${escapeHtml(
+                                        getClassName(selectedClass)
+                                    )}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-card-actions">
+
+                            <button
+                                type="button"
+                                class="enter-results-button"
+                                data-student-id="${escapeAttribute(id)}"
+                            >
+                                Enter Results
+                            </button>
+
+                            <button
+                                type="button"
+                                class="overall-results-button"
+                                data-student-id="${escapeAttribute(id)}"
+                            >
+                                Overall Results
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+            })
+            .join("");
+
+    dom.studentsGrid
+        .querySelectorAll(
+            ".enter-results-button"
+        )
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                    const student =
+                        findStudentById(
+                            button.dataset.studentId
+                        );
+
+                    if (student) {
+                        openStudentEntry(student);
+                    }
+                }
+            );
+        });
+
+    dom.studentsGrid
+        .querySelectorAll(
+            ".overall-results-button"
+        )
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                async function (event) {
+
+                    event.stopPropagation();
+
+                    const student =
+                        findStudentById(
+                            button.dataset.studentId
+                        );
+
+                    if (student) {
+                        await openStudentOverall(student);
+                    }
+                }
+            );
+        });
 }
 
 
@@ -1050,74 +930,28 @@ function renderStudents(){
    OPEN STUDENT ENTRY
 ========================================================= */
 
-async function openStudentEntry(
-  student
-){
+async function openStudentEntry(student) {
 
-  selectedStudent =
-    student;
+    selectedStudent = student;
 
+    renderEntryStudentInformation();
 
-  renderEntryStudentInformation();
+    if (dom.resultsEntryBody) {
 
+        dom.resultsEntryBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="loading-cell">
+                    Loading assigned subjects...
+                </td>
+            </tr>
+        `;
+    }
 
-  dom.resultsEntryBody.innerHTML = `
-
-    <tr>
-
-      <td colspan="7">
-
-        <div class="table-loading">
-          Loading subjects...
-        </div>
-
-      </td>
-
-    </tr>
-
-  `;
-
-
-  showView(
-    "entry"
-  );
-
-
-  try{
+    showEntry();
 
     await loadStudentResults();
 
     renderResultEntry();
-
-  }catch(error){
-
-    console.error(error);
-
-
-    dom.resultsEntryBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="7">
-
-          <div class="table-loading">
-            Could not load student results.
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-
-    showGlobalMessage(
-      getErrorMessage(error),
-      "error"
-    );
-
-  }
-
 }
 
 
@@ -1125,72 +959,86 @@ async function openStudentEntry(
    STUDENT INFORMATION
 ========================================================= */
 
-function renderEntryStudentInformation(){
+function renderEntryStudentInformation() {
 
-  if(!selectedStudent){
+    if (!selectedStudent) {
+        return;
+    }
 
-    return;
+    const name =
+        getStudentName(selectedStudent);
 
-  }
+    const id =
+        getStudentId(selectedStudent);
 
+    const gender =
+        getStudentGender(selectedStudent);
 
-  const name =
-    getStudentName(
-      selectedStudent
-    );
+    const formNumber =
+        getStudentFormNumber(selectedStudent);
 
+    if (dom.entryStudentAvatar) {
+        dom.entryStudentAvatar.textContent =
+            getInitials(name);
+    }
 
-  const form =
-    getStudentFormNumber(
-      selectedStudent
-    );
+    if (dom.entryStudentName) {
+        dom.entryStudentName.textContent =
+            name;
+    }
 
+    if (dom.entryStudentId) {
+        dom.entryStudentId.textContent =
+            id;
+    }
 
-  dom.entryStudentName.textContent =
-    name;
+    if (dom.entryStudentClass) {
+        dom.entryStudentClass.textContent =
+            `Form ${formNumber || "—"}`;
+    }
 
+    if (dom.entryStudentGender) {
+        dom.entryStudentGender.textContent =
+            gender || "—";
+    }
 
-  dom.entryStudentId.textContent =
-    getStudentId(
-      selectedStudent
-    );
+    if (dom.entryStudentSubtitle) {
+        dom.entryStudentSubtitle.textContent =
+            "Enter results for assigned subjects only";
+    }
 
+    if (dom.gradingInformation) {
 
-  dom.entryStudentGender.textContent =
-    getStudentGender(
-      selectedStudent
-    );
+        if (formNumber >= 3) {
 
+            dom.gradingInformation.innerHTML = `
+                <strong>Senior grading:</strong>
+                80–100 Grade 1,
+                70–79 Grade 2,
+                65–69 Grade 3,
+                60–64 Grade 4,
+                55–59 Grade 5,
+                50–54 Grade 6,
+                45–49 Grade 7,
+                40–44 Grade 8,
+                0–39 Grade 9.
+                English must be passed.
+            `;
 
-  dom.entryStudentClass.textContent =
-    getClassName(
-      selectedClass
-    );
+        } else {
 
-
-  dom.entryStudentSubtitle.textContent =
-    "Enter academic results for " +
-    name;
-
-
-  dom.entryStudentAvatar.textContent =
-    getInitials(
-      name
-    );
-
-
-  if(form >= 3){
-
-    dom.gradingInformation.textContent =
-      "Senior grading: 80–100 Grade 1, 70–79 Grade 2, 65–69 Grade 3, 60–64 Grade 4, 55–59 Grade 5, 50–54 Grade 6, 45–49 Grade 7, 40–44 Grade 8, 0–39 Grade 9. English must be passed but is not forced into the best-six aggregate.";
-
-  }else{
-
-    dom.gradingInformation.textContent =
-      "Junior grading: 75–100 A, 60–74 B, 50–59 C, 40–49 D, 0–39 F. Overall pass requires at least six passed subjects and English must be passed.";
-
-  }
-
+            dom.gradingInformation.innerHTML = `
+                <strong>Junior grading:</strong>
+                75–100 A,
+                60–74 B,
+                50–59 C,
+                40–49 D,
+                0–39 F.
+                Overall pass requires at least six passed subjects
+                and English must be passed.
+            `;
+        }
+    }
 }
 
 
@@ -1198,82 +1046,411 @@ function renderEntryStudentInformation(){
    LOAD STUDENT RESULTS
 ========================================================= */
 
-async function loadStudentResults(){
+async function loadStudentResults() {
 
-  if(!selectedStudent){
+    if (!selectedStudent) {
+        currentStudentResults = [];
+        return;
+    }
 
-    return;
+    const studentId =
+        getStudentId(selectedStudent);
 
-  }
+    currentStudentResults =
+        allResults.filter(function (result) {
+
+            return String(
+                result.student_id
+            ) === String(studentId);
+        });
+
+    try {
+
+        const { data, error } = await db
+            .from("results")
+            .select("*")
+            .eq("student_id", studentId);
+
+        if (error) {
+            throw error;
+        }
+
+        currentStudentResults =
+            data || [];
+
+        const otherResults =
+            allResults.filter(function (result) {
+
+                return String(
+                    result.student_id
+                ) !== String(studentId);
+            });
+
+        allResults = [
+            ...otherResults,
+            ...currentStudentResults
+        ];
+
+    } catch (error) {
+
+        console.warn(
+            "Could not refresh student results:",
+            error
+        );
+    }
+}
 
 
-  const studentId =
-    getDatabaseId(
-      selectedStudent
+/* =========================================================
+   IMPORTANT:
+   GET ONLY SUBJECTS ASSIGNED TO THIS STUDENT
+========================================================= */
+
+function getSubjectsForStudent(student) {
+
+    if (!student) {
+        return [];
+    }
+
+    /*
+       IMPORTANT CHANGE
+
+       We DO NOT use allSubjects when a student has
+       no assigned subjects.
+
+       The student's own assignment is the source of truth.
+    */
+
+    const assignedValues =
+        extractStudentSubjectAssignments(student);
+
+    console.log(
+        "Assigned subjects for student:",
+        getStudentName(student),
+        assignedValues
     );
 
+    if (!assignedValues.length) {
 
-  const localResults =
-    allResults.filter(
-      function(result){
-
-        return String(
-          result.student_id
-        ) === String(
-          studentId
+        console.warn(
+            "No subjects assigned to student:",
+            getStudentName(student)
         );
 
-      }
-    );
+        return [];
+    }
 
+    const matchedSubjects = [];
 
-  currentStudentResults =
-    localResults;
+    assignedValues.forEach(function (assignment) {
 
+        const subject =
+            findAssignedSubject(
+                assignment
+            );
 
-  const result =
-    await db
-      .from("results")
-      .select("*")
-      .eq(
-        "student_id",
-        studentId
-      );
+        if (
+            subject &&
+            !matchedSubjects.some(function (existing) {
 
+                return String(
+                    getDatabaseId(existing)
+                ) === String(
+                    getDatabaseId(subject)
+                );
 
-  if(result.error){
-
-    console.warn(
-      "Could not refresh results:",
-      result.error
-    );
-
-    return;
-
-  }
-
-
-  currentStudentResults =
-    result.data || [];
-
-
-  allResults =
-    allResults
-      .filter(
-        function(item){
-
-          return String(
-            item.student_id
-          ) !== String(
-            studentId
-          );
-
+            })
+        ) {
+            matchedSubjects.push(subject);
         }
-      )
-      .concat(
-        currentStudentResults
-      );
+    });
 
+    return sortSubjects(matchedSubjects);
+}
+
+
+/* =========================================================
+   EXTRACT STUDENT SUBJECT ASSIGNMENTS
+========================================================= */
+
+function extractStudentSubjectAssignments(student) {
+
+    /*
+       Preferred field:
+       students.subjects
+
+       Compatibility fields:
+       subject_ids
+       selected_subjects
+       subjects_taken
+    */
+
+    const possibleFields = [
+        "subjects",
+        "subject_ids",
+        "selected_subjects",
+        "subjects_taken"
+    ];
+
+    let raw = null;
+
+    for (const field of possibleFields) {
+
+        if (
+            student[field] !== undefined &&
+            student[field] !== null
+        ) {
+
+            raw = student[field];
+
+            /*
+               Prefer the first field that actually contains
+               assignments.
+            */
+            const parsed =
+                normalizeSubjectAssignments(raw);
+
+            if (parsed.length) {
+                return parsed;
+            }
+        }
+    }
+
+    return [];
+}
+
+
+/* =========================================================
+   NORMALIZE SUBJECT ASSIGNMENTS
+========================================================= */
+
+function normalizeSubjectAssignments(raw) {
+
+    if (
+        raw === null ||
+        raw === undefined ||
+        raw === ""
+    ) {
+        return [];
+    }
+
+    if (typeof raw === "string") {
+
+        const trimmed =
+            raw.trim();
+
+        if (!trimmed) {
+            return [];
+        }
+
+        /*
+           JSON array/object
+        */
+        if (
+            trimmed.startsWith("[") ||
+            trimmed.startsWith("{")
+        ) {
+
+            try {
+
+                const parsed =
+                    JSON.parse(trimmed);
+
+                return normalizeSubjectAssignments(
+                    parsed
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not parse student subjects JSON:",
+                    error
+                );
+            }
+        }
+
+        /*
+           Comma-separated subject IDs/names
+        */
+        return trimmed
+            .split(",")
+            .map(function (value) {
+                return value.trim();
+            })
+            .filter(Boolean);
+    }
+
+    if (Array.isArray(raw)) {
+
+        return raw
+            .flatMap(function (item) {
+
+                if (
+                    item === null ||
+                    item === undefined ||
+                    item === ""
+                ) {
+                    return [];
+                }
+
+                if (
+                    typeof item === "string" ||
+                    typeof item === "number"
+                ) {
+                    return [item];
+                }
+
+                if (typeof item === "object") {
+
+                    return [
+                        item.id ??
+                        item.subject_id ??
+                        item.subjectId ??
+                        item.subject_name ??
+                        item.name ??
+                        item.title
+                    ].filter(function (value) {
+                        return (
+                            value !== null &&
+                            value !== undefined &&
+                            value !== ""
+                        );
+                    });
+                }
+
+                return [];
+            });
+    }
+
+    if (typeof raw === "object") {
+
+        const value =
+            raw.id ??
+            raw.subject_id ??
+            raw.subjectId ??
+            raw.subject_name ??
+            raw.name ??
+            raw.title;
+
+        return value !== undefined &&
+               value !== null &&
+               value !== ""
+            ? [value]
+            : [];
+    }
+
+    return [];
+}
+
+
+/* =========================================================
+   FIND ASSIGNED SUBJECT
+========================================================= */
+
+function findAssignedSubject(assignment) {
+
+    const value =
+        String(assignment)
+            .trim()
+            .toLowerCase();
+
+    if (!value) {
+        return null;
+    }
+
+    /*
+       First match by database ID.
+    */
+
+    let subject =
+        allSubjects.find(function (item) {
+
+            const id =
+                getDatabaseId(item);
+
+            return id !== null &&
+                id !== undefined &&
+                String(id)
+                    .trim()
+                    .toLowerCase() === value;
+        });
+
+    if (subject) {
+        return subject;
+    }
+
+    /*
+       Then match by subject name.
+    */
+
+    subject =
+        allSubjects.find(function (item) {
+
+            return getSubjectName(item)
+                .trim()
+                .toLowerCase() === value;
+        });
+
+    if (subject) {
+        return subject;
+    }
+
+    /*
+       Support an assignment such as:
+       { id: "...", name: "English" }
+    */
+
+    if (
+        typeof assignment === "object" &&
+        assignment !== null
+    ) {
+
+        const possibleId =
+            assignment.id ??
+            assignment.subject_id;
+
+        const possibleName =
+            assignment.subject_name ??
+            assignment.name ??
+            assignment.title;
+
+        if (possibleId !== undefined) {
+
+            subject =
+                allSubjects.find(function (item) {
+
+                    return String(
+                        getDatabaseId(item)
+                    ) === String(
+                        possibleId
+                    );
+                });
+
+            if (subject) {
+                return subject;
+            }
+        }
+
+        if (possibleName) {
+
+            subject =
+                allSubjects.find(function (item) {
+
+                    return getSubjectName(item)
+                        .trim()
+                        .toLowerCase() ===
+                        String(possibleName)
+                            .trim()
+                            .toLowerCase();
+                });
+
+            if (subject) {
+                return subject;
+            }
+        }
+    }
+
+    return null;
 }
 
 
@@ -1281,368 +1458,285 @@ async function loadStudentResults(){
    RENDER RESULT ENTRY
 ========================================================= */
 
-function renderResultEntry(){
+function renderResultEntry() {
 
-  const subjects =
-    getSubjectsForStudent(
-      selectedStudent
-    );
+    if (!dom.resultsEntryBody) {
+        return;
+    }
 
-
-  dom.subjectCount.textContent =
-    subjects.length;
-
-
-  dom.resultsEntryBody.innerHTML =
-    "";
-
-
-  if(!subjects.length){
-
-    dom.resultsEntryBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="7">
-
-          <div class="table-loading">
-            No subjects have been assigned to this student.
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
-
-
-  subjects.forEach(
-    function(subject,index){
-
-      const subjectId =
-        getDatabaseId(
-          subject
+    const subjects =
+        getSubjectsForStudent(
+            selectedStudent
         );
 
+    if (dom.subjectCount) {
+        dom.subjectCount.textContent =
+            subjects.length;
+    }
 
-      const existing =
-        currentStudentResults.find(
-          function(result){
+    /*
+       IMPORTANT:
+       No assigned subjects = no subjects shown.
+    */
 
-            return String(
-              result.subject_id
-            ) === String(
-              subjectId
+    if (!subjects.length) {
+
+        dom.resultsEntryBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    class="empty-results-cell"
+                >
+                    <strong>No subjects assigned to this student.</strong>
+                    <br>
+                    <span>
+                        Assign subjects to this student
+                        before entering results.
+                    </span>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    dom.resultsEntryBody.innerHTML =
+        subjects
+            .map(function (subject) {
+
+                return renderSubjectResultRow(
+                    subject
+                );
+            })
+            .join("");
+
+    attachResultInputEvents();
+}
+
+
+/* =========================================================
+   RENDER SUBJECT ROW
+========================================================= */
+
+function renderSubjectResultRow(subject) {
+
+    const subjectId =
+        getDatabaseId(subject);
+
+    const subjectName =
+        getSubjectName(subject);
+
+    const papers =
+        getPaperStructure(
+            subject,
+            selectedStudent
+        );
+
+    const existing =
+        findExistingResult(
+            subjectId
+        );
+
+    const paperValues =
+        getExistingPaperValues(
+            existing,
+            papers
+        );
+
+    const calculation =
+        calculateSubjectPercentage(
+            papers,
+            paperValues
+        );
+
+    const grading =
+        calculation.percentage !== null
+            ? getSubjectGrading(
+                calculation.percentage,
+                selectedStudent
+            )
+            : null;
+
+    const paperCells =
+        papers
+            .map(function (paper, index) {
+
+                const value =
+                    paperValues[index] ??
+                    "";
+
+                return `
+                    <td>
+                        <input
+                            type="number"
+                            class="paper-mark-input"
+                            data-subject-id="${escapeAttribute(
+                                subjectId
+                            )}"
+                            data-paper-index="${index}"
+                            min="0"
+                            max="${paper.max}"
+                            step="1"
+                            value="${escapeAttribute(value)}"
+                            placeholder="0–${paper.max}"
+                        >
+
+                        <small>
+                            Max ${paper.max}
+                        </small>
+                    </td>
+                `;
+            })
+            .join("");
+
+    const totalCells =
+        papers.length === 1
+            ? ""
+            : `
+                <td
+                    class="subject-obtained"
+                    data-subject-total="${escapeAttribute(
+                        subjectId
+                    )}"
+                >
+                    ${
+                        calculation.obtained === null
+                            ? "—"
+                            : `${calculation.obtained}/${calculation.maximum}`
+                    }
+                </td>
+            `;
+
+    return `
+        <tr
+            class="result-subject-row"
+            data-subject-id="${escapeAttribute(
+                subjectId
+            )}"
+        >
+
+            <td class="subject-name-cell">
+                <strong>
+                    ${escapeHtml(subjectName)}
+                </strong>
+            </td>
+
+            ${paperCells}
+
+            ${
+                papers.length === 1
+                    ? `
+                        <td
+                            class="subject-obtained"
+                            data-subject-total="${escapeAttribute(
+                                subjectId
+                            )}"
+                        >
+                            ${
+                                calculation.obtained === null
+                                    ? "—"
+                                    : `${calculation.obtained}/${calculation.maximum}`
+                            }
+                        </td>
+                    `
+                    : totalCells
+            }
+
+            <td
+                class="subject-percentage"
+                data-subject-percentage="${escapeAttribute(
+                    subjectId
+                )}"
+            >
+                ${
+                    calculation.percentage === null
+                        ? "—"
+                        : `${calculation.percentage}%`
+                }
+            </td>
+
+            <td
+                class="subject-grade"
+                data-subject-grade="${escapeAttribute(
+                    subjectId
+                )}"
+            >
+                ${
+                    grading
+                        ? escapeHtml(
+                            String(grading.grade)
+                        )
+                        : "—"
+                }
+            </td>
+
+            <td
+                class="subject-remark"
+                data-subject-remark="${escapeAttribute(
+                    subjectId
+                )}"
+            >
+                ${
+                    grading
+                        ? escapeHtml(
+                            grading.remark
+                        )
+                        : "—"
+                }
+            </td>
+
+            <td
+                class="subject-status"
+                data-subject-status="${escapeAttribute(
+                    subjectId
+                )}"
+            >
+                ${
+                    grading
+                        ? grading.passed
+                            ? "PASS"
+                            : "FAIL"
+                        : "—"
+                }
+            </td>
+
+        </tr>
+    `;
+}
+
+
+/* =========================================================
+   INPUT EVENTS
+========================================================= */
+
+function attachResultInputEvents() {
+
+    document
+        .querySelectorAll(
+            ".paper-mark-input"
+        )
+        .forEach(function (input) {
+
+            input.addEventListener(
+                "input",
+                function () {
+
+                    updateSubjectRow(
+                        input.dataset.subjectId
+                    );
+                }
             );
 
-          }
-        );
+            input.addEventListener(
+                "change",
+                function () {
 
-
-      const papers =
-        getPaperStructure(
-          subject,
-          selectedStudent
-        );
-
-
-      const paperValues =
-        getExistingPaperValues(
-          existing,
-          papers
-        );
-
-
-      const calculation =
-        calculateSubjectPercentage(
-          papers,
-          paperValues
-        );
-
-
-      const grading =
-        getSubjectGrading(
-          calculation.percentage,
-          selectedStudent
-        );
-
-
-      const row =
-        document.createElement(
-          "tr"
-        );
-
-
-      row.dataset.subjectId =
-        subjectId;
-
-
-      row.innerHTML = `
-
-        <td>
-          ${index + 1}
-        </td>
-
-
-        <td class="subject-name">
-
-          ${escapeHtml(
-            getSubjectName(
-              subject
-            )
-          )}
-
-        </td>
-
-
-        <td>
-
-          <div class="paper-list">
-
-            ${papers
-              .map(
-                function(paper,paperIndex){
-
-                  const value =
-                    paperValues[
-                      paperIndex
-                    ] ?? "";
-
-                  return `
-
-                    <div class="paper-row">
-
-                      <span class="paper-label">
-                        ${escapeHtml(
-                          paper.name
-                        )}
-                      </span>
-
-                      <span class="paper-max">
-                        / ${paper.max}
-                      </span>
-
-                      <input
-                        type="number"
-                        class="paper-mark-input"
-                        data-paper-index="${paperIndex}"
-                        min="0"
-                        max="${paper.max}"
-                        step="1"
-                        value="${escapeAttribute(
-                          value
-                        )}"
-                        placeholder="0"
-                        aria-label="${escapeAttribute(
-                          paper.name +
-                          " mark"
-                        )}"
-                      >
-
-                    </div>
-
-                  `;
-
+                    updateSubjectRow(
+                        input.dataset.subjectId
+                    );
                 }
-              )
-              .join("")}
-
-
-            <div class="paper-total">
-
-              Total:
-              <span class="paper-obtained">
-                ${calculation.obtained}
-              </span>
-              /
-              <span class="paper-maximum">
-                ${calculation.maximum}
-              </span>
-
-            </div>
-
-          </div>
-
-        </td>
-
-
-        <td class="percentage-cell">
-
-          <div class="percentage-value">
-
-            ${
-              calculation.percentage === null
-                ? "—"
-                : calculation.percentage + "%"
-            }
-
-          </div>
-
-
-          <div class="percentage-detail">
-
-            ${
-              calculation.percentage === null
-                ? "No complete marks"
-                : calculation.obtained +
-                  " / " +
-                  calculation.maximum
-            }
-
-          </div>
-
-        </td>
-
-
-        <td>
-
-          <div class="grade-value">
-            ${
-              grading
-                ? escapeHtml(
-                    String(
-                      grading.grade
-                    )
-                  )
-                : "—"
-            }
-          </div>
-
-        </td>
-
-
-        <td>
-
-          <div class="classification-value">
-
-            ${
-              grading
-                ? escapeHtml(
-                    grading.remark
-                  )
-                : "—"
-            }
-
-          </div>
-
-        </td>
-
-
-        <td>
-
-          <span
-            class="result-status ${
-              grading
-                ? grading.passed
-                  ? "status-pass"
-                  : "status-fail"
-                : "status-empty"
-            }"
-          >
-
-            ${
-              grading
-                ? grading.passed
-                  ? "Pass"
-                  : "Fail"
-                : "—"
-            }
-
-          </span>
-
-        </td>
-
-      `;
-
-
-      const paperInputs =
-        Array.from(
-          row.querySelectorAll(
-            ".paper-mark-input"
-          )
-        );
-
-
-      const percentageElement =
-        row.querySelector(
-          ".percentage-value"
-        );
-
-
-      const percentageDetail =
-        row.querySelector(
-          ".percentage-detail"
-        );
-
-
-      const obtainedElement =
-        row.querySelector(
-          ".paper-obtained"
-        );
-
-
-      const maximumElement =
-        row.querySelector(
-          ".paper-maximum"
-        );
-
-
-      const gradeElement =
-        row.querySelector(
-          ".grade-value"
-        );
-
-
-      const classificationElement =
-        row.querySelector(
-          ".classification-value"
-        );
-
-
-      const statusElement =
-        row.querySelector(
-          ".result-status"
-        );
-
-
-      paperInputs.forEach(
-        function(input){
-
-          input.addEventListener(
-            "input",
-            function(){
-
-              updateSubjectRow(
-                row,
-                papers,
-                paperInputs,
-                percentageElement,
-                percentageDetail,
-                obtainedElement,
-                maximumElement,
-                gradeElement,
-                classificationElement,
-                statusElement
-              );
-
-            }
-          );
-
-        }
-      );
-
-
-      dom.resultsEntryBody.appendChild(
-        row
-      );
-
-    }
-  );
-
+            );
+        });
 }
 
 
@@ -1650,195 +1744,210 @@ function renderResultEntry(){
    UPDATE SUBJECT ROW
 ========================================================= */
 
-function updateSubjectRow(
-  row,
-  papers,
-  paperInputs,
-  percentageElement,
-  percentageDetail,
-  obtainedElement,
-  maximumElement,
-  gradeElement,
-  classificationElement,
-  statusElement
-){
+function updateSubjectRow(subjectId) {
 
-  let hasInvalid =
-    false;
+    const subject =
+        findSubjectById(subjectId);
 
+    if (!subject) {
+        return;
+    }
 
-  const values =
-    paperInputs.map(
-      function(input,index){
-
-        const raw =
-          input.value.trim();
-
-
-        if(raw === ""){
-
-          input.classList.remove(
-            "invalid"
-          );
-
-          return null;
-
-        }
-
-
-        const value =
-          Number(raw);
-
-
-        if(
-          Number.isNaN(value) ||
-          value < 0 ||
-          value > papers[index].max
-        ){
-
-          input.classList.add(
-            "invalid"
-          );
-
-          hasInvalid = true;
-
-          return null;
-
-        }
-
-
-        input.classList.remove(
-          "invalid"
+    const papers =
+        getPaperStructure(
+            subject,
+            selectedStudent
         );
 
+    const values =
+        getPaperInputValues(
+            subjectId,
+            papers
+        );
 
-        return value;
+    const calculation =
+        calculateSubjectPercentage(
+            papers,
+            values
+        );
 
-      }
-    );
+    const row =
+        document.querySelector(
+            `.result-subject-row[data-subject-id="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
+    if (!row) {
+        return;
+    }
 
-  if(hasInvalid){
+    const percentageElement =
+        row.querySelector(
+            `[data-subject-percentage="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    percentageElement.textContent =
-      "Invalid";
+    const gradeElement =
+        row.querySelector(
+            `[data-subject-grade="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    percentageDetail.textContent =
-      "Check paper marks";
+    const remarkElement =
+        row.querySelector(
+            `[data-subject-remark="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    obtainedElement.textContent =
-      "—";
+    const statusElement =
+        row.querySelector(
+            `[data-subject-status="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    maximumElement.textContent =
-      "—";
+    const totalElement =
+        row.querySelector(
+            `[data-subject-total="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    gradeElement.textContent =
-      "—";
+    const invalid =
+        values.some(function (value, index) {
 
-    classificationElement.textContent =
-      "Invalid";
+            if (
+                value === "" ||
+                value === null ||
+                value === undefined
+            ) {
+                return false;
+            }
 
-    statusElement.textContent =
-      "Invalid";
+            const number =
+                Number(value);
 
-    statusElement.className =
-      "result-status status-invalid";
+            return (
+                Number.isNaN(number) ||
+                number < 0 ||
+                number > papers[index].max
+            );
+        });
 
-    return;
+    if (invalid) {
 
-  }
+        if (percentageElement) {
+            percentageElement.textContent =
+                "Invalid";
+        }
 
+        if (gradeElement) {
+            gradeElement.textContent =
+                "—";
+        }
 
-  const calculation =
-    calculateSubjectPercentage(
-      papers,
-      values
-    );
+        if (remarkElement) {
+            remarkElement.textContent =
+                "Invalid mark";
+        }
 
+        if (statusElement) {
+            statusElement.textContent =
+                "—";
+        }
 
-  obtainedElement.textContent =
-    calculation.obtained;
+        return;
+    }
 
+    if (totalElement) {
 
-  maximumElement.textContent =
-    calculation.maximum;
+        if (calculation.obtained === null) {
 
+            totalElement.textContent =
+                "—";
 
-  if(
-    calculation.percentage === null
-  ){
+        } else {
 
-    percentageElement.textContent =
-      "—";
+            totalElement.textContent =
+                `${calculation.obtained}/${calculation.maximum}`;
+        }
+    }
 
-    percentageDetail.textContent =
-      "Complete all papers";
+    /*
+       Incomplete papers:
+       Do not calculate a final percentage.
+    */
 
-    gradeElement.textContent =
-      "—";
+    if (
+        calculation.percentage === null
+    ) {
 
-    classificationElement.textContent =
-      "—";
+        if (percentageElement) {
+            percentageElement.textContent =
+                "—";
+        }
 
-    statusElement.textContent =
-      "—";
+        if (gradeElement) {
+            gradeElement.textContent =
+                "—";
+        }
 
-    statusElement.className =
-      "result-status status-empty";
+        if (remarkElement) {
 
-    return;
+            const hasSomeMarks =
+                values.some(function (value) {
+                    return value !== "";
+                });
 
-  }
+            remarkElement.textContent =
+                hasSomeMarks
+                    ? "Complete all papers"
+                    : "—";
+        }
 
+        if (statusElement) {
+            statusElement.textContent =
+                "—";
+        }
 
-  percentageElement.textContent =
-    calculation.percentage +
-    "%";
+        return;
+    }
 
+    const grading =
+        getSubjectGrading(
+            calculation.percentage,
+            selectedStudent
+        );
 
-  percentageDetail.textContent =
-    calculation.obtained +
-    " / " +
-    calculation.maximum;
+    if (percentageElement) {
 
+        percentageElement.textContent =
+            `${calculation.percentage}%`;
+    }
 
-  const grading =
-    getSubjectGrading(
-      calculation.percentage,
-      selectedStudent
-    );
+    if (gradeElement) {
 
+        gradeElement.textContent =
+            grading.grade;
+    }
 
-  gradeElement.textContent =
-    grading
-      ? grading.grade
-      : "—";
+    if (remarkElement) {
 
+        remarkElement.textContent =
+            grading.remark;
+    }
 
-  classificationElement.textContent =
-    grading
-      ? grading.remark
-      : "—";
+    if (statusElement) {
 
-
-  if(grading && grading.passed){
-
-    statusElement.textContent =
-      "Pass";
-
-    statusElement.className =
-      "result-status status-pass";
-
-  }else{
-
-    statusElement.textContent =
-      "Fail";
-
-    statusElement.className =
-      "result-status status-fail";
-
-  }
-
+        statusElement.textContent =
+            grading.passed
+                ? "PASS"
+                : "FAIL";
+    }
 }
 
 
@@ -1847,116 +1956,108 @@ function updateSubjectRow(
 ========================================================= */
 
 function calculateSubjectPercentage(
-  papers,
-  values
-){
+    papers,
+    values
+) {
 
-  const maximum =
-    papers.reduce(
-      function(total,paper){
+    if (!papers.length) {
 
-        return total +
-          Number(
-            paper.max
-          );
+        return {
+            obtained: null,
+            maximum: 0,
+            percentage: null
+        };
+    }
 
-      },
-      0
-    );
+    let obtained = 0;
 
+    let enteredCount = 0;
 
-  const enteredValues =
-    values.filter(
-      function(value){
+    let valid = true;
 
-        return (
-          value !== null &&
-          value !== undefined &&
-          !Number.isNaN(
-            Number(value)
-          )
+    papers.forEach(function (paper, index) {
+
+        const value =
+            values[index];
+
+        if (
+            value === "" ||
+            value === null ||
+            value === undefined
+        ) {
+            return;
+        }
+
+        const number =
+            Number(value);
+
+        if (
+            Number.isNaN(number) ||
+            number < 0 ||
+            number > paper.max
+        ) {
+
+            valid = false;
+
+            return;
+        }
+
+        obtained += number;
+
+        enteredCount++;
+    });
+
+    const maximum =
+        papers.reduce(
+            function (sum, paper) {
+                return sum + Number(paper.max);
+            },
+            0
         );
 
-      }
-    );
+    if (!valid) {
 
+        return {
+            obtained,
+            maximum,
+            percentage: null
+        };
+    }
 
-  if(!enteredValues.length){
+    if (enteredCount === 0) {
+
+        return {
+            obtained: null,
+            maximum,
+            percentage: null
+        };
+    }
+
+    /*
+       Do not calculate until every paper
+       for the subject has a mark.
+    */
+
+    if (enteredCount < papers.length) {
+
+        return {
+            obtained,
+            maximum,
+            percentage: null
+        };
+    }
+
+    const rawPercentage =
+        maximum > 0
+            ? (obtained / maximum) * 100
+            : 0;
 
     return {
-
-      obtained:0,
-
-      maximum:maximum,
-
-      percentage:null
-
+        obtained,
+        maximum,
+        percentage:
+            Math.round(rawPercentage)
     };
-
-  }
-
-
-  const obtained =
-    enteredValues.reduce(
-      function(total,value){
-
-        return total +
-          Number(value);
-
-      },
-      0
-    );
-
-
-  if(
-    enteredValues.length !==
-    papers.length
-  ){
-
-    return {
-
-      obtained:obtained,
-
-      maximum:maximum,
-
-      percentage:null
-
-    };
-
-  }
-
-
-  const rawPercentage =
-    maximum > 0
-      ? obtained /
-        maximum *
-        100
-      : 0;
-
-
-  /*
-    IMPORTANT:
-    Subject percentage is rounded
-    to the nearest whole number
-    BEFORE grading.
-  */
-
-  const percentage =
-    Math.round(
-      rawPercentage
-    );
-
-
-  return {
-
-    obtained:obtained,
-
-    maximum:maximum,
-
-    percentage:percentage
-
-  };
-
 }
 
 
@@ -1964,155 +2065,93 @@ function calculateSubjectPercentage(
    SENIOR GRADING
 ========================================================= */
 
-function getSeniorGrade(
-  percentage
-){
+function getSeniorGrading(percentage) {
 
-  const value =
-    Number(
-      percentage
-    );
+    if (percentage >= 80) {
 
+        return {
+            grade: 1,
+            remark:
+                "Pass with Distinction (Outstanding)",
+            passed: true
+        };
+    }
 
-  if(value >= 80){
+    if (percentage >= 70) {
 
-    return {
+        return {
+            grade: 2,
+            remark:
+                "Pass with Distinction (Excellent)",
+            passed: true
+        };
+    }
 
-      grade:1,
+    if (percentage >= 65) {
 
-      remark:
-        "Pass with Distinction (Outstanding)",
+        return {
+            grade: 3,
+            remark:
+                "Pass with Credit (Good)",
+            passed: true
+        };
+    }
 
-      passed:true
+    if (percentage >= 60) {
 
-    };
+        return {
+            grade: 4,
+            remark:
+                "Pass with Credit (Competent)",
+            passed: true
+        };
+    }
 
-  }
+    if (percentage >= 55) {
 
+        return {
+            grade: 5,
+            remark:
+                "Pass with Credit (Satisfactory)",
+            passed: true
+        };
+    }
 
-  if(value >= 70){
+    if (percentage >= 50) {
 
-    return {
+        return {
+            grade: 6,
+            remark:
+                "Pass with Credit (Minimum Credit)",
+            passed: true
+        };
+    }
 
-      grade:2,
+    if (percentage >= 45) {
 
-      remark:
-        "Pass with Distinction (Excellent)",
+        return {
+            grade: 7,
+            remark:
+                "Ordinary Pass",
+            passed: true
+        };
+    }
 
-      passed:true
+    if (percentage >= 40) {
 
-    };
-
-  }
-
-
-  if(value >= 65){
-
-    return {
-
-      grade:3,
-
-      remark:
-        "Pass with Credit (Good)",
-
-      passed:true
-
-    };
-
-  }
-
-
-  if(value >= 60){
-
-    return {
-
-      grade:4,
-
-      remark:
-        "Pass with Credit (Competent)",
-
-      passed:true
-
-    };
-
-  }
-
-
-  if(value >= 55){
-
-    return {
-
-      grade:5,
-
-      remark:
-        "Pass with Credit (Satisfactory)",
-
-      passed:true
-
-    };
-
-  }
-
-
-  if(value >= 50){
+        return {
+            grade: 8,
+            remark:
+                "Ordinary Pass",
+            passed: true
+        };
+    }
 
     return {
-
-      grade:6,
-
-      remark:
-        "Pass with Credit (Minimum Credit)",
-
-      passed:true
-
+        grade: 9,
+        remark: "Fail",
+        passed: false
     };
-
-  }
-
-
-  if(value >= 45){
-
-    return {
-
-      grade:7,
-
-      remark:
-        "Ordinary Pass",
-
-      passed:true
-
-    };
-
-  }
-
-
-  if(value >= 40){
-
-    return {
-
-      grade:8,
-
-      remark:
-        "Ordinary Pass",
-
-      passed:true
-
-    };
-
-  }
-
-
-  return {
-
-    grade:9,
-
-    remark:
-      "Fail",
-
-    passed:false
-
-  };
-
 }
 
 
@@ -2120,360 +2159,250 @@ function getSeniorGrade(
    JUNIOR GRADING
 ========================================================= */
 
-function getJuniorGrade(
-  percentage
-){
+function getJuniorGrading(percentage) {
 
-  const value =
-    Number(
-      percentage
-    );
+    if (percentage >= 75) {
 
+        return {
+            grade: "A",
+            remark:
+                "Excellent / Distinction",
+            passed: true
+        };
+    }
 
-  if(value >= 75){
+    if (percentage >= 60) {
 
-    return {
+        return {
+            grade: "B",
+            remark:
+                "Very Good",
+            passed: true
+        };
+    }
 
-      grade:"A",
+    if (percentage >= 50) {
 
-      remark:
-        "Excellent / Distinction",
+        return {
+            grade: "C",
+            remark:
+                "Good",
+            passed: true
+        };
+    }
 
-      passed:true
+    if (percentage >= 40) {
 
-    };
-
-  }
-
-
-  if(value >= 60){
-
-    return {
-
-      grade:"B",
-
-      remark:
-        "Very Good",
-
-      passed:true
-
-    };
-
-  }
-
-
-  if(value >= 50){
+        return {
+            grade: "D",
+            remark:
+                "Average / Pass",
+            passed: true
+        };
+    }
 
     return {
-
-      grade:"C",
-
-      remark:
-        "Good",
-
-      passed:true
-
+        grade: "F",
+        remark: "Fail",
+        passed: false
     };
-
-  }
-
-
-  if(value >= 40){
-
-    return {
-
-      grade:"D",
-
-      remark:
-        "Average / Pass",
-
-      passed:true
-
-    };
-
-  }
-
-
-  return {
-
-    grade:"F",
-
-    remark:
-      "Fail",
-
-    passed:false
-
-  };
-
 }
 
 
 /* =========================================================
-   GET SUBJECT GRADING
+   GET GRADING
 ========================================================= */
 
 function getSubjectGrading(
-  percentage,
-  student
-){
+    percentage,
+    student
+) {
 
-  if(
-    percentage === null ||
-    percentage === undefined
-  ){
+    const form =
+        getStudentFormNumber(student);
 
-    return null;
+    if (form >= 3) {
+        return getSeniorGrading(
+            percentage
+        );
+    }
 
-  }
-
-
-  const form =
-    getStudentFormNumber(
-      student
+    return getJuniorGrading(
+        percentage
     );
-
-
-  if(form >= 3){
-
-    return getSeniorGrade(
-      percentage
-    );
-
-  }
-
-
-  return getJuniorGrade(
-    percentage
-  );
-
 }
 
 
 /* =========================================================
-   GET PAPER STRUCTURE
+   PAPER STRUCTURE
 ========================================================= */
 
 function getPaperStructure(
-  subject,
-  student
-){
+    subject,
+    student
+) {
 
-  const stored =
-    extractStoredPapers(
-      subject
-    );
+    const stored =
+        extractStoredPapers(subject);
 
+    if (stored.length) {
+        return stored;
+    }
 
-  if(stored.length){
+    const subjectName =
+        getSubjectName(subject);
 
-    return stored;
+    const structure =
+        DEFAULT_PAPER_STRUCTURES[
+            subjectName
+        ];
 
-  }
+    if (structure) {
 
+        const form =
+            getStudentFormNumber(student);
 
-  const subjectName =
-    getSubjectName(
-      subject
-    );
+        if (form >= 3) {
+            return structure.senior;
+        }
 
+        return structure.junior;
+    }
 
-  const form =
-    getStudentFormNumber(
-      student
-    );
-
-
-  const structure =
-    DEFAULT_PAPER_STRUCTURES[
-      subjectName
+    return [
+        {
+            name: "Paper I",
+            max: 100
+        }
     ];
-
-
-  if(structure){
-
-    if(form >= 3){
-
-      return structure.senior;
-
-    }
-
-
-    return structure.junior;
-
-  }
-
-
-  return [
-
-    {
-      name:"Paper I",
-      max:100
-    }
-
-  ];
-
 }
 
 
 /* =========================================================
-   EXTRACT STORED PAPERS
+   EXTRACT STORED PAPER STRUCTURE
 ========================================================= */
 
-function extractStoredPapers(
-  subject
-){
+function extractStoredPapers(subject) {
 
-  if(!subject){
+    const fields = [
+        "papers",
+        "paper_structure",
+        "paper_marks",
+        "mark_structure",
+        "paper_config",
+        "assessment_structure"
+    ];
+
+    for (const field of fields) {
+
+        let value =
+            subject[field];
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            continue;
+        }
+
+        if (typeof value === "string") {
+
+            try {
+
+                value =
+                    JSON.parse(value);
+
+            } catch (error) {
+
+                continue;
+            }
+        }
+
+        if (!Array.isArray(value)) {
+            continue;
+        }
+
+        const papers =
+            value
+                .map(function (paper, index) {
+
+                    if (
+                        typeof paper === "number"
+                    ) {
+
+                        return {
+                            name:
+                                `Paper ${roman(index + 1)}`,
+                            max:
+                                Number(paper)
+                        };
+                    }
+
+                    if (
+                        typeof paper === "object" &&
+                        paper !== null
+                    ) {
+
+                        const max =
+                            paper.max_marks ??
+                            paper.maximum_marks ??
+                            paper.max ??
+                            paper.marks ??
+                            paper.total;
+
+                        if (
+                            max === undefined ||
+                            max === null
+                        ) {
+                            return null;
+                        }
+
+                        return {
+                            name:
+                                paper.paper_name ??
+                                paper.name ??
+                                paper.paper ??
+                                `Paper ${roman(index + 1)}`,
+                            max:
+                                Number(max)
+                        };
+                    }
+
+                    return null;
+                })
+                .filter(function (paper) {
+
+                    return (
+                        paper &&
+                        Number.isFinite(paper.max) &&
+                        paper.max > 0
+                    );
+                });
+
+        if (papers.length) {
+            return papers;
+        }
+    }
 
     return [];
-
-  }
-
-
-  const possibleFields = [
-
-    "papers",
-    "paper_structure",
-    "paper_marks",
-    "mark_structure",
-    "paper_config",
-    "assessment_structure"
-
-  ];
+}
 
 
-  for(
-    const field of possibleFields
-  ){
+/* =========================================================
+   EXISTING RESULT
+========================================================= */
 
-    if(
-      subject[field] === null ||
-      subject[field] === undefined
-    ){
+function findExistingResult(subjectId) {
 
-      continue;
+    return currentStudentResults.find(
+        function (result) {
 
-    }
-
-
-    let value =
-      subject[field];
-
-
-    if(typeof value === "string"){
-
-      try{
-
-        value =
-          JSON.parse(value);
-
-      }catch(error){
-
-        continue;
-
-      }
-
-    }
-
-
-    if(!Array.isArray(value)){
-
-      continue;
-
-    }
-
-
-    const normalized =
-      value
-        .map(
-          function(item,index){
-
-            if(
-              item === null ||
-              item === undefined
-            ){
-
-              return null;
-
-            }
-
-
-            if(
-              typeof item === "number"
-            ){
-
-              return {
-
-                name:
-                  "Paper " +
-                  romanNumber(
-                    index + 1
-                  ),
-
-                max:
-                  item
-
-              };
-
-            }
-
-
-            if(
-              typeof item === "object"
-            ){
-
-              const max =
-                Number(
-                  item.max_marks ??
-                  item.maximum_marks ??
-                  item.max ??
-                  item.marks ??
-                  item.total ??
-                  100
-                );
-
-
-              return {
-
-                name:
-                  item.paper_name ||
-                  item.name ||
-                  item.paper ||
-                  (
-                    "Paper " +
-                    romanNumber(
-                      index + 1
-                    )
-                  ),
-
-                max:
-                  Number.isFinite(max)
-                    ? max
-                    : 100
-
-              };
-
-            }
-
-
-            return null;
-
-          }
-        )
-        .filter(Boolean);
-
-
-    if(normalized.length){
-
-      return normalized;
-
-    }
-
-  }
-
-
-  return [];
-
+            return String(
+                result.subject_id
+            ) === String(subjectId);
+        }
+    ) || null;
 }
 
 
@@ -2482,1328 +2411,179 @@ function extractStoredPapers(
 ========================================================= */
 
 function getExistingPaperValues(
-  result,
-  papers
-){
+    result,
+    papers
+) {
 
-  if(!result){
+    if (!result) {
 
-    return papers.map(
-      function(){
-
-        return "";
-
-      }
-    );
-
-  }
-
-
-  const possibleFields = [
-
-    "paper_marks",
-    "papers",
-    "marks_by_paper",
-    "paper_results",
-    "paper_scores"
-
-  ];
-
-
-  for(
-    const field of possibleFields
-  ){
-
-    if(
-      result[field] === null ||
-      result[field] === undefined
-    ){
-
-      continue;
-
-    }
-
-
-    let value =
-      result[field];
-
-
-    if(typeof value === "string"){
-
-      try{
-
-        value =
-          JSON.parse(value);
-
-      }catch(error){
-
-        continue;
-
-      }
-
-    }
-
-
-    if(Array.isArray(value)){
-
-      return papers.map(
-        function(paper,index){
-
-          const item =
-            value[index];
-
-
-          if(
-            item === null ||
-            item === undefined
-          ){
-
+        return papers.map(function () {
             return "";
-
-          }
-
-
-          if(
-            typeof item === "number"
-          ){
-
-            return item;
-
-          }
-
-
-          if(
-            typeof item === "object"
-          ){
-
-            return (
-              item.mark ??
-              item.value ??
-              ""
-            );
-
-          }
-
-
-          return "";
-
-        }
-      );
-
+        });
     }
 
+    let raw =
+        result.paper_marks ??
+        result.papers ??
+        result.marks_by_paper ??
+        result.paper_results ??
+        result.paper_scores;
 
-    if(
-      value &&
-      typeof value === "object"
-    ){
+    if (typeof raw === "string") {
 
-      return papers.map(
-        function(paper,index){
+        try {
+            raw = JSON.parse(raw);
+        } catch (error) {
+            raw = null;
+        }
+    }
 
-          const possibleKeys = [
+    if (Array.isArray(raw)) {
 
-            paper.name,
+        return papers.map(
+            function (_, index) {
 
-            String(index),
+                const value =
+                    raw[index];
 
-            String(index + 1),
+                if (
+                    value === null ||
+                    value === undefined
+                ) {
+                    return "";
+                }
 
-            "paper" +
-              (index + 1)
+                if (
+                    typeof value === "object"
+                ) {
 
-          ];
+                    return (
+                        value.mark ??
+                        value.marks ??
+                        value.score ??
+                        value.value ??
+                        ""
+                    );
+                }
 
-
-          for(
-            const key of possibleKeys
-          ){
-
-            if(
-              value[key] !== undefined
-            ){
-
-              return value[key];
-
+                return value;
             }
-
-          }
-
-
-          return "";
-
-        }
-      );
-
-    }
-
-  }
-
-
-  if(
-    result.mark !== null &&
-    result.mark !== undefined
-  ){
-
-    const oldMark =
-      Number(
-        result.mark
-      );
-
-
-    if(
-      !Number.isNaN(oldMark) &&
-      papers.length === 1
-    ){
-
-      return [
-        oldMark
-      ];
-
-    }
-
-  }
-
-
-  return papers.map(
-    function(){
-
-      return "";
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   GET SUBJECTS FOR STUDENT
-========================================================= */
-
-function getSubjectsForStudent(
-  student
-){
-
-  if(!student){
-
-    return [];
-
-  }
-
-
-  const studentForm =
-    getStudentFormNumber(
-      student
-    );
-
-
-  const selectedIds =
-    extractStudentSubjectIds(
-      student
-    );
-
-
-  if(
-    selectedIds &&
-    selectedIds.length
-  ){
-
-    const filtered =
-      allSubjects.filter(
-        function(subject){
-
-          const matchesStudentSelection =
-            selectedIds.some(
-              function(id){
-
-                return String(id) ===
-                  String(
-                    getDatabaseId(
-                      subject
-                    )
-                  );
-
-              }
-            );
-
-
-          if(!matchesStudentSelection){
-
-            return false;
-
-          }
-
-
-          const subjectForm =
-            getSubjectFormNumber(
-              subject
-            );
-
-
-          if(
-            subjectForm &&
-            studentForm
-          ){
-
-            return (
-              subjectForm ===
-              studentForm
-            );
-
-          }
-
-
-          return true;
-
-        }
-      );
-
-
-    if(filtered.length){
-
-      return sortSubjects(
-        filtered
-      );
-
-    }
-
-  }
-
-
-  if(allSubjects.length){
-
-    const formSubjects =
-      allSubjects.filter(
-        function(subject){
-
-          const subjectForm =
-            getSubjectFormNumber(
-              subject
-            );
-
-
-          if(
-            subjectForm &&
-            studentForm
-          ){
-
-            return (
-              subjectForm ===
-              studentForm
-            );
-
-          }
-
-
-          return !subjectForm;
-
-        }
-      );
-
-
-    if(formSubjects.length){
-
-      return sortSubjects(
-        formSubjects
-      );
-
-    }
-
-
-    return sortSubjects(
-      allSubjects
-    );
-
-  }
-
-
-  return SUBJECTS_FALLBACK.map(
-    function(name,index){
-
-      return {
-
-        id:
-          "fallback-" +
-          index,
-
-        subject_name:
-          name,
-
-        name:
-          name
-
-      };
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SORT SUBJECTS
-========================================================= */
-
-function sortSubjects(
-  subjects
-){
-
-  return [...subjects].sort(
-    function(a,b){
-
-      return getSubjectName(a)
-        .localeCompare(
-          getSubjectName(b)
         );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   STUDENT SUBJECT IDS
-========================================================= */
-
-function extractStudentSubjectIds(
-  student
-){
-
-  const possibleFields = [
-
-    "subject_ids",
-    "subjects",
-    "selected_subjects",
-    "subjects_taken"
-
-  ];
-
-
-  for(
-    const field of possibleFields
-  ){
-
-    if(
-      student[field] === null ||
-      student[field] === undefined
-    ){
-
-      continue;
-
     }
 
-
-    let value =
-      student[field];
-
-
-    if(typeof value === "string"){
-
-      try{
-
-        value =
-          JSON.parse(value);
-
-      }catch(error){
-
-        value =
-          value
-            .split(",")
-            .map(
-              function(item){
-
-                return item.trim();
-
-              }
-            )
-            .filter(Boolean);
-
-      }
-
-    }
-
-
-    if(Array.isArray(value)){
-
-      return value
-        .map(
-          function(item){
-
-            if(
-              item &&
-              typeof item === "object"
-            ){
-
-              return (
-                item.id ||
-                item.subject_id
-              );
-
-            }
-
-
-            return item;
-
-          }
-        )
-        .filter(Boolean);
-
-    }
-
-  }
-
-
-  return [];
-
-}
-
-
-/* =========================================================
-   SENIOR OVERALL CALCULATION
-========================================================= */
-
-function calculateSeniorOverall(
-  resultRows
-){
-
-  /*
-    Only completed and passed subjects
-    can contribute to the best-six aggregate.
-
-    English must be passed.
-
-    IMPORTANT:
-    English is NOT forced into the best six.
-    It is included only if its grade naturally
-    falls among the six best grade numbers.
-  */
-
-  const english =
-    resultRows.find(
-      function(item){
-
-        return isEnglishSubject(
-          item.subject
-        );
-
-      }
-    );
-
-
-  const completeRows =
-    resultRows.filter(
-      function(item){
-
-        return (
-          item.calculation.percentage !== null
-        );
-
-      }
-    );
-
-
-  const gradedRows =
-    completeRows
-      .map(
-        function(item){
-
-          const grading =
-            getSeniorGrade(
-              item.calculation.percentage
-            );
-
-
-          return {
-
-            ...item,
-
-            grading:grading
-
-          };
-
-        }
-      );
-
-
-  const englishGrading =
-    english &&
-    english.calculation.percentage !== null
-      ? getSeniorGrade(
-          english.calculation.percentage
-        )
-      : null;
-
-
-  const englishPassed =
-    Boolean(
-      englishGrading &&
-      englishGrading.passed
-    );
-
-
-  if(!english){
-
-    return {
-
-      valid:false,
-
-      passed:false,
-
-      reason:
-        "English result is required.",
-
-      aggregate:null,
-
-      selectedSubjects:[],
-
-      englishPassed:false
-
-    };
-
-  }
-
-
-  if(!englishGrading){
-
-    return {
-
-      valid:false,
-
-      passed:false,
-
-      reason:
-        "English must be completed.",
-
-      aggregate:null,
-
-      selectedSubjects:[],
-
-      englishPassed:false
-
-    };
-
-  }
-
-
-  if(!englishPassed){
-
-    return {
-
-      valid:false,
-
-      passed:false,
-
-      reason:
-        "English must be passed.",
-
-      aggregate:null,
-
-      selectedSubjects:[],
-
-      englishPassed:false
-
-    };
-
-  }
-
-
-  const passedRows =
-    gradedRows.filter(
-      function(item){
-
-        return item.grading.passed;
-
-      }
-    );
-
-
-  if(passedRows.length < 6){
-
-    return {
-
-      valid:false,
-
-      passed:false,
-
-      reason:
-        "At least six passed subjects are required for the best-six aggregate.",
-
-      aggregate:null,
-
-      selectedSubjects:[],
-
-      englishPassed:true
-
-    };
-
-  }
-
-
-  /*
-    Sort every passed subject by grade number.
-    Lower number = better result.
-  */
-
-  const bestSix =
-    [...passedRows]
-      .sort(
-        function(a,b){
-
-          return (
-            Number(a.grading.grade) -
-            Number(b.grading.grade)
-          );
-
-        }
-      )
-      .slice(0,6);
-
-
-  const aggregate =
-    bestSix.reduce(
-      function(total,item){
-
-        return total +
-          Number(
-            item.grading.grade
-          );
-
-      },
-      0
-    );
-
-
-  return {
-
-    valid:true,
-
-    passed:true,
-
-    reason:
-      "English passed.",
-
-    aggregate:aggregate,
-
-    selectedSubjects:bestSix,
-
-    englishPassed:true
-
-  };
-
-}
-
-
-/* =========================================================
-   JUNIOR OVERALL CALCULATION
-========================================================= */
-
-function calculateJuniorOverall(
-  resultRows
-){
-
-  const english =
-    resultRows.find(
-      function(item){
-
-        return isEnglishSubject(
-          item.subject
-        );
-
-      }
-    );
-
-
-  const completeRows =
-    resultRows.filter(
-      function(item){
-
-        return (
-          item.calculation.percentage !== null
-        );
-
-      }
-    );
-
-
-  const gradedRows =
-    completeRows.map(
-      function(item){
-
-        return {
-
-          ...item,
-
-          grading:
-            getJuniorGrade(
-              item.calculation.percentage
-            )
-
-        };
-
-      }
-    );
-
-
-  const passedRows =
-    gradedRows.filter(
-      function(item){
-
-        return item.grading.passed;
-
-      }
-    );
-
-
-  const englishGrading =
-    english &&
-    english.calculation.percentage !== null
-      ? getJuniorGrade(
-          english.calculation.percentage
-        )
-      : null;
-
-
-  const englishPassed =
-    Boolean(
-      englishGrading &&
-      englishGrading.passed
-    );
-
-
-  const passedCount =
-    passedRows.length;
-
-
-  const valid =
-    passedCount >= 6 &&
-    englishPassed;
-
-
-  let reason;
-
-
-  if(!englishGrading){
-
-    reason =
-      "English must be completed.";
-
-  }else if(!englishPassed){
-
-    reason =
-      "English must be passed.";
-
-  }else if(passedCount < 6){
-
-    reason =
-      "At least six subjects must be passed.";
-
-  }else{
-
-    reason =
-      "Minimum junior pass requirements met.";
-
-  }
-
-
-  return {
-
-    valid:valid,
-
-    passed:valid,
-
-    reason:reason,
-
-    passedCount:passedCount,
-
-    englishPassed:englishPassed,
-
-    selectedSubjects:passedRows
-
-  };
-
-}
-
-
-/* =========================================================
-   CALCULATE OVERALL
-========================================================= */
-
-function calculateOverall(
-  resultRows,
-  student
-){
-
-  const form =
-    getStudentFormNumber(
-      student
-    );
-
-
-  if(form >= 3){
-
-    return {
-
-      type:"senior",
-
-      ...calculateSeniorOverall(
-        resultRows
-      )
-
-    };
-
-  }
-
-
-  return {
-
-    type:"junior",
-
-    ...calculateJuniorOverall(
-      resultRows
-    )
-
-  };
-
-}
-
-
-/* =========================================================
-   RENDER OVERALL RESULTS
-========================================================= */
-
-function renderOverallResults(){
-
-  if(!selectedStudent){
-
-    return;
-
-  }
-
-
-  const name =
-    getStudentName(
-      selectedStudent
-    );
-
-
-  const subjects =
-    getSubjectsForStudent(
-      selectedStudent
-    );
-
-
-  const resultRows =
-    subjects.map(
-      function(subject){
-
-        const subjectId =
-          getDatabaseId(
-            subject
-          );
-
-
-        const result =
-          currentStudentResults.find(
-            function(item){
-
-              return String(
-                item.subject_id
-              ) === String(
-                subjectId
-              );
-
-            }
-          );
-
-
-        const papers =
-          getPaperStructure(
-            subject,
-            selectedStudent
-          );
-
-
-        const values =
-          getExistingPaperValues(
-            result,
-            papers
-          );
-
-
-        const calculation =
-          calculateSubjectPercentage(
-            papers,
-            values
-          );
-
-
-        const grading =
-          getSubjectGrading(
-            calculation.percentage,
-            selectedStudent
-          );
-
-
-        return {
-
-          subject:subject,
-
-          result:result,
-
-          papers:papers,
-
-          values:values,
-
-          calculation:calculation,
-
-          grading:grading
-
-        };
-
-      }
-    );
-
-
-  dom.studentName.textContent =
-    name;
-
-
-  dom.studentId.textContent =
-    getStudentId(
-      selectedStudent
-    );
-
-
-  dom.studentClass.textContent =
-    getClassName(
-      selectedClass
-    );
-
-
-  dom.studentGender.textContent =
-    getStudentGender(
-      selectedStudent
-    );
-
-
-  dom.studentSubjectCount.textContent =
-    subjects.length;
-
-
-  /*
-    Average percentage remains a weighted
-    average of completed papers.
-  */
-
-  const completeRows =
-    resultRows.filter(
-      function(item){
-
-        return (
-          item.calculation.percentage !== null
-        );
-
-      }
-    );
-
-
-  let overallPercentage =
-    null;
-
-
-  if(completeRows.length){
-
-    let totalObtained = 0;
-    let totalMaximum = 0;
-
-
-    completeRows.forEach(
-      function(item){
-
-        totalObtained +=
-          item.calculation.obtained;
-
-        totalMaximum +=
-          item.calculation.maximum;
-
-      }
-    );
-
-
-    if(totalMaximum > 0){
-
-      overallPercentage =
-        Math.round(
-          totalObtained /
-          totalMaximum *
-          100
-        );
-
-    }
-
-  }
-
-
-  dom.studentAverage.textContent =
-    overallPercentage === null
-      ? "—"
-      : overallPercentage +
-        "%";
-
-
-  dom.overallResultsBody.innerHTML =
-    "";
-
-
-  if(!resultRows.length){
-
-    dom.overallResultsBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="6">
-
-          <div class="table-loading">
-            No subjects found.
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-
-    dom.overallResult.textContent =
-      "NO RESULTS";
-
-    dom.overallResultDetails.textContent =
-      "No subjects are available.";
-
-    return;
-
-  }
-
-
-  resultRows.forEach(
-    function(item,index){
-
-      const grading =
-        item.grading;
-
-
-      const row =
-        document.createElement(
-          "tr"
-        );
-
-
-      const papersHtml =
-        item.papers
-          .map(
-            function(paper,paperIndex){
-
-              const value =
-                item.values[
-                  paperIndex
+    if (
+        raw &&
+        typeof raw === "object"
+    ) {
+
+        return papers.map(
+            function (paper, index) {
+
+                const keys = [
+                    paper.name,
+                    String(index),
+                    String(index + 1),
+                    `paper${index + 1}`,
+                    `paper_${index + 1}`
                 ];
 
+                for (
+                    const key of keys
+                ) {
 
-              return `
+                    if (
+                        raw[key] !== undefined
+                    ) {
 
-                <div class="overall-paper">
+                        const value =
+                            raw[key];
 
-                  <strong>
-                    ${escapeHtml(
-                      paper.name
-                    )}
-                  </strong>
+                        if (
+                            typeof value === "object" &&
+                            value !== null
+                        ) {
 
-                  <span>
-                    ${
-                      value === "" ||
-                      value === null ||
-                      value === undefined
-                        ? "—"
-                        : escapeHtml(
-                            String(value)
-                          )
+                            return (
+                                value.mark ??
+                                value.marks ??
+                                value.score ??
+                                value.value ??
+                                ""
+                            );
+                        }
+
+                        return value;
                     }
-                    /
-                    ${paper.max}
-                  </span>
+                }
 
-                </div>
-
-              `;
-
+                return "";
             }
-          )
-          .join("");
-
-
-      row.innerHTML = `
-
-        <td>
-          ${index + 1}
-        </td>
-
-
-        <td>
-
-          <strong>
-            ${escapeHtml(
-              getSubjectName(
-                item.subject
-              )
-            )}
-          </strong>
-
-        </td>
-
-
-        <td>
-
-          <div class="overall-paper-list">
-            ${papersHtml}
-          </div>
-
-        </td>
-
-
-        <td class="overall-percentage">
-
-          ${
-            item.calculation.percentage === null
-              ? "—"
-              : item.calculation.percentage +
-                "%"
-          }
-
-        </td>
-
-
-        <td class="overall-grade">
-
-          ${
-            grading
-              ? escapeHtml(
-                  String(
-                    grading.grade
-                  )
-                )
-              : "—"
-          }
-
-        </td>
-
-
-        <td class="overall-classification">
-
-          ${
-            grading
-              ? escapeHtml(
-                  grading.remark
-                )
-              : "Not entered"
-          }
-
-        </td>
-
-      `;
-
-
-      dom.overallResultsBody.appendChild(
-        row
-      );
-
+        );
     }
-  );
 
+    /*
+       Old single-paper results.
+    */
 
-  const overall =
-    calculateOverall(
-      resultRows,
-      selectedStudent
-    );
+    if (
+        papers.length === 1 &&
+        result.mark !== null &&
+        result.mark !== undefined &&
+        result.mark !== ""
+    ) {
 
+        return [
+            result.mark
+        ];
+    }
 
-  renderOverallSummary(
-    overall,
-    overallPercentage
-  );
-
+    return papers.map(function () {
+        return "";
+    });
 }
 
 
 /* =========================================================
-   RENDER OVERALL SUMMARY
+   GET PAPER INPUT VALUES
 ========================================================= */
 
-function renderOverallSummary(
-  overall,
-  average
-){
+function getPaperInputValues(
+    subjectId,
+    papers
+) {
 
-  if(overall.type === "senior"){
+    const row =
+        document.querySelector(
+            `.result-subject-row[data-subject-id="${escapeAttribute(
+                subjectId
+            )}"]`
+        );
 
-    if(
-      overall.valid &&
-      overall.aggregate !== null
-    ){
+    if (!row) {
 
-      dom.overallResult.textContent =
-        "PASS — AGGREGATE " +
-        overall.aggregate;
-
-
-      dom.overallResultDetails.textContent =
-        "Best six aggregate. English passed and was included only if it was among the six best grades.";
-
-      return;
-
+        return papers.map(function () {
+            return "";
+        });
     }
 
+    const inputs =
+        Array.from(
+            row.querySelectorAll(
+                ".paper-mark-input"
+            )
+        );
 
-    dom.overallResult.textContent =
-      "NOT QUALIFIED";
+    return papers.map(
+        function (_, index) {
 
+            const input =
+                inputs[index];
 
-    dom.overallResultDetails.textContent =
-      overall.reason;
-
-    return;
-
-  }
-
-
-  /*
-    Junior.
-  */
-
-  if(overall.valid){
-
-    dom.overallResult.textContent =
-      "PASS";
-
-
-    dom.overallResultDetails.textContent =
-      overall.passedCount +
-      " subjects passed and English passed.";
-
-    return;
-
-  }
-
-
-  dom.overallResult.textContent =
-    "FAIL";
-
-
-  dom.overallResultDetails.textContent =
-    overall.reason;
-
+            return input
+                ? input.value.trim()
+                : "";
+        }
+    );
 }
 
 
@@ -3812,354 +2592,227 @@ function renderOverallSummary(
 ========================================================= */
 
 async function saveResults(
-  showMessage = true
-){
+    showMessage = true
+) {
 
-  if(!selectedStudent){
+    if (!selectedStudent) {
 
-    throw new Error(
-      "No student has been selected."
-    );
-
-  }
-
-
-  const rows =
-    Array.from(
-      dom.resultsEntryBody
-        .querySelectorAll(
-          "tr[data-subject-id]"
-        )
-    );
-
-
-  if(!rows.length){
-
-    if(showMessage){
-
-      showSaveMessage(
-        "There are no subjects to save.",
-        "error"
-      );
-
+        throw new Error(
+            "No student selected."
+        );
     }
 
-
-    return;
-
-  }
-
-
-  dom.saveResultsBtn.disabled =
-    true;
-
-  dom.saveResultsBtn.textContent =
-    "Saving...";
-
-
-  const studentId =
-    getDatabaseId(
-      selectedStudent
-    );
-
-
-  const records = [];
-
-
-  for(
-    const row of rows
-  ){
-
-    const subjectId =
-      row.dataset.subjectId;
-
-
-    const subject =
-      findSubjectById(
-        subjectId
-      );
-
-
-    const papers =
-      getPaperStructure(
-        subject,
-        selectedStudent
-      );
-
-
-    const paperInputs =
-      Array.from(
-        row.querySelectorAll(
-          ".paper-mark-input"
-        )
-      );
-
-
-    const values = [];
-
-
-    let invalid =
-      false;
-
-
-    let hasAnyMark =
-      false;
-
-
-    paperInputs.forEach(
-      function(input,index){
-
-        const raw =
-          input.value.trim();
-
-
-        if(raw === ""){
-
-          values.push(null);
-
-          return;
-
-        }
-
-
-        hasAnyMark = true;
-
-
-        const value =
-          Number(raw);
-
-
-        if(
-          Number.isNaN(value) ||
-          value < 0 ||
-          value > papers[index].max
-        ){
-
-          invalid = true;
-
-          input.classList.add(
-            "invalid"
-          );
-
-          return;
-
-        }
-
-
-        input.classList.remove(
-          "invalid"
+    const subjects =
+        getSubjectsForStudent(
+            selectedStudent
         );
 
-
-        values.push(
-          value
-        );
-
-      }
-    );
-
-
-    if(invalid){
-
-      dom.saveResultsBtn.disabled =
-        false;
-
-      dom.saveResultsBtn.textContent =
-        "Save Results";
-
-
-      showSaveMessage(
-        "One or more paper marks are invalid. Check the maximum mark shown for each paper.",
-        "error"
-      );
-
-
-      throw new Error(
-        "Invalid paper mark."
-      );
-
-    }
-
-
     /*
-      Completely empty subject:
-      do not save it.
+       Important safety check:
+       Saving is impossible when no subjects
+       are assigned.
     */
 
-    if(!hasAnyMark){
+    if (!subjects.length) {
 
-      continue;
+        const message =
+            "This student has no assigned subjects.";
 
-    }
-
-
-    /*
-      Every paper must be completed.
-    */
-
-    if(
-      values.some(
-        function(value){
-
-          return (
-            value === null ||
-            value === undefined
-          );
-
+        if (showMessage) {
+            showSaveMessage(
+                message,
+                "error"
+            );
         }
-      )
-    ){
 
-      dom.saveResultsBtn.disabled =
-        false;
-
-      dom.saveResultsBtn.textContent =
-        "Save Results";
-
-
-      showSaveMessage(
-        "Please enter marks for every paper before saving the subject.",
-        "error"
-      );
-
-
-      throw new Error(
-        "Incomplete paper marks."
-      );
-
+        throw new Error(message);
     }
 
+    const records = [];
 
-    const calculation =
-      calculateSubjectPercentage(
-        papers,
-        values
-      );
+    for (const subject of subjects) {
 
+        const subjectId =
+            getDatabaseId(subject);
 
-    if(
-      calculation.percentage === null
-    ){
+        const subjectName =
+            getSubjectName(subject);
 
-      throw new Error(
-        "Could not calculate subject percentage."
-      );
+        const papers =
+            getPaperStructure(
+                subject,
+                selectedStudent
+            );
 
+        const values =
+            getPaperInputValues(
+                subjectId,
+                papers
+            );
+
+        const hasAnyValue =
+            values.some(function (value) {
+
+                return (
+                    value !== "" &&
+                    value !== null &&
+                    value !== undefined
+                );
+            });
+
+        /*
+           Completely empty assigned subjects
+           are skipped.
+        */
+
+        if (!hasAnyValue) {
+            continue;
+        }
+
+        /*
+           Every paper must be completed.
+        */
+
+        if (
+            values.some(function (value) {
+                return value === "";
+            })
+        ) {
+
+            throw new Error(
+                `${subjectName}: complete all papers before saving.`
+            );
+        }
+
+        /*
+           Validate marks.
+        */
+
+        for (
+            let index = 0;
+            index < papers.length;
+            index++
+        ) {
+
+            const value =
+                Number(values[index]);
+
+            if (
+                Number.isNaN(value) ||
+                value < 0 ||
+                value > papers[index].max
+            ) {
+
+                throw new Error(
+                    `${subjectName}: ${papers[index].name} must be between 0 and ${papers[index].max}.`
+                );
+            }
+        }
+
+        const calculation =
+            calculateSubjectPercentage(
+                papers,
+                values
+            );
+
+        if (
+            calculation.percentage === null
+        ) {
+
+            throw new Error(
+                `${subjectName}: unable to calculate result.`
+            );
+        }
+
+        const grading =
+            getSubjectGrading(
+                calculation.percentage,
+                selectedStudent
+            );
+
+        records.push({
+
+            student_id:
+                getStudentId(selectedStudent),
+
+            subject_id:
+                subjectId,
+
+            mark:
+                calculation.percentage,
+
+            grade:
+                grading.grade,
+
+            remark:
+                grading.remark,
+
+            paper_marks:
+                values.map(function (value) {
+                    return Number(value);
+                })
+        });
     }
-
-
-    const grading =
-      getSubjectGrading(
-        calculation.percentage,
-        selectedStudent
-      );
-
-
-    const remark =
-      grading
-        ? grading.remark
-        : "";
-
 
     /*
-      Store the rounded percentage.
-
-      The grade is also included in the
-      preferred record. If the existing
-      results table does not have a grade
-      column, the compatibility fallback
-      below saves without it.
+       Nothing entered.
     */
 
-    records.push({
+    if (!records.length) {
 
-      student_id:
-        studentId,
+        const message =
+            "No results have been entered.";
 
-      subject_id:
-        subjectId,
+        if (showMessage) {
+            showSaveMessage(
+                message,
+                "error"
+            );
+        }
 
-      mark:
-        calculation.percentage,
-
-      grade:
-        grading
-          ? grading.grade
-          : null,
-
-      remark:
-        remark,
-
-      paper_marks:
-        values
-
-    });
-
-  }
-
-
-  try{
-
-    if(records.length){
-
-      await upsertResults(
-        records
-      );
-
+        throw new Error(message);
     }
 
-
-    await loadStudentResults();
-
-
-    if(showMessage){
-
-      showSaveMessage(
-        "Student results saved successfully.",
-        "success"
-      );
-
-
-      showGlobalMessage(
-        "Results saved successfully.",
-        "success"
-      );
-
+    if (dom.saveResultsBtn) {
+        dom.saveResultsBtn.disabled = true;
     }
 
+    try {
 
-    return true;
+        await upsertResults(records);
 
-  }catch(error){
+        await loadStudentResults();
 
-    console.error(
-      "Save results error:",
-      error
-    );
+        renderResultEntry();
 
+        if (showMessage) {
 
-    if(showMessage){
+            showSaveMessage(
+                "Results saved successfully.",
+                "success"
+            );
+        }
 
-      showSaveMessage(
-        getErrorMessage(error),
-        "error"
-      );
+        return true;
 
+    } catch (error) {
+
+        if (showMessage) {
+
+            showSaveMessage(
+                getErrorMessage(error),
+                "error"
+            );
+        }
+
+        throw error;
+
+    } finally {
+
+        if (dom.saveResultsBtn) {
+            dom.saveResultsBtn.disabled = false;
+        }
     }
-
-
-    throw error;
-
-  }finally{
-
-    dom.saveResultsBtn.disabled =
-      false;
-
-    dom.saveResultsBtn.textContent =
-      "Save Results";
-
-  }
-
 }
 
 
@@ -4167,181 +2820,666 @@ async function saveResults(
    UPSERT RESULTS
 ========================================================= */
 
-async function upsertResults(
-  records
-){
+async function upsertResults(records) {
 
-  /*
-    First attempt:
-    grade + paper_marks.
-  */
+    let result =
+        await db
+            .from("results")
+            .upsert(
+                records,
+                {
+                    onConflict:
+                        "student_id,subject_id"
+                }
+            );
 
-  let result =
-    await db
-      .from("results")
-      .upsert(
-        records,
-        {
-          onConflict:
-            "student_id,subject_id"
-        }
-      );
+    if (!result.error) {
+        return;
+    }
 
-
-  if(!result.error){
-
-    return;
-
-  }
-
-
-  console.warn(
-    "Full result save failed. Trying compatibility save:",
-    result.error
-  );
-
-
-  /*
-    Second attempt:
-    grade without paper_marks.
-  */
-
-  const gradeRecords =
-    records.map(
-      function(record){
-
-        return {
-
-          student_id:
-            record.student_id,
-
-          subject_id:
-            record.subject_id,
-
-          mark:
-            record.mark,
-
-          grade:
-            record.grade,
-
-          remark:
-            record.remark
-
-        };
-
-      }
+    console.warn(
+        "Full results save failed. Retrying without paper_marks...",
+        result.error
     );
 
+    const withoutPaperMarks =
+        records.map(function (record) {
 
-  result =
-    await db
-      .from("results")
-      .upsert(
-        gradeRecords,
-        {
-          onConflict:
-            "student_id,subject_id"
-        }
-      );
+            const copy = {
+                ...record
+            };
 
+            delete copy.paper_marks;
 
-  if(!result.error){
+            return copy;
+        });
+
+    result =
+        await db
+            .from("results")
+            .upsert(
+                withoutPaperMarks,
+                {
+                    onConflict:
+                        "student_id,subject_id"
+                }
+            );
+
+    if (!result.error) {
+
+        showGlobalMessage(
+            "Results saved, but paper marks could not be stored because the results table does not contain paper_marks.",
+            "warning"
+        );
+
+        return;
+    }
+
+    console.warn(
+        "Results save failed again. Retrying old schema...",
+        result.error
+    );
+
+    const oldRecords =
+        records.map(function (record) {
+
+            return {
+                student_id:
+                    record.student_id,
+
+                subject_id:
+                    record.subject_id,
+
+                mark:
+                    record.mark
+            };
+        });
+
+    result =
+        await db
+            .from("results")
+            .upsert(
+                oldRecords,
+                {
+                    onConflict:
+                        "student_id,subject_id"
+                }
+            );
+
+    if (result.error) {
+        throw result.error;
+    }
 
     showGlobalMessage(
-      "Results saved. Paper marks could not be stored because the results table does not have the paper_marks column.",
-      "error"
+        "Results saved using the existing results table structure.",
+        "warning"
     );
-
-    return;
-
-  }
-
-
-  /*
-    Third attempt:
-    original compatible schema.
-  */
-
-  const oldRecords =
-    records.map(
-      function(record){
-
-        return {
-
-          student_id:
-            record.student_id,
-
-          subject_id:
-            record.subject_id,
-
-          mark:
-            record.mark,
-
-          remark:
-            record.remark
-
-        };
-
-      }
-    );
-
-
-  result =
-    await db
-      .from("results")
-      .upsert(
-        oldRecords,
-        {
-          onConflict:
-            "student_id,subject_id"
-        }
-      );
-
-
-  if(result.error){
-
-    throw result.error;
-
-  }
-
-
-  showGlobalMessage(
-    "Results saved using the existing results table structure.",
-    "success"
-  );
-
 }
 
 
 /* =========================================================
-   OPEN OVERALL
+   OPEN OVERALL RESULTS
 ========================================================= */
 
-async function openStudentOverall(
-  student
-){
+async function openStudentOverall(student) {
 
-  selectedStudent =
-    student;
-
-
-  try{
+    selectedStudent = student;
 
     await loadStudentResults();
 
-  }catch(error){
+    renderOverallResults();
 
-    console.error(error);
+    showOverall();
+}
 
-  }
+
+/* =========================================================
+   RENDER OVERALL RESULTS
+========================================================= */
+
+function renderOverallResults() {
+
+    if (!selectedStudent) {
+        return;
+    }
+
+    const subjects =
+        getSubjectsForStudent(
+            selectedStudent
+        );
+
+    if (dom.studentName) {
+        dom.studentName.textContent =
+            getStudentName(selectedStudent);
+    }
+
+    if (dom.studentId) {
+        dom.studentId.textContent =
+            getStudentId(selectedStudent);
+    }
+
+    if (dom.studentClass) {
+        dom.studentClass.textContent =
+            `Form ${getStudentFormNumber(
+                selectedStudent
+            ) || "—"}`;
+    }
+
+    if (dom.studentGender) {
+        dom.studentGender.textContent =
+            getStudentGender(selectedStudent) ||
+            "—";
+    }
+
+    if (dom.studentSubjectCount) {
+        dom.studentSubjectCount.textContent =
+            subjects.length;
+    }
+
+    if (!subjects.length) {
+
+        if (dom.overallResultsBody) {
+
+            dom.overallResultsBody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        class="empty-results-cell"
+                    >
+                        <strong>No subjects assigned to this student.</strong>
+                        <br>
+                        Assign subjects before viewing results.
+                    </td>
+                </tr>
+            `;
+        }
+
+        if (dom.studentAverage) {
+            dom.studentAverage.textContent =
+                "—";
+        }
+
+        if (dom.overallResult) {
+            dom.overallResult.textContent =
+                "NO RESULTS";
+        }
+
+        if (dom.overallResultDetails) {
+            dom.overallResultDetails.textContent =
+                "This student has no assigned subjects.";
+        }
+
+        return;
+    }
+
+    let totalObtained = 0;
+    let totalMaximum = 0;
+
+    const rows = [];
+
+    subjects.forEach(function (subject) {
+
+        const subjectId =
+            getDatabaseId(subject);
+
+        const papers =
+            getPaperStructure(
+                subject,
+                selectedStudent
+            );
+
+        const existing =
+            findExistingResult(
+                subjectId
+            );
+
+        const values =
+            getExistingPaperValues(
+                existing,
+                papers
+            );
+
+        const calculation =
+            calculateSubjectPercentage(
+                papers,
+                values
+            );
+
+        let grading = null;
+
+        if (
+            calculation.percentage !== null
+        ) {
+
+            grading =
+                getSubjectGrading(
+                    calculation.percentage,
+                    selectedStudent
+                );
+
+            totalObtained +=
+                calculation.obtained;
+
+            totalMaximum +=
+                calculation.maximum;
+        }
+
+        rows.push({
+            subject,
+            papers,
+            values,
+            calculation,
+            grading
+        });
+    });
+
+    if (dom.overallResultsBody) {
+
+        dom.overallResultsBody.innerHTML =
+            rows
+                .map(function (item) {
+
+                    const paperText =
+                        item.papers
+                            .map(function (paper, index) {
+
+                                const value =
+                                    item.values[index];
+
+                                return `
+                                    <span class="overall-paper-mark">
+                                        ${escapeHtml(
+                                            paper.name
+                                        )}:
+                                        ${
+                                            value === ""
+                                                ? "—"
+                                                : `${escapeHtml(
+                                                    String(value)
+                                                )}/${paper.max}`
+                                        }
+                                    </span>
+                                `;
+                            })
+                            .join("");
+
+                    return `
+                        <tr
+                            class="overall-result"
+                        >
+
+                            <td>
+                                <strong>
+                                    ${escapeHtml(
+                                        getSubjectName(
+                                            item.subject
+                                        )
+                                    )}
+                                </strong>
+
+                                <div class="overall-paper-marks">
+                                    ${paperText}
+                                </div>
+                            </td>
+
+                            <td>
+                                ${
+                                    item.calculation.percentage === null
+                                        ? "—"
+                                        : `${item.calculation.percentage}%`
+                                }
+                            </td>
+
+                            <td>
+                                ${
+                                    item.grading
+                                        ? escapeHtml(
+                                            String(
+                                                item.grading.grade
+                                            )
+                                        )
+                                        : "—"
+                                }
+                            </td>
+
+                            <td>
+                                ${
+                                    item.grading
+                                        ? escapeHtml(
+                                            item.grading.remark
+                                        )
+                                        : "—"
+                                }
+                            </td>
+
+                        </tr>
+                    `;
+                })
+                .join("");
+    }
+
+    const average =
+        totalMaximum > 0
+            ? Math.round(
+                (totalObtained /
+                    totalMaximum) *
+                100
+            )
+            : null;
+
+    if (dom.studentAverage) {
+
+        dom.studentAverage.textContent =
+            average === null
+                ? "—"
+                : `${average}%`;
+    }
+
+    const overall =
+        calculateOverall(
+            rows,
+            selectedStudent
+        );
+
+    renderOverallSummary(
+        overall
+    );
+}
 
 
-  renderOverallResults();
+/* =========================================================
+   SENIOR OVERALL
+========================================================= */
 
-  showView(
-    "overall"
-  );
+function calculateSeniorOverall(
+    resultRows
+) {
 
+    const completeRows =
+        resultRows.filter(function (row) {
+
+            return (
+                row.calculation.percentage !== null &&
+                row.grading !== null
+            );
+        });
+
+    const englishRow =
+        completeRows.find(function (row) {
+
+            return isEnglishSubject(
+                row.subject
+            );
+        });
+
+    const englishPassed =
+        !!(
+            englishRow &&
+            englishRow.grading &&
+            englishRow.grading.passed
+        );
+
+    const passedRows =
+        completeRows.filter(function (row) {
+
+            return (
+                row.grading &&
+                row.grading.passed
+            );
+        });
+
+    if (!englishRow) {
+
+        return {
+            valid: false,
+            pass: false,
+            aggregate: null,
+            selectedSubjects: [],
+            englishPassed: false,
+            reason:
+                "English result is required."
+        };
+    }
+
+    if (!englishPassed) {
+
+        return {
+            valid: false,
+            pass: false,
+            aggregate: null,
+            selectedSubjects: [],
+            englishPassed: false,
+            reason:
+                "English must be passed."
+        };
+    }
+
+    if (passedRows.length < 6) {
+
+        return {
+            valid: false,
+            pass: false,
+            aggregate: null,
+            selectedSubjects: [],
+            englishPassed: true,
+            reason:
+                "At least six passed subjects are required."
+        };
+    }
+
+    const bestSix =
+        [...passedRows]
+            .sort(function (a, b) {
+
+                return Number(
+                    a.grading.grade
+                ) -
+                Number(
+                    b.grading.grade
+                );
+            })
+            .slice(0, 6);
+
+    const aggregate =
+        bestSix.reduce(
+            function (sum, row) {
+
+                return (
+                    sum +
+                    Number(
+                        row.grading.grade
+                    )
+                );
+            },
+            0
+        );
+
+    return {
+        valid: true,
+        pass: true,
+        aggregate,
+        selectedSubjects: bestSix,
+        englishPassed: true,
+        reason: ""
+    };
+}
+
+
+/* =========================================================
+   JUNIOR OVERALL
+========================================================= */
+
+function calculateJuniorOverall(
+    resultRows
+) {
+
+    const completeRows =
+        resultRows.filter(function (row) {
+
+            return (
+                row.calculation.percentage !== null &&
+                row.grading !== null
+            );
+        });
+
+    const englishRow =
+        completeRows.find(function (row) {
+
+            return isEnglishSubject(
+                row.subject
+            );
+        });
+
+    const englishPassed =
+        !!(
+            englishRow &&
+            englishRow.grading &&
+            englishRow.grading.passed
+        );
+
+    const passedRows =
+        completeRows.filter(function (row) {
+
+            return (
+                row.grading &&
+                row.grading.passed
+            );
+        });
+
+    if (!englishRow) {
+
+        return {
+            valid: false,
+            pass: false,
+            passedCount: passedRows.length,
+            englishPassed: false,
+            selectedSubjects: passedRows,
+            reason:
+                "English result is required."
+        };
+    }
+
+    if (!englishPassed) {
+
+        return {
+            valid: false,
+            pass: false,
+            passedCount: passedRows.length,
+            englishPassed: false,
+            selectedSubjects: passedRows,
+            reason:
+                "English must be passed."
+        };
+    }
+
+    if (passedRows.length < 6) {
+
+        return {
+            valid: false,
+            pass: false,
+            passedCount: passedRows.length,
+            englishPassed: true,
+            selectedSubjects: passedRows,
+            reason:
+                "At least six passed subjects are required."
+        };
+    }
+
+    return {
+        valid: true,
+        pass: true,
+        passedCount: passedRows.length,
+        englishPassed: true,
+        selectedSubjects: passedRows,
+        reason: ""
+    };
+}
+
+
+/* =========================================================
+   CALCULATE OVERALL
+========================================================= */
+
+function calculateOverall(
+    resultRows,
+    student
+) {
+
+    const form =
+        getStudentFormNumber(student);
+
+    if (form >= 3) {
+
+        return calculateSeniorOverall(
+            resultRows
+        );
+    }
+
+    return calculateJuniorOverall(
+        resultRows
+    );
+}
+
+
+/* =========================================================
+   RENDER OVERALL SUMMARY
+========================================================= */
+
+function renderOverallSummary(
+    overall
+) {
+
+    if (!dom.overallResult) {
+        return;
+    }
+
+    if (overall.pass) {
+
+        dom.overallResult.textContent =
+            getStudentFormNumber(
+                selectedStudent
+            ) >= 3
+                ? `PASS — AGGREGATE ${overall.aggregate}`
+                : "PASS";
+
+        if (
+            dom.overallResultDetails
+        ) {
+
+            if (
+                getStudentFormNumber(
+                    selectedStudent
+                ) >= 3
+            ) {
+
+                dom.overallResultDetails.textContent =
+                    "Best six aggregate. English was passed and is included in the best six only when its grade is among the six best grades.";
+
+            } else {
+
+                dom.overallResultDetails.textContent =
+                    `${overall.passedCount} subjects passed and English was passed.`;
+            }
+        }
+
+        return;
+    }
+
+    dom.overallResult.textContent =
+        getStudentFormNumber(
+            selectedStudent
+        ) >= 3
+            ? "NOT QUALIFIED"
+            : "FAIL";
+
+    if (
+        dom.overallResultDetails
+    ) {
+
+        dom.overallResultDetails.textContent =
+            overall.reason ||
+            "Overall requirements were not met.";
+    }
 }
 
 
@@ -4349,192 +3487,388 @@ async function openStudentOverall(
    NAVIGATION
 ========================================================= */
 
-function showClasses(){
-
-  showView(
-    "classes"
-  );
-
+function showClasses() {
+    showView(dom.classesView);
 }
 
-
-function showStudents(){
-
-  if(selectedClass){
-
+function showStudents() {
     renderStudents();
+    showView(dom.studentsView);
+}
 
-  }
+function showEntry() {
+    showView(dom.entryView);
+}
 
-
-  showView(
-    "students"
-  );
-
+function showOverall() {
+    showView(dom.overallView);
 }
 
 
-function showEntry(){
+function showView(view) {
 
-  if(selectedStudent){
+    const views = [
+        dom.classesView,
+        dom.studentsView,
+        dom.entryView,
+        dom.overallView
+    ];
 
-    renderEntryStudentInformation();
+    views.forEach(function (item) {
 
-    renderResultEntry();
+        if (!item) {
+            return;
+        }
 
-  }
+        item.hidden =
+            item !== view;
 
-
-  showView(
-    "entry"
-  );
-
-}
-
-
-function showOverall(){
-
-  renderOverallResults();
-
-  showView(
-    "overall"
-  );
-
-}
-
-
-/* =========================================================
-   SHOW VIEW
-========================================================= */
-
-function showView(
-  view
-){
-
-  dom.classesView.classList.add(
-    "hidden"
-  );
-
-  dom.studentsView.classList.add(
-    "hidden"
-  );
-
-  dom.entryView.classList.add(
-    "hidden"
-  );
-
-  dom.overallView.classList.add(
-    "hidden"
-  );
-
-
-  if(view === "classes"){
-
-    dom.classesView.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  if(view === "students"){
-
-    dom.studentsView.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  if(view === "entry"){
-
-    dom.entryView.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  if(view === "overall"){
-
-    dom.overallView.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  window.scrollTo({
-
-    top:0,
-
-    behavior:"smooth"
-
-  });
-
-}
-
-
-/* =========================================================
-   SAVE MESSAGE
-========================================================= */
-
-function showSaveMessage(
-  message,
-  type
-){
-
-  dom.saveMessage.textContent =
-    message;
-
-
-  dom.saveMessage.className =
-    "save-message " +
-    type;
-
-}
-
-
-/* =========================================================
-   GLOBAL MESSAGE
-========================================================= */
-
-function showGlobalMessage(
-  message,
-  type
-){
-
-  clearTimeout(
-    globalMessageTimer
-  );
-
-
-  dom.globalMessage.textContent =
-    message;
-
-
-  dom.globalMessage.className =
-    "global-message " +
-    type;
-
-
-  dom.globalMessage.classList.remove(
-    "hidden"
-  );
-
-
-  globalMessageTimer =
-    setTimeout(
-      function(){
-
-        dom.globalMessage.classList.add(
-          "hidden"
+        item.classList.toggle(
+            "active-view",
+            item === view
         );
+    });
 
-      },
-      5000
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+/* =========================================================
+   DATABASE / STUDENT HELPERS
+========================================================= */
+
+function getStudentsForClass(classItem) {
+
+    if (!classItem) {
+        return [];
+    }
+
+    const classId =
+        getDatabaseId(classItem);
+
+    const formNumber =
+        getFormNumber(classItem);
+
+    const className =
+        getClassName(classItem);
+
+    return allStudents.filter(
+        function (student) {
+
+            if (
+                student.class_id !== undefined &&
+                student.class_id !== null &&
+                classId !== null &&
+                classId !== undefined
+            ) {
+
+                return String(
+                    student.class_id
+                ) === String(classId);
+            }
+
+            if (
+                student.form_number !== undefined &&
+                student.form_number !== null &&
+                formNumber
+            ) {
+
+                return Number(
+                    student.form_number
+                ) === Number(
+                    formNumber
+                );
+            }
+
+            if (
+                student.class_name &&
+                className
+            ) {
+
+                return String(
+                    student.class_name
+                ).toLowerCase() ===
+                String(className)
+                    .toLowerCase();
+            }
+
+            return false;
+        }
     );
+}
 
+
+function findStudentById(id) {
+
+    return allStudents.find(
+        function (student) {
+
+            return String(
+                getStudentId(student)
+            ) === String(id);
+        }
+    ) || null;
+}
+
+
+function findSubjectById(id) {
+
+    return allSubjects.find(
+        function (subject) {
+
+            return String(
+                getDatabaseId(subject)
+            ) === String(id);
+        }
+    ) || null;
+}
+
+
+/* =========================================================
+   CLASS HELPERS
+========================================================= */
+
+function getClassName(classItem) {
+
+    return (
+        classItem.class_name ||
+        classItem.name ||
+        classItem.title ||
+        "Class"
+    );
+}
+
+
+function getFormNumber(classItem) {
+
+    const value =
+        classItem?.form_number ??
+        classItem?.form ??
+        classItem?.formNumber;
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return null;
+    }
+
+    const match =
+        String(value).match(/\d+/);
+
+    return match
+        ? Number(match[0])
+        : null;
+}
+
+
+/* =========================================================
+   STUDENT HELPERS
+========================================================= */
+
+function getStudentName(student) {
+
+    if (
+        student.first_name ||
+        student.last_name
+    ) {
+
+        return [
+            student.first_name,
+            student.last_name
+        ]
+            .filter(Boolean)
+            .join(" ");
+    }
+
+    return (
+        student.full_name ||
+        student.name ||
+        student.student_name ||
+        "Student"
+    );
+}
+
+
+function getStudentId(student) {
+
+    return (
+        student.student_id ||
+        student.student_number ||
+        student.admission_number ||
+        student.id ||
+        "—"
+    );
+}
+
+
+function getStudentGender(student) {
+
+    return (
+        student.gender ||
+        student.sex ||
+        ""
+    );
+}
+
+
+function getStudentFormNumber(student) {
+
+    const value =
+        student?.form_number ??
+        student?.form ??
+        student?.formNumber;
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return 0;
+    }
+
+    const match =
+        String(value).match(/\d+/);
+
+    return match
+        ? Number(match[0])
+        : 0;
+}
+
+
+/* =========================================================
+   SUBJECT HELPERS
+========================================================= */
+
+function getSubjectName(subject) {
+
+    if (typeof subject === "string") {
+        return subject;
+    }
+
+    return (
+        subject.subject_name ||
+        subject.name ||
+        subject.title ||
+        "Subject"
+    );
+}
+
+
+function isEnglishSubject(subject) {
+
+    return getSubjectName(subject)
+        .trim()
+        .toLowerCase() === "english";
+}
+
+
+function sortSubjects(subjects) {
+
+    return [...subjects].sort(
+        function (a, b) {
+
+            return getSubjectName(a)
+                .localeCompare(
+                    getSubjectName(b)
+                );
+        }
+    );
+}
+
+
+/* =========================================================
+   GENERAL HELPERS
+========================================================= */
+
+function getDatabaseId(record) {
+
+    if (!record) {
+        return null;
+    }
+
+    return (
+        record.id ??
+        record.student_id ??
+        record.subject_id ??
+        null
+    );
+}
+
+
+function roman(number) {
+
+    const values = [
+        [1000, "M"],
+        [900, "CM"],
+        [500, "D"],
+        [400, "CD"],
+        [100, "C"],
+        [90, "XC"],
+        [50, "L"],
+        [40, "XL"],
+        [10, "X"],
+        [9, "IX"],
+        [5, "V"],
+        [4, "IV"],
+        [1, "I"]
+    ];
+
+    let result = "";
+    let value = number;
+
+    values.forEach(function ([amount, symbol]) {
+
+        while (value >= amount) {
+
+            result += symbol;
+            value -= amount;
+        }
+    });
+
+    return result;
+}
+
+
+function getInitials(name) {
+
+    return String(name)
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(function (word) {
+
+            return word.charAt(0);
+        })
+        .join("")
+        .toUpperCase() || "S";
+}
+
+
+/* =========================================================
+   HTML SAFETY
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function escapeAttribute(value) {
+
+    return escapeHtml(value);
 }
 
 
@@ -4543,837 +3877,105 @@ function showGlobalMessage(
 ========================================================= */
 
 function setDatabaseStatus(
-  type,
-  message
-){
+    message,
+    type
+) {
 
-  dom.databaseStatus.className =
-    "database-status " +
-    type;
-
-
-  dom.databaseStatus.innerHTML = `
-
-    <span class="status-dot"></span>
-
-    ${escapeHtml(
-      message
-    )}
-
-  `;
-
-}
-
-
-/* =========================================================
-   DOWNLOAD PDF
-========================================================= */
-
-function downloadResult(){
-
-  if(
-    typeof html2pdf ===
-    "undefined"
-  ){
-
-    showGlobalMessage(
-      "PDF library could not be loaded.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  const result =
-    document.getElementById(
-      "printableResult"
-    );
-
-
-  const actions =
-    result.querySelector(
-      ".results-actions"
-    );
-
-
-  const studentName =
-    document
-      .getElementById(
-        "studentName"
-      )
-      .textContent
-      .trim();
-
-
-  const safeName =
-    studentName
-      .replace(
-        /[^a-z0-9]/gi,
-        "-"
-      )
-      .replace(
-        /-+/g,
-        "-"
-      );
-
-
-  const fileName =
-    (
-      safeName ||
-      "Student"
-    ) +
-    "-Result.pdf";
-
-
-  if(actions){
-
-    actions.style.display =
-      "none";
-
-  }
-
-
-  const originalWidth =
-    result.style.width;
-
-
-  const originalMargin =
-    result.style.margin;
-
-
-  const originalBoxSizing =
-    result.style.boxSizing;
-
-
-  result.style.width =
-    "190mm";
-
-
-  result.style.margin =
-    "0 auto";
-
-
-  result.style.boxSizing =
-    "border-box";
-
-
-  const options = {
-
-    margin:[
-      10,
-      10,
-      10,
-      10
-    ],
-
-    filename:
-      fileName,
-
-    image:{
-      type:"jpeg",
-      quality:.98
-    },
-
-    html2canvas:{
-      scale:2,
-
-      useCORS:true,
-
-      scrollX:0,
-
-      scrollY:0
-    },
-
-    jsPDF:{
-      unit:"mm",
-
-      format:"a4",
-
-      orientation:"portrait"
-    },
-
-    pagebreak:{
-      mode:[
-        "css",
-        "legacy"
-      ],
-
-      avoid:[
-        "tr",
-        ".overall-result"
-      ]
-
+    if (!dom.databaseStatus) {
+        return;
     }
 
-  };
+    dom.databaseStatus.textContent =
+        message;
 
+    dom.databaseStatus.className =
+        "database-status";
 
-  showGlobalMessage(
-    "Preparing PDF...",
-    "success"
-  );
-
-
-  html2pdf()
-    .set(options)
-    .from(result)
-    .save()
-    .then(
-      function(){
-
-        restorePdfStyles();
-
-
-        showGlobalMessage(
-          "Results PDF created successfully.",
-          "success"
+    if (type) {
+        dom.databaseStatus.classList.add(
+            type
         );
-
-      }
-    )
-    .catch(
-      function(error){
-
-        console.error(
-          "PDF error:",
-          error
-        );
+    }
+}
 
 
-        restorePdfStyles();
+/* =========================================================
+   SAVE MESSAGE
+========================================================= */
 
+function showSaveMessage(
+    message,
+    type = "success"
+) {
 
-        showGlobalMessage(
-          "Could not create the PDF.",
-          "error"
-        );
-
-      }
-    );
-
-
-  function restorePdfStyles(){
-
-    result.style.width =
-      originalWidth;
-
-
-    result.style.margin =
-      originalMargin;
-
-
-    result.style.boxSizing =
-      originalBoxSizing;
-
-
-    if(actions){
-
-      actions.style.display =
-        "";
-
+    if (!dom.saveMessage) {
+        return;
     }
 
-  }
+    dom.saveMessage.textContent =
+        message;
 
-}
+    dom.saveMessage.className =
+        "save-message";
 
-
-/* =========================================================
-   SUBJECT HELPERS
-========================================================= */
-
-function isEnglishSubject(
-  subject
-){
-
-  return (
-    getSubjectName(
-      subject
-    )
-      .trim()
-      .toLowerCase()
-      ===
-    "english"
-  );
-
-}
-
-
-function findSubjectById(
-  subjectId
-){
-
-  return allSubjects.find(
-    function(subject){
-
-      return String(
-        getDatabaseId(
-          subject
-        )
-      ) === String(
-        subjectId
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CLASS HELPERS
-========================================================= */
-
-function getStudentsForClass(
-  classItem
-){
-
-  if(!classItem){
-
-    return [];
-
-  }
-
-
-  const classId =
-    getDatabaseId(
-      classItem
-    );
-
-
-  const formNumber =
-    classItem.form_number;
-
-
-  return allStudents.filter(
-    function(student){
-
-      if(
-        student.class_id !== undefined &&
-        student.class_id !== null
-      ){
-
-        return String(
-          student.class_id
-        ) === String(
-          classId
+    if (type) {
+        dom.saveMessage.classList.add(
+            type
         );
-
-      }
-
-
-      if(
-        student.form_number !== undefined &&
-        student.form_number !== null
-      ){
-
-        return String(
-          student.form_number
-        ) === String(
-          formNumber
-        );
-
-      }
-
-
-      if(
-        student.class_name &&
-        getClassName(
-          classItem
-        )
-      ){
-
-        return (
-          String(
-            student.class_name
-          )
-            .toLowerCase()
-            ===
-          String(
-            getClassName(
-              classItem
-            )
-          )
-            .toLowerCase()
-        );
-
-      }
-
-
-      return false;
-
     }
-  );
 
-}
+    dom.saveMessage.hidden = false;
 
+    setTimeout(function () {
 
-function getClassName(
-  classItem
-){
+        if (dom.saveMessage) {
+            dom.saveMessage.hidden = true;
+        }
 
-  if(!classItem){
-
-    return "Class";
-
-  }
-
-
-  return (
-    classItem.class_name ||
-    classItem.name ||
-    (
-      classItem.form_number
-        ? "Form " +
-          classItem.form_number
-        : "Class"
-    )
-  );
-
-}
-
-
-function getClassCode(
-  classItem
-){
-
-  if(!classItem){
-
-    return "";
-
-  }
-
-
-  return (
-    classItem.class_code ||
-    classItem.code ||
-    ""
-  );
-
-}
-
-
-function getClassFormLabel(
-  classItem
-){
-
-  if(
-    classItem &&
-    classItem.form_number
-  ){
-
-    return (
-      "FORM " +
-      classItem.form_number
-    );
-
-  }
-
-
-  return "CLASS";
-
-}
-
-
-function getClassInitial(
-  classItem
-){
-
-  const form =
-    classItem &&
-    classItem.form_number;
-
-
-  if(form){
-
-    return String(
-      form
-    );
-
-  }
-
-
-  return "C";
-
+    }, 5000);
 }
 
 
 /* =========================================================
-   STUDENT HELPERS
+   GLOBAL MESSAGE
 ========================================================= */
 
-function getStudentName(
-  student
-){
-
-  if(!student){
-
-    return "Student";
-
-  }
-
-
-  if(student.full_name){
-
-    return student.full_name;
-
-  }
-
-
-  const first =
-    student.first_name ||
-    "";
-
-
-  const last =
-    student.last_name ||
-    "";
-
-
-  const combined =
-    (
-      first +
-      " " +
-      last
-    ).trim();
-
-
-  if(combined){
-
-    return combined;
-
-  }
-
-
-  return (
-    student.name ||
-    "Student"
-  );
-
-}
-
-
-function getStudentId(
-  student
-){
-
-  if(!student){
-
-    return "—";
-
-  }
-
-
-  return (
-    student.student_number ||
-    student.student_id ||
-    student.admission_number ||
-    student.registration_number ||
-    student.id ||
-    "—"
-  );
-
-}
-
-
-function getStudentGender(
-  student
-){
-
-  if(!student){
-
-    return "—";
-
-  }
-
-
-  return (
-    student.gender ||
-    "—"
-  );
-
-}
-
-
-/* =========================================================
-   FORM HELPERS
-========================================================= */
-
-function getStudentFormNumber(
-  student
-){
-
-  if(!student){
-
-    return null;
-
-  }
-
-
-  const value =
-    student.form_number ??
-    student.form ??
-    student.class_form;
-
-
-  const number =
-    Number(
-      value
-    );
-
-
-  return Number.isFinite(number)
-    ? number
-    : null;
-
-}
-
-
-function getSubjectFormNumber(
-  subject
-){
-
-  if(!subject){
-
-    return null;
-
-  }
-
-
-  const value =
-    subject.form_number ??
-    subject.form ??
-    subject.class_form;
-
-
-  const number =
-    Number(
-      value
-    );
-
-
-  return Number.isFinite(number)
-    ? number
-    : null;
-
-}
-
-
-/* =========================================================
-   SUBJECT HELPERS
-========================================================= */
-
-function getSubjectName(
-  subject
-){
-
-  if(!subject){
-
-    return "Subject";
-
-  }
-
-
-  return (
-    subject.subject_name ||
-    subject.name ||
-    subject.title ||
-    "Subject"
-  );
-
-}
-
-
-/* =========================================================
-   DATABASE ID
-========================================================= */
-
-function getDatabaseId(
-  record
-){
-
-  if(!record){
-
-    return null;
-
-  }
-
-
-  return (
-    record.id ||
-    record.student_id ||
-    record.subject_id
-  );
-
-}
-
-
-/* =========================================================
-   ROMAN NUMBERS
-========================================================= */
-
-function romanNumber(
-  number
-){
-
-  const values = [
-
-    [10,"X"],
-
-    [9,"IX"],
-
-    [5,"V"],
-
-    [4,"IV"],
-
-    [1,"I"]
-
-  ];
-
-
-  let result = "";
-
-  let value =
-    Number(number);
-
-
-  values.forEach(
-    function(item){
-
-      while(
-        value >= item[0]
-      ){
-
-        result +=
-          item[1];
-
-        value -=
-          item[0];
-
-      }
-
+function showGlobalMessage(
+    message,
+    type = "success"
+) {
+
+    if (!dom.globalMessage) {
+        return;
     }
-  );
 
-
-  return result;
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(
-  value
-){
-
-  if(
-    value === null ||
-    value === undefined
-  ){
-
-    return "";
-
-  }
-
-
-  return String(value)
-
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
+    clearTimeout(
+        globalMessageTimer
     );
 
-}
+    dom.globalMessage.textContent =
+        message;
 
+    dom.globalMessage.className =
+        "global-message";
 
-/* =========================================================
-   ESCAPE ATTRIBUTE
-========================================================= */
+    if (type) {
+        dom.globalMessage.classList.add(
+            type
+        );
+    }
 
-function escapeAttribute(
-  value
-){
+    dom.globalMessage.hidden = false;
 
-  if(
-    value === null ||
-    value === undefined
-  ){
+    globalMessageTimer =
+        setTimeout(function () {
 
-    return "";
+            if (dom.globalMessage) {
+                dom.globalMessage.hidden =
+                    true;
+            }
 
-  }
-
-
-  return escapeHtml(
-    String(value)
-  );
-
-}
-
-
-/* =========================================================
-   INITIALS
-========================================================= */
-
-function getInitials(
-  name
-){
-
-  const words =
-    String(name)
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
-
-
-  if(!words.length){
-
-    return "ST";
-
-  }
-
-
-  if(words.length === 1){
-
-    return words[0]
-      .substring(0,2)
-      .toUpperCase();
-
-  }
-
-
-  return (
-    words[0][0] +
-    words[
-      words.length - 1
-    ][0]
-  ).toUpperCase();
-
+        }, 6000);
 }
 
 
@@ -5381,31 +3983,159 @@ function getInitials(
    ERROR MESSAGE
 ========================================================= */
 
-function getErrorMessage(
-  error
-){
+function getErrorMessage(error) {
 
-  if(!error){
+    if (!error) {
+        return "An unknown error occurred.";
+    }
 
-    return "An unexpected error occurred.";
+    if (
+        typeof error === "string"
+    ) {
+        return error;
+    }
 
-  }
-
-
-  if(error.message){
-
-    return error.message;
-
-  }
-
-
-  if(error.error_description){
-
-    return error.error_description;
-
-  }
+    return (
+        error.message ||
+        error.error_description ||
+        error.details ||
+        "An unexpected error occurred."
+    );
+}
 
 
-  return String(error);
+/* =========================================================
+   DOWNLOAD RESULT PDF
+========================================================= */
 
+async function downloadResult() {
+
+    if (
+        typeof html2pdf ===
+        "undefined"
+    ) {
+
+        showGlobalMessage(
+            "PDF library is not available.",
+            "error"
+        );
+
+        return;
+    }
+
+    const element =
+        dom.overallView;
+
+    if (!element) {
+        return;
+    }
+
+    const actions =
+        element.querySelector(
+            ".results-actions"
+        );
+
+    const originalWidth =
+        element.style.width;
+
+    const originalMargin =
+        element.style.margin;
+
+    const originalBoxSizing =
+        element.style.boxSizing;
+
+    if (actions) {
+        actions.style.display =
+            "none";
+    }
+
+    element.style.width =
+        "190mm";
+
+    element.style.margin =
+        "0 auto";
+
+    element.style.boxSizing =
+        "border-box";
+
+    const studentName =
+        getStudentName(
+            selectedStudent
+        )
+            .replace(
+                /[^a-z0-9]+/gi,
+                "-"
+            )
+            .replace(
+                /^-+|-+$/g,
+                ""
+            );
+
+    const filename =
+        `${studentName || "Student"}-Result.pdf`;
+
+    try {
+
+        await html2pdf()
+            .set({
+
+                margin: 10,
+
+                filename,
+
+                image: {
+                    type: "jpeg",
+                    quality: 0.98
+                },
+
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true
+                },
+
+                jsPDF: {
+                    unit: "mm",
+                    format: "a4",
+                    orientation: "portrait"
+                },
+
+                pagebreak: {
+                    mode: [
+                        "avoid-all",
+                        "css",
+                        "legacy"
+                    ]
+                }
+            })
+            .from(element)
+            .save();
+
+    } catch (error) {
+
+        console.error(
+            "PDF generation failed:",
+            error
+        );
+
+        showGlobalMessage(
+            "Could not generate PDF.",
+            "error"
+        );
+
+    } finally {
+
+        if (actions) {
+            actions.style.display =
+                "";
+        }
+
+        element.style.width =
+            originalWidth;
+
+        element.style.margin =
+            originalMargin;
+
+        element.style.boxSizing =
+            originalBoxSizing;
+    }
 }

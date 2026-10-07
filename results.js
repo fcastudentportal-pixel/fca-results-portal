@@ -2686,16 +2686,52 @@ function getSubjectsForStudent(student){
     return [];
   }
 
-  const selectedIds =
-    extractStudentSubjectIds(student);
 
   /*
-    ONLY SHOW SUBJECTS EXPLICITLY ASSIGNED
-    TO THIS STUDENT.
-  */
-  if(!selectedIds.length){
+   * The Students page stores selected subjects
+   * in the student's "subjects" column.
+   *
+   * Example:
+   *
+   * [
+   *   "Mathematics",
+   *   "English",
+   *   "Biology"
+   * ]
+   *
+   * We use those assignments as the source
+   * of truth for Results.
+   */
+
+  const selectedValues =
+    extractStudentSubjectIds(student);
+
+
+  /*
+   * No subjects assigned.
+   */
+
+  if(
+    !selectedValues ||
+    !selectedValues.length
+  ){
+
     return [];
   }
+
+
+  /*
+   * Match the student's assigned subjects
+   * against the subjects loaded from Supabase.
+   *
+   * We support BOTH:
+   *
+   * 1. Subject ID
+   * 2. Subject name
+   *
+   * This makes the Results page compatible
+   * with the current Students page.
+   */
 
   const assignedSubjects =
     allSubjects.filter(function(subject){
@@ -2703,13 +2739,105 @@ function getSubjectsForStudent(student){
       const subjectId =
         getDatabaseId(subject);
 
-      return selectedIds.some(function(id){
 
-        return String(id) === String(subjectId);
+      const subjectName =
+        getSubjectName(subject)
+          .trim()
+          .toLowerCase();
 
-      });
+
+      return selectedValues.some(
+        function(value){
+
+          /*
+           * If the stored value is an object.
+           */
+
+          if(
+            value &&
+            typeof value === "object"
+          ){
+
+            const valueId =
+              value.id ||
+              value.subject_id;
+
+            const valueName =
+              value.subject_name ||
+              value.name ||
+              value.subject;
+
+
+            if(
+              valueId &&
+              subjectId
+            ){
+
+              if(
+                String(valueId) ===
+                String(subjectId)
+              ){
+
+                return true;
+              }
+            }
+
+
+            if(valueName){
+
+              return (
+                String(valueName)
+                  .trim()
+                  .toLowerCase() ===
+                subjectName
+              );
+
+            }
+
+
+            return false;
+          }
+
+
+          /*
+           * Match by database subject ID.
+           */
+
+          if(
+            subjectId &&
+            String(value) ===
+            String(subjectId)
+          ){
+
+            return true;
+          }
+
+
+          /*
+           * Match by subject name.
+           */
+
+          return (
+            String(value)
+              .trim()
+              .toLowerCase() ===
+            subjectName
+          );
+
+        }
+      );
 
     });
+
+
+  /*
+   * IMPORTANT:
+   *
+   * Do NOT fall back to all Form 4 subjects.
+   *
+   * Only the subjects actually assigned
+   * to this student are returned.
+   */
 
   return sortSubjects(
     assignedSubjects

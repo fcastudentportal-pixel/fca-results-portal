@@ -387,7 +387,6 @@ async function loadSubjects(){
                 subject_name,
                 form_number,
                 section,
-                description,
                 created_at,
                 updated_at,
                 subject_papers (
@@ -451,12 +450,6 @@ async function loadSubjects(){
         renderSubjects();
 
         updateSummary();
-
-
-        setDatabaseStatus(
-            "Connected to FCA database.",
-            "success"
-        );
 
 
         console.log(
@@ -754,18 +747,6 @@ function createSubjectCard(
             `;
 
 
-    const description =
-        subject.description
-            ? `
-                <p class="subject-description">
-                    ${escapeHTML(
-                        subject.description
-                    )}
-                </p>
-            `
-            : "";
-
-
     card.innerHTML = `
 
         <div class="subject-card-header">
@@ -783,9 +764,6 @@ function createSubjectCard(
             </span>
 
         </div>
-
-
-        ${description}
 
 
         <div class="paper-list">
@@ -1062,12 +1040,6 @@ function openEditSubjectModal(
     $("subjectSection")
         .value =
         subject.section;
-
-
-    $("subjectDescription")
-        .value =
-        subject.description ||
-        "";
 
 
     $("papersContainer")
@@ -1461,12 +1433,6 @@ async function saveSubject(
             .value;
 
 
-    const description =
-        $("subjectDescription")
-            .value
-            .trim();
-
-
     /* -----------------------------------------------
        VALIDATION
     ------------------------------------------------ */
@@ -1706,11 +1672,6 @@ async function saveSubject(
 
                     section:
                         section,
-
-                    description:
-                        description ||
-                        null
-
                 })
                 .eq(
                     "id",
@@ -1773,10 +1734,6 @@ async function saveSubject(
 
                     section:
                         section,
-
-                    description:
-                        description ||
-                        null
 
                 })
                 .select(
@@ -2359,9 +2316,6 @@ async function seedDefaultSubjects(){
                     section:
                         section,
 
-                    description:
-                        null,
-
                     papers:
                         papers
 
@@ -2393,9 +2347,6 @@ async function seedDefaultSubjects(){
 
                 section:
                     record.section,
-
-                description:
-                    record.description
 
             })
             .select(

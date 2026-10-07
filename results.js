@@ -2680,35 +2680,33 @@ function getExistingPaperValues(
    GET SUBJECTS FOR STUDENT
 ========================================================= */
 
+/* =========================================================
+   GET SUBJECTS FOR STUDENT
+========================================================= */
+
 function getSubjectsForStudent(student){
 
   if(!student){
+
     return [];
+
   }
 
 
   /*
-   * The Students page stores selected subjects
-   * in the student's "subjects" column.
-   *
-   * Example:
-   *
-   * [
-   *   "Mathematics",
-   *   "English",
-   *   "Biology"
-   * ]
-   *
-   * We use those assignments as the source
-   * of truth for Results.
+   * Get the subjects explicitly assigned
+   * to this student.
    */
 
   const selectedValues =
-    extractStudentSubjectIds(student);
+    extractStudentSubjectIds(
+      student
+    );
 
 
   /*
-   * No subjects assigned.
+   * If the student has no assigned subjects,
+   * show nothing.
    */
 
   if(
@@ -2717,130 +2715,214 @@ function getSubjectsForStudent(student){
   ){
 
     return [];
+
   }
 
 
+  const studentForm =
+    getStudentFormNumber(
+      student
+    );
+
+
   /*
-   * Match the student's assigned subjects
-   * against the subjects loaded from Supabase.
-   *
-   * We support BOTH:
-   *
-   * 1. Subject ID
-   * 2. Subject name
-   *
-   * This makes the Results page compatible
-   * with the current Students page.
+   * Match ONLY the student's assigned subjects.
    */
 
   const assignedSubjects =
-    allSubjects.filter(function(subject){
+    allSubjects.filter(
+      function(subject){
 
-      const subjectId =
-        getDatabaseId(subject);
+        /*
+         * IMPORTANT:
+         *
+         * If subjects are stored separately for
+         * each Form, only use the subject belonging
+         * to this student's Form.
+         */
+
+        const subjectForm =
+          getSubjectFormNumber(
+            subject
+          );
 
 
-      const subjectName =
-        getSubjectName(subject)
-          .trim()
-          .toLowerCase();
-
-
-      return selectedValues.some(
-        function(value){
-
-          /*
-           * If the stored value is an object.
-           */
+        if(
+          studentForm !== null &&
+          subjectForm !== null
+        ){
 
           if(
-            value &&
-            typeof value === "object"
+            Number(subjectForm) !==
+            Number(studentForm)
           ){
 
-            const valueId =
-              value.id ||
-              value.subject_id;
+            return false;
 
-            const valueName =
-              value.subject_name ||
-              value.name ||
-              value.subject;
+          }
 
+        }
+
+
+        const subjectId =
+          getDatabaseId(
+            subject
+          );
+
+
+        const subjectName =
+          getSubjectName(
+            subject
+          )
+            .trim()
+            .toLowerCase();
+
+
+        /*
+         * Check whether this subject was assigned
+         * to the student.
+         */
+
+        return selectedValues.some(
+          function(value){
+
+            /*
+             * Assignment stored as an object.
+             */
 
             if(
-              valueId &&
-              subjectId
+              value &&
+              typeof value === "object"
             ){
 
+              const valueId =
+                value.id ||
+                value.subject_id;
+
+
+              const valueName =
+                value.subject_name ||
+                value.name ||
+                value.subject;
+
+
+              /*
+               * Match by ID.
+               */
+
               if(
+                valueId &&
+                subjectId &&
                 String(valueId) ===
                 String(subjectId)
               ){
 
                 return true;
+
               }
+
+
+              /*
+               * Match by name.
+               */
+
+              if(valueName){
+
+                return (
+                  String(valueName)
+                    .trim()
+                    .toLowerCase() ===
+                  subjectName
+                );
+
+              }
+
+
+              return false;
+
             }
 
 
-            if(valueName){
+            /*
+             * Match by database ID.
+             */
 
-              return (
-                String(valueName)
-                  .trim()
-                  .toLowerCase() ===
-                subjectName
-              );
+            if(
+              subjectId &&
+              String(value) ===
+              String(subjectId)
+            ){
+
+              return true;
 
             }
 
 
-            return false;
+            /*
+             * Match by subject name.
+             */
+
+            return (
+              String(value)
+                .trim()
+                .toLowerCase() ===
+              subjectName
+            );
+
           }
+        );
 
-
-          /*
-           * Match by database subject ID.
-           */
-
-          if(
-            subjectId &&
-            String(value) ===
-            String(subjectId)
-          ){
-
-            return true;
-          }
-
-
-          /*
-           * Match by subject name.
-           */
-
-          return (
-            String(value)
-              .trim()
-              .toLowerCase() ===
-            subjectName
-          );
-
-        }
-      );
-
-    });
+      }
+    );
 
 
   /*
-   * IMPORTANT:
+   * Extra protection:
    *
-   * Do NOT fall back to all Form 4 subjects.
-   *
-   * Only the subjects actually assigned
-   * to this student are returned.
+   * If the database contains duplicate subject
+   * records for the same student/form, only show
+   * one copy of each subject.
    */
 
+  const uniqueSubjects = [];
+
+
+  const seenSubjects =
+    new Set();
+
+
+  assignedSubjects.forEach(
+    function(subject){
+
+      const key =
+        getSubjectName(
+          subject
+        )
+          .trim()
+          .toLowerCase();
+
+
+      if(
+        seenSubjects.has(key)
+      ){
+
+        return;
+
+      }
+
+
+      seenSubjects.add(key);
+
+      uniqueSubjects.push(
+        subject
+      );
+
+    }
+  );
+
+
   return sortSubjects(
-    assignedSubjects
+    uniqueSubjects
   );
 
 }

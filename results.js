@@ -223,11 +223,6 @@ async function init(){
 
   if(!db){
 
-    setDatabaseStatus(
-      "error",
-      "Supabase client not found"
-    );
-
     showGlobalMessage(
       "FCA Supabase client was not found. Check config.js.",
       "error"
@@ -238,25 +233,10 @@ async function init(){
   }
 
 
-  setDatabaseStatus(
-    "checking",
-    "Connecting to database..."
-  );
-
-
   attachEvents();
 
 
   try{
-
-    await testDatabase();
-
-
-    setDatabaseStatus(
-      "connected",
-      "Database connected"
-    );
-
 
     await loadInitialData();
 
@@ -265,12 +245,6 @@ async function init(){
     console.error(
       "FCA Results initialization error:",
       error
-    );
-
-
-    setDatabaseStatus(
-      "error",
-      "Database connection failed"
     );
 
 
@@ -289,9 +263,6 @@ async function init(){
 ========================================================= */
 
 function cacheDom(){
-
-  dom.databaseStatus =
-    document.getElementById("databaseStatus");
 
   dom.classesView =
     document.getElementById("classesView");
@@ -503,23 +474,32 @@ async function testDatabase(){
    INITIAL DATA
 ========================================================= */
 
-async function loadInitialData(){
+async function loadInitialData() {
+try {
+// Load classes first so they can appear as soon
+// as their own database request finishes.
+await loadClasses();
+renderClasses();
 
-  await Promise.all([
+// Load the supporting data afterwards.
+await Promise.all([
+  loadStudents(),
+  loadSubjects(),
+  loadResults()
+]);
 
-    loadClasses(),
+// Refresh student counts after students load.
+renderClasses();
 
-    loadStudents(),
+} catch (error) {
+console.error("FCA Results loading error:", error);
 
-    loadSubjects(),
+showGlobalMessage(
+  getErrorMessage(error),
+  "error"
+);
 
-    loadResults()
-
-  ]);
-
-
-  renderClasses();
-
+}
 }
 
 
@@ -4203,15 +4183,9 @@ async function saveResults(
     if(showMessage){
 
       showSaveMessage(
-        "Student results saved successfully.",
-        "success"
-      );
-
-
-      showGlobalMessage(
-        "Results saved successfully.",
-        "success"
-      );
+  "Results saved successfully.",
+  "success"
+);
 
     }
 
@@ -4622,33 +4596,6 @@ function showGlobalMessage(
       },
       5000
     );
-
-}
-
-
-/* =========================================================
-   DATABASE STATUS
-========================================================= */
-
-function setDatabaseStatus(
-  type,
-  message
-){
-
-  dom.databaseStatus.className =
-    "database-status " +
-    type;
-
-
-  dom.databaseStatus.innerHTML = `
-
-    <span class="status-dot"></span>
-
-    ${escapeHtml(
-      message
-    )}
-
-  `;
 
 }
 

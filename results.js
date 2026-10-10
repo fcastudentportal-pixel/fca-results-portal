@@ -3867,8 +3867,7 @@ function renderOverallSummary(
     ){
 
       dom.overallResult.textContent =
-        "PASS — AGGREGATE " +
-        overall.aggregate;
+    "PASS — " + overall.aggregate + " POINTS";
 
 
       dom.overallResultDetails.textContent =

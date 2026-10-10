@@ -251,10 +251,10 @@ header h1{
    CONTENT
 ===================================================== */
 
+
 .view{
   display:block;
-
-  padding:30px;
+  padding:15px 30px;
 }
 
 .results-container{
@@ -368,7 +368,8 @@ header h1{
 ===================================================== */
 
 .section-heading{
-  margin-bottom:18px;
+  margin-top:0;
+  margin-bottom:12px;
 }
 
 .section-eyebrow{
@@ -1849,8 +1850,8 @@ footer{
   }
 
   .view{
-    padding:18px;
-  }
+  padding:12px 18px;
+}
 
   .results-container{
     width:100%;
@@ -2009,8 +2010,8 @@ footer{
   }
 
   .view{
-    padding:14px;
-  }
+  padding:10px 14px;
+}
 
   .entry-card-header{
     flex-direction:column;
@@ -2243,4 +2244,67 @@ footer{
     font-size:15px;
   }
 
+}
+
+/* Hide step labels on the results page */
+.section-eyebrow{
+  display:none !important;
+}
+
+
+/* FIX: Reduce empty space above the class selection */
+#classesView {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+#classesView .database-status {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#classesView .section-heading {
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  padding-top: 0 !important;
+}
+
+#classesView .section-eyebrow {
+  display: none !important;
+}
+
+#classesView .classes-grid {
+  margin-top: 0 !important;
+}
+
+/* FIX: Remove unwanted space above class selection */
+.view {
+  padding-top: 0 !important;
+}
+
+#databaseStatus {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+}
+
+#classesView {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#classesView .section-heading {
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  padding-top: 0 !important;
+}
+
+#classesView .section-eyebrow {
+  display: none !important;
+}
+
+#classesView .classes-grid {
+  margin-top: 0 !important;
 }

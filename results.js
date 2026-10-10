@@ -316,6 +316,13 @@ function cacheDom(){
   dom.resultsEntryBody =
     document.getElementById("resultsEntryBody");
 
+  
+dom.resultsEntrySection =
+  document.getElementById("resultsEntrySection");
+
+dom.addResultsBtn =
+  document.getElementById("addResultsBtn");
+
   dom.subjectCount =
     document.getElementById("subjectCount");
 
@@ -357,6 +364,32 @@ function cacheDom(){
   dom.globalMessage =
     document.getElementById("globalMessage");
 
+}
+
+
+/* =========================================================
+   SHOW / HIDE RESULTS ENTRY
+========================================================= */
+
+function hideResultsEntry() {
+  if (dom.resultsEntrySection) {
+    dom.resultsEntrySection.classList.add("hidden");
+  }
+
+  if (dom.addResultsBtn) {
+    dom.addResultsBtn.classList.remove("hidden");
+    dom.addResultsBtn.textContent = "Add Results";
+  }
+}
+
+function showResultsEntry() {
+  if (dom.resultsEntrySection) {
+    dom.resultsEntrySection.classList.remove("hidden");
+  }
+
+  if (dom.addResultsBtn) {
+    dom.addResultsBtn.classList.add("hidden");
+  }
 }
 
 
@@ -426,6 +459,17 @@ function attachEvents(){
 
       }
     );
+
+  
+if (dom.addResultsBtn) {
+  dom.addResultsBtn.addEventListener(
+    "click",
+    function() {
+      showResultsEntry();
+    }
+  );
+}
+
 
 
   dom.saveResultsBtn.addEventListener(
@@ -1037,6 +1081,7 @@ async function openStudentEntry(
   selectedStudent =
     student;
 
+  showResultsEntry();
 
   renderEntryStudentInformation();
 
@@ -3875,354 +3920,227 @@ function renderOverallSummary(
 }
 
 
+
 /* =========================================================
    SAVE RESULTS
 ========================================================= */
 
-async function saveResults(
-  showMessage = true
-){
+async function saveResults(showMessage = true) {
 
-  if(!selectedStudent){
+  if (!selectedStudent) {
+    if (showMessage) {
+      showSaveMessage(
+        "No student has been selected.",
+        "error"
+      );
+    }
 
-    throw new Error(
-      "No student has been selected."
-    );
-
+    return false;
   }
 
+  const rows = Array.from(
+    dom.resultsEntryBody.querySelectorAll(
+      "tr[data-subject-id]"
+    )
+  );
 
-  const rows =
-    Array.from(
-      dom.resultsEntryBody
-        .querySelectorAll(
-          "tr[data-subject-id]"
-        )
-    );
-
-
-  if(!rows.length){
-
-    if(showMessage){
-
+  if (!rows.length) {
+    if (showMessage) {
       showSaveMessage(
         "There are no subjects to save.",
         "error"
       );
-
     }
 
-
-    return;
-
+    return false;
   }
 
+  dom.saveResultsBtn.disabled = true;
+  dom.saveResultsBtn.textContent = "Saving...";
 
-  dom.saveResultsBtn.disabled =
-    true;
+  try {
 
-  dom.saveResultsBtn.textContent =
-    "Saving...";
-
-
-  const studentId =
-    getDatabaseId(
+    const studentId = getDatabaseId(
       selectedStudent
     );
 
+    const records = [];
 
-  const records = [];
+    for (const row of rows) {
 
+      const subjectId = row.dataset.subjectId;
 
-  for(
-    const row of rows
-  ){
-
-    const subjectId =
-      row.dataset.subjectId;
-
-
-    const subject =
-      findSubjectById(
+      const subject = findSubjectById(
         subjectId
       );
 
-
-    const papers =
-      getPaperStructure(
+      const papers = getPaperStructure(
         subject,
         selectedStudent
       );
 
-
-    const paperInputs =
-      Array.from(
+      const paperInputs = Array.from(
         row.querySelectorAll(
           ".paper-mark-input"
         )
       );
 
+      const values = [];
 
-    const values = [];
+      let invalid = false;
+      let hasAnyMark = false;
 
+      paperInputs.forEach(function(input, index) {
 
-    let invalid =
-      false;
+        const raw = input.value.trim();
 
-
-    let hasAnyMark =
-      false;
-
-
-    paperInputs.forEach(
-      function(input,index){
-
-        const raw =
-          input.value.trim();
-
-
-        if(raw === ""){
-
+        if (raw === "") {
           values.push(null);
-
           return;
-
         }
-
 
         hasAnyMark = true;
 
+        const value = Number(raw);
 
-        const value =
-          Number(raw);
-
-
-        if(
+        if (
           Number.isNaN(value) ||
           value < 0 ||
           value > papers[index].max
-        ){
-
+        ) {
           invalid = true;
-
-          input.classList.add(
-            "invalid"
-          );
-
+          input.classList.add("invalid");
+          values.push(null);
           return;
-
         }
 
+        input.classList.remove("invalid");
+        values.push(value);
 
-        input.classList.remove(
-          "invalid"
+      });
+
+      if (invalid) {
+        showSaveMessage(
+          "One or more paper marks are invalid. Check the maximum mark shown for each paper.",
+          "error"
         );
 
-
-        values.push(
-          value
-        );
-
+        return false;
       }
-    );
 
+      // Ignore subjects with no marks entered.
+      if (!hasAnyMark) {
+        continue;
+      }
 
-    if(invalid){
+      // Every paper must have a mark.
+      if (
+        values.some(function(value) {
+          return value === null ||
+                 value === undefined;
+        })
+      ) {
+        showSaveMessage(
+          "Please enter marks for every paper before saving the subject.",
+          "error"
+        );
 
-      dom.saveResultsBtn.disabled =
-        false;
+        return false;
+      }
 
-      dom.saveResultsBtn.textContent =
-        "Save Results";
-
-
-      showSaveMessage(
-        "One or more paper marks are invalid. Check the maximum mark shown for each paper.",
-        "error"
-      );
-
-
-      throw new Error(
-        "Invalid paper mark."
-      );
-
-    }
-
-
-    /*
-      Completely empty subject:
-      do not save it.
-    */
-
-    if(!hasAnyMark){
-
-      continue;
-
-    }
-
-
-    /*
-      Every paper must be completed.
-    */
-
-    if(
-      values.some(
-        function(value){
-
-          return (
-            value === null ||
-            value === undefined
-          );
-
-        }
-      )
-    ){
-
-      dom.saveResultsBtn.disabled =
-        false;
-
-      dom.saveResultsBtn.textContent =
-        "Save Results";
-
-
-      showSaveMessage(
-        "Please enter marks for every paper before saving the subject.",
-        "error"
-      );
-
-
-      throw new Error(
-        "Incomplete paper marks."
-      );
-
-    }
-
-
-    const calculation =
-      calculateSubjectPercentage(
+      const calculation = calculateSubjectPercentage(
         papers,
         values
       );
 
+      if (calculation.percentage === null) {
+        showSaveMessage(
+          "Could not calculate the subject percentage.",
+          "error"
+        );
 
-    if(
-      calculation.percentage === null
-    ){
+        return false;
+      }
 
-      throw new Error(
-        "Could not calculate subject percentage."
-      );
-
-    }
-
-
-    const grading =
-      getSubjectGrading(
+      const grading = getSubjectGrading(
         calculation.percentage,
         selectedStudent
       );
 
-
-    const remark =
-      grading
-        ? grading.remark
-        : "";
-
-
-    /*
-      Store the rounded percentage.
-
-      The grade is also included in the
-      preferred record. If the existing
-      results table does not have a grade
-      column, the compatibility fallback
-      below saves without it.
-    */
-
-    records.push({
-
-      student_id:
-        studentId,
-
-      subject_id:
-        subjectId,
-
-      mark:
-        calculation.percentage,
-
-      grade:
-        grading
-          ? grading.grade
-          : null,
-
-      remark:
-        remark,
-
-      paper_marks:
-        values
-
-    });
-
-  }
-
-
-  try{
-
-    if(records.length){
-
-      await upsertResults(
-        records
-      );
+      records.push({
+        student_id: studentId,
+        subject_id: subjectId,
+        mark: calculation.percentage,
+        grade: grading ? grading.grade : null,
+        remark: grading ? grading.remark : "",
+        paper_marks: values
+      });
 
     }
 
+    // Do not report a successful save when nothing was entered.
+    if (!records.length) {
 
+      if (showMessage) {
+        showSaveMessage(
+          "Enter at least one subject's marks before saving.",
+          "error"
+        );
+
+        return false;
+      }
+
+      // View Overall Results can still open without a new save.
+      await loadStudentResults();
+
+      return true;
+    }
+
+    // If the database save fails, execution goes to catch.
+    await upsertResults(records);
+
+    // Refresh the saved results before allowing the section to hide.
     await loadStudentResults();
 
-
-    if(showMessage){
+    if (showMessage) {
 
       showSaveMessage(
-  "Results saved successfully.",
-  "success"
-);
+        "Results saved successfully.",
+        "success"
+      );
+
+      // Hide only after the save operation succeeds.
+      hideResultsEntry();
 
     }
-
 
     return true;
 
-  }catch(error){
+  } catch (error) {
 
     console.error(
       "Save results error:",
       error
     );
 
-
-    if(showMessage){
-
+    if (showMessage) {
       showSaveMessage(
         getErrorMessage(error),
         "error"
       );
-
     }
 
+    return false;
 
-    throw error;
+  } finally {
 
-  }finally{
-
-    dom.saveResultsBtn.disabled =
-      false;
-
-    dom.saveResultsBtn.textContent =
-      "Save Results";
+    dom.saveResultsBtn.disabled = false;
+    dom.saveResultsBtn.textContent = "Save Results";
 
   }
 
 }
+
 
 
 /* =========================================================

@@ -3871,7 +3871,7 @@ function renderOverallSummary(
 
 
       dom.overallResultDetails.textContent =
-        "Best six aggregate. English passed and was included only if it was among the six best grades.";
+        "Best six aggregate.";
 
       return;
 
@@ -3902,7 +3902,7 @@ function renderOverallSummary(
 
     dom.overallResultDetails.textContent =
       overall.passedCount +
-      " subjects passed and English passed.";
+      " Best six aggregate.";
 
     return;
 

@@ -1902,18 +1902,26 @@ function showView(view) {
     dom.studentsView,
     dom.entryView,
     dom.overallView
-  ].forEach(element => element?.classList.add("hidden"));
+  ].forEach(element => {
+    element?.classList.add("hidden");
+  });
 
   const views = {
-    classes:dom.classesView,
-    students:dom.studentsView,
-    entry:dom.entryView,
-    overall:dom.overallView
+    classes: dom.classesView,
+    students: dom.studentsView,
+    entry: dom.entryView,
+    overall: dom.overallView
   };
 
   views[view]?.classList.remove("hidden");
 
-  window.scrollTo({top:0,behavior:"smooth"});
+  // Release panel appears only on the main Results page.
+  updateReleasePanelVisibility(view);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 /* =========================================================
@@ -2244,4 +2252,13 @@ function getErrorMessage(error) {
   return error.message ||
     error.error_description ||
     String(error);
+}
+
+function updateReleasePanelVisibility(view) {
+  const panel = dom.resultsReleasePanel;
+
+  if (!panel) return;
+
+  // Show the release panel only on the main Classes view.
+  panel.hidden = view !== "classes";
 }

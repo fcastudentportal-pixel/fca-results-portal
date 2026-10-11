@@ -2417,3 +2417,6 @@ margin-top: 20px;
 gap: 14px;
 }
 }
+#resultsReleasePanel[hidden] {
+  display: none !important;
+}

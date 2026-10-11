@@ -1246,30 +1246,44 @@ function calculateOverall(resultRows,student) {
 function renderOverallSummary(overall) {
   if (!overall) return;
 
+  const isSenior = overall.type === "senior";
+  const aggregate = isSenior
+    ? overall.aggregate
+    : "";
+
+  const englishPassed = overall.englishPassed;
+  const enoughSubjects = overall.passedCount >= 6;
+
+  let resultText = "";
+  let detailsText = "";
+
+  if (englishPassed === false) {
+    detailsText = isSenior
+      ? "English failed"
+      : "English failed.";
+
+  } else if (!enoughSubjects) {
+    detailsText = "Insufficient passes";
+  }
+
+  const passed =
+    overall.valid &&
+    englishPassed !== false &&
+    enoughSubjects;
+
   if (dom.overallResult) {
-    dom.overallResult.textContent = overall.valid
-      ? (
-          overall.type === "senior"
-            ? "PASS - " + overall.aggregate + " POINTS"
-            : "PASS"
-        )
-      : "INCOMPLETE";
+    if (isSenior) {
+      resultText = (passed ? "PASS" : "FAIL") +
+        " - " + aggregate + " POINTS";
+    } else {
+      resultText = passed ? "PASS" : "FAIL";
+    }
+
+    dom.overallResult.textContent = resultText;
   }
 
   if (dom.overallResultDetails) {
-    if (overall.type === "senior") {
-      dom.overallResultDetails.textContent =
-        overall.valid
-          ? "Best-six aggregate: " + overall.aggregate +
-            ". English passed."
-          : overall.reason || "Overall requirements not met.";
-    } else {
-      dom.overallResultDetails.textContent =
-        overall.valid
-          ? "Passed " + overall.passedCount +
-            " subjects. English passed."
-          : overall.reason || "Overall requirements not met.";
-    }
+    dom.overallResultDetails.textContent = detailsText;
   }
 }
 

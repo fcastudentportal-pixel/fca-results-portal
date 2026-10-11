@@ -1621,14 +1621,17 @@ function compareGradeLists(a,b,formNumber) {
   return b.length - a.length;
 }
 
+
 function buildStudentRankingRecord(student) {
   const formNumber = getEffectiveFormNumber(student);
   const subjects = getSubjectsForStudent(student);
   const studentId = getDatabaseId(student);
 
-  if (!subjects.length ||
-      studentId === null ||
-      studentId === undefined) {
+  if (
+    !subjects.length ||
+    studentId === null ||
+    studentId === undefined
+  ) {
     return null;
   }
 
@@ -1643,70 +1646,57 @@ function buildStudentRankingRecord(student) {
       String(result.subject_id) === String(subjectId)
     );
 
-    const papers = getPaperStructure(subject,{
+    const papers = getPaperStructure(subject, {
       ...student,
-      form_number:formNumber
+      form_number: formNumber
     });
 
-    const values = getExistingPaperValues(saved,papers);
-    const calculation = calculateSubjectPercentage(papers,values);
+    const values = getExistingPaperValues(saved, papers);
+    const calculation = calculateSubjectPercentage(
+      papers,
+      values
+    );
 
-    if (calculation.percentage === null) return null;
+    if (calculation.percentage === null) {
+      return null;
+    }
 
     const grading = formNumber >= 3
       ? getSeniorGrade(calculation.percentage)
       : getJuniorGrade(calculation.percentage);
 
-    return {subject,calculation,grading};
+    return {
+      subject,
+      calculation,
+      grading
+    };
   }).filter(Boolean);
 
-  if (rows.length < 6) return null;
+  // No completed subjects means there is no mark-based rank yet.
+  if (!rows.length) return null;
 
-  if (formNumber >= 3) {
-    const overall = calculateSeniorOverall(rows);
+  const bestSix = [...rows]
+    .filter(row => row.grading.passed)
+    .sort((a, b) => {
+      if (formNumber >= 3) {
+        return Number(a.grading.grade) -
+          Number(b.grading.grade);
+      }
 
-    if (!overall.valid || overall.aggregate === null) return null;
-
-    const bestSix = overall.selectedSubjects;
-
-    const bestSixIds = new Set(
-      bestSix.map(row => String(getDatabaseId(row.subject)))
-    );
-
-    const remainingGrades = rows
-      .filter(row =>
-        !bestSixIds.has(String(getDatabaseId(row.subject)))
-      )
-      .map(row => row.grading.grade)
-      .sort((a,b) => Number(a) - Number(b));
-
-    return {
-      studentId:String(studentId),
-      formNumber,
-      aggregate:overall.aggregate,
-      bestGrades:bestSix
-        .map(row => row.grading.grade)
-        .sort((a,b) => Number(a) - Number(b)),
-      remainingGrades,
-      overallPercentage:calculateRankingPercentage(rows)
-    };
-  }
-
-  const juniorOverall = calculateJuniorOverall(rows);
-
-  if (!juniorOverall.valid) return null;
-
-  const passedRows = rows.filter(row => row.grading.passed);
-
-  const bestSix = [...passedRows]
-    .sort((a,b) =>
-      getRankingGradeValue(a.grading.grade,formNumber) -
-      getRankingGradeValue(b.grading.grade,formNumber)
-    )
-    .slice(0,6);
+      return getRankingGradeValue(
+        a.grading.grade,
+        formNumber
+      ) - getRankingGradeValue(
+        b.grading.grade,
+        formNumber
+      );
+    })
+    .slice(0, 6);
 
   const bestIds = new Set(
-    bestSix.map(row => String(getDatabaseId(row.subject)))
+    bestSix.map(row =>
+      String(getDatabaseId(row.subject))
+    )
   );
 
   const remainingGrades = rows
@@ -1714,24 +1704,42 @@ function buildStudentRankingRecord(student) {
       !bestIds.has(String(getDatabaseId(row.subject)))
     )
     .map(row => row.grading.grade)
-    .sort((a,b) =>
-      getRankingGradeValue(a,formNumber) -
-      getRankingGradeValue(b,formNumber)
-    );
+    .sort((a, b) => {
+      if (formNumber >= 3) {
+        return Number(a) - Number(b);
+      }
 
-  return {
-    studentId:String(studentId),
+      return getRankingGradeValue(a, formNumber) -
+        getRankingGradeValue(b, formNumber);
+    });
+
+  const record = {
+    studentId: String(studentId),
     formNumber,
-    bestGrades:bestSix
+    bestGrades: bestSix
       .map(row => row.grading.grade)
-      .sort((a,b) =>
-        getRankingGradeValue(a,formNumber) -
-        getRankingGradeValue(b,formNumber)
-      ),
+      .sort((a, b) => {
+        if (formNumber >= 3) {
+          return Number(a) - Number(b);
+        }
+
+        return getRankingGradeValue(a, formNumber) -
+          getRankingGradeValue(b, formNumber);
+      }),
     remainingGrades,
-    overallPercentage:calculateRankingPercentage(rows)
+    overallPercentage: calculateRankingPercentage(rows)
   };
+
+  if (formNumber >= 3) {
+    record.aggregate = bestSix.reduce(
+      (sum, row) => sum + Number(row.grading.grade),
+      0
+    );
+  }
+
+  return record;
 }
+
 
 function calculateRankingPercentage(rows) {
   let obtained = 0;
@@ -1785,6 +1793,7 @@ function compareRankingRecords(a,b) {
   return b.overallPercentage - a.overallPercentage;
 }
 
+
 function renderStudentPosition() {
   if (!dom.studentPosition || !selectedStudent || !selectedClass) {
     return;
@@ -1804,17 +1813,21 @@ function renderStudentPosition() {
   );
 
   if (currentIndex === -1) {
-    dom.studentPosition.textContent = "—/" + totalStudents;
+    dom.studentPosition.textContent =
+      "Not ranked / " + totalStudents;
     return;
   }
 
+  // Competition ranking: tied students share a position.
   let position = 1;
 
   for (let i = 1; i <= currentIndex; i++) {
-    if (compareRankingRecords(
-      rankedStudents[i - 1],
-      rankedStudents[currentIndex]
-    ) !== 0) {
+    if (
+      compareRankingRecords(
+        rankedStudents[i - 1],
+        rankedStudents[currentIndex]
+      ) !== 0
+    ) {
       position = i + 1;
     }
   }
@@ -1822,6 +1835,7 @@ function renderStudentPosition() {
   dom.studentPosition.textContent =
     position + "/" + totalStudents;
 }
+
 
 /* =========================================================
    SAVE RESULTS

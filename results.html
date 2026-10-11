@@ -215,6 +215,39 @@
 
           </section>
 
+          <!-- RESULTS RELEASE CONTROLS -->
+      <section id="resultsReleasePanel" class="results-release-panel">
+        <div class="release-panel-info">
+          <span class="section-eyebrow">PUBLICATION CONTROL</span>
+          <h2>Student Results Release</h2>
+          <p id="releaseStatusText">
+            Checking the current results release status...
+          </p>
+        </div>
+
+        <div class="release-panel-actions">
+          <span id="releaseStatusBadge" class="release-status-badge">
+            Checking status
+          </span>
+
+          <button
+            id="releaseResultsBtn"
+            class="primary-button"
+            type="button"
+            disabled
+          >
+            Release Results
+          </button>
+        </div>
+
+        <div
+          id="releaseMessage"
+          class="save-message hidden"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </section>
+
 
           <!-- =================================================
                VIEW 2 — STUDENTS

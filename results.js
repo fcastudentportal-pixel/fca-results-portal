@@ -8,6 +8,12 @@
 
    Forms 1–2: A–F
    Forms 3–4: Grades 1–9
+
+   RELEASE CONTROL:
+   - Admin releases results through Supabase RPC.
+   - Admin can withdraw released results.
+   - Saving result changes triggers automatic withdrawal
+     through the database trigger.
 ========================================================= */
 
 const SUBJECTS_FALLBACK = [
@@ -79,6 +85,11 @@ let allResults = [];
 let selectedClass = null;
 let selectedStudent = null;
 let currentStudentResults = [];
+
+let resultsAreReleased = false;
+let releaseRequestInProgress = false;
+let releaseStatusAvailable = false;
+
 const dom = {};
 let globalMessageTimer = null;
 
@@ -97,10 +108,14 @@ async function init() {
       "FCA Supabase client was not found. Check config.js.",
       "error"
     );
+    setReleaseUnavailable("Supabase client was not found.");
     return;
   }
 
   attachEvents();
+
+  // Load publication status independently of the results data.
+  loadReleaseStatus();
 
   try {
     await loadInitialData();
@@ -122,7 +137,11 @@ function cacheDom() {
     "studentName", "studentId", "studentClass", "studentGender",
     "studentSubjectCount", "studentPosition", "overallResultsBody",
     "overallResult", "overallResultDetails", "saveResultsBtn",
-    "saveMessage", "globalMessage"
+    "saveMessage", "globalMessage",
+
+    // Results release panel
+    "resultsReleasePanel", "releaseStatusText",
+    "releaseStatusBadge", "releaseResultsBtn", "releaseMessage"
   ].forEach(id => {
     dom[id] = document.getElementById(id);
   });
@@ -169,6 +188,7 @@ function attachEvents() {
   document.getElementById("viewOverallFromEntryBtn")
     ?.addEventListener("click", async () => {
       const saved = await saveResults(false);
+
       if (saved) {
         await loadStudentResults();
         showOverall();
@@ -183,6 +203,184 @@ function attachEvents() {
 
   document.getElementById("downloadPdfBtn")
     ?.addEventListener("click", downloadResult);
+
+  // Administrator publication control
+  dom.releaseResultsBtn?.addEventListener(
+    "click",
+    toggleResultsRelease
+  );
+}
+
+/* =========================================================
+   RESULTS RELEASE CONTROL
+========================================================= */
+
+/*
+  This function calls the existing Supabase RPC.
+
+  p_release = null  → read current status
+  p_release = true  → release results
+  p_release = false → withdraw results
+
+  Authorization is enforced by the database function.
+*/
+
+async function callReleaseFunction(releaseValue) {
+  const { data, error } = await db.rpc(
+    "fca_admin_set_results_release",
+    { p_release: releaseValue }
+  );
+
+  if (error) throw error;
+
+  const status = Array.isArray(data) ? data[0] : data;
+
+  if (!status || typeof status.is_released !== "boolean") {
+    throw new Error(
+      "Supabase returned an invalid release status."
+    );
+  }
+
+  return status.is_released;
+}
+
+async function loadReleaseStatus() {
+  if (!db) return false;
+
+  if (dom.releaseResultsBtn) {
+    dom.releaseResultsBtn.disabled = true;
+    dom.releaseResultsBtn.textContent = "Checking Status...";
+  }
+
+  if (dom.releaseStatusText) {
+    dom.releaseStatusText.textContent =
+      "Checking the current results release status...";
+  }
+
+  try {
+    resultsAreReleased = await callReleaseFunction(null);
+    releaseStatusAvailable = true;
+
+    renderReleaseStatus();
+    return true;
+
+  } catch (error) {
+    console.error("Could not load release status:", error);
+
+    releaseStatusAvailable = false;
+
+    setReleaseUnavailable(
+      "Could not verify release status. " +
+      getErrorMessage(error)
+    );
+
+    return false;
+  }
+}
+
+function renderReleaseStatus() {
+  if (dom.releaseStatusText) {
+    dom.releaseStatusText.textContent = resultsAreReleased
+      ? "Results are released. Students can view results through the student portal."
+      : "Results are not released. Students must wait until the administrator publishes them.";
+  }
+
+  if (dom.releaseStatusBadge) {
+    dom.releaseStatusBadge.textContent = resultsAreReleased
+      ? "Released"
+      : "Not Released";
+
+    dom.releaseStatusBadge.className =
+      "release-status-badge " +
+      (resultsAreReleased ? "released" : "unreleased");
+  }
+
+  if (dom.releaseResultsBtn) {
+    dom.releaseResultsBtn.disabled =
+      !releaseStatusAvailable || releaseRequestInProgress;
+
+    if (releaseRequestInProgress) {
+      dom.releaseResultsBtn.textContent = "Updating...";
+    } else {
+      dom.releaseResultsBtn.textContent = resultsAreReleased
+        ? "Withdraw Results"
+        : "Release Results";
+    }
+  }
+}
+
+function setReleaseUnavailable(message) {
+  releaseStatusAvailable = false;
+
+  if (dom.releaseStatusText) {
+    dom.releaseStatusText.textContent =
+      message || "Release status is currently unavailable.";
+  }
+
+  if (dom.releaseStatusBadge) {
+    dom.releaseStatusBadge.textContent = "Status Unavailable";
+    dom.releaseStatusBadge.className =
+      "release-status-badge unreleased";
+  }
+
+  if (dom.releaseResultsBtn) {
+    dom.releaseResultsBtn.disabled = true;
+    dom.releaseResultsBtn.textContent = "Status Unavailable";
+  }
+}
+
+function showReleaseMessage(message, type) {
+  if (!dom.releaseMessage) {
+    showGlobalMessage(message, type);
+    return;
+  }
+
+  dom.releaseMessage.textContent = message;
+  dom.releaseMessage.className = "save-message " + type;
+  dom.releaseMessage.classList.remove("hidden");
+}
+
+async function toggleResultsRelease() {
+  if (!db || releaseRequestInProgress || !releaseStatusAvailable) {
+    return;
+  }
+
+  releaseRequestInProgress = true;
+  renderReleaseStatus();
+
+  const desiredStatus = !resultsAreReleased;
+
+  try {
+    const actualStatus = await callReleaseFunction(desiredStatus);
+
+    resultsAreReleased = actualStatus;
+    releaseStatusAvailable = true;
+    renderReleaseStatus();
+
+    showReleaseMessage(
+      resultsAreReleased
+        ? "Results have been released successfully."
+        : "Results have been withdrawn successfully.",
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Could not update results release:", error);
+
+    showReleaseMessage(
+      "Could not update results release. " +
+      getErrorMessage(error),
+      "error"
+    );
+
+    // Refresh the actual state from the database.
+    releaseStatusAvailable = false;
+    await loadReleaseStatus();
+
+  } finally {
+    releaseRequestInProgress = false;
+    renderReleaseStatus();
+  }
 }
 
 /* =========================================================
@@ -206,14 +404,20 @@ async function loadClasses() {
   const {data,error} = await db
     .from("classes")
     .select("*")
-    .order("form_number", {ascending:true,nullsFirst:false});
+    .order("form_number", {
+      ascending:true,
+      nullsFirst:false
+    });
 
   if (error) throw error;
   allClasses = data || [];
 }
 
 async function loadStudents() {
-  const {data,error} = await db.from("students").select("*");
+  const {data,error} = await db
+    .from("students")
+    .select("*");
+
   if (error) throw error;
   allStudents = data || [];
 }
@@ -240,7 +444,9 @@ async function loadSubjects() {
 }
 
 async function loadResults() {
-  const {data,error} = await db.from("results").select("*");
+  const {data,error} = await db
+    .from("results")
+    .select("*");
 
   if (error) {
     console.warn("Results could not be loaded:", error);
@@ -293,9 +499,15 @@ function renderClasses() {
 
 function openClass(classItem) {
   selectedClass = classItem;
-  dom.selectedClassTitle.textContent = getClassName(classItem);
-  dom.selectedClassDescription.textContent =
-    "Students in " + getClassName(classItem);
+
+  if (dom.selectedClassTitle) {
+    dom.selectedClassTitle.textContent = getClassName(classItem);
+  }
+
+  if (dom.selectedClassDescription) {
+    dom.selectedClassDescription.textContent =
+      "Students in " + getClassName(classItem);
+  }
 
   renderStudents();
   showView("students");
@@ -307,6 +519,7 @@ function openClass(classItem) {
 
 function renderStudents() {
   if (!dom.studentsGrid) return;
+
   dom.studentsGrid.innerHTML = "";
   if (!selectedClass) return;
 
@@ -343,15 +556,17 @@ function renderStudents() {
         <button type="button" class="secondary-button overall-results-btn">Overall Results</button>
       </div>`;
 
-    card.querySelector(".enter-results-btn").addEventListener("click", event => {
-      event.stopPropagation();
-      openStudentEntry(student);
-    });
+    card.querySelector(".enter-results-btn")
+      .addEventListener("click", event => {
+        event.stopPropagation();
+        openStudentEntry(student);
+      });
 
-    card.querySelector(".overall-results-btn").addEventListener("click", event => {
-      event.stopPropagation();
-      openStudentOverall(student);
-    });
+    card.querySelector(".overall-results-btn")
+      .addEventListener("click", event => {
+        event.stopPropagation();
+        openStudentOverall(student);
+      });
 
     dom.studentsGrid.appendChild(card);
   });
@@ -366,8 +581,12 @@ async function openStudentEntry(student) {
   showResultsEntry();
   renderEntryStudentInformation();
 
-  dom.resultsEntryBody.innerHTML = `
-    <tr><td colspan="7"><div class="table-loading">Loading subjects...</div></td></tr>`;
+  if (dom.resultsEntryBody) {
+    dom.resultsEntryBody.innerHTML = `
+      <tr><td colspan="7">
+        <div class="table-loading">Loading subjects...</div>
+      </td></tr>`;
+  }
 
   showView("entry");
 
@@ -376,8 +595,14 @@ async function openStudentEntry(student) {
     renderResultEntry();
   } catch (error) {
     console.error(error);
-    dom.resultsEntryBody.innerHTML = `
-      <tr><td colspan="7"><div class="table-loading">Could not load student results.</div></td></tr>`;
+
+    if (dom.resultsEntryBody) {
+      dom.resultsEntryBody.innerHTML = `
+        <tr><td colspan="7">
+          <div class="table-loading">Could not load student results.</div>
+        </td></tr>`;
+    }
+
     showGlobalMessage(getErrorMessage(error), "error");
   }
 }
@@ -388,16 +613,25 @@ function renderEntryStudentInformation() {
   const name = getStudentName(selectedStudent);
   const form = getEffectiveFormNumber(selectedStudent);
 
-  dom.entryStudentName.textContent = name;
-  dom.entryStudentId.textContent = getStudentId(selectedStudent);
-  dom.entryStudentGender.textContent = getStudentGender(selectedStudent);
-  dom.entryStudentClass.textContent = getClassName(selectedClass);
-  dom.entryStudentSubtitle.textContent = "Enter academic results for " + name;
-  dom.entryStudentAvatar.textContent = getInitials(name);
+  if (dom.entryStudentName) dom.entryStudentName.textContent = name;
+  if (dom.entryStudentId) dom.entryStudentId.textContent = getStudentId(selectedStudent);
+  if (dom.entryStudentGender) dom.entryStudentGender.textContent = getStudentGender(selectedStudent);
+  if (dom.entryStudentClass) dom.entryStudentClass.textContent = getClassName(selectedClass);
 
-  dom.gradingInformation.textContent = form >= 3
-    ? "Senior grading: 80–100 Grade 1, 70–79 Grade 2, 65–69 Grade 3, 60–64 Grade 4, 55–59 Grade 5, 50–54 Grade 6, 45–49 Grade 7, 40–44 Grade 8, 0–39 Grade 9. English must be passed but is not forced into the best-six aggregate."
-    : "Junior grading: 75–100 A, 60–74 B, 50–59 C, 40–49 D, 0–39 F. Overall pass requires at least six passed subjects and English must be passed.";
+  if (dom.entryStudentSubtitle) {
+    dom.entryStudentSubtitle.textContent =
+      "Enter academic results for " + name;
+  }
+
+  if (dom.entryStudentAvatar) {
+    dom.entryStudentAvatar.textContent = getInitials(name);
+  }
+
+  if (dom.gradingInformation) {
+    dom.gradingInformation.textContent = form >= 3
+      ? "Senior grading: 80–100 Grade 1, 70–79 Grade 2, 65–69 Grade 3, 60–64 Grade 4, 55–59 Grade 5, 50–54 Grade 6, 45–49 Grade 7, 40–44 Grade 8, 0–39 Grade 9. English must be passed but is not forced into the best-six aggregate."
+      : "Junior grading: 75–100 A, 60–74 B, 50–59 C, 40–49 D, 0–39 F. Overall pass requires at least six passed subjects and English must be passed.";
+  }
 }
 
 async function loadStudentResults() {
@@ -416,7 +650,7 @@ async function loadStudentResults() {
 
   if (error) {
     console.warn("Could not refresh results:", error);
-    return;
+    throw error;
   }
 
   currentStudentResults = data || [];
@@ -432,7 +666,12 @@ async function loadStudentResults() {
 
 function renderResultEntry() {
   const subjects = getSubjectsForStudent(selectedStudent);
-  dom.subjectCount.textContent = subjects.length;
+
+  if (dom.subjectCount) {
+    dom.subjectCount.textContent = subjects.length;
+  }
+
+  if (!dom.resultsEntryBody) return;
   dom.resultsEntryBody.innerHTML = "";
 
   if (!subjects.length) {
@@ -445,6 +684,7 @@ function renderResultEntry() {
 
   subjects.forEach((subject,index) => {
     const subjectId = getDatabaseId(subject);
+
     const existing = currentStudentResults.find(result =>
       String(result.subject_id) === String(subjectId)
     );
@@ -488,6 +728,7 @@ function renderResultEntry() {
       <td><span class="result-status ${!grading ? "status-empty" : grading.passed ? "status-pass" : "status-fail"}">${!grading ? "—" : grading.passed ? "Pass" : "Fail"}</span></td>`;
 
     const inputs = Array.from(row.querySelectorAll(".paper-mark-input"));
+
     const els = {
       percentage:row.querySelector(".percentage-value"),
       detail:row.querySelector(".percentage-detail"),
@@ -511,12 +752,14 @@ function updateSubjectRow(row,papers,inputs,els) {
 
   const values = inputs.map((input,index) => {
     const raw = input.value.trim();
+
     if (raw === "") {
       input.classList.remove("invalid");
       return null;
     }
 
     const value = Number(raw);
+
     if (!Number.isFinite(value) || value < 0 ||
         value > papers[index].max) {
       input.classList.add("invalid");
@@ -555,14 +798,24 @@ function updateSubjectRow(row,papers,inputs,els) {
   }
 
   els.percentage.textContent = calculation.percentage + "%";
-  els.detail.textContent = calculation.obtained + " / " + calculation.maximum;
+  els.detail.textContent =
+    calculation.obtained + " / " + calculation.maximum;
 
-  const grading = getSubjectGrading(calculation.percentage, selectedStudent);
+  const grading = getSubjectGrading(
+    calculation.percentage,
+    selectedStudent
+  );
+
   els.grade.textContent = grading ? grading.grade : "—";
   els.classification.textContent = grading ? grading.remark : "—";
-  els.status.textContent = grading ? (grading.passed ? "Pass" : "Fail") : "—";
+  els.status.textContent = grading
+    ? (grading.passed ? "Pass" : "Fail")
+    : "—";
+
   els.status.className = "result-status " +
-    (grading ? (grading.passed ? "status-pass" : "status-fail") : "status-empty");
+    (grading
+      ? (grading.passed ? "status-pass" : "status-fail")
+      : "status-empty");
 }
 
 /* =========================================================
@@ -570,13 +823,18 @@ function updateSubjectRow(row,papers,inputs,els) {
 ========================================================= */
 
 function calculateSubjectPercentage(papers,values) {
-  const maximum = papers.reduce((sum,paper) => sum + Number(paper.max), 0);
+  const maximum = papers.reduce(
+    (sum,paper) => sum + Number(paper.max), 0
+  );
+
   const entered = values.filter(value =>
     value !== null && value !== undefined && value !== "" &&
     Number.isFinite(Number(value))
   );
 
-  const obtained = entered.reduce((sum,value) => sum + Number(value), 0);
+  const obtained = entered.reduce(
+    (sum,value) => sum + Number(value), 0
+  );
 
   if (!entered.length || entered.length !== papers.length) {
     return {obtained,maximum,percentage:null};
@@ -585,7 +843,9 @@ function calculateSubjectPercentage(papers,values) {
   return {
     obtained,
     maximum,
-    percentage:maximum > 0 ? Math.round(obtained / maximum * 100) : 0
+    percentage:maximum > 0
+      ? Math.round(obtained / maximum * 100)
+      : 0
   };
 }
 
@@ -600,6 +860,7 @@ function getSeniorGrade(percentage) {
   if (value >= 50) return {grade:6,remark:"Pass with Credit (Minimum Credit)",passed:true};
   if (value >= 45) return {grade:7,remark:"Ordinary Pass",passed:true};
   if (value >= 40) return {grade:8,remark:"Ordinary Pass",passed:true};
+
   return {grade:9,remark:"Fail",passed:false};
 }
 
@@ -610,11 +871,13 @@ function getJuniorGrade(percentage) {
   if (value >= 60) return {grade:"B",remark:"Very Good",passed:true};
   if (value >= 50) return {grade:"C",remark:"Good",passed:true};
   if (value >= 40) return {grade:"D",remark:"Average / Pass",passed:true};
+
   return {grade:"F",remark:"Fail",passed:false};
 }
 
 function getSubjectGrading(percentage,student) {
   if (percentage === null || percentage === undefined) return null;
+
   return getEffectiveFormNumber(student) >= 3
     ? getSeniorGrade(percentage)
     : getJuniorGrade(percentage);
@@ -645,14 +908,21 @@ function extractStoredPapers(subject) {
     if (value === null || value === undefined) continue;
 
     if (typeof value === "string") {
-      try { value = JSON.parse(value); } catch { continue; }
+      try {
+        value = JSON.parse(value);
+      } catch {
+        continue;
+      }
     }
 
     if (!Array.isArray(value)) continue;
 
     const normalized = value.map((item,index) => {
       if (typeof item === "number") {
-        return {name:"Paper " + romanNumber(index + 1),max:item};
+        return {
+          name:"Paper " + romanNumber(index + 1),
+          max:item
+        };
       }
 
       if (item && typeof item === "object") {
@@ -681,21 +951,31 @@ function getExistingPaperValues(result,papers) {
   if (!result) return papers.map(() => "");
 
   for (const field of [
-    "paper_marks","papers","marks_by_paper","paper_results","paper_scores"
+    "paper_marks","papers","marks_by_paper",
+    "paper_results","paper_scores"
   ]) {
     let value = result[field];
     if (value === null || value === undefined) continue;
 
     if (typeof value === "string") {
-      try { value = JSON.parse(value); } catch { continue; }
+      try {
+        value = JSON.parse(value);
+      } catch {
+        continue;
+      }
     }
 
     if (Array.isArray(value)) {
       return papers.map((paper,index) => {
         const item = value[index];
+
         if (item === null || item === undefined) return "";
         if (typeof item === "number") return item;
-        if (typeof item === "object") return item.mark ?? item.value ?? "";
+
+        if (typeof item === "object") {
+          return item.mark ?? item.value ?? "";
+        }
+
         return "";
       });
     }
@@ -703,16 +983,19 @@ function getExistingPaperValues(result,papers) {
     if (value && typeof value === "object") {
       return papers.map((paper,index) => {
         for (const key of [
-          paper.name,String(index),String(index + 1),"paper" + (index + 1)
+          paper.name,String(index),String(index + 1),
+          "paper" + (index + 1)
         ]) {
           if (value[key] !== undefined) return value[key];
         }
+
         return "";
       });
     }
   }
 
-  if (result.mark !== null && result.mark !== undefined && papers.length === 1) {
+  if (result.mark !== null && result.mark !== undefined &&
+      papers.length === 1) {
     const mark = Number(result.mark);
     if (Number.isFinite(mark)) return [mark];
   }
@@ -735,7 +1018,8 @@ function getSubjectsForStudent(student) {
   const assigned = allSubjects.filter(subject => {
     const subjectForm = getSubjectFormNumber(subject);
 
-    if (subjectForm !== null && Number(subjectForm) !== studentForm) {
+    if (subjectForm !== null &&
+        Number(subjectForm) !== studentForm) {
       return false;
     }
 
@@ -745,9 +1029,11 @@ function getSubjectsForStudent(student) {
     return selectedValues.some(value => {
       if (value && typeof value === "object") {
         const valueId = value.id || value.subject_id;
-        const valueName = value.subject_name || value.name || value.subject;
+        const valueName =
+          value.subject_name || value.name || value.subject;
 
-        if (valueId && subjectId && String(valueId) === String(subjectId)) {
+        if (valueId && subjectId &&
+            String(valueId) === String(subjectId)) {
           return true;
         }
 
@@ -756,7 +1042,10 @@ function getSubjectsForStudent(student) {
           : false;
       }
 
-      if (subjectId && String(value) === String(subjectId)) return true;
+      if (subjectId && String(value) === String(subjectId)) {
+        return true;
+      }
+
       return String(value).trim().toLowerCase() === subjectName;
     });
   });
@@ -765,10 +1054,13 @@ function getSubjectsForStudent(student) {
 
   return assigned.filter(subject => {
     const key = getSubjectName(subject).trim().toLowerCase();
+
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).sort((a,b) => getSubjectName(a).localeCompare(getSubjectName(b)));
+  }).sort((a,b) =>
+    getSubjectName(a).localeCompare(getSubjectName(b))
+  );
 }
 
 function extractStudentSubjectIds(student) {
@@ -782,16 +1074,19 @@ function extractStudentSubjectIds(student) {
       try {
         value = JSON.parse(value);
       } catch {
-        value = value.split(",").map(item => item.trim()).filter(Boolean);
+        value = value.split(",")
+          .map(item => item.trim())
+          .filter(Boolean);
       }
     }
 
     if (Array.isArray(value)) {
       return value.map(item => {
         if (item && typeof item === "object") {
-          return item.id || item.subject_id || item.subject_name ||
-            item.name || item.subject;
+          return item.id || item.subject_id ||
+            item.subject_name || item.name || item.subject;
         }
+
         return item;
       }).filter(Boolean);
     }
@@ -809,22 +1104,35 @@ function isEnglishSubject(subject) {
 }
 
 function calculateSeniorOverall(resultRows) {
-  const english = resultRows.find(item => isEnglishSubject(item.subject));
+  const english = resultRows.find(item =>
+    isEnglishSubject(item.subject)
+  );
 
   if (!english || english.calculation.percentage === null) {
     return {
-      valid:false,passed:false,
-      reason:english ? "English must be completed." : "English result is required.",
-      aggregate:null,selectedSubjects:[],englishPassed:false
+      valid:false,
+      passed:false,
+      reason:english
+        ? "English must be completed."
+        : "English result is required.",
+      aggregate:null,
+      selectedSubjects:[],
+      englishPassed:false
     };
   }
 
-  const englishGrade = getSeniorGrade(english.calculation.percentage);
+  const englishGrade = getSeniorGrade(
+    english.calculation.percentage
+  );
 
   if (!englishGrade.passed) {
     return {
-      valid:false,passed:false,reason:"English must be passed.",
-      aggregate:null,selectedSubjects:[],englishPassed:false
+      valid:false,
+      passed:false,
+      reason:"English must be passed.",
+      aggregate:null,
+      selectedSubjects:[],
+      englishPassed:false
     };
   }
 
@@ -838,28 +1146,40 @@ function calculateSeniorOverall(resultRows) {
 
   if (passedRows.length < 6) {
     return {
-      valid:false,passed:false,
+      valid:false,
+      passed:false,
       reason:"At least six passed subjects are required for the best-six aggregate.",
-      aggregate:null,selectedSubjects:[],englishPassed:true
+      aggregate:null,
+      selectedSubjects:[],
+      englishPassed:true
     };
   }
 
   const selectedSubjects = [...passedRows]
-    .sort((a,b) => Number(a.grading.grade) - Number(b.grading.grade))
+    .sort((a,b) =>
+      Number(a.grading.grade) - Number(b.grading.grade)
+    )
     .slice(0,6);
 
   const aggregate = selectedSubjects.reduce(
-    (sum,item) => sum + Number(item.grading.grade),0
+    (sum,item) => sum + Number(item.grading.grade),
+    0
   );
 
   return {
-    valid:true,passed:true,reason:"English passed.",
-    aggregate,selectedSubjects,englishPassed:true
+    valid:true,
+    passed:true,
+    reason:"English passed.",
+    aggregate,
+    selectedSubjects,
+    englishPassed:true
   };
 }
 
 function calculateJuniorOverall(resultRows) {
-  const english = resultRows.find(item => isEnglishSubject(item.subject));
+  const english = resultRows.find(item =>
+    isEnglishSubject(item.subject)
+  );
 
   const gradedRows = resultRows
     .filter(item => item.calculation.percentage !== null)
@@ -868,22 +1188,35 @@ function calculateJuniorOverall(resultRows) {
       grading:getJuniorGrade(item.calculation.percentage)
     }));
 
-  const passedRows = gradedRows.filter(item => item.grading.passed);
+  const passedRows = gradedRows.filter(item =>
+    item.grading.passed
+  );
 
-  const englishGrade = english && english.calculation.percentage !== null
-    ? getJuniorGrade(english.calculation.percentage)
-    : null;
+  const englishGrade =
+    english && english.calculation.percentage !== null
+      ? getJuniorGrade(english.calculation.percentage)
+      : null;
 
-  const englishPassed = Boolean(englishGrade && englishGrade.passed);
+  const englishPassed = Boolean(
+    englishGrade && englishGrade.passed
+  );
+
   const valid = passedRows.length >= 6 && englishPassed;
 
   let reason = "Minimum junior pass requirements met.";
-  if (!englishGrade) reason = "English must be completed.";
-  else if (!englishPassed) reason = "English must be passed.";
-  else if (passedRows.length < 6) reason = "At least six subjects must be passed.";
+
+  if (!englishGrade) {
+    reason = "English must be completed.";
+  } else if (!englishPassed) {
+    reason = "English must be passed.";
+  } else if (passedRows.length < 6) {
+    reason = "At least six subjects must be passed.";
+  }
 
   return {
-    valid,passed:valid,reason,
+    valid,
+    passed:valid,
+    reason,
     passedCount:passedRows.length,
     englishPassed,
     selectedSubjects:passedRows
@@ -892,10 +1225,16 @@ function calculateJuniorOverall(resultRows) {
 
 function calculateOverall(resultRows,student) {
   if (getEffectiveFormNumber(student) >= 3) {
-    return {type:"senior",...calculateSeniorOverall(resultRows)};
+    return {
+      type:"senior",
+      ...calculateSeniorOverall(resultRows)
+    };
   }
 
-  return {type:"junior",...calculateJuniorOverall(resultRows)};
+  return {
+    type:"junior",
+    ...calculateJuniorOverall(resultRows)
+  };
 }
 
 /* =========================================================
@@ -909,6 +1248,7 @@ function renderOverallResults() {
 
   const resultRows = subjects.map(subject => {
     const subjectId = getDatabaseId(subject);
+
     const result = currentStudentResults.find(item =>
       String(item.subject_id) === String(subjectId)
     );
@@ -916,28 +1256,50 @@ function renderOverallResults() {
     const papers = getPaperStructure(subject,selectedStudent);
     const values = getExistingPaperValues(result,papers);
     const calculation = calculateSubjectPercentage(papers,values);
-    const grading = getSubjectGrading(calculation.percentage,selectedStudent);
+    const grading = getSubjectGrading(
+      calculation.percentage,
+      selectedStudent
+    );
 
-    return {subject,result,papers,values,calculation,grading};
+    return {
+      subject,
+      result,
+      papers,
+      values,
+      calculation,
+      grading
+    };
   });
 
-  dom.studentName.textContent = getStudentName(selectedStudent);
-  dom.studentId.textContent = getStudentId(selectedStudent);
-  dom.studentClass.textContent = getClassName(selectedClass);
-  dom.studentGender.textContent = getStudentGender(selectedStudent);
-  dom.studentSubjectCount.textContent = subjects.length;
+  if (dom.studentName) dom.studentName.textContent = getStudentName(selectedStudent);
+  if (dom.studentId) dom.studentId.textContent = getStudentId(selectedStudent);
+  if (dom.studentClass) dom.studentClass.textContent = getClassName(selectedClass);
+  if (dom.studentGender) dom.studentGender.textContent = getStudentGender(selectedStudent);
+  if (dom.studentSubjectCount) dom.studentSubjectCount.textContent = subjects.length;
 
+  if (!dom.overallResultsBody) return;
   dom.overallResultsBody.innerHTML = "";
 
   if (!resultRows.length) {
     dom.overallResultsBody.innerHTML = `
-      <tr><td colspan="6"><div class="table-loading">No subjects found.</div></td></tr>`;
-    dom.overallResult.textContent = "NO RESULTS";
-    dom.overallResultDetails.textContent = "No subjects are available.";
+      <tr><td colspan="6">
+        <div class="table-loading">No subjects found.</div>
+      </td></tr>`;
+
+    if (dom.overallResult) {
+      dom.overallResult.textContent = "NO RESULTS";
+    }
+
+    if (dom.overallResultDetails) {
+      dom.overallResultDetails.textContent =
+        "No subjects are available.";
+    }
+
     if (dom.studentPosition) {
       dom.studentPosition.textContent =
         "—/" + getStudentsForClass(selectedClass).length;
     }
+
     return;
   }
 
@@ -946,11 +1308,13 @@ function renderOverallResults() {
 
     const papersHtml = item.papers.map((paper,paperIndex) => {
       const value = item.values[paperIndex];
+
       return `
         <div class="overall-paper">
           <strong>${escapeHtml(paper.name)}</strong>
           <span>${value === "" || value === null || value === undefined
-            ? "—" : escapeHtml(String(value))}/${paper.max}</span>
+            ? "—"
+            : escapeHtml(String(value))}/${paper.max}</span>
         </div>`;
     }).join("");
 
@@ -959,11 +1323,14 @@ function renderOverallResults() {
       <td><strong>${escapeHtml(getSubjectName(item.subject))}</strong></td>
       <td><div class="overall-paper-list">${papersHtml}</div></td>
       <td class="overall-percentage">${item.calculation.percentage === null
-        ? "—" : item.calculation.percentage + "%"}</td>
+        ? "—"
+        : item.calculation.percentage + "%"}</td>
       <td class="overall-grade">${item.grading
-        ? escapeHtml(String(item.grading.grade)) : "—"}</td>
+        ? escapeHtml(String(item.grading.grade))
+        : "—"}</td>
       <td class="overall-classification">${item.grading
-        ? escapeHtml(item.grading.remark) : "Not entered"}</td>`;
+        ? escapeHtml(item.grading.remark)
+        : "Not entered"}</td>`;
 
     dom.overallResultsBody.appendChild(row);
   });
@@ -976,26 +1343,49 @@ function renderOverallResults() {
 function renderOverallSummary(overall) {
   if (overall.type === "senior") {
     if (overall.valid && overall.aggregate !== null) {
-      dom.overallResult.textContent =
-        "PASS — " + overall.aggregate + " POINTS";
-      dom.overallResultDetails.textContent = "Best six aggregate.";
+      if (dom.overallResult) {
+        dom.overallResult.textContent =
+          "PASS — " + overall.aggregate + " POINTS";
+      }
+
+      if (dom.overallResultDetails) {
+        dom.overallResultDetails.textContent = "Best six aggregate.";
+      }
+
       return;
     }
 
-    dom.overallResult.textContent = "NOT QUALIFIED";
-    dom.overallResultDetails.textContent = overall.reason;
+    if (dom.overallResult) {
+      dom.overallResult.textContent = "NOT QUALIFIED";
+    }
+
+    if (dom.overallResultDetails) {
+      dom.overallResultDetails.textContent = overall.reason;
+    }
+
     return;
   }
 
   if (overall.valid) {
-    dom.overallResult.textContent = "PASS";
-    dom.overallResultDetails.textContent =
-      overall.passedCount + " subjects passed.";
+    if (dom.overallResult) {
+      dom.overallResult.textContent = "PASS";
+    }
+
+    if (dom.overallResultDetails) {
+      dom.overallResultDetails.textContent =
+        overall.passedCount + " subjects passed.";
+    }
+
     return;
   }
 
-  dom.overallResult.textContent = "FAIL";
-  dom.overallResultDetails.textContent = overall.reason;
+  if (dom.overallResult) {
+    dom.overallResult.textContent = "FAIL";
+  }
+
+  if (dom.overallResultDetails) {
+    dom.overallResultDetails.textContent = overall.reason;
+  }
 }
 
 /* =========================================================
@@ -1031,7 +1421,9 @@ function buildStudentRankingRecord(student) {
   const subjects = getSubjectsForStudent(student);
   const studentId = getDatabaseId(student);
 
-  if (!subjects.length || studentId === null || studentId === undefined) {
+  if (!subjects.length ||
+      studentId === null ||
+      studentId === undefined) {
     return null;
   }
 
@@ -1063,22 +1455,23 @@ function buildStudentRankingRecord(student) {
     return {subject,calculation,grading};
   }).filter(Boolean);
 
-  // A student needs at least six completed subjects to be ranked.
   if (rows.length < 6) return null;
 
   if (formNumber >= 3) {
     const overall = calculateSeniorOverall(rows);
 
-    // Senior students must have passed English and have six passed subjects.
     if (!overall.valid || overall.aggregate === null) return null;
 
     const bestSix = overall.selectedSubjects;
+
     const bestSixIds = new Set(
       bestSix.map(row => String(getDatabaseId(row.subject)))
     );
 
     const remainingGrades = rows
-      .filter(row => !bestSixIds.has(String(getDatabaseId(row.subject))))
+      .filter(row =>
+        !bestSixIds.has(String(getDatabaseId(row.subject)))
+      )
       .map(row => row.grading.grade)
       .sort((a,b) => Number(a) - Number(b));
 
@@ -1086,14 +1479,14 @@ function buildStudentRankingRecord(student) {
       studentId:String(studentId),
       formNumber,
       aggregate:overall.aggregate,
-      bestGrades:bestSix.map(row => row.grading.grade)
+      bestGrades:bestSix
+        .map(row => row.grading.grade)
         .sort((a,b) => Number(a) - Number(b)),
       remainingGrades,
       overallPercentage:calculateRankingPercentage(rows)
     };
   }
 
-  // Junior overall ranking requires English passed and at least six passes.
   const juniorOverall = calculateJuniorOverall(rows);
 
   if (!juniorOverall.valid) return null;
@@ -1112,7 +1505,9 @@ function buildStudentRankingRecord(student) {
   );
 
   const remainingGrades = rows
-    .filter(row => !bestIds.has(String(getDatabaseId(row.subject))))
+    .filter(row =>
+      !bestIds.has(String(getDatabaseId(row.subject)))
+    )
     .map(row => row.grading.grade)
     .sort((a,b) =>
       getRankingGradeValue(a,formNumber) -
@@ -1122,7 +1517,8 @@ function buildStudentRankingRecord(student) {
   return {
     studentId:String(studentId),
     formNumber,
-    bestGrades:bestSix.map(row => row.grading.grade)
+    bestGrades:bestSix
+      .map(row => row.grading.grade)
       .sort((a,b) =>
         getRankingGradeValue(a,formNumber) -
         getRankingGradeValue(b,formNumber)
@@ -1151,10 +1547,13 @@ function compareRankingRecords(a,b) {
     return a.aggregate - b.aggregate;
   }
 
-  // When senior aggregates tie, compare grades in other subjects first.
   if (senior) {
     const remainingDifference =
-      compareGradeLists(a.remainingGrades,b.remainingGrades,a.formNumber);
+      compareGradeLists(
+        a.remainingGrades,
+        b.remainingGrades,
+        a.formNumber
+      );
 
     if (remainingDifference !== 0) return remainingDifference;
 
@@ -1169,7 +1568,11 @@ function compareRankingRecords(a,b) {
     if (bestDifference !== 0) return bestDifference;
 
     const remainingDifference =
-      compareGradeLists(a.remainingGrades,b.remainingGrades,a.formNumber);
+      compareGradeLists(
+        a.remainingGrades,
+        b.remainingGrades,
+        a.formNumber
+      );
 
     if (remainingDifference !== 0) return remainingDifference;
   }
@@ -1178,7 +1581,9 @@ function compareRankingRecords(a,b) {
 }
 
 function renderStudentPosition() {
-  if (!dom.studentPosition || !selectedStudent || !selectedClass) return;
+  if (!dom.studentPosition || !selectedStudent || !selectedClass) {
+    return;
+  }
 
   const classStudents = getStudentsForClass(selectedClass);
   const totalStudents = classStudents.length;
@@ -1198,7 +1603,6 @@ function renderStudentPosition() {
     return;
   }
 
-  // Competition ranking: tied students share a position.
   let position = 1;
 
   for (let i = 1; i <= currentIndex; i++) {
@@ -1210,7 +1614,8 @@ function renderStudentPosition() {
     }
   }
 
-  dom.studentPosition.textContent = position + "/" + totalStudents;
+  dom.studentPosition.textContent =
+    position + "/" + totalStudents;
 }
 
 /* =========================================================
@@ -1219,7 +1624,24 @@ function renderStudentPosition() {
 
 async function saveResults(showMessage = true) {
   if (!selectedStudent) {
-    if (showMessage) showSaveMessage("No student has been selected.","error");
+    if (showMessage) {
+      showSaveMessage(
+        "No student has been selected.",
+        "error"
+      );
+    }
+
+    return false;
+  }
+
+  if (!dom.resultsEntryBody || !dom.saveResultsBtn) {
+    if (showMessage) {
+      showSaveMessage(
+        "The results entry form could not be found.",
+        "error"
+      );
+    }
+
     return false;
   }
 
@@ -1228,7 +1650,13 @@ async function saveResults(showMessage = true) {
   );
 
   if (!rows.length) {
-    if (showMessage) showSaveMessage("There are no subjects to save.","error");
+    if (showMessage) {
+      showSaveMessage(
+        "There are no subjects to save.",
+        "error"
+      );
+    }
+
     return false;
   }
 
@@ -1243,7 +1671,9 @@ async function saveResults(showMessage = true) {
       const subjectId = row.dataset.subjectId;
       const subject = findSubjectById(subjectId);
       const papers = getPaperStructure(subject,selectedStudent);
-      const inputs = Array.from(row.querySelectorAll(".paper-mark-input"));
+      const inputs = Array.from(
+        row.querySelectorAll(".paper-mark-input")
+      );
 
       const values = [];
       let invalid = false;
@@ -1260,7 +1690,9 @@ async function saveResults(showMessage = true) {
         hasAnyMark = true;
         const value = Number(raw);
 
-        if (!Number.isFinite(value) || value < 0 || value > papers[index].max) {
+        if (!Number.isFinite(value) ||
+            value < 0 ||
+            value > papers[index].max) {
           invalid = true;
           input.classList.add("invalid");
           values.push(null);
@@ -1275,27 +1707,41 @@ async function saveResults(showMessage = true) {
           "One or more paper marks are invalid. Check the maximum mark for each paper.",
           "error"
         );
+
         return false;
       }
 
       if (!hasAnyMark) continue;
 
-      if (values.some(value => value === null || value === undefined)) {
+      if (values.some(value =>
+        value === null || value === undefined
+      )) {
         showSaveMessage(
           "Please enter marks for every paper before saving the subject.",
           "error"
         );
+
         return false;
       }
 
-      const calculation = calculateSubjectPercentage(papers,values);
+      const calculation = calculateSubjectPercentage(
+        papers,
+        values
+      );
 
       if (calculation.percentage === null) {
-        showSaveMessage("Could not calculate the subject percentage.","error");
+        showSaveMessage(
+          "Could not calculate the subject percentage.",
+          "error"
+        );
+
         return false;
       }
 
-      const grading = getSubjectGrading(calculation.percentage,selectedStudent);
+      const grading = getSubjectGrading(
+        calculation.percentage,
+        selectedStudent
+      );
 
       records.push({
         student_id:studentId,
@@ -1309,7 +1755,11 @@ async function saveResults(showMessage = true) {
 
     if (!records.length) {
       if (showMessage) {
-        showSaveMessage("Enter at least one subject's marks before saving.","error");
+        showSaveMessage(
+          "Enter at least one subject's marks before saving.",
+          "error"
+        );
+
         return false;
       }
 
@@ -1320,17 +1770,33 @@ async function saveResults(showMessage = true) {
     await upsertResults(records);
     await loadStudentResults();
 
-    // Re-render ranking data using the newly saved marks.
+    /*
+      The database trigger automatically withdraws results
+      after a results-table change. Refresh the panel to
+      display the current database status.
+    */
+    await loadReleaseStatus();
+
     if (showMessage) {
-      showSaveMessage("Results saved successfully.","success");
+      showSaveMessage(
+        "Results saved successfully.",
+        "success"
+      );
+
       hideResultsEntry();
     }
 
     return true;
+
   } catch (error) {
     console.error("Save results error:",error);
-    if (showMessage) showSaveMessage(getErrorMessage(error),"error");
+
+    if (showMessage) {
+      showSaveMessage(getErrorMessage(error),"error");
+    }
+
     return false;
+
   } finally {
     dom.saveResultsBtn.disabled = false;
     dom.saveResultsBtn.textContent = "Save Results";
@@ -1344,7 +1810,10 @@ async function upsertResults(records) {
 
   if (!result.error) return;
 
-  console.warn("Full result save failed. Trying compatibility save:",result.error);
+  console.warn(
+    "Full result save failed. Trying compatibility save:",
+    result.error
+  );
 
   const gradeRecords = records.map(record => ({
     student_id:record.student_id,
@@ -1363,6 +1832,7 @@ async function upsertResults(records) {
       "Results saved, but paper marks could not be stored. Check whether the results table has a paper_marks column.",
       "error"
     );
+
     return;
   }
 
@@ -1396,6 +1866,7 @@ async function openStudentOverall(student) {
     await loadStudentResults();
   } catch (error) {
     console.error(error);
+    showGlobalMessage(getErrorMessage(error),"error");
   }
 
   renderOverallResults();
@@ -1416,6 +1887,7 @@ function showEntry() {
     renderEntryStudentInformation();
     renderResultEntry();
   }
+
   showView("entry");
 }
 
@@ -1426,7 +1898,10 @@ function showOverall() {
 
 function showView(view) {
   [
-    dom.classesView,dom.studentsView,dom.entryView,dom.overallView
+    dom.classesView,
+    dom.studentsView,
+    dom.entryView,
+    dom.overallView
   ].forEach(element => element?.classList.add("hidden"));
 
   const views = {
@@ -1447,6 +1922,7 @@ function showView(view) {
 
 function showSaveMessage(message,type) {
   if (!dom.saveMessage) return;
+
   dom.saveMessage.textContent = message;
   dom.saveMessage.className = "save-message " + type;
 }
@@ -1455,6 +1931,7 @@ function showGlobalMessage(message,type) {
   if (!dom.globalMessage) return;
 
   clearTimeout(globalMessageTimer);
+
   dom.globalMessage.textContent = message;
   dom.globalMessage.className = "global-message " + type;
   dom.globalMessage.classList.remove("hidden");
@@ -1470,19 +1947,33 @@ function showGlobalMessage(message,type) {
 
 function downloadResult() {
   if (typeof html2pdf === "undefined") {
-    showGlobalMessage("PDF library could not be loaded.","error");
+    showGlobalMessage(
+      "PDF library could not be loaded.",
+      "error"
+    );
+
     return;
   }
 
   const result = document.getElementById("printableResult");
+
   if (!result) {
-    showGlobalMessage("Printable results section was not found.","error");
+    showGlobalMessage(
+      "Printable results section was not found.",
+      "error"
+    );
+
     return;
   }
 
   const actions = result.querySelector(".results-actions");
-  const studentName = document.getElementById("studentName").textContent.trim();
-  const safeName = studentName.replace(/[^a-z0-9]/gi,"-").replace(/-+/g,"-");
+  const studentName =
+    document.getElementById("studentName").textContent.trim();
+
+  const safeName = studentName
+    .replace(/[^a-z0-9]/gi,"-")
+    .replace(/-+/g,"-");
+
   const fileName = (safeName || "Student") + "-Result.pdf";
 
   if (actions) actions.style.display = "none";
@@ -1501,6 +1992,7 @@ function downloadResult() {
     result.style.width = original.width;
     result.style.margin = original.margin;
     result.style.boxSizing = original.boxSizing;
+
     if (actions) actions.style.display = "";
   };
 
@@ -1510,18 +2002,38 @@ function downloadResult() {
     margin:[10,10,10,10],
     filename:fileName,
     image:{type:"jpeg",quality:0.98},
-    html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0},
-    jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
-    pagebreak:{mode:["css","legacy"],avoid:["tr",".overall-result"]}
+    html2canvas:{
+      scale:2,
+      useCORS:true,
+      scrollX:0,
+      scrollY:0
+    },
+    jsPDF:{
+      unit:"mm",
+      format:"a4",
+      orientation:"portrait"
+    },
+    pagebreak:{
+      mode:["css","legacy"],
+      avoid:["tr",".overall-result"]
+    }
   }).from(result).save()
     .then(() => {
       restore();
-      showGlobalMessage("Results PDF created successfully.","success");
+
+      showGlobalMessage(
+        "Results PDF created successfully.",
+        "success"
+      );
     })
     .catch(error => {
       console.error("PDF error:",error);
       restore();
-      showGlobalMessage("Could not create the PDF.","error");
+
+      showGlobalMessage(
+        "Could not create the PDF.",
+        "error"
+      );
     });
 }
 
@@ -1542,11 +2054,13 @@ function getStudentsForClass(classItem) {
   const formNumber = classItem.form_number;
 
   return allStudents.filter(student => {
-    if (student.class_id !== undefined && student.class_id !== null) {
+    if (student.class_id !== undefined &&
+        student.class_id !== null) {
       return String(student.class_id) === String(classId);
     }
 
-    if (student.form_number !== undefined && student.form_number !== null) {
+    if (student.form_number !== undefined &&
+        student.form_number !== null) {
       return String(student.form_number) === String(formNumber);
     }
 
@@ -1561,6 +2075,7 @@ function getStudentsForClass(classItem) {
 
 function getClassName(item) {
   if (!item) return "Class";
+
   return item.class_name || item.name ||
     (item.form_number ? "Form " + item.form_number : "Class");
 }
@@ -1570,11 +2085,15 @@ function getClassCode(item) {
 }
 
 function getClassFormLabel(item) {
-  return item && item.form_number ? "FORM " + item.form_number : "CLASS";
+  return item && item.form_number
+    ? "FORM " + item.form_number
+    : "CLASS";
 }
 
 function getClassInitial(item) {
-  return item && item.form_number ? String(item.form_number) : "C";
+  return item && item.form_number
+    ? String(item.form_number)
+    : "C";
 }
 
 function getStudentName(student) {
@@ -1582,7 +2101,8 @@ function getStudentName(student) {
   if (student.full_name) return student.full_name;
 
   const combined = (
-    (student.first_name || "") + " " + (student.last_name || "")
+    (student.first_name || "") + " " +
+    (student.last_name || "")
   ).trim();
 
   return combined || student.name || "Student";
@@ -1590,9 +2110,13 @@ function getStudentName(student) {
 
 function getStudentId(student) {
   if (!student) return "—";
-  return student.student_number || student.student_id ||
-    student.admission_number || student.registration_number ||
-    student.id || "—";
+
+  return student.student_number ||
+    student.student_id ||
+    student.admission_number ||
+    student.registration_number ||
+    student.id ||
+    "—";
 }
 
 function getStudentGender(student) {
@@ -1602,8 +2126,14 @@ function getStudentGender(student) {
 function getStudentFormNumber(student) {
   if (!student) return null;
 
-  const value = student.form_number ?? student.form ?? student.class_form;
-  if (value === null || value === undefined || value === "") return null;
+  const value =
+    student.form_number ??
+    student.form ??
+    student.class_form;
+
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
 
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -1620,8 +2150,14 @@ function getEffectiveFormNumber(student) {
 function getSubjectFormNumber(subject) {
   if (!subject) return null;
 
-  const value = subject.form_number ?? subject.form ?? subject.class_form;
-  if (value === null || value === undefined || value === "") return null;
+  const value =
+    subject.form_number ??
+    subject.form ??
+    subject.class_form;
+
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
 
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
@@ -1629,16 +2165,31 @@ function getSubjectFormNumber(subject) {
 
 function getSubjectName(subject) {
   if (!subject) return "Subject";
-  return subject.subject_name || subject.name || subject.title || "Subject";
+
+  return subject.subject_name ||
+    subject.name ||
+    subject.title ||
+    "Subject";
 }
 
 function getDatabaseId(record) {
   if (!record) return null;
-  return record.id ?? record.student_id ?? record.subject_id ?? null;
+
+  return record.id ??
+    record.student_id ??
+    record.subject_id ??
+    null;
 }
 
 function romanNumber(number) {
-  const values = [[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
+  const values = [
+    [10,"X"],
+    [9,"IX"],
+    [5,"V"],
+    [4,"IV"],
+    [1,"I"]
+  ];
+
   let result = "";
   let value = Number(number);
 
@@ -1664,19 +2215,33 @@ function escapeHtml(value) {
 }
 
 function escapeAttribute(value) {
-  return value === null || value === undefined ? "" : escapeHtml(String(value));
+  return value === null || value === undefined
+    ? ""
+    : escapeHtml(String(value));
 }
 
 function getInitials(name) {
-  const words = String(name).trim().split(/\s+/).filter(Boolean);
+  const words = String(name)
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
 
   if (!words.length) return "ST";
-  if (words.length === 1) return words[0].substring(0,2).toUpperCase();
 
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  if (words.length === 1) {
+    return words[0].substring(0,2).toUpperCase();
+  }
+
+  return (
+    words[0][0] +
+    words[words.length - 1][0]
+  ).toUpperCase();
 }
 
 function getErrorMessage(error) {
   if (!error) return "An unexpected error occurred.";
-  return error.message || error.error_description || String(error);
+
+  return error.message ||
+    error.error_description ||
+    String(error);
 }

@@ -2308,3 +2308,112 @@ footer{
 #classesView .classes-grid {
   margin-top: 0 !important;
 }
+
+/* RESULTS RELEASE PANEL */
+.results-release-panel {
+margin-top: 32px;
+padding: 24px;
+border: 1px solid #e2d8d5;
+border-radius: 16px;
+background: #fff;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 20px;
+}
+
+.release-panel-info {
+flex: 1 1 260px;
+}
+
+.release-panel-info h2 {
+margin: 8px 0;
+color: #3e0714;
+}
+
+.release-panel-info p {
+margin: 0;
+color: #625b5b;
+line-height: 1.6;
+}
+
+.release-panel-actions {
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.release-status-badge {
+display: inline-block;
+padding: 7px 12px;
+border-radius: 20px;
+background: #f4f2ee;
+color: #625b5b;
+font-size: 12px;
+font-weight: 700;
+}
+
+.release-status-badge.released {
+background: #e6f4ec;
+color: #18794e;
+}
+
+.release-status-badge.unreleased {
+background: #fff0d6;
+color: #805400;
+}
+
+#releaseResultsBtn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+.results-release-panel {
+padding: 18px;
+align-items: stretch;
+}
+
+.release-panel-actions {
+align-items: stretch;
+flex-direction: column;
+}
+
+.release-panel-actions button {
+width: 100%;
+}
+}
+/* RESULTS RELEASE STATUS IMPROVEMENTS */
+
+.release-status-badge.hidden-status {
+background: #fff0f0;
+color: #b42318;
+}
+
+#releaseMessage {
+flex-basis: 100%;
+margin: 0;
+font-size: 13px;
+line-height: 1.5;
+}
+
+#releaseMessage.success {
+color: #18794e;
+}
+
+#releaseMessage.error {
+color: #b42318;
+}
+
+#releaseResultsBtn {
+white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+.results-release-panel {
+margin-top: 20px;
+gap: 14px;
+}
+}

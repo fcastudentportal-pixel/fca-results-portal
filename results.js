@@ -1237,8 +1237,43 @@ function calculateOverall(resultRows,student) {
   };
 }
 
+
+/* =========================================================
+   RENDER OVERALL RESULT SUMMARY
+========================================================= */
+
+function renderOverallSummary(overall) {
+  if (!overall) return;
+
+  if (dom.overallResult) {
+    dom.overallResult.textContent = overall.valid
+      ? "PASS"
+      : "INCOMPLETE";
+  }
+
+  if (dom.overallResultDetails) {
+    if (overall.type === "senior") {
+      dom.overallResultDetails.textContent =
+        overall.valid
+          ? "Best-six aggregate: " + overall.aggregate +
+            ". English passed."
+          : overall.reason || "Overall requirements not met.";
+    } else {
+      dom.overallResultDetails.textContent =
+        overall.valid
+          ? "Passed " + overall.passedCount +
+            " subjects. English passed."
+          : overall.reason || "Overall requirements not met.";
+    }
+  }
+}
+
+
 /* =========================================================
    RENDER OVERALL RESULTS
+   - Removes the Papers column.
+   - Adds Subject Position after Percentage.
+   - Keeps existing grading and overall calculations.
 ========================================================= */
 
 function renderOverallResults() {
@@ -1253,9 +1288,14 @@ function renderOverallResults() {
       String(item.subject_id) === String(subjectId)
     );
 
-    const papers = getPaperStructure(subject,selectedStudent);
-    const values = getExistingPaperValues(result,papers);
-    const calculation = calculateSubjectPercentage(papers,values);
+    const papers = getPaperStructure(subject, selectedStudent);
+    const values = getExistingPaperValues(result, papers);
+
+    const calculation = calculateSubjectPercentage(
+      papers,
+      values
+    );
+
     const grading = getSubjectGrading(
       calculation.percentage,
       selectedStudent
@@ -1271,20 +1311,41 @@ function renderOverallResults() {
     };
   });
 
-  if (dom.studentName) dom.studentName.textContent = getStudentName(selectedStudent);
-  if (dom.studentId) dom.studentId.textContent = getStudentId(selectedStudent);
-  if (dom.studentClass) dom.studentClass.textContent = getClassName(selectedClass);
-  if (dom.studentGender) dom.studentGender.textContent = getStudentGender(selectedStudent);
-  if (dom.studentSubjectCount) dom.studentSubjectCount.textContent = subjects.length;
+  // Student information
+  if (dom.studentName) {
+    dom.studentName.textContent = getStudentName(selectedStudent);
+  }
+
+  if (dom.studentId) {
+    dom.studentId.textContent = getStudentId(selectedStudent);
+  }
+
+  if (dom.studentClass) {
+    dom.studentClass.textContent = getClassName(selectedClass);
+  }
+
+  if (dom.studentGender) {
+    dom.studentGender.textContent = getStudentGender(selectedStudent);
+  }
+
+  if (dom.studentSubjectCount) {
+    dom.studentSubjectCount.textContent = subjects.length;
+  }
 
   if (!dom.overallResultsBody) return;
+
   dom.overallResultsBody.innerHTML = "";
 
   if (!resultRows.length) {
     dom.overallResultsBody.innerHTML = `
-      <tr><td colspan="6">
-        <div class="table-loading">No subjects found.</div>
-      </td></tr>`;
+      <tr>
+        <td colspan="6">
+          <div class="table-loading">
+            No subjects found.
+          </div>
+        </td>
+      </tr>
+    `;
 
     if (dom.overallResult) {
       dom.overallResult.textContent = "NO RESULTS";
@@ -1303,90 +1364,214 @@ function renderOverallResults() {
     return;
   }
 
-  resultRows.forEach((item,index) => {
+  // Render one row per subject.
+  resultRows.forEach((item, index) => {
     const row = document.createElement("tr");
 
-    const papersHtml = item.papers.map((paper,paperIndex) => {
-      const value = item.values[paperIndex];
+    const percentage = item.calculation.percentage;
 
-      return `
-        <div class="overall-paper">
-          <strong>${escapeHtml(paper.name)}</strong>
-          <span>${value === "" || value === null || value === undefined
-            ? "—"
-            : escapeHtml(String(value))}/${paper.max}</span>
-        </div>`;
-    }).join("");
+    const subjectPosition = getSubjectPosition(
+      item.subject,
+      percentage
+    );
 
     row.innerHTML = `
       <td>${index + 1}</td>
-      <td><strong>${escapeHtml(getSubjectName(item.subject))}</strong></td>
-      <td><div class="overall-paper-list">${papersHtml}</div></td>
-      <td class="overall-percentage">${item.calculation.percentage === null
-        ? "—"
-        : item.calculation.percentage + "%"}</td>
-      <td class="overall-grade">${item.grading
-        ? escapeHtml(String(item.grading.grade))
-        : "—"}</td>
-      <td class="overall-classification">${item.grading
-        ? escapeHtml(item.grading.remark)
-        : "Not entered"}</td>`;
+
+      <td>
+        <strong>
+          ${escapeHtml(getSubjectName(item.subject))}
+        </strong>
+      </td>
+
+      <td class="overall-percentage">
+        ${percentage === null ? "—" : percentage + "%"}
+      </td>
+
+      <td class="subject-position">
+        ${escapeHtml(subjectPosition)}
+      </td>
+
+      <td class="overall-grade">
+        ${item.grading
+          ? escapeHtml(String(item.grading.grade))
+          : "—"}
+      </td>
+
+      <td class="overall-classification">
+        ${item.grading
+          ? escapeHtml(item.grading.remark)
+          : "Not entered"}
+      </td>
+    `;
 
     dom.overallResultsBody.appendChild(row);
   });
 
-  const overall = calculateOverall(resultRows,selectedStudent);
+  // Preserve existing overall result and class position logic.
+  const overall = calculateOverall(
+    resultRows,
+    selectedStudent
+  );
+
   renderOverallSummary(overall);
   renderStudentPosition();
 }
 
-function renderOverallSummary(overall) {
-  if (overall.type === "senior") {
-    if (overall.valid && overall.aggregate !== null) {
-      if (dom.overallResult) {
-        dom.overallResult.textContent =
-          "PASS — " + overall.aggregate + " POINTS";
+
+/* =========================================================
+   SUBJECT POSITION
+   Example: 1/40, 2/40, 3/40
+
+   Ranking rules:
+   - Compare students in the same class.
+   - Only compare students assigned to the subject.
+   - Rank completed subject results by percentage.
+   - Equal percentages receive equal positions.
+   - The denominator is the number of students assigned
+     to that subject in the selected class.
+========================================================= */
+
+function getSubjectPosition(subject, currentPercentage) {
+  if (!selectedClass || !selectedStudent || !subject) {
+    return "—";
+  }
+
+  const subjectId = getDatabaseId(subject);
+  const subjectName = getSubjectName(subject)
+    .trim()
+    .toLowerCase();
+
+  // Find students in this class who take this subject.
+  const eligibleStudents = getStudentsForClass(selectedClass)
+    .filter(student => {
+      const assignedSubjects = getSubjectsForStudent(student);
+
+      return assignedSubjects.some(assigned => {
+        const assignedId = getDatabaseId(assigned);
+
+        if (
+          subjectId !== null &&
+          subjectId !== undefined &&
+          assignedId !== null &&
+          assignedId !== undefined
+        ) {
+          return String(assignedId) === String(subjectId);
+        }
+
+        return getSubjectName(assigned)
+          .trim()
+          .toLowerCase() === subjectName;
+      });
+    });
+
+  const denominator = eligibleStudents.length;
+
+  if (denominator === 0) {
+    return "—";
+  }
+
+  // A student without completed marks has no subject rank yet.
+  if (
+    currentPercentage === null ||
+    currentPercentage === undefined ||
+    !Number.isFinite(Number(currentPercentage))
+  ) {
+    return "—/" + denominator;
+  }
+
+  const completedResults = [];
+
+  eligibleStudents.forEach(student => {
+    const studentId = getDatabaseId(student);
+
+    const savedResult = allResults.find(result =>
+      String(result.student_id) === String(studentId) &&
+      (
+        String(result.subject_id) === String(subjectId) ||
+        (
+          (result.subject_id === null ||
+           result.subject_id === undefined) &&
+          String(result.subject || "")
+            .trim()
+            .toLowerCase() === subjectName
+        )
+      )
+    );
+
+    if (!savedResult) return;
+
+    const papers = getPaperStructure(subject, student);
+    const values = getExistingPaperValues(savedResult, papers);
+
+    const calculation = calculateSubjectPercentage(
+      papers,
+      values
+    );
+
+    let percentage = calculation.percentage;
+
+    /*
+      Compatibility fallback:
+      The mark column stores the calculated percentage.
+      Use it if paper-level marks are unavailable.
+    */
+    if (
+      percentage === null &&
+      savedResult.mark !== null &&
+      savedResult.mark !== undefined &&
+      savedResult.mark !== ""
+    ) {
+      const storedMark = Number(savedResult.mark);
+
+      if (
+        Number.isFinite(storedMark) &&
+        storedMark >= 0 &&
+        storedMark <= 100
+      ) {
+        percentage = Math.round(storedMark);
       }
-
-      if (dom.overallResultDetails) {
-        dom.overallResultDetails.textContent = "Best six aggregate.";
-      }
-
-      return;
     }
 
-    if (dom.overallResult) {
-      dom.overallResult.textContent = "NOT QUALIFIED";
-    }
+    if (percentage === null) return;
 
-    if (dom.overallResultDetails) {
-      dom.overallResultDetails.textContent = overall.reason;
-    }
+    completedResults.push({
+      studentId: String(studentId),
+      percentage: Number(percentage)
+    });
+  });
 
-    return;
+  // Highest percentage ranks first.
+  completedResults.sort(
+    (a, b) => b.percentage - a.percentage
+  );
+
+  /*
+    Competition ranking:
+    70%, 69%, 69%, 60% produces:
+    1,    2,   2,   4
+  */
+  const currentId = String(getDatabaseId(selectedStudent));
+
+  const currentRecord = completedResults.find(record =>
+    record.studentId === currentId
+  );
+
+  // Use the currently displayed percentage for the selected student.
+  const selectedPercentage = Number(currentPercentage);
+
+  const rank = 1 + completedResults.filter(record =>
+    record.percentage > selectedPercentage
+  ).length;
+
+  // Ensure this student has a saved/completed result.
+  if (!currentRecord) {
+    return "—/" + denominator;
   }
 
-  if (overall.valid) {
-    if (dom.overallResult) {
-      dom.overallResult.textContent = "PASS";
-    }
-
-    if (dom.overallResultDetails) {
-      dom.overallResultDetails.textContent =
-        overall.passedCount + " subjects passed.";
-    }
-
-    return;
-  }
-
-  if (dom.overallResult) {
-    dom.overallResult.textContent = "FAIL";
-  }
-
-  if (dom.overallResultDetails) {
-    dom.overallResultDetails.textContent = overall.reason;
-  }
+  return rank + "/" + denominator;
 }
+
 
 /* =========================================================
    POSITION IN CLASS

@@ -1242,12 +1242,17 @@ function calculateOverall(resultRows,student) {
    RENDER OVERALL RESULT SUMMARY
 ========================================================= */
 
+
 function renderOverallSummary(overall) {
   if (!overall) return;
 
   if (dom.overallResult) {
     dom.overallResult.textContent = overall.valid
-      ? "PASS"
+      ? (
+          overall.type === "senior"
+            ? "PASS - " + overall.aggregate + " POINTS"
+            : "PASS"
+        )
       : "INCOMPLETE";
   }
 
@@ -1267,6 +1272,7 @@ function renderOverallSummary(overall) {
     }
   }
 }
+
 
 
 /* =========================================================

@@ -1103,82 +1103,79 @@ function isEnglishSubject(subject) {
   return getSubjectName(subject).trim().toLowerCase() === "english";
 }
 
+
+
 function calculateSeniorOverall(resultRows) {
   const english = resultRows.find(item =>
     isEnglishSubject(item.subject)
   );
 
-  if (!english || english.calculation.percentage === null) {
-    return {
-      valid:false,
-      passed:false,
-      reason:english
-        ? "English must be completed."
-        : "English result is required.",
-      aggregate:null,
-      selectedSubjects:[],
-      passedCount:0,
-      englishPassed:false
-    };
-  }
-
-  const englishGrade = getSeniorGrade(
-    english.calculation.percentage
-  );
-
-  if (!englishGrade.passed) {
-    return {
-      valid:false,
-      passed:false,
-      reason:"English must be passed.",
-      aggregate:null,
-      selectedSubjects:[],
-      passedCount:0,
-      englishPassed:false
-    };
-  }
-
-  const passedRows = resultRows
+  // Include every completed subject, whether passed or failed.
+  const completedRows = resultRows
     .filter(item => item.calculation.percentage !== null)
     .map(item => ({
       ...item,
-      grading:getSeniorGrade(item.calculation.percentage)
-    }))
-    .filter(item => item.grading.passed);
+      grading: getSeniorGrade(item.calculation.percentage)
+    }));
 
-  if (passedRows.length < 6) {
-    return {
-      valid:false,
-      passed:false,
-      reason:"At least six passed subjects are required for the best-six aggregate.",
-      aggregate:null,
-      selectedSubjects:[],
-      passedCount:passedRows.length,
-      englishPassed:true
-    };
-  }
-
-  const selectedSubjects = [...passedRows]
-    .sort((a,b) =>
-      Number(a.grading.grade) - Number(b.grading.grade)
-    )
-    .slice(0,6);
-
-  const aggregate = selectedSubjects.reduce(
-    (sum,item) => sum + Number(item.grading.grade),
-    0
+  // Count only passed subjects when deciding the overall result.
+  const passedRows = completedRows.filter(item =>
+    item.grading.passed
   );
 
-    return {
-    valid:true,
-    passed:true,
-    reason:"English passed.",
+  // Best six completed subjects determine aggregate points.
+  // Failed subjects are included when necessary.
+  const selectedSubjects = [...completedRows]
+    .sort((a, b) =>
+      Number(a.grading.grade) - Number(b.grading.grade)
+    )
+    .slice(0, 6);
+
+  // Calculate points whenever six subjects are completed.
+  const aggregate = selectedSubjects.length === 6
+    ? selectedSubjects.reduce(
+        (sum, item) => sum + Number(item.grading.grade),
+        0
+      )
+    : null;
+
+  const englishCompleted = Boolean(
+    english && english.calculation.percentage !== null
+  );
+
+  const englishPassed = englishCompleted
+    ? getSeniorGrade(english.calculation.percentage).passed
+    : false;
+
+  const passed =
+    englishPassed &&
+    passedRows.length >= 6;
+
+  let reason = "Pass requirements met.";
+
+  if (!englishCompleted) {
+    reason = english
+      ? "English must be completed."
+      : "English result is required.";
+  } else if (!englishPassed) {
+    reason = "English must be passed.";
+  } else if (passedRows.length < 6) {
+    reason = "At least six subjects must be passed.";
+  }
+
+  return {
+    type: "senior",
+    valid: englishCompleted && completedRows.length >= 6,
+    passed,
+    reason,
     aggregate,
     selectedSubjects,
-    passedCount:passedRows.length,
-    englishPassed:true
+    passedCount: passedRows.length,
+    englishPassed
   };
 }
+
+
 
 function calculateJuniorOverall(resultRows) {
   const english = resultRows.find(item =>
@@ -1248,12 +1245,13 @@ function calculateOverall(resultRows,student) {
 
 
 
+
 function renderOverallSummary(overall) {
   if (!overall) return;
 
   const isSenior = overall.type === "senior";
 
-  // Keep junior results using the existing junior rules.
+  // Preserve the existing junior Forms 1–2 behaviour.
   if (!isSenior) {
     if (dom.overallResult) {
       dom.overallResult.textContent =
@@ -1268,42 +1266,43 @@ function renderOverallSummary(overall) {
     return;
   }
 
-  // Senior results: English must be passed,
-  // and at least six subjects must be passed.
-  const englishPassed = overall.englishPassed;
   const passedCount = Number(overall.passedCount || 0);
+  const englishPassed = overall.englishPassed;
 
-  let passed = false;
-  let detailsText = "";
+  const passed =
+    englishPassed === true &&
+    passedCount >= 6 &&
+    overall.valid === true &&
+    overall.passed === true;
 
-  if (englishPassed === false) {
-    detailsText = "English failed";
+  let detailsText = "Passed";
+
+  if (englishPassed !== true) {
+    detailsText = "English must be passed.";
   } else if (passedCount < 6) {
-    detailsText = "Insufficient passes";
-  } else {
-    passed = overall.valid === true && overall.passed === true;
-    detailsText = passed ? "Passed" : "Failed";
+    detailsText = "At least six subjects must be passed.";
   }
 
-  
-if (dom.overallResult) {
-  const hasAggregate =
-    overall.aggregate !== null &&
-    overall.aggregate !== undefined &&
-    overall.aggregate !== "";
+  if (dom.overallResult) {
+    const hasAggregate =
+      overall.aggregate !== null &&
+      overall.aggregate !== undefined &&
+      overall.aggregate !== "";
 
-  if (hasAggregate) {
-    dom.overallResult.textContent =
-      `${passed ? "PASS" : "FAIL"} - ${overall.aggregate} POINTS`;
-  } else {
-    dom.overallResult.textContent = passed ? "PASS" : "FAIL";
+    if (hasAggregate) {
+      dom.overallResult.textContent =
+        `${passed ? "PASS" : "FAIL"} - ${overall.aggregate} POINTS`;
+    } else {
+      dom.overallResult.textContent =
+        passed ? "PASS" : "FAIL";
+    }
   }
-}
-  
+
   if (dom.overallResultDetails) {
     dom.overallResultDetails.textContent = detailsText;
   }
 }
+
 
 
 

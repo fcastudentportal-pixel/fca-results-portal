@@ -1285,12 +1285,21 @@ function renderOverallSummary(overall) {
     detailsText = passed ? "Passed" : "Failed";
   }
 
-  if (dom.overallResult) {
-    dom.overallResult.textContent = passed
-      ? `PASS - ${overall.aggregate} POINTS`
-      : "FAIL";
-  }
+  
+if (dom.overallResult) {
+  const hasAggregate =
+    overall.aggregate !== null &&
+    overall.aggregate !== undefined &&
+    overall.aggregate !== "";
 
+  if (hasAggregate) {
+    dom.overallResult.textContent =
+      `${passed ? "PASS" : "FAIL"} - ${overall.aggregate} POINTS`;
+  } else {
+    dom.overallResult.textContent = passed ? "PASS" : "FAIL";
+  }
+}
+  
   if (dom.overallResultDetails) {
     dom.overallResultDetails.textContent = detailsText;
   }

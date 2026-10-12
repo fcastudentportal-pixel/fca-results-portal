@@ -629,8 +629,8 @@ function renderEntryStudentInformation() {
 
   if (dom.gradingInformation) {
     dom.gradingInformation.textContent = form >= 3
-      ? "Senior grading: 80–100 Grade 1, 70–79 Grade 2, 65–69 Grade 3, 60–64 Grade 4, 55–59 Grade 5, 50–54 Grade 6, 45–49 Grade 7, 40–44 Grade 8, 0–39 Grade 9. English must be passed but is not forced into the best-six aggregate."
-      : "Junior grading: 75–100 A, 60–74 B, 50–59 C, 40–49 D, 0–39 F. Overall pass requires at least six passed subjects and English must be passed.";
+      ? "Senior grading: 90–100 Grade 1, 85–89 Grade 2, 75–84 Grade 3, 74–65 Grade 4, 55–64 Grade 5, 50–54 Grade 6, 45–49 Grade 7, 40–44 Grade 8, 0–39 Grade 9. English must be passed but is not forced into the best-six aggregate."
+      : "Junior grading: 85–100 A, 70–84 B, 55–69 C, 40–54 D, 0–39 F. Overall pass requires at least six passed subjects and English must be passed.";
   }
 }
 

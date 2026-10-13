@@ -94,6 +94,21 @@ const dom = {};
 let globalMessageTimer = null;
 
 document.addEventListener("DOMContentLoaded", init);
+let selectedAcademicYear = new Date().getFullYear();
+let selectedTerm = "Term 1";
+let selectedAssessmentType = "End-of-Term";
+
+let feeStatuses = [];
+let teacherRemarks = [];
+let progressionRecords = [];
+
+const ASSESSMENT_TYPES = [
+  "Continuous Assessment",
+  "Mid-Term",
+  "End-of-Term"
+];
+
+const TERMS = ["Term 1", "Term 2", "Term 3"];
 
 /* =========================================================
    INITIALIZATION
@@ -108,17 +123,15 @@ async function init() {
       "FCA Supabase client was not found. Check config.js.",
       "error"
     );
-    setReleaseUnavailable("Supabase client was not found.");
     return;
   }
 
   attachEvents();
-
-  // Load publication status independently of the results data.
-  loadReleaseStatus();
+  createAssessmentControls();
 
   try {
     await loadInitialData();
+    await refreshAssessment();
   } catch (error) {
     console.error("FCA Results initialization error:", error);
     showGlobalMessage(getErrorMessage(error), "error");
@@ -639,24 +652,29 @@ async function loadStudentResults() {
 
   const studentId = getDatabaseId(selectedStudent);
 
-  currentStudentResults = allResults.filter(result =>
-    String(result.student_id) === String(studentId)
-  );
-
-  const {data,error} = await db
+  const { data, error } = await db
     .from("results")
     .select("*")
-    .eq("student_id", studentId);
+    .eq("student_id", studentId)
+    .eq("academic_year", selectedAcademicYear)
+    .eq("term", selectedTerm)
+    .eq("assessment_type", selectedAssessmentType);
 
   if (error) {
-    console.warn("Could not refresh results:", error);
+    console.error("Could not load selected assessment results:", error);
     throw error;
   }
 
   currentStudentResults = data || [];
 
-  allResults = allResults.filter(item =>
-    String(item.student_id) !== String(studentId)
+  // Keep the local cache for the selected assessment only.
+  allResults = allResults.filter(result =>
+    !(
+      String(result.student_id) === String(studentId) &&
+      Number(result.academic_year) === selectedAcademicYear &&
+      result.term === selectedTerm &&
+      result.assessment_type === selectedAssessmentType
+    )
   ).concat(currentStudentResults);
 }
 
@@ -1981,14 +1999,17 @@ async function saveResults(showMessage = true) {
       );
 
       records.push({
-        student_id:studentId,
-        subject_id:subjectId,
-        mark:calculation.percentage,
-        grade:grading ? grading.grade : null,
-        remark:grading ? grading.remark : "",
-        paper_marks:values
-      });
-    }
+  student_id: studentId,
+  subject_id: subjectId,
+  mark: calculation.percentage,
+  grade: grading ? grading.grade : null,
+  remark: grading ? grading.remark : "",
+  paper_marks: values,
+
+  academic_year: selectedAcademicYear,
+  term: selectedTerm,
+  assessment_type: selectedAssessmentType
+});
 
     if (!records.length) {
       if (showMessage) {
@@ -2498,4 +2519,309 @@ function updateReleasePanelVisibility(view) {
 
   // Show the release panel only on the main Classes view.
   panel.hidden = view !== "classes";
+}
+function createAssessmentControls() {
+  const mainView = document.getElementById("classesView");
+
+  if (!mainView || document.getElementById("fcaAssessmentControls")) {
+    return;
+  }
+
+  const toolbar = document.createElement("section");
+  toolbar.id = "fcaAssessmentControls";
+  toolbar.className = "fca-assessment-controls";
+
+  toolbar.innerHTML = `
+    <h3>Assessment Settings</h3>
+
+    <div class="fca-assessment-fields">
+      <label>
+        Academic Year
+        <input
+          type="number"
+          id="fcaAcademicYear"
+          min="2000"
+          max="2200"
+          value="${selectedAcademicYear}"
+        >
+      </label>
+
+      <label>
+        Term
+        <select id="fcaTerm">
+          ${TERMS.map(term => `
+            <option value="${term}" ${term === selectedTerm ? "selected" : ""}>
+              ${term}
+            </option>
+          `).join("")}
+        </select>
+      </label>
+
+      <label>
+        Assessment
+        <select id="fcaAssessmentType">
+          ${ASSESSMENT_TYPES.map(type => `
+            <option value="${type}" ${type === selectedAssessmentType ? "selected" : ""}>
+              ${type}
+            </option>
+          `).join("")}
+        </select>
+      </label>
+    </div>
+
+    <p id="fcaAssessmentNotice" role="status">
+      Selected assessment: ${selectedAssessmentType}, ${selectedTerm}, ${selectedAcademicYear}
+    </p>
+
+    <div class="fca-release-controls">
+      <strong id="fcaAssessmentReleaseStatus">Checking release status...</strong>
+      <button type="button" id="fcaAssessmentReleaseButton" disabled>
+        Checking...
+      </button>
+    </div>
+
+    <div id="fcaAssessmentMessage" role="status"></div>
+  `;
+
+  mainView.prepend(toolbar);
+
+  document.getElementById("fcaAcademicYear")
+    .addEventListener("change", async event => {
+      const value = Number(event.target.value);
+
+      if (!Number.isInteger(value) || value < 2000 || value > 2200) {
+        showAssessmentMessage("Enter a valid academic year.", "error");
+        event.target.value = selectedAcademicYear;
+        return;
+      }
+
+      selectedAcademicYear = value;
+      await refreshAssessment();
+    });
+
+  document.getElementById("fcaTerm")
+    .addEventListener("change", async event => {
+      selectedTerm = event.target.value;
+      await refreshAssessment();
+    });
+
+  document.getElementById("fcaAssessmentType")
+    .addEventListener("change", async event => {
+      selectedAssessmentType = event.target.value;
+      await refreshAssessment();
+    });
+
+  document.getElementById("fcaAssessmentReleaseButton")
+    .addEventListener("click", toggleAssessmentRelease);
+
+  const style = document.createElement("style");
+
+  style.textContent = `
+    .fca-assessment-controls {
+      margin: 0 0 24px;
+      padding: 18px;
+      border: 1px solid #e4d8da;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .fca-assessment-fields {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .fca-assessment-fields label {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-weight: 600;
+    }
+
+    .fca-assessment-fields input,
+    .fca-assessment-fields select {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid #d7c9cc;
+      border-radius: 7px;
+      background: white;
+    }
+
+    .fca-release-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    #fcaAssessmentReleaseButton {
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 7px;
+      background: #650d22;
+      color: white;
+      cursor: pointer;
+    }
+
+    #fcaAssessmentReleaseButton:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    #fcaAssessmentMessage {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 650px) {
+      .fca-assessment-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function showAssessmentMessage(message, type = "info") {
+  const element = document.getElementById("fcaAssessmentMessage");
+  if (!element) return;
+
+  element.textContent = message;
+  element.style.color = type === "error"
+    ? "#b42318"
+    : type === "success"
+      ? "#18794e"
+      : "#3e0714";
+}
+async function getAssessmentReleaseStatus() {
+  const { data, error } = await db
+    .from("assessment_release_settings")
+    .select("is_released")
+    .eq("academic_year", selectedAcademicYear)
+    .eq("term", selectedTerm)
+    .eq("assessment_type", selectedAssessmentType)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data?.is_released === true;
+}
+
+async function refreshAssessment() {
+  const status = document.getElementById("fcaAssessmentReleaseStatus");
+  const button = document.getElementById("fcaAssessmentReleaseButton");
+  const notice = document.getElementById("fcaAssessmentNotice");
+
+  if (notice) {
+    notice.textContent =
+      `Selected assessment: ${selectedAssessmentType}, ${selectedTerm}, ${selectedAcademicYear}`;
+  }
+
+  if (status) status.textContent = "Checking release status...";
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Checking...";
+  }
+
+  try {
+    resultsAreReleased = await getAssessmentReleaseStatus();
+    releaseStatusAvailable = true;
+
+    if (status) {
+      status.textContent = resultsAreReleased
+        ? "Released — students may view this assessment if their fees are complete."
+        : "Not released — students cannot view this assessment.";
+    }
+
+    if (button) {
+      button.textContent = resultsAreReleased
+        ? "Withdraw This Assessment"
+        : "Release This Assessment";
+      button.disabled = false;
+    }
+
+    // Refresh only the selected assessment's saved results.
+    if (selectedStudent) {
+      await loadStudentResults();
+      renderResultEntry();
+    }
+
+    showAssessmentMessage("", "info");
+  } catch (error) {
+    console.error("Assessment refresh error:", error);
+
+    releaseStatusAvailable = false;
+
+    if (status) status.textContent = "Release status unavailable.";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Unavailable";
+    }
+
+    showAssessmentMessage(getErrorMessage(error), "error");
+  }
+}
+
+async function toggleAssessmentRelease() {
+  const button = document.getElementById("fcaAssessmentReleaseButton");
+
+  if (!button || !releaseStatusAvailable || releaseRequestInProgress) {
+    return;
+  }
+
+  const desiredStatus = !resultsAreReleased;
+
+  const message = desiredStatus
+    ? `Release ${selectedAssessmentType} for ${selectedTerm}, ${selectedAcademicYear}?`
+    : `Withdraw ${selectedAssessmentType} for ${selectedTerm}, ${selectedAcademicYear}?`;
+
+  if (!window.confirm(message)) return;
+
+  releaseRequestInProgress = true;
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try {
+    const { data, error } = await db.rpc(
+      "fca_admin_set_assessment_release",
+      {
+        p_academic_year: selectedAcademicYear,
+        p_term: selectedTerm,
+        p_assessment_type: selectedAssessmentType,
+        p_release: desiredStatus
+      }
+    );
+
+    if (error) throw error;
+
+    const response = Array.isArray(data) ? data[0] : data;
+
+    if (!response || response.success !== true) {
+      throw new Error("The database did not confirm the release change.");
+    }
+
+    resultsAreReleased = response.is_released === true;
+    releaseStatusAvailable = true;
+
+    showAssessmentMessage(
+      resultsAreReleased
+        ? "Assessment released successfully."
+        : "Assessment withdrawn successfully.",
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Assessment release error:", error);
+
+    showAssessmentMessage(
+      "Could not update the assessment release: " + getErrorMessage(error),
+      "error"
+    );
+  } finally {
+    releaseRequestInProgress = false;
+    await refreshAssessment();
+  }
 }

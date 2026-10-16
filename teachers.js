@@ -1,24 +1,32 @@
+
 "use strict";
 
 /* ============================================================
-   FCA TEACHERS MANAGEMENT
-   SUPABASE VERSION
+   FIRST CLASS ACADEMY — TEACHERS MANAGEMENT
 
-   - Teacher form hidden by default
-   - Add Teacher opens form
-   - Edit opens form
-   - Cancel closes form
-   - Successful save closes form
-   - Administrator password required for deletion
+   TEACHER ID:
+   FCA-T-AM (Alex Meja)
+   Duplicate initials receive a unique suffix:
+   FCA-T-AM-2, FCA-T-AM-3, etc.
+
+   ACCESS:
+   - Administrator account: login to the admin dashboard.
+   - IT technician password: authorize teacher-management actions.
+   - Teacher password: teacher's own login credentials.
+
+   SECURITY:
+   - Technician password verification uses a Supabase RPC.
+   - Do not store the technician password in this file.
+   - Server-side RLS policies must also protect database writes.
 ============================================================ */
 
 
 /* ============================================================
-   FCA ADMIN
+   CONFIGURATION
 ============================================================ */
 
-const FCA_ADMIN_EMAIL =
-    "fca.admin@gmail.com";
+const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
+const TECHNICIAN_VERIFY_RPC = "fca_verify_technician_password";
 
 
 /* ============================================================
@@ -26,147 +34,356 @@ const FCA_ADMIN_EMAIL =
 ============================================================ */
 
 let teachers = [];
-
 let editingTeacherId = null;
-
 let teacherToDeleteId = null;
+let technicianAuthorizedForCurrentAction = false;
 
 
 /* ============================================================
    ELEMENTS
 ============================================================ */
 
-const teacherForm =
-    document.getElementById("teacherForm");
+const teacherForm = document.getElementById("teacherForm");
+const teacherList = document.getElementById("teacherList");
+const teacherCount = document.getElementById("teacherCount");
+const subjectCount = document.getElementById("subjectCount");
+const classCount = document.getElementById("classCount");
+const teacherMessage = document.getElementById("teacherMessage");
+const formTitle = document.getElementById("formTitle");
 
-const teacherList =
-    document.getElementById("teacherList");
+const firstNameInput = document.getElementById("firstName");
+const lastNameInput = document.getElementById("lastName");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-const teacherCount =
-    document.getElementById("teacherCount");
+const cancelBtn = document.getElementById("cancelBtn");
+const selectAllSubjectsBtn = document.getElementById("selectAllSubjectsBtn");
+const clearSubjectsBtn = document.getElementById("clearSubjectsBtn");
+const selectAllClassesBtn = document.getElementById("selectAllClassesBtn");
+const clearClassesBtn = document.getElementById("clearClassesBtn");
+const passwordToggle = document.getElementById("passwordToggle");
+const addTeacherSection = document.getElementById("addTeacher");
+const addTeacherBtn = document.getElementById("addTeacherBtn");
 
-const subjectCount =
-    document.getElementById("subjectCount");
-
-const classCount =
-    document.getElementById("classCount");
-
-const teacherMessage =
-    document.getElementById("teacherMessage");
-
-const formTitle =
-    document.getElementById("formTitle");
-
-const firstNameInput =
-    document.getElementById("firstName");
-
-const lastNameInput =
-    document.getElementById("lastName");
-
-const usernameInput =
-    document.getElementById("username");
-
-const passwordInput =
-    document.getElementById("password");
-
-const cancelBtn =
-    document.getElementById("cancelBtn");
-
-const selectAllSubjectsBtn =
-    document.getElementById("selectAllSubjectsBtn");
-
-const clearSubjectsBtn =
-    document.getElementById("clearSubjectsBtn");
-
-const selectAllClassesBtn =
-    document.getElementById("selectAllClassesBtn");
-
-const clearClassesBtn =
-    document.getElementById("clearClassesBtn");
-
-const passwordToggle =
-    document.getElementById("passwordToggle");
-
-const addTeacherSection =
-    document.getElementById("addTeacher");
-
-const addTeacherBtn =
-    document.getElementById("addTeacherBtn");
+const deleteModal = document.getElementById("deleteModal");
+const deleteTeacherName = document.getElementById("deleteTeacherName");
+const adminDeletePassword = document.getElementById("adminDeletePassword");
+const deleteError = document.getElementById("deleteError");
+const deleteCancelBtn = document.getElementById("deleteCancelBtn");
+const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+const adminPasswordToggle = document.getElementById("adminPasswordToggle");
 
 
 /* ============================================================
-   DELETE MODAL ELEMENTS
+   SUPABASE
 ============================================================ */
 
-const deleteModal =
-    document.getElementById("deleteModal");
+function getSupabaseClient() {
+    if (!window.fcaSupabase) {
+        throw new Error(
+            "FCA Supabase client is unavailable. Check config.js."
+        );
+    }
 
-const deleteTeacherName =
-    document.getElementById("deleteTeacherName");
+    return window.fcaSupabase;
+}
 
-const adminDeletePassword =
-    document.getElementById("adminDeletePassword");
 
-const deleteError =
-    document.getElementById("deleteError");
+/* ============================================================
+   ADMIN DASHBOARD SESSION
+   This checks dashboard login only.
+   It does not replace technician authorization.
+============================================================ */
 
-const deleteCancelBtn =
-    document.getElementById("deleteCancelBtn");
+async function checkAdminAuthorization() {
+    try {
+        const supabase = getSupabaseClient();
 
-const deleteConfirmBtn =
-    document.getElementById("deleteConfirmBtn");
+        const { data, error } = await supabase.auth.getSession();
 
-const adminPasswordToggle =
-    document.getElementById("adminPasswordToggle");
+        if (error) {
+            throw error;
+        }
+
+        const user = data?.session?.user;
+
+        if (!user) {
+            window.location.replace("admin-login.html");
+            return false;
+        }
+
+        const email = (user.email || "").trim().toLowerCase();
+
+        if (email !== FCA_ADMIN_EMAIL) {
+            await supabase.auth.signOut();
+            window.location.replace("admin-login.html");
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("FCA administrator session error:", error);
+        window.location.replace("admin-login.html");
+        return false;
+    }
+}
+
+
+/* ============================================================
+   TECHNICIAN AUTHORIZATION
+
+   Required Supabase RPC:
+   fca_verify_technician_password(p_password text)
+
+   Expected response:
+   true
+   OR
+   { authorized: true }
+
+   The RPC must verify the password securely on the server.
+   Never replace this with a password hardcoded in JavaScript.
+============================================================ */
+
+async function verifyTechnicianPassword(password) {
+    if (!password) {
+        return false;
+    }
+
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase.rpc(
+        TECHNICIAN_VERIFY_RPC,
+        {
+            p_password: password
+        }
+    );
+
+    if (error) {
+        console.error("Technician verification failed:", error);
+
+        throw new Error(
+            "Technician verification is not configured correctly. " +
+            "Check the Supabase technician-verification RPC."
+        );
+    }
+
+    if (data === true) {
+        return true;
+    }
+
+    if (
+        data &&
+        typeof data === "object" &&
+        data.authorized === true
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+
+/* ============================================================
+   ASK FOR TECHNICIAN PASSWORD
+
+   This modal is generated by JavaScript, so no new HTML
+   modal is required.
+============================================================ */
+
+function requestTechnicianPassword(actionDescription) {
+    return new Promise((resolve) => {
+        const existing = document.getElementById(
+            "fcaTechnicianAuthModal"
+        );
+
+        if (existing) {
+            existing.remove();
+        }
+
+        const modal = document.createElement("div");
+
+        modal.id = "fcaTechnicianAuthModal";
+
+        modal.style.cssText = `
+            position:fixed;
+            inset:0;
+            z-index:99999;
+            background:rgba(0,0,0,.65);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:18px;
+        `;
+
+        modal.innerHTML = `
+            <div style="
+                background:#fff;
+                color:#1d2430;
+                width:100%;
+                max-width:420px;
+                padding:24px;
+                border-radius:14px;
+                box-shadow:0 15px 45px rgba(0,0,0,.25);
+            ">
+                <h2 style="margin:0 0 8px;font-size:21px;">
+                    IT Technician Authorization
+                </h2>
+
+                <p style="margin:0 0 16px;line-height:1.5;color:#606775;">
+                    Enter your technician password to authorize:
+                    <strong>${escapeHtml(actionDescription)}</strong>
+                </p>
+
+                <label for="fcaTechnicianPassword"
+                    style="display:block;margin-bottom:7px;font-weight:600;">
+                    Technician password
+                </label>
+
+                <input
+                    id="fcaTechnicianPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Enter technician password"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                        padding:13px;
+                        border:1px solid #cfd3da;
+                        border-radius:8px;
+                        font-size:16px;
+                    "
+                >
+
+                <p
+                    id="fcaTechnicianAuthError"
+                    role="alert"
+                    style="color:#b42318;min-height:20px;font-size:13px;"
+                ></p>
+
+                <div style="display:flex;gap:10px;">
+                    <button
+                        type="button"
+                        id="fcaTechnicianCancel"
+                        style="
+                            flex:1;padding:12px;border:1px solid #cfd3da;
+                            border-radius:8px;background:#fff;cursor:pointer;
+                        "
+                    >Cancel</button>
+
+                    <button
+                        type="button"
+                        id="fcaTechnicianConfirm"
+                        style="
+                            flex:1;padding:12px;border:0;border-radius:8px;
+                            background:#650d22;color:#fff;cursor:pointer;
+                        "
+                    >Authorize</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const input = modal.querySelector("#fcaTechnicianPassword");
+        const errorBox = modal.querySelector("#fcaTechnicianAuthError");
+        const confirmBtn = modal.querySelector("#fcaTechnicianConfirm");
+        const cancelBtn = modal.querySelector("#fcaTechnicianCancel");
+
+        let finished = false;
+
+        function finish(result) {
+            if (finished) return;
+
+            finished = true;
+            modal.remove();
+            resolve(result);
+        }
+
+        cancelBtn.addEventListener("click", () => finish(false));
+
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                finish(false);
+            }
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                confirmBtn.click();
+            }
+
+            if (event.key === "Escape") {
+                finish(false);
+            }
+        });
+
+        confirmBtn.addEventListener("click", async () => {
+            const password = input.value;
+
+            if (!password) {
+                errorBox.textContent =
+                    "Enter your technician password.";
+                input.focus();
+                return;
+            }
+
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = "Verifying...";
+            errorBox.textContent = "";
+
+            try {
+                const authorized =
+                    await verifyTechnicianPassword(password);
+
+                if (!authorized) {
+                    errorBox.textContent =
+                        "Incorrect technician password.";
+
+                    input.value = "";
+                    input.focus();
+                    return;
+                }
+
+                finish(true);
+            } catch (error) {
+                console.error(error);
+
+                errorBox.textContent =
+                    error.message ||
+                    "Unable to verify technician authorization.";
+            } finally {
+                if (modal.isConnected) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = "Authorize";
+                }
+            }
+        });
+
+        setTimeout(() => input.focus(), 50);
+    });
+}
 
 
 /* ============================================================
    FORM VISIBILITY
 ============================================================ */
 
-/*
- * Use !important so teachers.css cannot accidentally
- * override the form visibility.
- */
-
-function hideTeacherForm(){
-
-    if(!addTeacherSection){
-
-        console.error(
-            "FCA: addTeacher section was not found."
-        );
-
-        return;
-
-    }
-
+function hideTeacherForm() {
+    if (!addTeacherSection) return;
 
     addTeacherSection.style.setProperty(
         "display",
         "none",
         "important"
     );
-
 }
 
-
-/* ============================================================
-   SHOW TEACHER FORM
-============================================================ */
-
-function showTeacherForm(){
-
-    if(!addTeacherSection){
-
-        console.error(
-            "FCA: addTeacher section was not found."
-        );
-
+function showTeacherForm() {
+    if (!addTeacherSection) {
+        console.error("FCA: addTeacher section was not found.");
         return;
-
     }
-
 
     addTeacherSection.style.setProperty(
         "display",
@@ -174,571 +391,135 @@ function showTeacherForm(){
         "important"
     );
 
-
-    /*
-     * Scroll to the form after it becomes visible.
-     */
-
-    setTimeout(
-        function(){
-
-            addTeacherSection.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-        },
-        50
-    );
-
+    setTimeout(() => {
+        addTeacherSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 50);
 }
 
 
 /* ============================================================
-   OPEN NEW TEACHER FORM
+   FORM HELPERS
 ============================================================ */
 
-function openAddTeacherForm(){
+function showMessage(message, type = "info") {
+    if (!teacherMessage) return;
 
-    /*
-     * Make sure we are not editing an existing teacher.
-     */
+    teacherMessage.textContent = message;
+    teacherMessage.className = "message " + type;
+}
 
+function setPasswordVisibility(input, button, visible) {
+    if (!input || !button) return;
+
+    input.type = visible ? "text" : "password";
+
+    button.classList.toggle("is-visible", visible);
+    button.setAttribute(
+        "aria-label",
+        visible ? "Hide password" : "Show password"
+    );
+    button.setAttribute(
+        "title",
+        visible ? "Hide password" : "Show password"
+    );
+    button.setAttribute(
+        "aria-pressed",
+        visible ? "true" : "false"
+    );
+}
+
+function openAddTeacherForm() {
     editingTeacherId = null;
 
+    if (teacherForm) teacherForm.reset();
 
-    /*
-     * Clear the form first.
-     */
+    if (formTitle) formTitle.textContent = "Add Teacher";
 
-    if(teacherForm){
-
-        teacherForm.reset();
-
-    }
-
-
-    if(formTitle){
-
-        formTitle.textContent =
-            "Add Teacher";
-
-    }
-
-
-    if(passwordInput){
-
+    if (passwordInput) {
         passwordInput.value = "";
-
-        passwordInput.type =
-            "password";
-
-        passwordInput.placeholder =
-            "Enter password";
-
+        passwordInput.placeholder = "Set teacher login password";
+        passwordInput.required = true;
+        setPasswordVisibility(passwordInput, passwordToggle, false);
     }
-
-
-    if(passwordToggle){
-
-        passwordToggle.classList.remove(
-            "is-visible"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    if(teacherMessage){
-
-        teacherMessage.textContent =
-            "";
-
-        teacherMessage.className =
-            "message";
-
-    }
-
 
     const saveButton =
-        teacherForm
-            ? teacherForm.querySelector(
-                ".save-btn"
-            )
-            : null;
+        teacherForm?.querySelector(".save-btn");
 
+    if (saveButton) saveButton.textContent = "Save Teacher";
 
-    if(saveButton){
-
-        saveButton.textContent =
-            "Save Teacher";
-
-    }
-
-
-    /*
-     * Open the form.
-     */
-
+    showMessage("", "info");
     showTeacherForm();
 
+    setTimeout(() => firstNameInput?.focus(), 250);
+}
 
-    /*
-     * Focus first field.
-     */
-
-    setTimeout(
-        function(){
-
-            if(firstNameInput){
-
-                firstNameInput.focus();
-
-            }
-
-        },
-        250
-    );
-
+if (addTeacherBtn) {
+    addTeacherBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAddTeacherForm();
+    });
 }
 
 
 /* ============================================================
-   TOP ADD TEACHER BUTTON
+   NORMALIZE SUBJECTS AND CLASSES
 ============================================================ */
 
-if(addTeacherBtn){
-
-    addTeacherBtn.addEventListener(
-        "click",
-        function(event){
-
-            event.preventDefault();
-
-            openAddTeacherForm();
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   SUPABASE CLIENT
-============================================================ */
-
-function getSupabaseClient(){
-
-    if(!window.fcaSupabase){
-
-        throw new Error(
-            "FCA Supabase client is not available. Check config.js."
-        );
-
-    }
-
-
-    return window.fcaSupabase;
-
-}
-
-
-/* ============================================================
-   ADMIN AUTHORIZATION
-============================================================ */
-
-async function checkAdminAuthorization(){
-
-    try{
-
-        const supabase =
-            getSupabaseClient();
-
-
-        const {
-            data,
-            error
-        } =
-            await supabase
-                .auth
-                .getSession();
-
-
-        if(error){
-
-            console.error(
-                "FCA session error:",
-                error
-            );
-
-            window.location.replace(
-                "admin-login.html"
-            );
-
-            return false;
-
-        }
-
-
-        if(
-            !data ||
-            !data.session ||
-            !data.session.user
-        ){
-
-            console.warn(
-                "No FCA administrator session."
-            );
-
-            window.location.replace(
-                "admin-login.html"
-            );
-
-            return false;
-
-        }
-
-
-        const email =
-            data.session.user.email
-                ?.trim()
-                .toLowerCase();
-
-
-        console.log(
-            "FCA authenticated management user:",
-            email
-        );
-
-
-        if(
-            email !==
-            FCA_ADMIN_EMAIL
-        ){
-
-            console.warn(
-                "Unauthorized FCA account:",
-                email
-            );
-
-
-            await supabase
-                .auth
-                .signOut();
-
-
-            window.location.replace(
-                "admin-login.html"
-            );
-
-            return false;
-
-        }
-
-
-        return true;
-
-    }
-
-    catch(error){
-
-        console.error(
-            "FCA authorization error:",
-            error
-        );
-
-
-        window.location.replace(
-            "admin-login.html"
-        );
-
-
-        return false;
-
-    }
-
-}
-
-
-/* ============================================================
-   VERIFY ADMINISTRATOR PASSWORD
-============================================================ */
-
-async function verifyAdministratorPassword(
-    password
-){
-
-    if(!password){
-
-        return false;
-
-    }
-
-
-    const supabase =
-        getSupabaseClient();
-
-
-    const {
-        data: sessionData,
-        error: sessionError
-    } =
-        await supabase
-            .auth
-            .getSession();
-
-
-    if(sessionError){
-
-        throw new Error(
-            sessionError.message
-        );
-
-    }
-
-
-    if(
-        !sessionData ||
-        !sessionData.session ||
-        !sessionData.session.user
-    ){
-
-        throw new Error(
-            "Administrator session has expired. Please log in again."
-        );
-
-    }
-
-
-    const currentEmail =
-        sessionData.session.user.email
-            ?.trim()
-            .toLowerCase();
-
-
-    if(
-        currentEmail !==
-        FCA_ADMIN_EMAIL
-    ){
-
-        throw new Error(
-            "Only the FCA administrator can delete teachers."
-        );
-
-    }
-
-
-    const {
-        data,
-        error
-    } =
-        await supabase
-            .auth
-            .signInWithPassword({
-
-                email:
-                    FCA_ADMIN_EMAIL,
-
-                password:
-                    password
-
-            });
-
-
-    if(error){
-
-        return false;
-
-    }
-
-
-    if(
-        !data ||
-        !data.user
-    ){
-
-        return false;
-
-    }
-
-
-    const authenticatedEmail =
-        data.user.email
-            ?.trim()
-            .toLowerCase();
-
-
-    return (
-        authenticatedEmail ===
-        FCA_ADMIN_EMAIL
-    );
-
-}
-
-
-/* ============================================================
-   NORMALIZE SUBJECTS
-============================================================ */
-
-function normalizeSubjects(value){
-
-    if(!value){
-
-        return [];
-
-    }
-
-
-    if(Array.isArray(value)){
-
-        return value
-            .map(
-                item =>
-                    typeof item === "string"
-                        ? item
-                        : (
-                            item?.name ||
-                            item?.subject_name ||
-                            item?.subject ||
-                            ""
-                        )
-            )
+function normalizeList(value, possibleKeys) {
+    if (!value) return [];
+
+    function extract(items) {
+        return items
+            .map((item) => {
+                if (typeof item === "string") return item;
+
+                for (const key of possibleKeys) {
+                    if (item?.[key]) return item[key];
+                }
+
+                return "";
+            })
             .filter(Boolean);
-
     }
 
+    if (Array.isArray(value)) {
+        return extract(value);
+    }
 
-    if(typeof value === "string"){
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
 
-        try{
-
-            const parsed =
-                JSON.parse(value);
-
-
-            if(Array.isArray(parsed)){
-
-                return parsed
-                    .map(
-                        item =>
-                            typeof item === "string"
-                                ? item
-                                : (
-                                    item?.name ||
-                                    item?.subject_name ||
-                                    item?.subject ||
-                                    ""
-                                )
-                    )
-                    .filter(Boolean);
-
+            if (Array.isArray(parsed)) {
+                return extract(parsed);
             }
-
+        } catch {
+            return value.trim() ? [value.trim()] : [];
         }
 
-        catch{
-
-            return value.trim()
-                ? [value.trim()]
-                : [];
-
-        }
-
+        return value.trim() ? [value.trim()] : [];
     }
-
 
     return [];
-
 }
 
+function normalizeSubjects(value) {
+    return normalizeList(value, [
+        "name",
+        "subject_name",
+        "subject"
+    ]);
+}
 
-/* ============================================================
-   NORMALIZE CLASSES
-============================================================ */
-
-function normalizeClasses(value){
-
-    if(!value){
-
-        return [];
-
-    }
-
-
-    if(Array.isArray(value)){
-
-        return value
-            .map(
-                item =>
-                    typeof item === "string"
-                        ? item
-                        : (
-                            item?.name ||
-                            item?.class_name ||
-                            item?.class ||
-                            ""
-                        )
-            )
-            .filter(Boolean);
-
-    }
-
-
-    if(typeof value === "string"){
-
-        try{
-
-            const parsed =
-                JSON.parse(value);
-
-
-            if(Array.isArray(parsed)){
-
-                return parsed
-                    .map(
-                        item =>
-                            typeof item === "string"
-                                ? item
-                                : (
-                                    item?.name ||
-                                    item?.class_name ||
-                                    item?.class ||
-                                    ""
-                                )
-                    )
-                    .filter(Boolean);
-
-            }
-
-        }
-
-        catch{
-
-            return value.trim()
-                ? [value.trim()]
-                : [];
-
-        }
-
-    }
-
-
-    return [];
-
+function normalizeClasses(value) {
+    return normalizeList(value, [
+        "name",
+        "class_name",
+        "class"
+    ]);
 }
 
 
@@ -746,843 +527,327 @@ function normalizeClasses(value){
    LOAD TEACHERS
 ============================================================ */
 
-async function loadTeachers(){
-
-    if(!teacherList){
-
-        return;
-
-    }
-
+async function loadTeachers() {
+    if (!teacherList) return;
 
     teacherList.innerHTML = `
-
         <div class="empty-state">
-
-            <div class="empty-icon">
-                T
-            </div>
-
-            <strong>
-                Loading teachers...
-            </strong>
-
-            <p>
-                Connecting to FCA database.
-            </p>
-
+            <div class="empty-icon">T</div>
+            <strong>Loading teachers...</strong>
+            <p>Connecting to FCA database.</p>
         </div>
-
     `;
 
+    try {
+        const supabase = getSupabaseClient();
 
-    try{
+        const { data, error } = await supabase
+            .from("teachers")
+            .select("*")
+            .order("created_at", { ascending: false });
 
-        const supabase =
-            getSupabaseClient();
+        if (error) throw error;
 
-
-        const {
-            data,
-            error
-        } =
-            await supabase
-                .from("teachers")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if(error){
-
-            console.error(
-                "FCA Teachers database error:",
-                error
-            );
-
-            throw new Error(
-                error.message
-            );
-
-        }
-
-
-        teachers =
-            Array.isArray(data)
-                ? data
-                : [];
-
+        teachers = Array.isArray(data) ? data : [];
 
         displayTeachers();
-
-    }
-
-    catch(error){
-
-        console.error(
-            "FCA Teachers Error:",
-            error
-        );
-
+    } catch (error) {
+        console.error("FCA teachers loading error:", error);
 
         teacherList.innerHTML = `
-
             <div class="empty-state">
-
-                <div class="empty-icon">
-                    !
-                </div>
-
-                <strong>
-                    Unable to load teachers
-                </strong>
-
-                <p>
-                    ${escapeHtml(
-                        error.message ||
-                        "Unknown database error."
-                    )}
-                </p>
-
-                <button
-                    class="add-btn"
-                    type="button"
-                    onclick="loadTeachers()"
-                >
+                <div class="empty-icon">!</div>
+                <strong>Unable to load teachers</strong>
+                <p>${escapeHtml(error.message || "Database error.")}</p>
+                <button class="add-btn" type="button"
+                    onclick="loadTeachers()">
                     Retry Connection
                 </button>
-
             </div>
-
         `;
-
     }
-
 }
+
+window.loadTeachers = loadTeachers;
 
 
 /* ============================================================
    DISPLAY TEACHERS
 ============================================================ */
 
-function displayTeachers(){
-
-    if(teacherCount){
-
-        teacherCount.textContent =
-            teachers.length;
-
+function displayTeachers() {
+    if (teacherCount) {
+        teacherCount.textContent = teachers.length;
     }
 
-
-    let subjectsTotal = 0;
-
-    let classesTotal = 0;
-
-
-    teachers.forEach(
-        teacher => {
-
-            subjectsTotal +=
-                normalizeSubjects(
-                    teacher.subjects
-                ).length;
-
-
-            classesTotal +=
-                normalizeClasses(
-                    teacher.classes
-                ).length;
-
-        }
-    );
-
-
-    if(subjectCount){
-
-        subjectCount.textContent =
-            subjectsTotal;
-
+    if (subjectCount) {
+        subjectCount.textContent = teachers.reduce(
+            (total, teacher) =>
+                total + normalizeSubjects(teacher.subjects).length,
+            0
+        );
     }
 
-
-    if(classCount){
-
-        classCount.textContent =
-            classesTotal;
-
+    if (classCount) {
+        classCount.textContent = teachers.reduce(
+            (total, teacher) =>
+                total + normalizeClasses(teacher.classes).length,
+            0
+        );
     }
 
+    if (!teacherList) return;
 
-    if(!teacherList){
-
-        return;
-
-    }
-
-
-    if(teachers.length === 0){
-
+    if (!teachers.length) {
         teacherList.innerHTML = `
-
             <div class="empty-state">
-
-                <div class="empty-icon">
-                    T
-                </div>
-
-                <strong>
-                    No teachers added yet
-                </strong>
-
-                <p>
-                    Add your first teacher to begin
-                    managing classes and results.
-                </p>
-
-                <a
-                    href="#addTeacher"
-                    class="add-btn empty-add-teacher"
-                >
+                <div class="empty-icon">T</div>
+                <strong>No teachers added yet</strong>
+                <p>Add your first teacher to begin managing classes and results.</p>
+                <a href="#addTeacher"
+                    class="add-btn empty-add-teacher">
                     + Add Teacher
                 </a>
-
             </div>
-
         `;
-
         return;
-
     }
 
+    teacherList.innerHTML = teachers.map((teacher) => {
+        const subjects = normalizeSubjects(teacher.subjects);
+        const classes = normalizeClasses(teacher.classes);
 
-    teacherList.innerHTML =
-        teachers
-            .map(
-                teacher => {
+        const fullName =
+            `${teacher.first_name || ""} ${teacher.last_name || ""}`.trim()
+            || teacher.full_name
+            || "Unnamed Teacher";
 
-                    const subjects =
-                        normalizeSubjects(
-                            teacher.subjects
-                        );
+        const initials = (
+            (teacher.first_name || "").charAt(0) +
+            (teacher.last_name || "").charAt(0)
+        ).toUpperCase();
 
+        return `
+            <div class="teacher-card">
+                <div class="teacher-main">
+                    <div class="teacher-avatar">
+                        ${escapeHtml(initials)}
+                    </div>
 
-                    const classes =
-                        normalizeClasses(
-                            teacher.classes
-                        );
-
-
-                    const fullName =
-                        `${teacher.first_name || ""} ${teacher.last_name || ""}`
-                            .trim();
-
-
-                    const initials =
-                        (
-                            (teacher.first_name || "")
-                                .charAt(0) +
-
-                            (teacher.last_name || "")
-                                .charAt(0)
-                        )
-                            .toUpperCase();
-
-
-                    return `
-
-                        <div class="teacher-card">
-
-                            <div class="teacher-main">
-
-                                <div class="teacher-avatar">
-                                    ${escapeHtml(initials)}
-                                </div>
-
-
-                                <div class="teacher-info">
-
-                                    <div class="teacher-name-row">
-
-                                        <h3>
-                                            ${escapeHtml(
-                                                fullName ||
-                                                teacher.full_name ||
-                                                "Unnamed Teacher"
-                                            )}
-                                        </h3>
-
-                                        <span class="teacher-id">
-                                            ${escapeHtml(
-                                                teacher.teacher_number ||
-                                                "No ID"
-                                            )}
-                                        </span>
-
-                                    </div>
-
-
-                                    <p class="username">
-                                        @${escapeHtml(
-                                            teacher.username ||
-                                            "No username"
-                                        )}
-                                    </p>
-
-
-                                    <div class="assignment-block">
-
-                                        <strong>
-                                            Subjects
-                                        </strong>
-
-                                        <div class="tags">
-
-                                            ${
-                                                subjects.length
-
-                                                ? subjects
-                                                    .map(
-                                                        subject => `
-
-                                                            <span
-                                                                class="tag subject-tag"
-                                                            >
-                                                                ${escapeHtml(
-                                                                    subject
-                                                                )}
-                                                            </span>
-
-                                                        `
-                                                    )
-                                                    .join("")
-
-                                                : `
-
-                                                    <span class="none">
-                                                        No subjects assigned
-                                                    </span>
-
-                                                `
-                                            }
-
-                                        </div>
-
-                                    </div>
-
-
-                                    <div class="assignment-block">
-
-                                        <strong>
-                                            Classes
-                                        </strong>
-
-                                        <div class="tags">
-
-                                            ${
-                                                classes.length
-
-                                                ? classes
-                                                    .map(
-                                                        className => `
-
-                                                            <span
-                                                                class="tag class-tag"
-                                                            >
-                                                                ${escapeHtml(
-                                                                    className
-                                                                )}
-                                                            </span>
-
-                                                        `
-                                                    )
-                                                    .join("")
-
-                                                : `
-
-                                                    <span class="none">
-                                                        No classes assigned
-                                                    </span>
-
-                                                `
-                                            }
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="teacher-actions">
-
-                                <button
-                                    class="edit-btn"
-                                    type="button"
-                                    data-action="edit"
-                                    data-id="${escapeHtml(teacher.id)}"
-                                >
-                                    Edit
-                                </button>
-
-
-                                <button
-                                    class="delete-btn"
-                                    type="button"
-                                    data-action="delete"
-                                    data-id="${escapeHtml(teacher.id)}"
-                                >
-                                    Delete
-                                </button>
-
-                            </div>
-
+                    <div class="teacher-info">
+                        <div class="teacher-name-row">
+                            <h3>${escapeHtml(fullName)}</h3>
+                            <span class="teacher-id">
+                                ${escapeHtml(teacher.teacher_number || "No ID")}
+                            </span>
                         </div>
 
-                    `;
+                        <p class="username">
+                            @${escapeHtml(teacher.username || "No username")}
+                        </p>
 
-                }
-            )
-            .join("");
+                        <div class="assignment-block">
+                            <strong>Subjects</strong>
+                            <div class="tags">
+                                ${
+                                    subjects.length
+                                    ? subjects.map(subject => `
+                                        <span class="tag subject-tag">
+                                            ${escapeHtml(subject)}
+                                        </span>
+                                    `).join("")
+                                    : `<span class="none">No subjects assigned</span>`
+                                }
+                            </div>
+                        </div>
 
+                        <div class="assignment-block">
+                            <strong>Classes</strong>
+                            <div class="tags">
+                                ${
+                                    classes.length
+                                    ? classes.map(className => `
+                                        <span class="tag class-tag">
+                                            ${escapeHtml(className)}
+                                        </span>
+                                    `).join("")
+                                    : `<span class="none">No classes assigned</span>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="teacher-actions">
+                    <button class="edit-btn" type="button"
+                        data-action="edit"
+                        data-id="${escapeHtml(teacher.id)}">
+                        Edit
+                    </button>
+
+                    <button class="delete-btn" type="button"
+                        data-action="delete"
+                        data-id="${escapeHtml(teacher.id)}">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
 
 /* ============================================================
-   TEACHER LIST CLICK HANDLER
+   TEACHER LIST ACTIONS
 ============================================================ */
 
-if(teacherList){
+if (teacherList) {
+    teacherList.addEventListener("click", (event) => {
+        const target = event.target;
 
-    teacherList.addEventListener(
-        "click",
-        function(event){
-
-            const target =
-                event.target;
-
-
-            /*
-             * Empty state Add Teacher
-             */
-
-            const addButton =
-                target.closest(
-                    ".empty-add-teacher"
-                );
-
-
-            if(addButton){
-
-                event.preventDefault();
-
-                openAddTeacherForm();
-
-                return;
-
-            }
-
-
-            /*
-             * Edit button
-             */
-
-            const editButton =
-                target.closest(
-                    '[data-action="edit"]'
-                );
-
-
-            if(editButton){
-
-                event.preventDefault();
-
-                const id =
-                    editButton.dataset.id;
-
-
-                editTeacher(id);
-
-                return;
-
-            }
-
-
-            /*
-             * Delete button
-             */
-
-            const deleteButton =
-                target.closest(
-                    '[data-action="delete"]'
-                );
-
-
-            if(deleteButton){
-
-                event.preventDefault();
-
-                const id =
-                    deleteButton.dataset.id;
-
-
-                deleteTeacher(id);
-
-                return;
-
-            }
-
+        if (target.closest(".empty-add-teacher")) {
+            event.preventDefault();
+            openAddTeacherForm();
+            return;
         }
-    );
 
+        const editButton = target.closest('[data-action="edit"]');
+
+        if (editButton) {
+            event.preventDefault();
+            editTeacher(editButton.dataset.id);
+            return;
+        }
+
+        const deleteButton = target.closest('[data-action="delete"]');
+
+        if (deleteButton) {
+            event.preventDefault();
+            deleteTeacher(deleteButton.dataset.id);
+        }
+    });
 }
 
 
 /* ============================================================
-   SELECTED SUBJECTS
+   SUBJECT AND CLASS SELECTION
 ============================================================ */
 
-function getSelectedSubjects(){
-
+function getSelectedSubjects() {
     return Array.from(
-        document.querySelectorAll(
-            'input[name="subjects"]:checked'
-        )
-    )
-        .map(
-            checkbox =>
-                checkbox.value
-        );
-
+        document.querySelectorAll('input[name="subjects"]:checked')
+    ).map(input => input.value);
 }
 
-
-/* ============================================================
-   SELECTED CLASSES
-============================================================ */
-
-function getSelectedClasses(){
-
+function getSelectedClasses() {
     return Array.from(
-        document.querySelectorAll(
-            'input[name="classes"]:checked'
-        )
-    )
-        .map(
-            checkbox =>
-                checkbox.value
-        );
-
+        document.querySelectorAll('input[name="classes"]:checked')
+    ).map(input => input.value);
 }
 
-
-/* ============================================================
-   SELECT ALL SUBJECTS
-============================================================ */
-
-function selectAllSubjects(){
-
-    document
-        .querySelectorAll(
-            'input[name="subjects"]'
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    true;
-
-            }
-        );
-
+function selectAllSubjects() {
+    document.querySelectorAll('input[name="subjects"]')
+        .forEach(input => input.checked = true);
 }
 
-
-/* ============================================================
-   CLEAR SUBJECTS
-============================================================ */
-
-function clearSubjects(){
-
-    document
-        .querySelectorAll(
-            'input[name="subjects"]'
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    false;
-
-            }
-        );
-
+function clearSubjects() {
+    document.querySelectorAll('input[name="subjects"]')
+        .forEach(input => input.checked = false);
 }
 
-
-/* ============================================================
-   SELECT ALL CLASSES
-============================================================ */
-
-function selectAllClasses(){
-
-    document
-        .querySelectorAll(
-            'input[name="classes"]'
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    true;
-
-            }
-        );
-
+function selectAllClasses() {
+    document.querySelectorAll('input[name="classes"]')
+        .forEach(input => input.checked = true);
 }
 
-
-/* ============================================================
-   CLEAR CLASSES
-============================================================ */
-
-function clearClasses(){
-
-    document
-        .querySelectorAll(
-            'input[name="classes"]'
-        )
-        .forEach(
-            checkbox => {
-
-                checkbox.checked =
-                    false;
-
-            }
-        );
-
+function clearClasses() {
+    document.querySelectorAll('input[name="classes"]')
+        .forEach(input => input.checked = false);
 }
 
-
-/* ============================================================
-   SELECTION BUTTONS
-============================================================ */
-
-if(selectAllSubjectsBtn){
-
-    selectAllSubjectsBtn.addEventListener(
-        "click",
-        selectAllSubjects
-    );
-
-}
-
-
-if(clearSubjectsBtn){
-
-    clearSubjectsBtn.addEventListener(
-        "click",
-        clearSubjects
-    );
-
-}
-
-
-if(selectAllClassesBtn){
-
-    selectAllClassesBtn.addEventListener(
-        "click",
-        selectAllClasses
-    );
-
-}
-
-
-if(clearClassesBtn){
-
-    clearClassesBtn.addEventListener(
-        "click",
-        clearClasses
-    );
-
-}
+selectAllSubjectsBtn?.addEventListener("click", selectAllSubjects);
+clearSubjectsBtn?.addEventListener("click", clearSubjects);
+selectAllClassesBtn?.addEventListener("click", selectAllClasses);
+clearClassesBtn?.addEventListener("click", clearClasses);
 
 
 /* ============================================================
    PASSWORD SHOW / HIDE
 ============================================================ */
 
-if(
-    passwordToggle &&
-    passwordInput
-){
+passwordToggle?.addEventListener("click", () => {
+    setPasswordVisibility(
+        passwordInput,
+        passwordToggle,
+        passwordInput?.type === "password"
+    );
+});
 
-    passwordToggle.addEventListener(
-        "click",
-        function(){
+adminPasswordToggle?.addEventListener("click", () => {
+    setPasswordVisibility(
+        adminDeletePassword,
+        adminPasswordToggle,
+        adminDeletePassword?.type === "password"
+    );
+});
 
-            const isVisible =
-                passwordInput.type === "text";
+
+/* ============================================================
+   PASSWORD HASHING
+
+   Kept for compatibility with your current teacher records.
+   For production authentication, use Supabase Auth or a
+   server-side password hashing system instead.
+============================================================ */
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+    return Array.from(new Uint8Array(hashBuffer))
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("");
+}
 
 
-            if(isVisible){
+/* ============================================================
+   TEACHER ID GENERATION
 
-                passwordInput.type =
-                    "password";
+   Example: Alex Meja => FCA-T-AM
+   Duplicate initials get a suffix.
+============================================================ */
 
-                passwordToggle.classList.remove(
-                    "is-visible"
-                );
+function generateTeacherNumber(firstName, lastName, excludeId = null) {
+    const firstInitial =
+        (firstName.trim().charAt(0) || "").toUpperCase();
 
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
+    const lastInitial =
+        (lastName.trim().charAt(0) || "").toUpperCase();
 
-                passwordToggle.setAttribute(
-                    "title",
-                    "Show password"
-                );
+    const base = `FCA-T-${firstInitial}${lastInitial}`;
 
-                passwordToggle.setAttribute(
-                    "aria-pressed",
-                    "false"
-                );
-
-            }
-
-            else{
-
-                passwordInput.type =
-                    "text";
-
-                passwordToggle.classList.add(
-                    "is-visible"
-                );
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
-
-                passwordToggle.setAttribute(
-                    "title",
-                    "Hide password"
-                );
-
-                passwordToggle.setAttribute(
-                    "aria-pressed",
-                    "true"
-                );
-
-            }
-
-        }
+    const usedNumbers = new Set(
+        teachers
+            .filter(teacher =>
+                excludeId === null ||
+                String(teacher.id) !== String(excludeId)
+            )
+            .map(teacher => teacher.teacher_number)
+            .filter(Boolean)
     );
 
-}
-
-
-/* ============================================================
-   GENERATE TEACHER NUMBER
-============================================================ */
-
-function generateTeacherNumber(){
-
-    const year =
-        new Date()
-            .getFullYear();
-
-
-    const random =
-        Math.floor(
-            1000 +
-            Math.random() * 9000
-        );
-
-
-    return `FCA-T-${year}-${random}`;
-
-}
-
-
-/* ============================================================
-   HASH TEACHER PASSWORD
-============================================================ */
-
-async function hashPassword(password){
-
-    const encoder =
-        new TextEncoder();
-
-
-    const data =
-        encoder.encode(
-            password
-        );
-
-
-    const hashBuffer =
-        await crypto.subtle.digest(
-            "SHA-256",
-            data
-        );
-
-
-    const hashArray =
-        Array.from(
-            new Uint8Array(
-                hashBuffer
-            )
-        );
-
-
-    return hashArray
-        .map(
-            byte =>
-                byte
-                    .toString(16)
-                    .padStart(2, "0")
-        )
-        .join("");
-
-}
-
-
-/* ============================================================
-   VERIFY TEACHER PASSWORD
-============================================================ */
-
-async function verifyPassword(
-    enteredPassword,
-    storedHash
-){
-
-    if(
-        !enteredPassword ||
-        !storedHash
-    ){
-
-        return false;
-
+    if (!usedNumbers.has(base)) {
+        return base;
     }
 
+    let suffix = 2;
 
-    const enteredHash =
-        await hashPassword(
-            enteredPassword
-        );
+    while (usedNumbers.has(`${base}-${suffix}`)) {
+        suffix++;
+    }
 
-
-    return enteredHash ===
-        storedHash;
-
+    return `${base}-${suffix}`;
 }
 
 
@@ -1590,314 +855,162 @@ async function verifyPassword(
    SAVE / UPDATE TEACHER
 ============================================================ */
 
-if(teacherForm){
+if (teacherForm) {
+    teacherForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-    teacherForm.addEventListener(
-        "submit",
-        async function(event){
+        const firstName = firstNameInput?.value.trim() || "";
+        const lastName = lastNameInput?.value.trim() || "";
+        const username = usernameInput?.value.trim().toLowerCase() || "";
+        const password = passwordInput?.value || "";
+        const subjects = getSelectedSubjects();
+        const classes = getSelectedClasses();
 
-            event.preventDefault();
+        if (!firstName || !lastName) {
+            showMessage("First name and last name are required.", "error");
+            return;
+        }
 
+        if (!username) {
+            showMessage("Username is required.", "error");
+            return;
+        }
 
-            const firstName =
-                firstNameInput.value.trim();
+        if (editingTeacherId === null && !password) {
+            showMessage(
+                "Set a password for the new teacher.",
+                "error"
+            );
+            return;
+        }
 
+        if (!subjects.length) {
+            showMessage("Select at least one subject.", "error");
+            return;
+        }
 
-            const lastName =
-                lastNameInput.value.trim();
+        if (!classes.length) {
+            showMessage("Assign at least one class.", "error");
+            return;
+        }
 
+        try {
+            const authorized = await requestTechnicianPassword(
+                editingTeacherId === null
+                    ? "adding a teacher"
+                    : "editing a teacher"
+            );
 
-            const username =
-                usernameInput.value
-                    .trim()
-                    .toLowerCase();
-
-
-            const password =
-                passwordInput.value;
-
-
-            const subjects =
-                getSelectedSubjects();
-
-
-            const classes =
-                getSelectedClasses();
-
-
-            if(
-                !firstName ||
-                !lastName
-            ){
-
-                showMessage(
-                    "First name and last name are required.",
-                    "error"
-                );
-
+            if (!authorized) {
+                showMessage("Action cancelled.", "info");
                 return;
-
             }
 
+            const supabase = getSupabaseClient();
 
-            if(!username){
+            const saveButton = teacherForm.querySelector(".save-btn");
 
-                showMessage(
-                    "Username is required.",
-                    "error"
-                );
-
-                return;
-
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.textContent = "Saving...";
             }
 
-
-            if(!password){
-
-                showMessage(
-                    editingTeacherId !== null
-                        ? "Enter the current teacher password to confirm the edit."
-                        : "Password is required when adding a teacher.",
-                    "error"
+            if (editingTeacherId !== null) {
+                const teacher = teachers.find(
+                    item => String(item.id) === String(editingTeacherId)
                 );
 
-                return;
-
-            }
-
-
-            if(subjects.length === 0){
-
-                showMessage(
-                    "Please select at least one subject.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            if(classes.length === 0){
-
-                showMessage(
-                    "Please assign at least one class.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            try{
-
-                const supabase =
-                    getSupabaseClient();
-
-
-                /* ========================================
-                   EDIT TEACHER
-                ======================================== */
-
-                if(
-                    editingTeacherId !== null
-                ){
-
-                    const teacher =
-                        teachers.find(
-                            item =>
-                                String(item.id) ===
-                                String(editingTeacherId)
-                        );
-
-
-                    if(!teacher){
-
-                        throw new Error(
-                            "Teacher could not be found."
-                        );
-
-                    }
-
-
-                    const validPassword =
-                        await verifyPassword(
-                            password,
-                            teacher.password_hash
-                        );
-
-
-                    if(!validPassword){
-
-                        showMessage(
-                            "Incorrect teacher password. The teacher was not updated.",
-                            "error"
-                        );
-
-                        return;
-
-                    }
-
-
-                    const {
-                        error
-                    } =
-                        await supabase
-                            .from("teachers")
-                            .update({
-
-                                first_name:
-                                    firstName,
-
-                                last_name:
-                                    lastName,
-
-                                full_name:
-                                    `${firstName} ${lastName}`,
-
-                                username:
-                                    username,
-
-                                subjects:
-                                    subjects,
-
-                                classes:
-                                    classes,
-
-                                updated_at:
-                                    new Date()
-                                        .toISOString()
-
-                            })
-                            .eq(
-                                "id",
-                                editingTeacherId
-                            );
-
-
-                    if(error){
-
-                        throw new Error(
-                            error.message
-                        );
-
-                    }
-
-
-                    /*
-                     * Close form after successful update.
-                     */
-
-                    resetForm();
-
-
-                    await loadTeachers();
-
-
-                    showMessage(
-                        "Teacher updated successfully.",
-                        "success"
-                    );
-
-                    return;
-
+                if (!teacher) {
+                    throw new Error("Teacher could not be found.");
                 }
 
+                const updateData = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    full_name: `${firstName} ${lastName}`,
+                    username,
+                    subjects,
+                    classes,
+                    updated_at: new Date().toISOString()
+                };
 
-                /* ========================================
-                   ADD TEACHER
-                ======================================== */
+                // Change the teacher password only when a new one is supplied.
+                if (password) {
+                    updateData.password_hash = await hashPassword(password);
+                }
 
-                const passwordHash =
-                    await hashPassword(
-                        password
-                    );
+                const { data, error } = await supabase
+                    .from("teachers")
+                    .update(updateData)
+                    .eq("id", editingTeacherId)
+                    .select("id");
 
+                if (error) throw error;
 
-                const teacherNumber =
-                    generateTeacherNumber();
-
-
-                const {
-                    error
-                } =
-                    await supabase
-                        .from("teachers")
-                        .insert({
-
-                            first_name:
-                                firstName,
-
-                            last_name:
-                                lastName,
-
-                            full_name:
-                                `${firstName} ${lastName}`,
-
-                            username:
-                                username,
-
-                            password_hash:
-                                passwordHash,
-
-                            teacher_number:
-                                teacherNumber,
-
-                            subjects:
-                                subjects,
-
-                            classes:
-                                classes
-
-                        });
-
-
-                if(error){
-
+                if (!Array.isArray(data) || data.length === 0) {
                     throw new Error(
-                        error.message
+                        "Teacher was not updated. Check Supabase UPDATE policies."
                     );
-
                 }
-
-
-                /*
-                 * Close form after successful addition.
-                 */
 
                 resetForm();
+                await loadTeachers();
+                showMessage("Teacher updated successfully.", "success");
+            } else {
+                const passwordHash = await hashPassword(password);
+                const teacherNumber = generateTeacherNumber(
+                    firstName,
+                    lastName
+                );
 
+                const { data, error } = await supabase
+                    .from("teachers")
+                    .insert({
+                        first_name: firstName,
+                        last_name: lastName,
+                        full_name: `${firstName} ${lastName}`,
+                        username,
+                        password_hash: passwordHash,
+                        teacher_number: teacherNumber,
+                        subjects,
+                        classes
+                    })
+                    .select("id");
 
+                if (error) throw error;
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error(
+                        "Teacher was not added. Check Supabase INSERT policies."
+                    );
+                }
+
+                resetForm();
                 await loadTeachers();
 
-
                 showMessage(
-                    "Teacher added successfully.",
+                    `Teacher added successfully. Teacher ID: ${teacherNumber}`,
                     "success"
                 );
-
             }
+        } catch (error) {
+            console.error("FCA teacher save error:", error);
+            showMessage(
+                error.message || "Unable to save teacher.",
+                "error"
+            );
+        } finally {
+            const saveButton = teacherForm.querySelector(".save-btn");
 
-            catch(error){
-
-                console.error(
-                    "FCA Teacher save error:",
-                    error
-                );
-
-
-                showMessage(
-                    error.message ||
-                    "Unable to save teacher.",
-                    "error"
-                );
-
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.textContent =
+                    editingTeacherId === null
+                        ? "Save Teacher"
+                        : "Update Teacher";
             }
-
         }
-    );
-
+    });
 }
 
 
@@ -1905,464 +1018,174 @@ if(teacherForm){
    EDIT TEACHER
 ============================================================ */
 
-function editTeacher(id){
+function editTeacher(id) {
+    const teacher = teachers.find(
+        item => String(item.id) === String(id)
+    );
 
-    const teacher =
-        teachers.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if(!teacher){
-
-        alert(
-            "Teacher not found."
-        );
-
+    if (!teacher) {
+        alert("Teacher not found.");
         return;
-
     }
 
+    editingTeacherId = teacher.id;
 
-    editingTeacherId =
-        teacher.id;
+    if (formTitle) formTitle.textContent = "Edit Teacher";
 
-
-    if(formTitle){
-
-        formTitle.textContent =
-            "Edit Teacher";
-
+    if (firstNameInput) {
+        firstNameInput.value = teacher.first_name || "";
     }
 
-
-    if(firstNameInput){
-
-        firstNameInput.value =
-            teacher.first_name || "";
-
+    if (lastNameInput) {
+        lastNameInput.value = teacher.last_name || "";
     }
 
-
-    if(lastNameInput){
-
-        lastNameInput.value =
-            teacher.last_name || "";
-
+    if (usernameInput) {
+        usernameInput.value = teacher.username || "";
     }
 
-
-    if(usernameInput){
-
-        usernameInput.value =
-            teacher.username || "";
-
-    }
-
-
-    if(passwordInput){
-
+    if (passwordInput) {
         passwordInput.value = "";
-
-        passwordInput.type =
-            "password";
-
+        passwordInput.required = false;
         passwordInput.placeholder =
-            "Enter current password to confirm";
+            "Leave blank to keep current teacher password";
 
+        setPasswordVisibility(passwordInput, passwordToggle, false);
     }
-
-
-    if(passwordToggle){
-
-        passwordToggle.classList.remove(
-            "is-visible"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
 
     clearSubjects();
-
     clearClasses();
 
+    const teacherSubjects = normalizeSubjects(teacher.subjects);
+    const teacherClasses = normalizeClasses(teacher.classes);
 
-    const subjects =
-        normalizeSubjects(
-            teacher.subjects
-        );
+    document.querySelectorAll('input[name="subjects"]')
+        .forEach(input => {
+            input.checked = teacherSubjects.some(
+                subject =>
+                    subject.toLowerCase() === input.value.toLowerCase()
+            );
+        });
 
+    document.querySelectorAll('input[name="classes"]')
+        .forEach(input => {
+            input.checked = teacherClasses.some(
+                className =>
+                    className.toLowerCase() === input.value.toLowerCase()
+            );
+        });
 
-    const classes =
-        normalizeClasses(
-            teacher.classes
-        );
+    const saveButton = teacherForm?.querySelector(".save-btn");
 
-
-    subjects.forEach(
-        subject => {
-
-            document
-                .querySelectorAll(
-                    'input[name="subjects"]'
-                )
-                .forEach(
-                    checkbox => {
-
-                        if(
-                            checkbox.value
-                                .toLowerCase() ===
-                            subject
-                                .toLowerCase()
-                        ){
-
-                            checkbox.checked =
-                                true;
-
-                        }
-
-                    }
-                );
-
-        }
-    );
-
-
-    classes.forEach(
-        className => {
-
-            document
-                .querySelectorAll(
-                    'input[name="classes"]'
-                )
-                .forEach(
-                    checkbox => {
-
-                        if(
-                            checkbox.value
-                                .toLowerCase() ===
-                            className
-                                .toLowerCase()
-                        ){
-
-                            checkbox.checked =
-                                true;
-
-                        }
-
-                    }
-                );
-
-        }
-    );
-
-
-    const saveButton =
-        teacherForm
-            ? teacherForm.querySelector(
-                ".save-btn"
-            )
-            : null;
-
-
-    if(saveButton){
-
-        saveButton.textContent =
-            "Update Teacher";
-
+    if (saveButton) {
+        saveButton.textContent = "Update Teacher";
     }
 
-
-    /*
-     * IMPORTANT:
-     * Open the form after all edit data has been loaded.
-     */
-
-    showTeacherForm();
-
-
     showMessage(
-        "Enter the current teacher password to confirm the edit.",
+        "Your technician password will be required to save changes.",
         "info"
     );
 
+    showTeacherForm();
 }
 
-
-/*
- * Make editTeacher globally available in case
- * another part of the page calls it.
- */
-
-window.editTeacher =
-    editTeacher;
+window.editTeacher = editTeacher;
 
 
 /* ============================================================
    OPEN DELETE MODAL
 ============================================================ */
 
-function deleteTeacher(id){
+function deleteTeacher(id) {
+    const teacher = teachers.find(
+        item => String(item.id) === String(id)
+    );
 
-    const teacher =
-        teachers.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if(!teacher){
-
-        alert(
-            "Teacher could not be found."
-        );
-
+    if (!teacher) {
+        alert("Teacher could not be found.");
         return;
-
     }
 
-
-    if(!deleteModal){
-
-        console.error(
-            "Delete modal was not found."
-        );
-
+    if (!deleteModal) {
+        console.error("Delete modal was not found in the HTML.");
         return;
-
     }
 
-
-    teacherToDeleteId =
-        teacher.id;
-
+    teacherToDeleteId = teacher.id;
 
     const name =
-        `${teacher.first_name || ""} ${teacher.last_name || ""}`
-            .trim();
+        `${teacher.first_name || ""} ${teacher.last_name || ""}`.trim();
 
-
-    if(deleteTeacherName){
-
-        deleteTeacherName.textContent =
-            name
-                ? `Delete ${name}?`
-                : "Delete this teacher?";
-
+    if (deleteTeacherName) {
+        deleteTeacherName.textContent = name
+            ? `Delete ${name}?`
+            : "Delete this teacher?";
     }
 
-
-    if(adminDeletePassword){
-
+    if (adminDeletePassword) {
         adminDeletePassword.value = "";
-
-        adminDeletePassword.type =
-            "password";
-
+        adminDeletePassword.type = "password";
+        adminDeletePassword.placeholder =
+            "Use the technician authorization prompt";
     }
 
-
-    if(deleteError){
-
+    if (deleteError) {
         deleteError.textContent =
-            "";
-
+            "Your technician password will be requested when you confirm.";
     }
 
-
-    if(deleteConfirmBtn){
-
-        deleteConfirmBtn.disabled =
-            false;
-
-        deleteConfirmBtn.textContent =
-            "Delete Teacher";
-
+    if (deleteConfirmBtn) {
+        deleteConfirmBtn.disabled = false;
+        deleteConfirmBtn.textContent = "Delete Teacher";
     }
 
-
-    deleteModal.classList.add(
-        "show"
-    );
-
-
-    setTimeout(
-        function(){
-
-            if(adminDeletePassword){
-
-                adminDeletePassword.focus();
-
-            }
-
-        },
-        100
-    );
-
+    deleteModal.classList.add("show");
 }
 
-
-window.deleteTeacher =
-    deleteTeacher;
+window.deleteTeacher = deleteTeacher;
 
 
 /* ============================================================
    CLOSE DELETE MODAL
 ============================================================ */
 
-function closeDeleteModal(){
+function closeDeleteModal() {
+    deleteModal?.classList.remove("show");
 
-    if(!deleteModal){
+    teacherToDeleteId = null;
 
-        return;
-
-    }
-
-
-    deleteModal.classList.remove(
-        "show"
-    );
-
-
-    teacherToDeleteId =
-        null;
-
-
-    if(adminDeletePassword){
-
+    if (adminDeletePassword) {
         adminDeletePassword.value = "";
-
-        adminDeletePassword.type =
-            "password";
-
+        adminDeletePassword.type = "password";
     }
 
-
-    if(deleteError){
-
-        deleteError.textContent =
-            "";
-
+    if (deleteError) {
+        deleteError.textContent = "";
     }
 
-
-    if(deleteConfirmBtn){
-
-        deleteConfirmBtn.disabled =
-            false;
-
-        deleteConfirmBtn.textContent =
-            "Delete Teacher";
-
+    if (deleteConfirmBtn) {
+        deleteConfirmBtn.disabled = false;
+        deleteConfirmBtn.textContent = "Delete Teacher";
     }
-
 }
 
+deleteCancelBtn?.addEventListener("click", closeDeleteModal);
 
-/* ============================================================
-   CANCEL DELETE
-============================================================ */
-
-if(deleteCancelBtn){
-
-    deleteCancelBtn.addEventListener(
-        "click",
-        closeDeleteModal
-    );
-
-}
-
-
-/* ============================================================
-   ADMIN PASSWORD SHOW / HIDE
-============================================================ */
-
-if(
-    adminPasswordToggle &&
-    adminDeletePassword
-){
-
-    adminPasswordToggle.addEventListener(
-        "click",
-        function(){
-
-            const isVisible =
-                adminDeletePassword.type === "text";
-
-
-            if(isVisible){
-
-                adminDeletePassword.type =
-                    "password";
-
-                adminPasswordToggle.classList.remove(
-                    "is-visible"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "title",
-                    "Show password"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "aria-pressed",
-                    "false"
-                );
-
-            }
-
-            else{
-
-                adminDeletePassword.type =
-                    "text";
-
-                adminPasswordToggle.classList.add(
-                    "is-visible"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "title",
-                    "Hide password"
-                );
-
-                adminPasswordToggle.setAttribute(
-                    "aria-pressed",
-                    "true"
-                );
-
-            }
-
+if (adminDeletePassword) {
+    adminDeletePassword.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closeDeleteModal();
         }
-    );
+    });
+}
 
+if (deleteModal) {
+    deleteModal.addEventListener("click", event => {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
 }
 
 
@@ -2370,456 +1193,114 @@ if(
    CONFIRM DELETE
 ============================================================ */
 
-if(deleteConfirmBtn){
-
-    deleteConfirmBtn.addEventListener(
-        "click",
-        async function(){
-
-            if(
-                teacherToDeleteId ===
-                null
-            ){
-
-                closeDeleteModal();
-
-                return;
-
-            }
-
-
-            try{
-
-                deleteConfirmBtn.disabled =
-                    true;
-
-                deleteConfirmBtn.textContent =
-                    "Verifying...";
-
-
-                if(deleteError){
-
-                    deleteError.textContent =
-                        "";
-
-                }
-
-
-                const password =
-                    adminDeletePassword
-                        ? adminDeletePassword.value
-                        : "";
-
-
-                if(!password){
-
-                    if(deleteError){
-
-                        deleteError.textContent =
-                            "Administrator password is required.";
-
-                    }
-
-
-                    deleteConfirmBtn.disabled =
-                        false;
-
-                    deleteConfirmBtn.textContent =
-                        "Delete Teacher";
-
-                    return;
-
-                }
-
-
-                const validAdmin =
-                    await verifyAdministratorPassword(
-                        password
-                    );
-
-
-                if(!validAdmin){
-
-                    if(deleteError){
-
-                        deleteError.textContent =
-                            "Incorrect administrator password. Teacher was not deleted.";
-
-                    }
-
-
-                    deleteConfirmBtn.disabled =
-                        false;
-
-                    deleteConfirmBtn.textContent =
-                        "Delete Teacher";
-
-                    return;
-
-                }
-
-
-                deleteConfirmBtn.textContent =
-                    "Deleting...";
-
-
-                const supabase =
-                    getSupabaseClient();
-
-
-                const {
-                    data: deletedRows,
-                    error
-                } =
-                    await supabase
-                        .from("teachers")
-                        .delete()
-                        .eq(
-                            "id",
-                            teacherToDeleteId
-                        )
-                        .select("id");
-
-
-                if(error){
-
-                    throw new Error(
-                        error.message
-                    );
-
-                }
-
-
-                if(
-                    !Array.isArray(deletedRows) ||
-                    deletedRows.length === 0
-                ){
-
-                    throw new Error(
-                        "Teacher was NOT deleted from Supabase. Please check the teachers table DELETE RLS policy."
-                    );
-
-                }
-
-
-                const deletedTeacher =
-                    teachers.find(
-                        item =>
-                            String(item.id) ===
-                            String(teacherToDeleteId)
-                    );
-
-
-                const name =
-                    deletedTeacher
-                        ? `${deletedTeacher.first_name || ""} ${deletedTeacher.last_name || ""}`.trim()
-                        : "Teacher";
-
-
-                const {
-                    data: remainingTeacher,
-                    error: verifyError
-                } =
-                    await supabase
-                        .from("teachers")
-                        .select("id")
-                        .eq(
-                            "id",
-                            teacherToDeleteId
-                        )
-                        .maybeSingle();
-
-
-                if(verifyError){
-
-                    throw new Error(
-                        verifyError.message
-                    );
-
-                }
-
-
-                if(remainingTeacher){
-
-                    throw new Error(
-                        "The teacher still exists in Supabase. The deletion could not be completed."
-                    );
-
-                }
-
-
-                teachers =
-                    teachers.filter(
-                        item =>
-                            String(item.id) !==
-                            String(teacherToDeleteId)
-                    );
-
-
-                closeDeleteModal();
-
-
-                displayTeachers();
-
-
-                await loadTeachers();
-
-
-                showMessage(
-                    `${name || "Teacher"} deleted successfully.`,
-                    "success"
-                );
-
-            }
-
-            catch(error){
-
-                console.error(
-                    "FCA teacher delete error:",
-                    error
-                );
-
-
-                if(deleteError){
-
-                    deleteError.textContent =
-                        error.message ||
-                        "Unable to delete teacher.";
-
-                }
-
-            }
-
-            finally{
-
-                if(deleteConfirmBtn){
-
-                    deleteConfirmBtn.disabled =
-                        false;
-
-                    deleteConfirmBtn.textContent =
-                        "Delete Teacher";
-
-                }
-
-            }
-
-        }
+deleteConfirmBtn?.addEventListener("click", async () => {
+    if (teacherToDeleteId === null) {
+        closeDeleteModal();
+        return;
+    }
+
+    const deletingId = teacherToDeleteId;
+    const teacher = teachers.find(
+        item => String(item.id) === String(deletingId)
     );
 
-}
+    const name = teacher
+        ? `${teacher.first_name || ""} ${teacher.last_name || ""}`.trim()
+        : "Teacher";
 
+    try {
+        deleteConfirmBtn.disabled = true;
+        deleteConfirmBtn.textContent = "Verifying...";
 
-/* ============================================================
-   ENTER / ESCAPE SUPPORT
-============================================================ */
+        if (deleteError) deleteError.textContent = "";
 
-if(adminDeletePassword){
+        const authorized = await requestTechnicianPassword(
+            `deleting ${name || "a teacher"}`
+        );
 
-    adminDeletePassword.addEventListener(
-        "keydown",
-        function(event){
-
-            if(
-                event.key ===
-                "Enter"
-            ){
-
-                event.preventDefault();
-
-
-                if(deleteConfirmBtn){
-
-                    deleteConfirmBtn.click();
-
-                }
-
+        if (!authorized) {
+            if (deleteError) {
+                deleteError.textContent = "Deletion cancelled.";
             }
-
-
-            if(
-                event.key ===
-                "Escape"
-            ){
-
-                event.preventDefault();
-
-                closeDeleteModal();
-
-            }
-
+            return;
         }
-    );
 
-}
+        deleteConfirmBtn.textContent = "Deleting...";
 
+        const supabase = getSupabaseClient();
 
-/* ============================================================
-   CLICK OUTSIDE DELETE MODAL
-============================================================ */
+        const { data, error } = await supabase
+            .from("teachers")
+            .delete()
+            .eq("id", deletingId)
+            .select("id");
 
-if(deleteModal){
+        if (error) throw error;
 
-    deleteModal.addEventListener(
-        "click",
-        function(event){
-
-            if(
-                event.target ===
-                deleteModal
-            ){
-
-                closeDeleteModal();
-
-            }
-
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error(
+                "Teacher was not deleted. Check Supabase DELETE policies."
+            );
         }
-    );
 
-}
+        closeDeleteModal();
+
+        await loadTeachers();
+
+        showMessage(
+            `${name || "Teacher"} deleted successfully.`,
+            "success"
+        );
+    } catch (error) {
+        console.error("FCA teacher deletion error:", error);
+
+        if (deleteError) {
+            deleteError.textContent =
+                error.message || "Unable to delete teacher.";
+        }
+    } finally {
+        if (deleteConfirmBtn) {
+            deleteConfirmBtn.disabled = false;
+            deleteConfirmBtn.textContent = "Delete Teacher";
+        }
+    }
+});
 
 
 /* ============================================================
    RESET FORM
 ============================================================ */
 
-function resetForm(){
-
-    if(teacherForm){
-
+function resetForm() {
+    if (teacherForm) {
         teacherForm.reset();
-
     }
 
+    editingTeacherId = null;
 
-    editingTeacherId =
-        null;
+    if (formTitle) formTitle.textContent = "Add Teacher";
 
+    if (passwordInput) {
+        passwordInput.value = "";
+        passwordInput.required = true;
+        passwordInput.placeholder = "Set teacher login password";
 
-    if(formTitle){
-
-        formTitle.textContent =
-            "Add Teacher";
-
+        setPasswordVisibility(passwordInput, passwordToggle, false);
     }
 
+    const saveButton = teacherForm?.querySelector(".save-btn");
 
-    if(teacherMessage){
-
-        teacherMessage.textContent =
-            "";
-
-        teacherMessage.className =
-            "message";
-
+    if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Teacher";
     }
 
-
-    if(passwordInput){
-
-        passwordInput.type =
-            "password";
-
-        passwordInput.placeholder =
-            "Enter password";
-
-        passwordInput.value =
-            "";
-
-    }
-
-
-    const saveButton =
-        teacherForm
-            ? teacherForm.querySelector(
-                ".save-btn"
-            )
-            : null;
-
-
-    if(saveButton){
-
-        saveButton.textContent =
-            "Save Teacher";
-
-    }
-
-
-    if(passwordToggle){
-
-        passwordToggle.classList.remove(
-            "is-visible"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-label",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "title",
-            "Show password"
-        );
-
-        passwordToggle.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-    }
-
-
-    /*
-     * IMPORTANT:
-     * Reset always hides the form.
-     */
-
+    showMessage("", "info");
     hideTeacherForm();
-
 }
 
-
-/* ============================================================
-   CANCEL FORM
-============================================================ */
-
-if(cancelBtn){
-
-    cancelBtn.addEventListener(
-        "click",
-        function(){
-
-            resetForm();
-
-        }
-    );
-
-}
-
-
-/* ============================================================
-   MESSAGE
-============================================================ */
-
-function showMessage(
-    message,
-    type = "info"
-){
-
-    if(!teacherMessage){
-
-        return;
-
-    }
-
-
-    teacherMessage.textContent =
-        message;
-
-
-    teacherMessage.className =
-        "message " + type;
-
+if (cancelBtn) {
+    cancelBtn.addEventListener("click", resetForm);
 }
 
 
@@ -2827,66 +1308,26 @@ function showMessage(
    HTML ESCAPE
 ============================================================ */
 
-function escapeHtml(value){
-
-    return String(
-        value ?? ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 
 /* ============================================================
-   SUPABASE AUTH STATE
+   AUTH STATE
 ============================================================ */
 
-if(window.fcaSupabase){
-
-    window.fcaSupabase
-        .auth
-        .onAuthStateChange(
-            function(event, session){
-
-                console.log(
-                    "FCA Teachers Auth Event:",
-                    event
-                );
-
-
-                if(
-                    event === "SIGNED_OUT" ||
-                    !session
-                ){
-
-                    window.location.replace(
-                        "admin-login.html"
-                    );
-
-                }
-
-            }
-        );
-
+if (window.fcaSupabase) {
+    window.fcaSupabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_OUT" || !session) {
+            window.location.replace("admin-login.html");
+        }
+    });
 }
 
 
@@ -2894,38 +1335,16 @@ if(window.fcaSupabase){
    INITIALIZE
 ============================================================ */
 
-async function initializeTeachersPage(){
-
-    console.log(
-        "FCA Teachers page initializing..."
-    );
-
-
-    /*
-     * Always hide form when page first opens.
-     */
+async function initializeTeachersPage() {
+    console.log("FCA Teachers page initializing...");
 
     hideTeacherForm();
 
+    const authorized = await checkAdminAuthorization();
 
-    const authorized =
-        await checkAdminAuthorization();
-
-
-    if(!authorized){
-
-        return;
-
-    }
-
+    if (!authorized) return;
 
     await loadTeachers();
-
 }
-
-
-/* ============================================================
-   START
-============================================================ */
 
 initializeTeachersPage();

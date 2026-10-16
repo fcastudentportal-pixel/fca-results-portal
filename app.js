@@ -1,9 +1,12 @@
 
 /* =========================================================
    FIRST CLASS ACADEMY — STUDENT RESULTS PORTAL
-   Assessment-aware version
 
-   Uses:
+   READ-ONLY OFFICIAL RESULTS
+
+   Displays results saved by the FCA Results Management page.
+
+   RPC:
    fca_student_get_assessment_results(
      p_student_id,
      p_access_password,
@@ -11,6 +14,15 @@
      p_term,
      p_assessment_type
    )
+
+   Assessment types:
+   - Continuous Assessment
+   - Mid-Term
+   - End-of-Term
+
+   SECURITY:
+   Fee eligibility and result-release permissions must be
+   enforced inside the Supabase RPC, not by this frontend.
 ========================================================= */
 
 "use strict";
@@ -24,13 +36,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = $("studentLoginForm");
   const idInput = $("studentId");
   const passInput = $("studentPassword");
-  const tbody = $("resultsTable")?.querySelector("tbody");
+  const resultsTable = $("resultsTable");
+  const tbody = resultsTable?.querySelector("tbody");
   const submit = form?.querySelector('button[type="submit"]');
+  const togglePassword = $("togglePassword");
 
   const SESSION_KEY = "fca_logged_in_student_id";
   const currentYear = new Date().getFullYear();
 
-  const TERMS = ["Term 1", "Term 2", "Term 3"];
+  const TERMS = [
+    "Term 1",
+    "Term 2",
+    "Term 3"
+  ];
 
   const ASSESSMENT_TYPES = [
     "Continuous Assessment",
@@ -38,12 +56,32 @@ document.addEventListener("DOMContentLoaded", () => {
     "End-of-Term"
   ];
 
-  if ($("currentYear")) {
-    $("currentYear").textContent = currentYear;
+  /* =========================================================
+     PASSWORD VISIBILITY
+  ========================================================= */
+
+  if (togglePassword && passInput) {
+    togglePassword.addEventListener("click", () => {
+      const show = passInput.type === "password";
+
+      passInput.type = show ? "text" : "password";
+
+      togglePassword.classList.toggle("is-visible", show);
+
+      togglePassword.setAttribute(
+        "aria-label",
+        show ? "Hide password" : "Show password"
+      );
+
+      togglePassword.setAttribute(
+        "aria-pressed",
+        String(show)
+      );
+    });
   }
 
   /* =========================================================
-     MESSAGES AND GENERAL HELPERS
+     GENERAL HELPERS
   ========================================================= */
 
   function message(text, type = "error") {
@@ -52,8 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!box) {
       box = document.createElement("div");
       box.id = "fcaMessage";
-      box.className = "error";
       box.setAttribute("role", "status");
+      box.setAttribute("aria-live", "polite");
 
       (form || loginView || document.body).appendChild(box);
     }
@@ -78,17 +116,18 @@ document.addEventListener("DOMContentLoaded", () => {
       ">": "&gt;",
       '"': "&quot;",
       "'": "&#039;"
-    }[char]));
+    })[char]);
+  }
+
+  function hasValue(value) {
+    return value !== undefined &&
+      value !== null &&
+      value !== "";
   }
 
   function val(object, keys, fallback = "—") {
     for (const key of keys) {
-      if (
-        object &&
-        object[key] !== undefined &&
-        object[key] !== null &&
-        object[key] !== ""
-      ) {
+      if (object && hasValue(object[key])) {
         return object[key];
       }
     }
@@ -112,8 +151,80 @@ document.addEventListener("DOMContentLoaded", () => {
     return [];
   }
 
+  function normaliseAssessment(value) {
+    const text = String(value ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/[_\s]+/g, "-");
+
+    if (
+      text === "continuous-assessment" ||
+      text === "continuous-assessments"
+    ) {
+      return "Continuous Assessment";
+    }
+
+    if (
+      text === "mid-term" ||
+      text === "midterm"
+    ) {
+      return "Mid-Term";
+    }
+
+    if (
+      text === "end-of-term" ||
+      text === "end-term" ||
+      text === "endterm"
+    ) {
+      return "End-of-Term";
+    }
+
+    return String(value ?? "").trim();
+  }
+
+  function normaliseTerm(value) {
+    const match = String(value ?? "")
+      .trim()
+      .match(/^term\s*([123])$/i);
+
+    return match ? `Term ${match[1]}` : "";
+  }
+
+  function normalisePayload(payload) {
+    let value = payload;
+
+    if (Array.isArray(value) && value.length === 1) {
+      value = value[0];
+    }
+
+    if (typeof value === "string") {
+      try {
+        value = JSON.parse(value);
+      } catch {
+        throw new Error(
+          "The results service returned invalid data."
+        );
+      }
+    }
+
+    if (Array.isArray(value)) {
+      throw new Error(
+        "The results service returned an unexpected response. " +
+        "Please contact the school office."
+      );
+    }
+
+    if (!value || typeof value !== "object") {
+      throw new Error(
+        "No valid results response was received."
+      );
+    }
+
+    return value;
+  }
+
   /* =========================================================
-     FORM NUMBER
+     FORM NUMBER — DISPLAY ONLY
   ========================================================= */
 
   function formNo(student, rows) {
@@ -133,129 +244,22 @@ document.addEventListener("DOMContentLoaded", () => {
       className.match(/(?:form|f)\s*([1-4])/i) ||
       className.match(/\b([1-4])\b/);
 
-    return match
-      ? Number(match[1])
-      : Number(val(rows[0], ["form_number"], 1));
-  }
+    if (match) {
+      return Number(match[1]);
+    }
 
-  /* =========================================================
-     MARKS, GRADES AND CLASSIFICATIONS
-  ========================================================= */
-
-  function markOf(result) {
-    const raw = val(
-      result,
-      ["percentage", "mark", "total", "score"],
-      null
+    const savedForm = Number(
+      val(rows[0], ["form_number"], 0)
     );
 
-    if (raw === null) {
-      return null;
-    }
-
-    const number = Number(raw);
-
-    return Number.isFinite(number) ? number : null;
-  }
-
-  function gradeOf(mark, formNumber, storedGrade) {
-    if (
-      storedGrade !== "—" &&
-      storedGrade !== undefined &&
-      storedGrade !== null &&
-      String(storedGrade) !== ""
-    ) {
-      return String(storedGrade);
-    }
-
-    if (mark === null) {
-      return "—";
-    }
-
-    // Forms 1 and 2: A–F grading
-    if (formNumber <= 2) {
-      return mark >= 75 ? "A"
-        : mark >= 60 ? "B"
-        : mark >= 50 ? "C"
-        : mark >= 40 ? "D"
-        : "F";
-    }
-
-    // Forms 3 and 4: Grades 1–9
-    return mark >= 80 ? "1"
-      : mark >= 70 ? "2"
-      : mark >= 65 ? "3"
-      : mark >= 60 ? "4"
-      : mark >= 55 ? "5"
-      : mark >= 50 ? "6"
-      : mark >= 45 ? "7"
-      : mark >= 40 ? "8"
-      : "9";
-  }
-
-  function classOf(grade, formNumber, stored) {
-    if (stored && stored !== "—") {
-      return String(stored);
-    }
-
-    if (formNumber <= 2) {
-      return ({
-        A: "Distinction",
-        B: "Credit",
-        C: "Credit",
-        D: "Pass",
-        F: "Fail"
-      })[grade] || "—";
-    }
-
-    const number = Number(grade);
-
-    if (!Number.isFinite(number)) {
-      return "—";
-    }
-
-    return number <= 2 ? "Distinction"
-      : number <= 4 ? "Credit"
-      : number <= 6 ? "Competent"
-      : number <= 8 ? "Ordinary Pass"
-      : "Fail";
+    return savedForm >= 1 && savedForm <= 4
+      ? savedForm
+      : "—";
   }
 
   /* =========================================================
-     POSITIONS
-     Example: 1/80 or 5/40
-  ========================================================= */
-
-  function positionText(rank, total) {
-    if (
-      rank === undefined ||
-      rank === null ||
-      rank === "" ||
-      total === undefined ||
-      total === null ||
-      total === ""
-    ) {
-      return "—";
-    }
-
-    const r = Number(rank);
-    const t = Number(total);
-
-    if (
-      !Number.isInteger(r) ||
-      !Number.isInteger(t) ||
-      r < 1 ||
-      t < 1
-    ) {
-      return "—";
-    }
-
-    return `${r}/${t}`;
-  }
-
-  /* =========================================================
-     ASSESSMENT SELECTORS
-     Create them if index.html does not already contain them.
+     ASSESSMENT CONTROLS
+     Created automatically when missing from index.html.
   ========================================================= */
 
   function ensureAssessmentControls() {
@@ -271,15 +275,14 @@ document.addEventListener("DOMContentLoaded", () => {
       host.style.cssText =
         "display:grid;gap:10px;margin:12px 0;text-align:left;";
 
-      const anchor =
-        passInput?.closest(".form-group") ||
-        passInput?.parentElement ||
-        submit;
+      const passwordLabel = passInput?.closest("label");
 
-      if (anchor && anchor !== submit) {
-        anchor.insertAdjacentElement("afterend", host);
+      if (passwordLabel) {
+        passwordLabel.insertAdjacentElement("afterend", host);
+      } else if (submit) {
+        form.insertBefore(host, submit);
       } else {
-        form.insertBefore(host, submit || null);
+        form.appendChild(host);
       }
     }
 
@@ -287,118 +290,236 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         id: "academicYear",
         label: "Academic Year",
-        type: "year"
+        values: Array.from(
+          { length: Math.max(1, currentYear - 2000 + 1) },
+          (_, index) => String(currentYear - index)
+        ),
+        defaultValue: String(currentYear)
       },
       {
         id: "assessmentTerm",
         label: "Term",
-        type: "term"
+        values: TERMS,
+        defaultValue: "Term 1"
       },
       {
         id: "assessmentType",
         label: "Assessment",
-        type: "assessment"
+        values: ASSESSMENT_TYPES,
+        defaultValue: "Continuous Assessment"
       }
     ];
 
     for (const definition of definitions) {
-      if ($(definition.id)) {
-        continue;
+      let select = $(definition.id);
+
+      if (!select) {
+        const wrapper = document.createElement("label");
+
+        wrapper.style.cssText =
+          "display:grid;gap:5px;font-weight:600;";
+
+        wrapper.htmlFor = definition.id;
+        wrapper.appendChild(
+          document.createTextNode(definition.label)
+        );
+
+        select = document.createElement("select");
+        select.id = definition.id;
+        select.name = definition.id;
+        select.required = true;
+
+        select.style.cssText =
+          "width:100%;padding:10px;border:1px solid #ccc;" +
+          "border-radius:6px;font:inherit;background:white;";
+
+        wrapper.appendChild(select);
+        host.appendChild(wrapper);
       }
 
-      const wrapper = document.createElement("label");
+      const existingValue = select.value;
 
-      wrapper.style.cssText =
-        "display:grid;gap:5px;font-weight:600;";
+      select.replaceChildren();
 
-      wrapper.htmlFor = definition.id;
-      wrapper.appendChild(
-        document.createTextNode(definition.label)
-      );
-
-      const select = document.createElement("select");
-
-      select.id = definition.id;
-      select.name = definition.id;
-      select.required = true;
-
-      select.style.cssText =
-        "width:100%;padding:10px;border:1px solid #ccc;" +
-        "border-radius:6px;font:inherit;background:white;";
-
-      if (definition.type === "year") {
-        for (
-          let year = currentYear;
-          year >= currentYear - 5;
-          year--
-        ) {
-          const option = new Option(
-            String(year),
-            String(year),
-            year === currentYear,
-            year === currentYear
-          );
-
-          select.add(option);
-        }
-      } else {
-        const options = definition.type === "term"
-          ? TERMS
-          : ASSESSMENT_TYPES;
-
-        const defaultValue = definition.type === "term"
-          ? "Term 1"
-          : "End-of-Term";
-
-        for (const value of options) {
-          select.add(
-            new Option(
-              value,
-              value,
-              false,
-              value === defaultValue
-            )
-          );
-        }
+      for (const value of definition.values) {
+        select.add(new Option(value, value));
       }
 
-      wrapper.appendChild(select);
-      host.appendChild(wrapper);
+      const preferredValue = definition.values.includes(existingValue)
+        ? existingValue
+        : definition.defaultValue;
+
+      select.value = preferredValue;
     }
+
+    $("academicYear")?.setAttribute(
+      "aria-label",
+      "Select academic year"
+    );
+
+    $("assessmentTerm")?.setAttribute(
+      "aria-label",
+      "Select term"
+    );
+
+    $("assessmentType")?.setAttribute(
+      "aria-label",
+      "Select assessment type"
+    );
   }
 
   function selectedAssessment() {
-    const year = Number(
-      $("academicYear")?.value || currentYear
+    const year = Number($("academicYear")?.value);
+    const term = normaliseTerm($("assessmentTerm")?.value);
+    const assessmentType = normaliseAssessment(
+      $("assessmentType")?.value
     );
 
-    const term =
-      $("assessmentTerm")?.value || "Term 1";
-
-    const assessmentType =
-      $("assessmentType")?.value || "End-of-Term";
-
-    if (!Number.isInteger(year) || year < 2000) {
-      throw new Error("Choose a valid academic year.");
+    if (!Number.isInteger(year) || year < 2000 || year > currentYear) {
+      throw new Error("Please select a valid academic year.");
     }
 
     if (!TERMS.includes(term)) {
-      throw new Error("Choose a valid term.");
+      throw new Error("Please select a valid term.");
     }
 
     if (!ASSESSMENT_TYPES.includes(assessmentType)) {
-      throw new Error("Choose a valid assessment.");
+      throw new Error("Please select a valid assessment.");
     }
 
-    return {
-      year,
-      term,
-      assessmentType
-    };
+    return { year, term, assessmentType };
   }
 
   /* =========================================================
-     RENDER STUDENT RESULTS
+     REPORT TABLE
+     Display the official saved values; never derive grades.
+  ========================================================= */
+
+  function prepareResultsTable() {
+    if (!resultsTable) return;
+
+    const headRow = resultsTable.querySelector("thead tr");
+
+    if (headRow) {
+      headRow.innerHTML = `
+        <th>Subject</th>
+        <th>Saved Mark</th>
+        <th>Saved Grade</th>
+        <th>Teacher's Remark</th>
+        <th>Paper Marks</th>
+      `;
+    }
+  }
+
+  function formatSavedMark(result) {
+    const mark = val(
+      result,
+      ["mark", "percentage", "total", "score"],
+      null
+    );
+
+    if (mark === null || mark === "—") {
+      return "—";
+    }
+
+    // Display the saved mark as provided by the Results Management page.
+    return String(mark);
+  }
+
+  function formatPaperMarks(value) {
+    if (value === undefined || value === null) {
+      return "—";
+    }
+
+    if (typeof value === "string") {
+      try {
+        value = JSON.parse(value);
+      } catch {
+        return value || "—";
+      }
+    }
+
+    if (typeof value !== "object") {
+      return String(value);
+    }
+
+    if (Array.isArray(value)) {
+      if (!value.length) return "—";
+
+      return value.map(item => {
+        if (item && typeof item === "object") {
+          const paper = val(
+            item,
+            ["paper_name", "name", "paper", "paper_number"],
+            ""
+          );
+
+          const mark = val(
+            item,
+            ["mark", "marks", "score", "obtained"],
+            "—"
+          );
+
+          return paper ? `${paper}: ${mark}` : String(mark);
+        }
+
+        return String(item);
+      }).join(" | ");
+    }
+
+    const entries = Object.entries(value);
+
+    if (!entries.length) return "—";
+
+    return entries.map(([key, item]) => {
+      if (item && typeof item === "object") {
+        const mark = val(
+          item,
+          ["mark", "marks", "score", "obtained"],
+          "—"
+        );
+
+        const name = val(
+          item,
+          ["paper_name", "name"],
+          key
+        );
+
+        return `${name}: ${mark}`;
+      }
+
+      return `${key}: ${item}`;
+    }).join(" | ");
+  }
+
+  function renderEmptyResults(text) {
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5">${esc(text)}</td>
+        </tr>
+      `;
+    }
+
+    for (const id of [
+      "studentAggregate",
+      "aggregateFooter",
+      "studentPosition"
+    ]) {
+      if ($(id)) $(id).textContent = "—";
+    }
+
+    if ($("overallResult")) {
+      $("overallResult").textContent = "—";
+      $("overallResult").className = "result-status";
+    }
+  }
+
+  /* =========================================================
+     RENDER OFFICIAL STUDENT PROFILE AND RESULTS
+
+     Grades, remarks, marks and positions are read from saved
+     result records. No grading or PASS/FAIL calculation here.
   ========================================================= */
 
   function render(payload, typedId, selection) {
@@ -406,9 +527,37 @@ document.addEventListener("DOMContentLoaded", () => {
       payload.student ||
       payload.student_data ||
       payload.profile ||
-      payload;
+      null;
 
-    const rows = rowsOf(payload);
+    if (!student || typeof student !== "object") {
+      throw new Error(
+        "The saved student profile was not returned. " +
+        "Please contact the school office."
+      );
+    }
+
+    const rawRows = rowsOf(payload);
+
+    // Refuse rows that do not match the requested assessment.
+    // The RPC should already return the exact selection.
+    const rows = rawRows.filter(result => {
+      const rowYear = Number(
+        val(result, ["academic_year"], NaN)
+      );
+
+      const rowTerm = normaliseTerm(
+        val(result, ["term"], "")
+      );
+
+      const rowAssessment = normaliseAssessment(
+        val(result, ["assessment_type"], "")
+      );
+
+      return rowYear === selection.year &&
+        rowTerm === selection.term &&
+        rowAssessment === selection.assessmentType;
+    });
+
     const formNumber = formNo(student, rows);
 
     const name = val(
@@ -427,6 +576,12 @@ document.addEventListener("DOMContentLoaded", () => {
       $("studentName").textContent = name;
     }
 
+    if ($("studentInfo")) {
+      $("studentInfo").textContent =
+        `${studentId} · ${selection.year} · ` +
+        `${selection.term} · ${selection.assessmentType}`;
+    }
+
     if ($("summaryStudentId")) {
       $("summaryStudentId").textContent = studentId;
     }
@@ -435,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
       $("summaryClass").textContent = val(
         student,
         ["class_name", "class"],
-        `Form ${formNumber}`
+        formNumber !== "—" ? `Form ${formNumber}` : "—"
       );
     }
 
@@ -447,43 +602,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if ($("studentSubjectCount")) {
-      $("studentSubjectCount").textContent =
-        String(rows.length);
-    }
-
-    const classRank = val(
-      payload,
-      [
-        "class_position",
-        "position_in_class",
-        "student_position"
-      ],
-      val(
-        student,
-        ["class_position", "position_in_class"],
-        null
-      )
-    );
-
-    const classTotal = val(
-      payload,
-      ["class_total", "total_class_students"],
-      val(
-        student,
-        ["class_total", "total_class_students"],
-        null
-      )
-    );
-
-    if ($("studentPosition")) {
-      $("studentPosition").textContent =
-        positionText(classRank, classTotal);
+      $("studentSubjectCount").textContent = String(rows.length);
     }
 
     if ($("reportYear")) {
-      $("reportYear").textContent = String(
-        val(rows[0], ["academic_year"], selection.year)
-      );
+      $("reportYear").textContent = String(selection.year);
     }
 
     if ($("termLabel")) {
@@ -497,145 +620,63 @@ document.addEventListener("DOMContentLoaded", () => {
         selection.assessmentType;
     }
 
-    if (!tbody) {
-      return;
-    }
+    if (!tbody) return;
 
     if (!rows.length) {
-      tbody.innerHTML =
-        '<tr><td colspan="6">' +
-        "No subject results were found for this assessment." +
-        "</td></tr>";
-
-      if ($("studentAggregate")) {
-        $("studentAggregate").textContent = "—";
-      }
-
-      if ($("aggregateFooter")) {
-        $("aggregateFooter").textContent = "—";
-      }
-
-      if ($("overallResult")) {
-        $("overallResult").textContent = "NOT AVAILABLE";
-        $("overallResult").className = "result-status";
-      }
+      renderEmptyResults(
+        "No saved results were found for this student, " +
+        "academic year, term and assessment."
+      );
 
       return;
     }
 
-    const prepared = rows.map(result => {
-      const mark = markOf(result);
-
-      const grade = gradeOf(
-        mark,
-        formNumber,
-        result.grade
+    // Display only stored records. No local grade, mark,
+    // aggregate, ranking or pass/fail calculation is performed.
+    tbody.innerHTML = rows.map(result => {
+      const subject = val(
+        result,
+        ["subject_name", "subject"],
+        "—"
       );
 
-      return {
+      const mark = formatSavedMark(result);
+
+      const grade = val(
         result,
-        mark,
-        grade,
-        subject: String(
-          val(result, ["subject", "subject_name"], "—")
-        )
-      };
-    }).sort((a, b) =>
-      a.subject.localeCompare(b.subject)
-    );
+        ["grade"],
+        "—"
+      );
 
-    tbody.innerHTML = prepared.map((item, index) => {
-      const result = item.result;
+      const remark = val(
+        result,
+        ["remark", "teacher_remark", "classification"],
+        "—"
+      );
 
-      const subjectPosition = positionText(
-        val(result, ["subject_position", "position"], null),
-        val(
-          result,
-          ["subject_total", "total_subject_students"],
-          null
-        )
+      const paperMarks = formatPaperMarks(
+        result.paper_marks
       );
 
       return `
         <tr>
-          <td>${index + 1}</td>
-          <td>${esc(item.subject)}</td>
-          <td>${
-            item.mark === null
-              ? "—"
-              : esc(Number(item.mark.toFixed(1)) + "%")
-          }</td>
-          <td>${esc(subjectPosition)}</td>
+          <td>${esc(subject)}</td>
+          <td>${esc(mark)}</td>
           <td>
-            <span class="grade-pill">
-              ${esc(item.grade)}
-            </span>
+            <span class="grade-pill">${esc(grade)}</span>
           </td>
-          <td>${esc(classOf(
-            item.grade,
-            formNumber,
-            val(result, ["classification", "remark"], "—")
-          ))}</td>
+          <td>${esc(remark)}</td>
+          <td>${esc(paperMarks)}</td>
         </tr>
       `;
     }).join("");
 
-    /* =======================================================
-       AGGREGATE AND PASS/FAIL
-    ======================================================= */
-
-    let aggregate = "—";
-    let passed = false;
-
-    if (formNumber >= 3) {
-      const validGrades = prepared
-        .map(item => Number(item.grade))
-        .filter(number =>
-          Number.isInteger(number) &&
-          number >= 1 &&
-          number <= 9
-        )
-        .sort((a, b) => a - b);
-
-      aggregate = validGrades.length
-        ? String(
-            validGrades
-              .slice(0, 6)
-              .reduce((a, b) => a + b, 0)
-          )
-        : "—";
-
-      const english = prepared.find(item =>
-        /english/i.test(item.subject)
-      );
-
-      passed =
-        validGrades.length >= 6 &&
-        validGrades
-          .slice(0, 6)
-          .every(point => point <= 8) &&
-        (!english || Number(english.grade) <= 8);
-
-    } else {
-      const passing = prepared.filter(item =>
-        item.grade !== "F" &&
-        item.grade !== "—"
-      ).length;
-
-      const english = prepared.find(item =>
-        /english/i.test(item.subject)
-      );
-
-      passed =
-        passing >= 6 &&
-        (!english || english.grade !== "F");
-    }
-
-    // Prefer official values when the server provides them.
-    aggregate = val(
+    // Use official overall-result values only when the RPC
+    // returns them. Never derive an aggregate or status.
+    const aggregate = val(
       payload,
-      ["aggregate_points", "aggregate", "aggregatePoints"],
-      aggregate
+      ["aggregate_points", "aggregate", "overall_aggregate"],
+      val(student, ["aggregate_points", "aggregate"], "—")
     );
 
     if ($("studentAggregate")) {
@@ -646,30 +687,58 @@ document.addEventListener("DOMContentLoaded", () => {
       $("aggregateFooter").textContent = String(aggregate);
     }
 
-    const override = val(
+    const officialPosition = val(
       payload,
-      ["overall_result", "overallResult", "result_status"],
-      ""
+      ["class_position", "position_in_class", "student_position"],
+      val(
+        student,
+        ["class_position", "position_in_class"],
+        null
+      )
     );
 
-    const overall =
-      override && override !== "—"
-        ? String(override).toUpperCase()
-        : passed
-          ? "PASS"
-          : "FAIL";
+    const officialClassTotal = val(
+      payload,
+      ["class_total", "total_class_students"],
+      val(student, ["class_total", "total_class_students"], null)
+    );
+
+    if ($("studentPosition")) {
+      const rank = Number(officialPosition);
+      const total = Number(officialClassTotal);
+
+      $("studentPosition").textContent =
+        Number.isInteger(rank) &&
+        Number.isInteger(total) &&
+        rank > 0 &&
+        total > 0
+          ? `${rank}/${total}`
+          : "—";
+    }
+
+    const officialStatus = val(
+      payload,
+      ["overall_result", "overallResult", "result_status"],
+      val(student, ["overall_result", "result_status"], "—")
+    );
 
     if ($("overallResult")) {
-      $("overallResult").textContent = overall;
+      $("overallResult").textContent = String(officialStatus);
+
+      const status = String(officialStatus).toUpperCase();
 
       $("overallResult").className =
         "result-status " +
-        (/^PASS/.test(overall) ? "pass" : "fail");
+        (status.startsWith("PASS")
+          ? "pass"
+          : status.startsWith("FAIL")
+            ? "fail"
+            : "");
     }
   }
 
   /* =========================================================
-     FETCH RESULTS THROUGH THE NEW SUPABASE RPC
+     FETCH SAVED RESULTS FROM SUPABASE
   ========================================================= */
 
   async function fetchResults(studentId, password, selection) {
@@ -685,63 +754,82 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (error) {
-      throw error;
-    }
+      console.error("FCA Supabase RPC error:", error);
 
-    let payload = data;
+      const serverMessage = String(error.message || "");
 
-    if (
-      Array.isArray(payload) &&
-      payload.length === 1
-    ) {
-      payload = payload[0];
-    }
-
-    if (typeof payload === "string") {
-      try {
-        payload = JSON.parse(payload);
-      } catch {
-        // Keep the original payload for validation below.
+      if (/fee|payment|paid|balance/i.test(serverMessage)) {
+        throw new Error(
+          "Your fee payment does not meet the requirements " +
+          "for this assessment. Please contact the school office."
+        );
       }
+
+      if (/release|published|available/i.test(serverMessage)) {
+        throw new Error(
+          "These results have not been released by the school yet."
+        );
+      }
+
+      if (/invalid.*password|incorrect.*password|student.*not found/i.test(serverMessage)) {
+        throw new Error(
+          "Student ID or Access Password is incorrect."
+        );
+      }
+
+      throw new Error(
+        "Unable to retrieve results. Please try again or " +
+        "contact the school office."
+      );
     }
 
-    if (payload?.success === false) {
+    const payload = normalisePayload(data);
+
+    if (payload.success === false || payload.error) {
       const serverMessage = String(
-        payload.message || ""
+        payload.message || payload.error || ""
       );
 
-      if (/fee|school fees/i.test(serverMessage)) {
+      if (/fee|payment|paid|balance/i.test(serverMessage)) {
         throw new Error(
-          "Your school fees are not marked complete for " +
-          "this academic year. Please contact the school office."
+          "Your fee payment does not meet the requirements " +
+          "for this assessment. Please contact the school office."
         );
       }
 
-      if (/not.*released|not been released/i.test(serverMessage)) {
+      if (/release|published|not available/i.test(serverMessage)) {
         throw new Error(
-          "This assessment has not been released by the school yet."
+          "These results have not been released by the school yet."
+        );
+      }
+
+      if (/password|student.*not found|invalid.*student/i.test(serverMessage)) {
+        throw new Error(
+          "Student ID or Access Password is incorrect."
         );
       }
 
       throw new Error(
-        serverMessage ||
-        "Student ID or Access Password is incorrect."
-      );
-    }
-
-    if (!payload) {
-      throw new Error(
-        "No response was received. Please try again."
+        serverMessage || "Results could not be retrieved."
       );
     }
 
     if (
       !payload.student &&
-      !Array.isArray(payload.results)
+      !payload.student_data &&
+      !payload.profile
     ) {
       throw new Error(
-        "The database returned an unexpected response. " +
-        "Please contact the school office."
+        "The server did not return a verified student profile."
+      );
+    }
+
+    if (!Array.isArray(payload.results) &&
+        !Array.isArray(payload.student_results) &&
+        !Array.isArray(payload.data)) {
+      throw new Error(
+        "The results service did not return saved subject records. " +
+        "Please check the student results RPC."
       );
     }
 
@@ -749,7 +837,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================================================
-     INITIALISE PORTAL
+     INITIALISE
   ========================================================= */
 
   if (!db) {
@@ -758,9 +846,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Check config.js and your internet connection."
     );
 
-    if (submit) {
-      submit.disabled = true;
-    }
+    if (submit) submit.disabled = true;
 
     return;
   }
@@ -774,9 +860,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   ensureAssessmentControls();
+  prepareResultsTable();
 
   /* =========================================================
-     LOGIN AND LOAD SELECTED RESULTS
+     LOGIN AND VIEW SELECTED RESULTS
   ========================================================= */
 
   form.addEventListener("submit", async event => {
@@ -784,12 +871,10 @@ document.addEventListener("DOMContentLoaded", () => {
     clearMessage();
 
     const studentId = idInput.value.trim();
-    const password = passInput.value.trim();
+    const password = passInput.value;
 
     if (!studentId || !password) {
-      message(
-        "Enter both your Student ID and Access Password."
-      );
+      message("Enter your Student ID and Access Password.");
       return;
     }
 
@@ -802,8 +887,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const oldText =
-      submit?.textContent || "View Results";
+    const oldText = submit?.textContent || "View Results";
 
     if (submit) {
       submit.disabled = true;
@@ -819,10 +903,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       render(payload, studentId, selection);
 
-      sessionStorage.setItem(
-        SESSION_KEY,
-        studentId
-      );
+      sessionStorage.setItem(SESSION_KEY, studentId);
 
       passInput.value = "";
       showPortal(true);
@@ -833,10 +914,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     } catch (error) {
-      console.error(
-        "FCA results lookup:",
-        error
-      );
+      console.error("FCA results lookup:", error);
 
       showPortal(false);
 
@@ -854,13 +932,63 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* =========================================================
-     PRINT / SAVE PDF
+     PRINT REPORT CARD
   ========================================================= */
 
-  $("downloadPdfBtn")?.addEventListener(
-    "click",
-    () => window.print()
-  );
+  $("printBtn")?.addEventListener("click", () => {
+    window.print();
+  });
+
+  $("downloadPdfBtn")?.addEventListener("click", () => {
+    window.print();
+  });
+
+  /* =========================================================
+     EMAIL SUMMARY
+  ========================================================= */
+
+  $("emailBtn")?.addEventListener("click", () => {
+    const studentName =
+      $("studentName")?.textContent || "Student";
+
+    const studentInfo =
+      $("studentInfo")?.textContent || "";
+
+    const subject =
+      `FCA Results Summary - ${studentName}`;
+
+    const lines = [];
+
+    if (resultsTable) {
+      const tableRows = Array.from(
+        resultsTable.querySelectorAll("tbody tr")
+      );
+
+      for (const row of tableRows) {
+        const cells = Array.from(row.cells).map(
+          cell => cell.textContent.trim()
+        );
+
+        lines.push(cells.join(" | "));
+      }
+    }
+
+    const body = [
+      "FIRST CLASS ACADEMY",
+      "STUDENT RESULTS SUMMARY",
+      "",
+      studentName,
+      studentInfo,
+      "",
+      ...lines
+    ].join("\n");
+
+    window.location.href =
+      "mailto:?subject=" +
+      encodeURIComponent(subject) +
+      "&body=" +
+      encodeURIComponent(body);
+  });
 
   /* =========================================================
      LOGOUT
@@ -873,6 +1001,7 @@ document.addEventListener("DOMContentLoaded", () => {
     passInput.value = "";
 
     clearMessage();
+    renderEmptyResults("Log in to view your official results.");
     showPortal(false);
 
     window.scrollTo({
@@ -881,7 +1010,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Require credentials again whenever the page is loaded.
+  /* =========================================================
+     START IN LOGIN VIEW
+  ========================================================= */
+
   sessionStorage.removeItem(SESSION_KEY);
   showPortal(false);
 });

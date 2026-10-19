@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FCA | Academic Finance</title>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .finance-intro {
+      background: var(--maroon);
+      color: white;
+      padding: 24px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+    .finance-intro h2 { margin: 0 0 8px; font: 26px Georgia, serif; }
+    .finance-intro p { margin: 0; color: #eadfe2; }
+    .finance-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .finance-stat {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .finance-stat strong { display: block; font-size: 28px; margin-bottom: 6px; }
+    .finance-stat small { color: var(--muted); }
+    .unpaid strong { color: #a61b29; }
+    .partial strong { color: #946200; }
+    .paid strong { color: #177245; }
+    .finance-filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .finance-table-wrap { overflow-x: auto; }
+    .finance-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    .finance-table th, .finance-table td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .finance-table th { background: var(--dark); color: white; font-size: 13px; }
+    .finance-table td select { min-width: 130px; margin: 0; padding: 9px; }
+    .status-label { font-weight: 700; }
+    .finance-message { margin: 12px 0; min-height: 22px; font-weight: 600; }
+    .finance-message.error { color: #a61b29; }
+    .finance-message.success { color: #177245; }
+    @media (max-width: 700px) {
+      .finance-stats, .finance-filters { grid-template-columns: 1fr; }
+      .finance-stat { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <a class="brand-mark" href="admin.html">
+        <img src="fca-logo.png" alt="First Class Academy">
+      </a>
+      <div><b>FCA Portal</b><small>Administration</small></div>
+    </div>
+
+    <nav>
+      <a class="nav" href="admin.html">Dashboard</a>
+      <a class="nav" href="teachers.html">Teachers</a>
+      <a class="nav" href="classes.html">Classes</a>
+      <a class="nav" href="students.html">Students</a>
+      <a class="nav" href="subjects.html">Subjects</a>
+      <a class="nav active" href="academic-finance.html">Academic Finance</a>
+      <a class="nav" href="results.html">Results</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header>
+      <div>
+        <small>ADMINISTRATION</small>
+        <h1>Academic Finance</h1>
+      </div>
+      <div class="pill">Administrator</div>
+    </header>
+
+    <section class="view active">
+      <div class="finance-intro">
+        <h2>Student Fee Management</h2>
+        <p>Manage school fee payment status by class and academic year.</p>
+      </div>
+
+      <div class="finance-stats">
+        <div class="finance-stat unpaid">
+          <strong id="unpaidCount">—</strong>
+          <small>Not Paid</small>
+        </div>
+        <div class="finance-stat partial">
+          <strong id="partialCount">—</strong>
+          <small>50% Paid</small>
+        </div>
+        <div class="finance-stat paid">
+          <strong id="paidCount">—</strong>
+          <small>100% Paid</small>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Filter Students</h2>
+        <div class="finance-filters">
+          <label>Academic Year
+            <select id="yearFilter"></select>
+          </label>
+          <label>Class
+            <select id="classFilter">
+              <option value="">All classes</option>
+            </select>
+          </label>
+          <label>Search
+            <input id="studentSearch" type="search" placeholder="Name or student ID">
+          </label>
+        </div>
+        <button class="primary" id="refreshButton" type="button">Refresh Students</button>
+        <p id="financeMessage" class="finance-message" role="status"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Student Payment Records</h2>
+        <div class="finance-table-wrap">
+          <table class="finance-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Student ID</th>
+                <th>Class</th>
+                <th>Academic Year</th>
+                <th>Payment Status</th>
+              </tr>
+            </thead>
+            <tbody id="financeTableBody">
+              <tr><td colspan="5">Loading students...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="academic-finance.js"></script>
+</body>
+</html>

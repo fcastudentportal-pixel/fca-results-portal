@@ -244,20 +244,35 @@ if (error) {
     showMessage(`Saved: ${student.full_name} — ${status}.`, "success");
   }
 
-  tableBody.addEventListener("change", async event => {
-    const select = event.target.closest(".fee-status-select");
-    if (!select) return;
+  
+tableBody.addEventListener("change", async event => {
+  const select = event.target.closest(".fee-status-select");
+  if (!select) return;
 
-    const studentId = select.dataset.student;
-    const status = select.value;
+  const studentId = select.dataset.student;
+  const status = select.value;
 
-    select.disabled = true;
-    try {
-      await saveStatus(studentId, status);
-    } finally {
-      select.disabled = false;
-    }
-  });
+  // Confirm that the change event is working.
+  showMessage(
+    "Change detected: " + status + ". Saving...",
+    "success"
+  );
+
+  select.disabled = true;
+
+  try {
+    await saveStatus(studentId, status);
+  } catch (error) {
+    console.error("Unexpected fee save error:", error);
+
+    showMessage(
+      "Unexpected error: " + (error.message || String(error)),
+      "error"
+    );
+  } finally {
+    select.disabled = false;
+  }
+});
 
   yearFilter.addEventListener("change", render);
   classFilter.addEventListener("change", render);

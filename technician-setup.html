@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FCA Technician Setup</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f2ee;
+      color: #1d2430;
+    }
+    main {
+      max-width: 420px;
+      margin: 35px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 8px 28px #0001;
+    }
+    h1 { color: #650d22; font-size: 23px; }
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #650d22;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; }
+    #message { line-height: 1.5; overflow-wrap: anywhere; }
+    .warning { font-size: 13px; color: #606775; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>FCA Technician Setup</h1>
+  <p>Sign in with the authorized FCA administrator account.</p>
+
+  <form id="loginForm">
+    <label for="email">Administrator email</label>
+    <input id="email" type="email"
+      value="fca.admin@gmail.com" required>
+
+    <label for="adminPassword">Administrator password</label>
+    <input id="adminPassword" type="password"
+      autocomplete="current-password" required>
+
+    <button id="loginButton" type="submit">
+      Sign In
+    </button>
+  </form>
+
+  <form id="setupForm" hidden>
+    <p>Administrator signed in. Create your new technician password.</p>
+
+    <label for="technicianPassword">New technician password</label>
+    <input id="technicianPassword" type="password"
+      minlength="12" autocomplete="new-password" required>
+
+    <label for="confirmPassword">Confirm technician password</label>
+    <input id="confirmPassword" type="password"
+      minlength="12" autocomplete="new-password" required>
+
+    <button id="saveButton" type="submit">
+      Save Technician Password
+    </button>
+    <button id="logoutButton" type="button">
+      Sign Out
+    </button>
+  </form>
+
+  <p class="warning">
+    Use a unique password of at least 12 characters.
+    Do not share it or put it in website source files.
+  </p>
+  <p id="message" role="status"></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+"use strict";
+
+const client = window.fcaSupabase;
+const message = document.getElementById("message");
+const loginForm = document.getElementById("loginForm");
+const setupForm = document.getElementById("setupForm");
+const loginButton = document.getElementById("loginButton");
+const saveButton = document.getElementById("saveButton");
+
+function showMessage(text, success = false) {
+  message.textContent = text;
+  message.style.color = success ? "#187544" : "#b42318";
+}
+
+function showSetup(signedIn) {
+  loginForm.hidden = signedIn;
+  setupForm.hidden = !signedIn;
+}
+
+async function checkSession() {
+  if (!client) {
+    showMessage("Supabase client unavailable. Check config.js.");
+    return;
+  }
+
+  const { data, error } = await client.auth.getSession();
+
+  if (error) {
+    showMessage("Unable to check session. " + error.message);
+    return;
+  }
+
+  const email = data.session?.user?.email?.toLowerCase();
+
+  if (email === "fca.admin@gmail.com") {
+    showSetup(true);
+  } else {
+    showSetup(false);
+  }
+}
+
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if (!client) {
+    showMessage("Supabase client unavailable. Check config.js.");
+    return;
+  }
+
+  loginButton.disabled = true;
+  showMessage("Signing in...");
+
+  try {
+    const { data, error } = await client.auth.signInWithPassword({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("adminPassword").value
+    });
+
+    if (error) throw error;
+
+    if (data.user?.email?.toLowerCase() !== "fca.admin@gmail.com") {
+      await client.auth.signOut();
+      throw new Error("This is not the authorized FCA administrator account.");
+    }
+
+    document.getElementById("adminPassword").value = "";
+    showSetup(true);
+    showMessage("Administrator signed in.", true);
+  } catch (error) {
+    showMessage(error.message || "Sign-in failed.");
+  } finally {
+    loginButton.disabled = false;
+  }
+});
+
+setupForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const password = document.getElementById("technicianPassword").value;
+  const confirmation = document.getElementById("confirmPassword").value;
+
+  if (password.length < 12) {
+    showMessage("Use at least 12 characters.");
+    return;
+  }
+
+  if (password !== confirmation) {
+    showMessage("The passwords do not match.");
+    return;
+  }
+
+  saveButton.disabled = true;
+  showMessage("Saving password hash securely...");
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await client.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const email = sessionData.session?.user?.email?.toLowerCase();
+
+    if (email !== "fca.admin@gmail.com") {
+      throw new Error("Administrator session required. Sign in again.");
+    }
+
+    const { data, error } = await client.rpc(
+      "fca_set_technician_password",
+      { p_new_password: password }
+    );
+
+    if (error) throw error;
+    if (data !== true) throw new Error("Password setup was not confirmed.");
+
+    document.getElementById("technicianPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+    showMessage(
+      "Technician password saved successfully. You can now test it on the Teachers page.",
+      true
+    );
+  } catch (error) {
+    showMessage(error.message || "Unable to save technician password.");
+  } finally {
+    saveButton.disabled = false;
+  }
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const { error } = await client.auth.signOut();
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+  showSetup(false);
+  showMessage("Signed out.");
+});
+
+checkSession();
+</script>
+</body>
+</html>

@@ -213,15 +213,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       .select("id,student_id,academic_year,fee_status,updated_at")
       .single();
 
-    if (error) {
-      console.error("Fee status save failed:", error);
-      showMessage(
-        "Save failed. Check admin login and Supabase RLS policies.",
-        "error"
-      );
-      await loadData();
-      return;
-    }
+    
+if (error) {
+  console.error("Fee status save failed:", {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    hint: error.hint
+  });
+
+  showMessage(
+  "Save failed: " + error.message +
+  " | Code: " + (error.code || "unknown"),
+  "error"
+);
+
+  select.disabled = false;
+  return;
+}
 
     const index = fees.findIndex(f =>
       f.student_id === studentId &&

@@ -67,6 +67,7 @@ const addTeacherBtn = document.getElementById("addTeacherBtn");
 
 const deleteModal = document.getElementById("deleteModal");
 const deleteTeacherName = document.getElementById("deleteTeacherName");
+
 const deleteError = document.getElementById("deleteError");
 const deleteCancelBtn = document.getElementById("deleteCancelBtn");
 const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
@@ -780,14 +781,6 @@ passwordToggle?.addEventListener("click", () => {
     );
 });
 
-adminPasswordToggle?.addEventListener("click", () => {
-    setPasswordVisibility(
-        adminDeletePassword,
-        adminPasswordToggle,
-        adminDeletePassword?.type === "password"
-    );
-});
-
 
 /* ============================================================
    PASSWORD HASHING
@@ -1109,13 +1102,6 @@ function deleteTeacher(id) {
             : "Delete this teacher?";
     }
 
-    if (adminDeletePassword) {
-        adminDeletePassword.value = "";
-        adminDeletePassword.type = "password";
-        adminDeletePassword.placeholder =
-            "Use the technician authorization prompt";
-    }
-
     if (deleteError) {
         deleteError.textContent =
             "Your technician password will be requested when you confirm.";
@@ -1141,11 +1127,6 @@ function closeDeleteModal() {
 
     teacherToDeleteId = null;
 
-    if (adminDeletePassword) {
-        adminDeletePassword.value = "";
-        adminDeletePassword.type = "password";
-    }
-
     if (deleteError) {
         deleteError.textContent = "";
     }
@@ -1157,15 +1138,6 @@ function closeDeleteModal() {
 }
 
 deleteCancelBtn?.addEventListener("click", closeDeleteModal);
-
-if (adminDeletePassword) {
-    adminDeletePassword.addEventListener("keydown", event => {
-        if (event.key === "Escape") {
-            event.preventDefault();
-            closeDeleteModal();
-        }
-    });
-}
 
 if (deleteModal) {
     deleteModal.addEventListener("click", event => {

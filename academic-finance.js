@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const $ = id => document.getElementById(id);
 
   const yearFilter = $("yearFilter");
+  const termFilter = $("termFilter");
   const classFilter = $("classFilter");
   const searchInput = $("studentSearch");
   const tableBody = $("financeTableBody");
@@ -14,6 +15,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let students = [];
   let classes = [];
   let fees = [];
+
+  const TERMS = ["Term 1", "Term 2", "Term 3"];
 
   const STATUS = {
     unpaid: "Not Paid",
@@ -40,10 +43,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     return Number(yearFilter.value);
   }
 
-  function getFee(student, year) {
+  function selectedTerm() {
+    return termFilter.value;
+  }
+
+  function getFee(student, year, term) {
     return fees.find(f =>
       f.student_id === student.student_id &&
-      Number(f.academic_year) === Number(year)
+      Number(f.academic_year) === Number(year) &&
+      f.term === term
     );
   }
 
@@ -57,27 +65,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     tableBody.innerHTML =
       '<tr><td colspan="5">Loading...</td></tr>';
 
-    const [studentResult, classResult, feeResult] = await Promise.all([
-      db.from("students")
-        .select("id,full_name,student_id,class_id,form_number,academic_year")
-        .order("full_name"),
-      db.from("classes")
-        .select("id,class_name,form_number")
-        .order("form_number"),
-      db.from("fees")
-        .select("id,student_id,academic_year,fee_status,updated_at")
-    ]);
+    const [studentResult, classResult, feeResult] =
+      await Promise.all([
+        db.from("students")
+          .select(
+            "id,full_name,student_id,class_id,form_number,academic_year"
+          )
+          .order("full_name"),
 
-    if (studentResult.error || classResult.error || feeResult.error) {
+        db.from("classes")
+          .select("id,class_name,form_number")
+          .order("form_number"),
+
+        db.from("fees")
+          .select(
+            "id,student_id,academic_year,term,fee_status,updated_at"
+          )
+      ]);
+
+    if (
+      studentResult.error ||
+      classResult.error ||
+      feeResult.error
+    ) {
       console.error(
+        "Finance loading errors:",
         studentResult.error,
         classResult.error,
         feeResult.error
       );
+
       showMessage(
-        "Could not load records. Check Supabase permissions and RLS policies.",
+        "Could not load records. Check Supabase permissions, " +
+        "RLS policies, and the fees.term column.",
         "error"
       );
+
       tableBody.innerHTML =
         '<tr><td colspan="5">Unable to load records.</td></tr>';
       return;
@@ -89,33 +112,50 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const years = new Set([
       new Date().getFullYear(),
-      ...students.map(s => Number(s.academic_year)).filter(Boolean),
-      ...fees.map(f => Number(f.academic_year)).filter(Boolean)
+      ...students
+        .map(s => Number(s.academic_year))
+        .filter(Boolean),
+      ...fees
+        .map(f => Number(f.academic_year))
+        .filter(Boolean)
     ]);
 
     const previousYear = yearFilter.value;
+
     yearFilter.innerHTML = [...years]
       .sort((a, b) => b - a)
       .map(year =>
         `<option value="${year}">${year}</option>`
-      ).join("");
+      )
+      .join("");
 
     if (years.has(Number(previousYear))) {
       yearFilter.value = previousYear;
     }
 
+    // Ensure the three terms exist in the HTML dropdown.
+    termFilter.innerHTML = TERMS.map(term =>
+      `<option value="${term}">${term}</option>`
+    ).join("");
+
     classFilter.innerHTML =
       '<option value="">All classes</option>' +
       classes.map(c =>
-        `<option value="${escapeHTML(c.id)}">${escapeHTML(c.class_name)}</option>`
+        `<option value="${escapeHTML(c.id)}">` +
+        `${escapeHTML(c.class_name)}</option>`
       ).join("");
 
     render();
-    showMessage(`Loaded ${students.length} students.`);
+
+    showMessage(
+      `Loaded ${students.length} students.`,
+      "success"
+    );
   }
 
   function render() {
     const year = selectedYear();
+    const term = selectedTerm();
     const selectedClass = classFilter.value;
     const query = searchInput.value.trim().toLowerCase();
 
@@ -124,17 +164,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         Number(student.academic_year) === year;
 
       const matchesClass =
-        !selectedClass || student.class_id === selectedClass;
+        !selectedClass ||
+        student.class_id === selectedClass;
 
       const matchesSearch =
         !query ||
-        String(student.full_name || "").toLowerCase().includes(query) ||
-        String(student.student_id || "").toLowerCase().includes(query);
+        String(student.full_name || "")
+          .toLowerCase().includes(query) ||
+        String(student.student_id || "")
+          .toLowerCase().includes(query);
 
       return matchesYear && matchesClass && matchesSearch;
     });
 
-    const allYearStudents = students.filter(
+    // Statistics apply to the selected year AND term.
+    const allTermStudents = students.filter(
       student => Number(student.academic_year) === year
     );
 
@@ -142,8 +186,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let partial = 0;
     let paid = 0;
 
-    allYearStudents.forEach(student => {
-      const status = getStatus(getFee(student, year));
+    allTermStudents.forEach(student => {
+      const fee = getFee(student, year, term);
+      const status = getStatus(fee);
+
       if (status === STATUS.unpaid) unpaid++;
       else if (status === STATUS.partial) partial++;
       else if (status === STATUS.paid) paid++;
@@ -155,33 +201,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!visibleStudents.length) {
       tableBody.innerHTML =
-        '<tr><td colspan="5">No students found for these filters.</td></tr>';
+        '<tr><td colspan="5">' +
+        'No students found for these filters.</td></tr>';
       return;
     }
 
     tableBody.innerHTML = visibleStudents.map(student => {
-      const fee = getFee(student, year);
+      const fee = getFee(student, year, term);
       const status = getStatus(fee);
-      const classInfo = classes.find(c => c.id === student.class_id);
+
+      const classInfo = classes.find(
+        c => c.id === student.class_id
+      );
+
       const className = classInfo
         ? classInfo.class_name
-        : (student.form_number ? `Form ${student.form_number}` : "Not assigned");
+        : (
+            student.form_number
+              ? `Form ${student.form_number}`
+              : "Not assigned"
+          );
 
       return `
         <tr>
           <td>${escapeHTML(student.full_name)}</td>
           <td>${escapeHTML(student.student_id)}</td>
           <td>${escapeHTML(className)}</td>
-          <td>${year}</td>
+          <td>${year} — ${escapeHTML(term)}</td>
           <td>
             <select
               class="fee-status-select"
               data-student="${escapeHTML(student.student_id)}"
               aria-label="Fee status for ${escapeHTML(student.full_name)}"
             >
-              <option value="Not Paid" ${status === "Not Paid" ? "selected" : ""}>Not Paid</option>
-              <option value="50% Paid" ${status === "50% Paid" ? "selected" : ""}>50% Paid</option>
-              <option value="Complete" ${status === "Complete" ? "selected" : ""}>100% Paid</option>
+              <option value="Not Paid"
+                ${status === "Not Paid" ? "selected" : ""}>
+                Not Paid
+              </option>
+
+              <option value="50% Paid"
+                ${status === "50% Paid" ? "selected" : ""}>
+                50% Paid
+              </option>
+
+              <option value="Complete"
+                ${status === "Complete" ? "selected" : ""}>
+                100% Paid
+              </option>
             </select>
           </td>
         </tr>
@@ -191,98 +257,118 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function saveStatus(studentId, status) {
     const year = selectedYear();
-    const student = students.find(s => s.student_id === studentId);
+    const term = selectedTerm();
+
+    const student = students.find(
+      s => s.student_id === studentId
+    );
 
     if (!student) {
       showMessage("Student not found.", "error");
-      return;
+      throw new Error("Student not found.");
     }
 
-    showMessage(`Saving fee status for ${student.full_name}...`);
+    if (!TERMS.includes(term)) {
+      showMessage("Please select a valid term.", "error");
+      throw new Error("Invalid academic term.");
+    }
+
+    showMessage(
+      `Saving ${student.full_name} — ${year}, ${term}...`
+    );
 
     const { data, error } = await db
       .from("fees")
       .upsert({
         student_id: studentId,
         academic_year: year,
+        term: term,
         fee_status: status,
         updated_at: new Date().toISOString()
       }, {
-        onConflict: "student_id,academic_year"
+        onConflict: "student_id,academic_year,term"
       })
-      .select("id,student_id,academic_year,fee_status,updated_at")
+      .select(
+        "id,student_id,academic_year,term,fee_status,updated_at"
+      )
       .single();
 
-    
-if (error) {
-  console.error("Fee status save failed:", {
-    message: error.message,
-    code: error.code,
-    details: error.details,
-    hint: error.hint
-  });
+    if (error) {
+      console.error("Fee status save failed:", {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
 
-  showMessage(
-  "Save failed: " + error.message +
-  " | Code: " + (error.code || "unknown"),
-  "error"
-);
+      showMessage(
+        "Save failed: " + error.message +
+        " | Code: " + (error.code || "unknown"),
+        "error"
+      );
 
-  select.disabled = false;
-  return;
-}
+      throw error;
+    }
 
     const index = fees.findIndex(f =>
       f.student_id === studentId &&
-      Number(f.academic_year) === year
+      Number(f.academic_year) === year &&
+      f.term === term
     );
 
-    if (index >= 0) fees[index] = data;
-    else fees.push(data);
+    if (index >= 0) {
+      fees[index] = data;
+    } else {
+      fees.push(data);
+    }
 
     render();
-    showMessage(`Saved: ${student.full_name} — ${status}.`, "success");
-  }
-
-  
-tableBody.addEventListener("change", async event => {
-  const select = event.target.closest(".fee-status-select");
-  if (!select) return;
-
-  const studentId = select.dataset.student;
-  const status = select.value;
-
-  // Confirm that the change event is working.
-  showMessage(
-    "Change detected: " + status + ". Saving...",
-    "success"
-  );
-
-  select.disabled = true;
-
-  try {
-    await saveStatus(studentId, status);
-  } catch (error) {
-    console.error("Unexpected fee save error:", error);
 
     showMessage(
-      "Unexpected error: " + (error.message || String(error)),
-      "error"
+      `Saved: ${student.full_name} — ${year}, ${term}: ${status}.`,
+      "success"
     );
-  } finally {
-    select.disabled = false;
   }
-});
+
+  tableBody.addEventListener("change", async event => {
+    const select = event.target.closest(".fee-status-select");
+    if (!select) return;
+
+    const studentId = select.dataset.student;
+    const status = select.value;
+
+    select.disabled = true;
+
+    try {
+      await saveStatus(studentId, status);
+    } catch (error) {
+      console.error("Fee save error:", error);
+
+      // Restore the displayed value to the last saved status.
+      render();
+    } finally {
+      // render() may have replaced the original select element.
+      // This still safely re-enables the original element.
+      select.disabled = false;
+    }
+  });
 
   yearFilter.addEventListener("change", render);
+  termFilter.addEventListener("change", render);
   classFilter.addEventListener("change", render);
   searchInput.addEventListener("input", render);
+
   $("refreshButton").addEventListener("click", loadData);
 
   if (!db) {
-    showMessage("Supabase is not initialized. Check config.js.", "error");
+    showMessage(
+      "Supabase is not initialized. Check config.js.",
+      "error"
+    );
+
     tableBody.innerHTML =
-      '<tr><td colspan="5">Database connection unavailable.</td></tr>';
+      '<tr><td colspan="5">' +
+      'Database connection unavailable.</td></tr>';
     return;
   }
 
@@ -290,7 +376,10 @@ tableBody.addEventListener("change", async event => {
     const authorized = await window.fcaRequireAdmin();
     if (!authorized) return;
   } else {
-    showMessage("Admin authorization function is unavailable.", "error");
+    showMessage(
+      "Admin authorization function is unavailable.",
+      "error"
+    );
     return;
   }
 

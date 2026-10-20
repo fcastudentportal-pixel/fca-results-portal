@@ -74,7 +74,7 @@
       <a class="nav" href="classes.html">Classes</a>
       <a class="nav" href="students.html">Students</a>
       <a class="nav" href="subjects.html">Subjects</a>
-      <a class="nav" href="academic-finance.html">Academic Finance</a>
+      <a class="nav active" href="academic-finance.html">Academic Finance</a>
       <a class="nav" href="results.html">Results</a>
     </nav>
   </aside>
@@ -111,19 +111,35 @@
 
       <div class="panel">
         <h2>Filter Students</h2>
-        <div class="finance-filters">
-          <label>Academic Year
-            <select id="yearFilter"></select>
-          </label>
-          <label>Class
-            <select id="classFilter">
-              <option value="">All classes</option>
-            </select>
-          </label>
-          <label>Search
-            <input id="studentSearch" type="search" placeholder="Name or student ID">
-          </label>
-        </div>
+        
+<div class="finance-filters">
+  <label>Academic Year
+    <select id="yearFilter"></select>
+  </label>
+
+  <label>Term
+    <select id="termFilter">
+      <option value="Term 1">Term 1</option>
+      <option value="Term 2">Term 2</option>
+      <option value="Term 3">Term 3</option>
+    </select>
+  </label>
+
+  <label>Class
+    <select id="classFilter">
+      <option value="">All classes</option>
+    </select>
+  </label>
+
+  <label>Search
+    <input
+      id="studentSearch"
+      type="search"
+      placeholder="Name or student ID"
+    >
+  </label>
+</div>
+
         <button class="primary" id="refreshButton" type="button">Refresh Students</button>
         <p id="financeMessage" class="finance-message" role="status"></p>
       </div>

@@ -67,12 +67,9 @@ const addTeacherBtn = document.getElementById("addTeacherBtn");
 
 const deleteModal = document.getElementById("deleteModal");
 const deleteTeacherName = document.getElementById("deleteTeacherName");
-const adminDeletePassword = document.getElementById("adminDeletePassword");
 const deleteError = document.getElementById("deleteError");
 const deleteCancelBtn = document.getElementById("deleteCancelBtn");
 const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
-const adminPasswordToggle = document.getElementById("adminPasswordToggle");
-
 
 /* ============================================================
    SUPABASE
@@ -895,16 +892,6 @@ if (teacherForm) {
         }
 
         try {
-            const authorized = await requestTechnicianPassword(
-                editingTeacherId === null
-                    ? "adding a teacher"
-                    : "editing a teacher"
-            );
-
-            if (!authorized) {
-                showMessage("Action cancelled.", "info");
-                return;
-            }
 
             const supabase = getSupabaseClient();
 
@@ -1082,9 +1069,9 @@ function editTeacher(id) {
     }
 
     showMessage(
-        "Your technician password will be required to save changes.",
-        "info"
-    );
+    "Update the teacher details and save your changes.",
+    "info"
+);
 
     showTeacherForm();
 }

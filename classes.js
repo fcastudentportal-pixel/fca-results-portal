@@ -13,7 +13,8 @@
 
 const MAX_CLASSES = 4;
 
-const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
+const TECHNICIAN_VERIFY_RPC =
+  "fca_verify_technician_password";
 
 
 /* =========================================================
@@ -250,9 +251,9 @@ function setupEvents() {
 
 
   dom.adminPasswordToggle?.addEventListener(
-    "click",
-    toggleAdminDeletePassword
-  );
+  "click",
+  toggleTechnicianDeletePassword
+);
 
 
   /* -------------------------------------------------------
@@ -1395,20 +1396,20 @@ async function confirmDeleteClass() {
 
 
   const password =
-    dom.adminDeletePassword?.value.trim();
+  dom.adminDeletePassword?.value;
 
 
-  if (!password) {
+if (!password || !password.trim()) {
 
-    showDeleteMessage(
-      "error",
-      "Please enter the administrator password."
-    );
+  showDeleteMessage(
+    "error",
+    "Please enter the technician password."
+  );
 
-    dom.adminDeletePassword?.focus();
+  dom.adminDeletePassword?.focus();
 
-    return;
-  }
+  return;
+}
 
 
   const selectedClass =
@@ -1457,27 +1458,23 @@ async function confirmDeleteClass() {
   try {
 
     /* =====================================================
-       1. VERIFY ADMIN
-    ===================================================== */
+   1. VERIFY TECHNICIAN
+===================================================== */
 
-    showDeleteMessage(
-      "info",
-      "Verifying administrator password..."
-    );
+showDeleteMessage(
+  "info",
+  "Verifying technician password..."
+);
 
+const technicianVerified =
+  await verifyTechnicianPassword(password);
 
-    const adminVerified =
-      await verifyAdministratorPassword(
-        password
-      );
+if (!technicianVerified) {
 
-
-    if (!adminVerified) {
-
-      throw new Error(
-        "The administrator password is incorrect."
-      );
-    }
+  throw new Error(
+    "The technician password is incorrect."
+  );
+}
 
 
     /* =====================================================
@@ -1770,59 +1767,58 @@ async function confirmDeleteClass() {
 }
 
 
+
 /* =========================================================
-   ADMIN AUTHENTICATION
+   TECHNICIAN AUTHENTICATION
 ========================================================= */
 
-async function verifyAdministratorPassword(
-  password
-) {
+async function verifyTechnicianPassword(password) {
 
-  if (!db) {
+  if (!db || !password) {
     return false;
   }
-
 
   try {
 
     const {
       data,
       error
-    } = await db.auth.signInWithPassword({
-
-      email:
-        FCA_ADMIN_EMAIL,
-
-      password:
-        password
-
-    });
-
+    } = await db.rpc(
+      TECHNICIAN_VERIFY_RPC,
+      {
+        p_password: password
+      }
+    );
 
     if (error) {
 
       console.error(
-        "Admin authentication error:",
+        "Technician verification RPC error:",
         error
       );
 
-      return false;
+      throw new Error(
+        "Technician verification is not configured correctly. Check the Supabase technician-verification RPC."
+      );
     }
 
-
-    return !!data?.user;
-
+    // Accept the documented boolean or object response.
+    return (
+      data === true ||
+      data?.authorized === true
+    );
 
   } catch (error) {
 
     console.error(
-      "Admin verification exception:",
+      "Technician verification exception:",
       error
     );
 
-    return false;
+    throw error;
   }
 }
+
 
 
 /* =========================================================
@@ -1899,8 +1895,7 @@ function toggleTeacherPassword() {
 /* =========================================================
    ADMIN PASSWORD TOGGLE
 ========================================================= */
-
-function toggleAdminDeletePassword() {
+function toggleTechnicianDeletePassword() {
 
   if (!dom.adminDeletePassword) {
     return;

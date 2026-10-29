@@ -669,81 +669,130 @@
 </div>
 
 
+
 <!-- =====================================================
-     DELETE TEACHER MODAL
+     FCA SECURITY — DELETE TEACHER MODAL
 ====================================================== -->
 
-<div
-  id="deleteModal"
-  class="delete-modal"
->
+<div id="deleteModal" class="delete-modal" aria-hidden="true">
 
-  <div class="delete-modal-box">
+  <div class="delete-modal-box"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="deleteModalTitle">
 
-    <div class="delete-modal-header">
+    <button
+      type="button"
+      id="deleteCloseBtn"
+      class="security-close-btn"
+      aria-label="Close delete dialog">
+      &times;
+    </button>
 
-      <div class="delete-modal-icon">
-        !
+    <div class="security-brand">
+      <img src="fca-logo.png" alt="First Class Academy logo">
+    </div>
+
+    <div class="security-eyebrow">FCA SECURITY</div>
+
+    <h2 id="deleteModalTitle" class="security-title">
+      Delete Teacher
+    </h2>
+
+    <p class="security-description">
+      Technician authorization is required to permanently
+      delete this teacher.
+    </p>
+
+    <div class="security-target">
+      <span>TEACHER TO DELETE</span>
+      <strong id="deleteTeacherName">Teacher name</strong>
+    </div>
+
+    <div class="security-warning">
+      Deleting this teacher may permanently remove associated
+      records, depending on your database relationships.
+      This action cannot be undone.
+    </div>
+
+    <form id="deleteTeacherAuthForm">
+
+      <label for="deleteTechnicianPassword">
+        Technician Password
+      </label>
+
+      <div class="security-password-wrapper">
+
+        <input
+          type="password"
+          id="deleteTechnicianPassword"
+          placeholder="Enter technician password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          type="button"
+          id="deletePasswordToggle"
+          class="security-password-toggle"
+          aria-label="Show technician password"
+          aria-pressed="false">
+
+          <svg class="security-eye-open"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+
+          <svg class="security-eye-closed"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M3 3l18 18"/>
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+            <path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"/>
+            <path d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"/>
+          </svg>
+
+        </button>
       </div>
 
-      <div>
+      <p id="deleteError" class="delete-error"
+         role="alert" aria-live="polite"></p>
 
-        <h3>
+      <div class="delete-modal-actions">
+
+        <button
+          type="button"
+          id="deleteCancelBtn"
+          class="delete-cancel-btn">
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          id="deleteConfirmBtn"
+          class="delete-confirm-btn">
           Delete Teacher
-        </h3>
-
-        <p id="deleteTeacherName">
-          Confirm teacher deletion.
-        </p>
+        </button>
 
       </div>
 
-    </div>
-
-
-    
-<div class="delete-modal-body">
-
-  <p>
-    Are you sure you want to permanently delete this teacher?
-  </p>
-
-  <p>
-    You will verify your technician password in the next prompt.
-  </p>
-
-  <p
-    id="deleteError"
-    class="delete-error"
-  ></p>
-
-</div>
-
-
-
-    <div class="delete-modal-actions">
-
-      <button
-        type="button"
-        id="deleteCancelBtn"
-        class="delete-cancel-btn"
-      >
-        Cancel
-      </button>
-
-      <button
-        type="button"
-        id="deleteConfirmBtn"
-        class="delete-confirm-btn"
-      >
-        Delete Teacher
-      </button>
-
-    </div>
+    </form>
 
   </div>
-
 </div>
+
 
 
 <!-- =====================================================

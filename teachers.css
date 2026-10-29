@@ -1153,3 +1153,280 @@ textarea:focus{
   }
 
 }
+
+/* =====================================================
+   FCA SECURITY — DELETE TEACHER MODAL
+===================================================== */
+
+.delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(35, 20, 25, 0.58);
+  backdrop-filter: blur(5px);
+  overflow-y: auto;
+}
+
+.delete-modal.show {
+  display: flex;
+}
+
+.delete-modal-box {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 34px 32px 30px;
+  border-radius: 28px;
+  background: #fff;
+  color: #202631;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+}
+
+.security-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 50%;
+  background: #f5f4f1;
+  color: #202631;
+  font-size: 32px;
+  cursor: pointer;
+}
+
+.security-brand {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 24px;
+}
+
+.security-brand img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.security-eyebrow {
+  margin-bottom: 10px;
+  color: #927632;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+
+.security-title {
+  margin: 0;
+  color: #650d22;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 36px;
+  font-weight: 500;
+}
+
+.security-description {
+  margin: 16px 0 34px;
+  color: #727782;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.security-target {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  border: 1px solid #e9dfbf;
+  border-radius: 20px;
+  background: #f7f1df;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.security-target span {
+  color: #737783;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.security-target strong {
+  color: #650d22;
+  font-size: 30px;
+}
+
+.security-warning {
+  margin: 24px 0 30px;
+  padding: 20px;
+  border: 1px solid #e8c7c7;
+  border-radius: 18px;
+  background: #fff6f5;
+  color: #a34444;
+  line-height: 1.65;
+}
+
+#deleteTeacherAuthForm > label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.security-password-wrapper {
+  position: relative;
+}
+
+.security-password-wrapper input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 64px;
+  padding: 16px 60px 16px 18px;
+  border: 2px solid #d7d9de;
+  border-radius: 17px;
+  background: #fff;
+  color: #202631;
+  font: inherit;
+  font-size: 17px;
+  outline: none;
+}
+
+.security-password-wrapper input:focus {
+  border-color: #650d22;
+  box-shadow: 0 0 0 3px rgba(101, 13, 34, 0.09);
+}
+
+.security-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 38px;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #727782;
+  cursor: pointer;
+}
+
+.security-password-toggle svg {
+  width: 27px;
+  height: 27px;
+}
+
+.security-password-toggle .security-eye-closed {
+  display: none;
+}
+
+.security-password-toggle.is-visible .security-eye-open {
+  display: none;
+}
+
+.security-password-toggle.is-visible .security-eye-closed {
+  display: block;
+}
+
+.delete-error {
+  min-height: 20px;
+  margin: 12px 0;
+  color: #b42318;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.delete-modal-actions button {
+  flex: 1;
+  min-height: 68px;
+  padding: 14px;
+  border-radius: 17px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.delete-cancel-btn {
+  border: 2px solid #dedbd6;
+  background: #fff;
+  color: #202631;
+}
+
+.delete-confirm-btn {
+  border: 0;
+  background: #650d22;
+  color: #fff;
+}
+
+.delete-modal-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 520px) {
+  .delete-modal {
+    padding: 10px;
+  }
+
+  .delete-modal-box {
+    max-height: calc(100dvh - 20px);
+    padding: 26px 20px 22px;
+    border-radius: 24px;
+  }
+
+  .security-close-btn {
+    top: 14px;
+    right: 14px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .security-brand img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .security-title {
+    font-size: 30px;
+  }
+
+  .security-description {
+    margin-bottom: 24px;
+  }
+
+  .security-target strong {
+    font-size: 25px;
+  }
+
+  .security-warning {
+    padding: 15px;
+    margin: 18px 0 24px;
+  }
+
+  .delete-modal-actions {
+    gap: 10px;
+  }
+
+  .delete-modal-actions button {
+    min-height: 58px;
+    padding: 10px 6px;
+    font-size: 14px;
+  }
+}

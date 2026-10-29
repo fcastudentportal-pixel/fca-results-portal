@@ -15,8 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
        CONFIGURATION
     ===================================================== */
 
-    const FCA_ADMIN_EMAIL = "fca.admin@gmail.com";
-
     const db = window.fcaSupabase;
 
     let currentFormNumber = null;
@@ -2142,7 +2140,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 false;
 
             deleteConfirmBtn.textContent =
-                "Delete Student";
+    "Delete Student";
         }
 
 
@@ -2247,175 +2245,195 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       CONFIRM DELETE STUDENT
-    ===================================================== */
+    
+    
+/* =====================================================
+   FCA SECURITY — CONFIRM STUDENT DELETION
+   IT TECHNICIAN AUTHORIZATION REQUIRED
+===================================================== */
 
-    async function confirmDeleteStudent() {
+async function confirmDeleteStudent() {
 
-        if (!selectedStudentId) {
+    if (!selectedStudentId) {
 
-            showDeleteError(
-                "No student was selected."
-            );
+        showDeleteError(
+            "No student was selected."
+        );
 
-            return;
+        return;
+    }
+
+    const password = adminDeletePassword
+        ? adminDeletePassword.value.trim()
+        : "";
+
+    if (!password) {
+
+        showDeleteError(
+            "Enter the IT Technician password to continue."
+        );
+
+        if (adminDeletePassword) {
+            adminDeletePassword.focus();
         }
 
+        return;
+    }
 
-        const password =
-            adminDeletePassword
-                ? adminDeletePassword.value.trim()
-                : "";
+    if (deleteConfirmBtn) {
 
+        deleteConfirmBtn.disabled = true;
+        deleteConfirmBtn.textContent =
+            "Verifying FCA SECURITY...";
+    }
 
-        if (!password) {
+    try {
 
-            showDeleteError(
-                "Please enter the administrator password."
-            );
+        /*
+         * STEP 1:
+         * Verify the IT Technician password
+         * through the existing Supabase RPC.
+         */
 
-
-            if (adminDeletePassword) {
-
-                adminDeletePassword.focus();
+        const {
+            data,
+            error: securityError
+        } = await db.rpc(
+            "fca_verify_technician_password",
+            {
+                p_password: password
             }
+        );
 
+        if (securityError) {
+
+            console.error(
+                "FCA SECURITY verification error:",
+                securityError
+            );
+
+            showDeleteError(
+                "FCA SECURITY verification failed. " +
+                "Please try again."
+            );
 
             return;
         }
 
+        /*
+         * The RPC may return:
+         * true
+         * OR
+         * { authorized: true }
+         */
+
+        const authorized =
+            data === true ||
+            (
+                data !== null &&
+                typeof data === "object" &&
+                data.authorized === true
+            );
+
+        if (!authorized) {
+
+            showDeleteError(
+                "FCA SECURITY authorization denied. " +
+                "The IT Technician password is incorrect."
+            );
+
+            return;
+        }
+
+        /*
+         * STEP 2:
+         * Save the selected ID before deleting.
+         */
+
+        const studentIdToDelete =
+            selectedStudentId;
+
+        /*
+         * STEP 3:
+         * Delete the student from Supabase.
+         *
+         * Database RLS policies must also
+         * authorize this DELETE operation.
+         */
+
+        if (deleteConfirmBtn) {
+            deleteConfirmBtn.textContent =
+                "Deleting student...";
+        }
+
+        const {
+            error: deleteErrorResult
+        } = await db
+            .from("students")
+            .delete()
+            .eq("id", studentIdToDelete);
+
+        if (deleteErrorResult) {
+
+            console.error(
+                "Student deletion error:",
+                deleteErrorResult
+            );
+
+            showDeleteError(
+                "Student deletion failed. " +
+                deleteErrorResult.message
+            );
+
+            return;
+        }
+
+        /*
+         * STEP 4:
+         * Update the local student list.
+         */
+
+        students = students.filter(
+            function (student) {
+                return student.id !== studentIdToDelete;
+            }
+        );
+
+        updateStudentCount();
+        renderStudents();
+
+        /*
+         * STEP 5:
+         * Close the modal after success.
+         */
+
+        closeDeleteModal();
+
+        console.log(
+            "FCA SECURITY: Student deleted successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "FCA SECURITY deletion error:",
+            error
+        );
+
+        showDeleteError(
+            "An unexpected FCA SECURITY error occurred."
+        );
+
+    } finally {
 
         if (deleteConfirmBtn) {
 
-            deleteConfirmBtn.disabled =
-                true;
-
+            deleteConfirmBtn.disabled = false;
             deleteConfirmBtn.textContent =
-                "Deleting...";
-        }
-
-
-        try {
-
-            /*
-             * Authenticate administrator.
-             */
-
-            const {
-                error: authError
-            } =
-                await db.auth.signInWithPassword({
-
-                    email:
-                        FCA_ADMIN_EMAIL,
-
-                    password:
-                        password
-
-                });
-
-
-            if (authError) {
-
-                console.error(
-                    "Admin authentication error:",
-                    authError
-                );
-
-
-                showDeleteError(
-                    "Administrator password is incorrect."
-                );
-
-
-                return;
-            }
-
-
-            const studentIdToDelete =
-                selectedStudentId;
-
-
-            /*
-             * Delete student.
-             */
-
-            const {
-                error
-            } =
-                await db
-                    .from("students")
-                    .delete()
-                    .eq(
-                        "id",
-                        studentIdToDelete
-                    );
-
-
-            if (error) {
-
-                console.error(
-                    "Student deletion error:",
-                    error
-                );
-
-
-                showDeleteError(
-                    "Unable to delete student. " +
-                    error.message
-                );
-
-
-                return;
-            }
-
-
-            /*
-             * Remove locally.
-             */
-
-            students =
-                students.filter(
-                    function (student) {
-
-                        return student.id !==
-                            studentIdToDelete;
-                    }
-                );
-
-
-            updateStudentCount();
-
-            renderStudents();
-
-            closeDeleteModal();
-
-        } catch (error) {
-
-            console.error(
-                "Delete student error:",
-                error
-            );
-
-
-            showDeleteError(
-                error.message ||
-                "An unexpected error occurred while deleting the student."
-            );
-
-        } finally {
-
-            if (deleteConfirmBtn) {
-
-                deleteConfirmBtn.disabled =
-                    false;
-
-                deleteConfirmBtn.textContent =
-                    "Delete Student";
-            }
+                "FCA SECURITY";
         }
     }
+}
 
 
     /* =====================================================

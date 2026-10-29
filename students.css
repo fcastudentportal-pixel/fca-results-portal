@@ -830,148 +830,354 @@ input[readonly]{
 }
 
 
+
 /* =====================================================
-   DELETE MODAL
+   FCA SECURITY — DELETE STUDENT MODAL
 ===================================================== */
 
-.delete-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:9999;
-  backdrop-filter:blur(4px);
+.delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(35, 19, 24, 0.58);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
-.delete-modal.show{
-  display:flex;
+.delete-modal.show {
+  display: flex;
 }
 
-.delete-modal-box{
-  width:100%;
-  max-width:460px;
-  background:#fff;
-  border-radius:18px;
-  box-shadow:0 25px 70px rgba(0,0,0,.25);
-  overflow:hidden;
+.delete-modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+  padding: 35px 32px 28px;
+  background: #fff;
+  border-radius: 27px;
+  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.22);
 }
 
-.delete-modal-header{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:22px;
-  border-bottom:1px solid #eee;
+/* Close button */
+
+.delete-modal-close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: #f4f2ee;
+  color: #1d2430;
+  font-size: 30px;
+  cursor: pointer;
 }
 
-.delete-modal-icon{
-  width:48px;
-  height:48px;
-  flex-shrink:0;
-  border-radius:50%;
-  background:#f8e8eb;
-  color:var(--maroon);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:22px;
+/* Logo and heading */
+
+.delete-modal-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 5px 35px 0;
 }
 
-.delete-modal-header h3{
-  margin:0;
-  color:var(--maroon);
-  font:22px Georgia,serif;
+.delete-modal-logo {
+  width: 105px;
+  height: 105px;
+  object-fit: contain;
+  margin-bottom: 18px;
 }
 
-.delete-modal-header p{
-  margin:5px 0 0;
-  color:var(--muted);
-  font-size:13px;
+.delete-modal-eyebrow {
+  margin: 0 0 12px;
+  color: #8b7431;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 4px;
 }
 
-.delete-modal-body{
-  padding:22px;
+.delete-modal-header {
+  display: block;
+  padding: 0;
+  border: 0;
+  text-align: center;
 }
 
-.delete-modal-body > p{
-  margin:0 0 15px;
-  color:var(--text);
-  font-size:14px;
-  line-height:1.5;
+.delete-modal-header h3 {
+  margin: 0;
+  color: var(--maroon);
+  font: 36px Georgia, serif;
 }
 
-.admin-password-wrapper{
-  position:relative;
+.delete-modal-header p {
+  margin: 17px 0 24px;
+  color: #737780;
+  font-size: 17px;
+  line-height: 1.55;
 }
 
-.admin-password-wrapper input{
-  width:100%;
-  margin:0;
-  padding:13px 48px 13px 13px;
-  border:1px solid #ccd1da;
-  border-radius:9px;
-  font-size:14px;
+/* Student information */
+
+.delete-student-summary {
+  margin: 0 0 18px;
+  padding: 25px 18px;
+  text-align: center;
+  background: #f7f1e2;
+  border: 2px solid #ece2c6;
+  border-radius: 20px;
 }
 
-.admin-password-wrapper button{
-  position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:36px;
-  height:36px;
-  border:0;
-  background:transparent;
-  cursor:pointer;
-  border-radius:7px;
+.delete-student-summary span {
+  display: block;
+  margin-bottom: 10px;
+  color: #737780;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.delete-error{
-  min-height:18px;
-  margin:8px 0 0 !important;
-  color:#b42318 !important;
-  font-size:12px !important;
+.delete-student-summary strong {
+  display: block;
+  color: var(--maroon);
+  font-size: 30px;
+  overflow-wrap: anywhere;
 }
 
-.delete-modal-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  padding:16px 22px 22px;
+.delete-student-summary small {
+  display: block;
+  margin-top: 8px;
+  color: #6c5a3a;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+/* Permanent deletion warning */
+
+.delete-student-warning {
+  margin: 0 0 28px;
+  padding: 22px 24px;
+  color: #9c4545;
+  background: #fff6f5;
+  border: 2px solid #ecd0ce;
+  border-radius: 17px;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* Technician password */
+
+.delete-modal-body {
+  padding: 0;
+}
+
+.delete-modal-body > label {
+  display: block;
+  margin-bottom: 13px;
+  color: #252a33;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.admin-password-wrapper {
+  position: relative;
+}
+
+.admin-password-wrapper input {
+  width: 100%;
+  min-height: 72px;
+  margin: 0;
+  padding: 18px 60px 18px 25px;
+  border: 2px solid #d6d8dc;
+  border-radius: 17px;
+  background: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+}
+
+.admin-password-wrapper input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px #d5b15a25;
+}
+
+.admin-password-wrapper button {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #737780;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.delete-error {
+  min-height: 18px;
+  margin: 10px 0 0 !important;
+  color: #b42318 !important;
+  font-size: 13px !important;
+  line-height: 1.5;
+}
+
+/* Bottom buttons */
+
+.delete-modal-actions {
+  display: flex;
+  gap: 16px;
+  padding: 45px 0 0;
 }
 
 .delete-cancel-btn,
-.delete-confirm-btn{
-  border:0;
-  padding:11px 17px;
-  border-radius:8px;
-  font-weight:700;
-  cursor:pointer;
-  font-size:13px;
+.delete-confirm-btn {
+  flex: 1;
+  min-height: 76px;
+  padding: 16px;
+  border-radius: 17px;
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, opacity .2s ease;
 }
 
-.delete-cancel-btn{
-  background:#f1f1f1;
-  color:#555;
+.delete-cancel-btn {
+  border: 2px solid #d9d7d3;
+  background: #fff;
+  color: #252a33;
 }
 
-.delete-confirm-btn{
-  background:var(--maroon);
-  color:#fff;
+.delete-cancel-btn:hover {
+  background: #f7f5f2;
 }
 
-.delete-confirm-btn:hover{
-  background:#4e091b;
+.delete-confirm-btn {
+  border: 2px solid var(--maroon);
+  background: var(--maroon);
+  color: #fff;
 }
 
-.delete-confirm-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
+.delete-confirm-btn:hover {
+  background: #4e091b;
 }
+
+.delete-confirm-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Responsive layout */
+
+@media (max-width: 600px) {
+  .delete-modal {
+    padding: 12px;
+  }
+
+  .delete-modal-box {
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
+    padding: 28px 20px 22px;
+    border-radius: 24px;
+  }
+
+  .delete-modal-close {
+    top: 15px;
+    right: 15px;
+    width: 43px;
+    height: 43px;
+    font-size: 25px;
+  }
+
+  .delete-modal-logo {
+    width: 83px;
+    height: 83px;
+    margin-bottom: 13px;
+  }
+
+  .delete-modal-eyebrow {
+    font-size: 12px;
+    letter-spacing: 3px;
+  }
+
+  .delete-modal-header h3 {
+    font-size: 29px;
+  }
+
+  .delete-modal-header p {
+    margin: 13px 0 20px;
+    font-size: 14px;
+  }
+
+  .delete-student-summary {
+    padding: 20px 12px;
+    border-radius: 15px;
+  }
+
+  .delete-student-summary strong {
+    font-size: 25px;
+  }
+
+  .delete-student-warning {
+    margin-bottom: 23px;
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  .delete-modal-body > label {
+    font-size: 16px;
+  }
+
+  .admin-password-wrapper input {
+    min-height: 62px;
+    padding: 15px 52px 15px 18px;
+    font-size: 16px;
+  }
+
+  .delete-modal-actions {
+    gap: 10px;
+    padding-top: 30px;
+  }
+
+  .delete-cancel-btn,
+  .delete-confirm-btn {
+    min-height: 62px;
+    padding: 12px 8px;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .delete-modal-actions {
+    flex-direction: column;
+  }
+
+  .delete-cancel-btn,
+  .delete-confirm-btn {
+    width: 100%;
+    flex: auto;
+  }
+}
+
 
 
 /* =====================================================
@@ -1178,4 +1384,42 @@ input[readonly]{
 
 .go-to-classes-button:hover {
     background: #430817;
+}
+
+/* FCA SECURITY modal adjustments */
+
+.delete-modal-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.delete-modal-logo {
+  width: 105px;
+  height: 105px;
+  object-fit: contain;
+  margin-bottom: 18px;
+}
+
+.admin-password-wrapper .password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-password-wrapper .eye-icon {
+  width: 23px;
+  height: 23px;
+}
+
+.delete-modal-close {
+  z-index: 1;
 }

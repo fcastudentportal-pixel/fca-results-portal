@@ -740,8 +740,10 @@
 </div>
 
 
+
+            
 <!-- =====================================================
-     DELETE STUDENT MODAL
+     FCA SECURITY — DELETE STUDENT MODAL
 ====================================================== -->
 
 <div
@@ -749,48 +751,83 @@
   class="delete-modal"
   aria-hidden="true"
 >
+  <div
+    class="delete-modal-box"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="deleteModalTitle"
+  >
 
-  <div class="delete-modal-box">
+    <!-- Close button -->
+    <button
+      type="button"
+      class="delete-modal-close"
+      id="closeDeleteModalBtn"
+      aria-label="Close dialog"
+    >
+      &times;
+    </button>
 
-    <div class="delete-modal-header">
+    <!-- FCA logo and security heading -->
+    <div class="delete-modal-brand">
 
-      <div class="delete-modal-icon">
-        !
-      </div>
+      <img
+        src="fca-logo.png"
+        alt="First Class Academy logo"
+        class="delete-modal-logo"
+      >
 
-      <div>
-
-        <h3>
-          Delete Student
-        </h3>
-
-        <p id="deleteStudentName">
-          Confirm student deletion.
-        </p>
-
-      </div>
+      <p class="delete-modal-eyebrow">
+        FCA SECURITY
+      </p>
 
     </div>
 
+    <!-- Modal title -->
+    <div class="delete-modal-header">
 
-    <div class="delete-modal-body">
+      <h3 id="deleteModalTitle">
+        Delete Student
+      </h3>
 
       <p>
-        Enter the administrator password to permanently
+        Technician authorization is required to permanently
         delete this student.
       </p>
 
+    </div>
+
+    <!-- Student details -->
+    <div class="delete-student-summary">
+
+      <span>Student to Delete</span>
+
+      <strong id="deleteStudentName">
+        Student name
+      </strong>
+
+    </div>
+
+    <!-- Warning -->
+    <div class="delete-student-warning">
+      Deleting this student is permanent and may also affect
+      results and other records belonging to this student.
+      This action cannot be undone.
+    </div>
+
+    <!-- Technician authorization -->
+    <div class="delete-modal-body">
 
       <div class="admin-password-wrapper">
 
         <input
           type="password"
           id="adminDeletePassword"
-          placeholder="Administrator password"
+          placeholder="Enter technician password"
           autocomplete="current-password"
         >
 
-
+        <!-- Show/hide password -->
         <button
           type="button"
           id="adminPasswordToggle"
@@ -810,19 +847,11 @@
             stroke-linejoin="round"
             aria-hidden="true"
           >
-
             <path
               d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
             />
-
-            <circle
-              cx="12"
-              cy="12"
-              r="3"
-            />
-
+            <circle cx="12" cy="12" r="3" />
           </svg>
-
 
           <svg
             class="eye-icon eye-closed"
@@ -834,36 +863,31 @@
             stroke-linejoin="round"
             aria-hidden="true"
           >
-
-            <path d="M3 3l18 18"/>
-
+            <path d="M3 3l18 18" />
             <path
               d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
             />
-
             <path
               d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"
             />
-
             <path
               d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"
             />
-
           </svg>
 
         </button>
 
       </div>
 
-
       <p
         id="deleteError"
         class="delete-error"
+        role="alert"
       ></p>
 
     </div>
 
-
+    <!-- Actions -->
     <div class="delete-modal-actions">
 
       <button
@@ -885,8 +909,8 @@
     </div>
 
   </div>
-
 </div>
+
 
 
 <!-- =====================================================

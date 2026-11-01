@@ -1,259 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <!-- SEO -->
   <title>First Class Academy Results Portal | FCA</title>
-
   <meta
     name="description"
-    content="First Class Academy Results Portal. Students and parents can access FCA student examination results online using the student's name and student number."
-  >
-
-  <meta
+    content="First Class Academy Results Portal. Students and parents can access FCA student examination results online using the student ID and Access Password."
     name="keywords"
     content="First Class Academy, FCA, FCA results, student results, school results, examination results"
-  >
-
-  <meta name="author" content="First Class Academy">
-  <meta name="robots" content="index, follow">
-
+    name="author" 
+    content="First Class Academy"
+    name="robots" 
+    content="index, follow">
   <!-- Google Search Console -->
   <meta
     name="google-site-verification"
-    content="Q_MEjx8EBJAp28Liwk_UCEKiXy9Sq2qkpsi-0D7mEeg"
-  >
-
+    content="Q_MEjx8EBJAp28Liwk_UCEKiXy9Sq2qkpsi-0D7mEeg">
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
   <!-- HEADER -->
   <header class="topbar">
-
     <a class="admin-logo" href="admin-login.html">
       <img src="fca-logo.png" alt="First Class Academy Logo">
     </a>
-
     <div>
       <div class="eyebrow">OFFICIAL STUDENT PORTAL</div>
-
       <h1>FIRST CLASS ACADEMY RESULTS PORTAL</h1>
-
       <p>SKILLS KNOWLEDGE INNOVATION</p>
     </div>
-
   </header>
-
-
   <!-- MAIN CONTENT -->
   <main class="container">
-
     <!-- LOGIN / SEARCH VIEW -->
     <section id="loginView" class="card login-card">
-
       <h2>Search Student Results</h2>
-
       <p class="muted">
         Students and parents can access First Class Academy examination
         results using the Student ID and Access Password.
       </p>
-
       <form id="studentLoginForm">
-
         <label>
           Student ID
           <input
             id="studentId"
             placeholder="FCA-2026-AB-0"
-            required
-          >
+            required>
         </label>
+        <label class="password-label">
+          Access Password
+          <div class="password-field">
+          <input
+            id="studentPassword"
+            type="password"
+            maxlength="10"
+            placeholder="fca@abc123"
+            autocomplete="current-password"
+            required>
 
-        
-<label class="password-label">
-  Access Password
-
-  <div class="password-field">
-    <input
-      id="studentPassword"
-      type="password"
-      maxlength="10"
-      placeholder="fca@abc123"
-      autocomplete="current-password"
-      required
-    >
-
-    <button
-      type="button"
-      id="togglePassword"
-      class="password-toggle"
-      aria-label="Show password"
-      aria-pressed="false"
-    >
-      <!-- Open eye -->
-      <svg
-        class="eye-icon eye-open"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
-
-      <!-- Closed eye -->
-      <svg
-        class="eye-icon eye-closed"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M3 3l18 18"/>
-        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
-        <path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"/>
-        <path d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"/>
-      </svg>
-    </button>
-  </div>
-</label>
-
-        </button>
-
-      </div>
-
-        <button class="primary" type="submit">
-         View Results
-        </button>
-
+          <button
+            type="button"
+            id="togglePassword"
+            class="password-toggle"
+            aria-label="Show password"
+            aria-pressed="false">
+          <!-- Open eye -->
+          <svg
+            class="eye-icon eye-open"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>    
+          <!-- Closed eye -->
+          <svg
+            class="eye-icon eye-closed"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+            <path d="M3 3l18 18"/>
+            <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+            <path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a17.8 17.8 0 0 1-3.1 4.4"/>
+            <path d="M6.6 6.6C3.7 8.5 2 12 2 12s3.5 8 10 8c1.3 0 2.5-.3 3.6-.8"/>
+          </svg>
+         </button>
+         </div>
+        </label>
+          <button class="primary" type="submit">
+           View Results
+          </button>
       </form>
-
     </section>
-
-
-    <!-- STUDENT PORTAL VIEW -->
-    <section id="portalView" class="hidden">
-
-      <!-- STUDENT INFORMATION -->
-      <div class="portal-head card">
-
-        <div>
-
-          <div class="eyebrow">ACADEMIC PERFORMANCE</div>
-
-          <h2 id="studentName"></h2>
-
-          <p id="studentInfo" class="muted"></p>
-
-        </div>
-
-        <div class="actions">
-
-          <button id="printBtn" class="primary">
-            Print Report Card
-          </button>
-
-          <button id="emailBtn" class="secondary">
-            Email Summary
-          </button>
-
-          <button id="logoutBtn" class="secondary">
-            Log out
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <!-- RESULTS AND ANNOUNCEMENTS -->
-      <div class="grid-2">
-
-        <!-- RESULTS -->
-        <section class="card">
-
-          <h3>Current Term Results</h3>
-
-          <div class="table-wrap">
-
-            <table id="resultsTable">
-
-              <thead>
-                <tr>
-                  <th>Subject</th>
-                  <th>Assessment</th>
-                  <th>Exam</th>
-                  <th>Total</th>
-                  <th>Grade</th>
-                </tr>
-              </thead>
-
-              <tbody></tbody>
-
-            </table>
-
-          </div>
-
-        </section>
-
-
-        <!-- ANNOUNCEMENTS -->
-        <aside class="card">
-
-          <h3>Announcements</h3>
-
-          <div id="announcementList"></div>
-
-        </aside>
-
-      </div>
-
-
-      <!-- ACADEMIC CALENDAR -->
-      <section class="card">
-
-        <h3>Academic Calendar</h3>
-
-        <p class="muted">
-          Star an event to bookmark it. Starred events within 7 days
-          show an alert.
-        </p>
-
-        <div id="calendarList"></div>
-
-        <div id="calendarAlert" class="alert hidden"></div>
-
-      </section>
-
-    </section>
-
   </main>
-
-
   <!-- FOOTER -->
   <footer>
     © First Class Academy
   </footer>
-
-
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
-
 </body>
 </html>

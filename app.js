@@ -1,36 +1,8 @@
-
-/* =========================================================
-   FIRST CLASS ACADEMY — STUDENT RESULTS PORTAL
-
-   READ-ONLY OFFICIAL RESULTS
-
-   Displays results saved by the FCA Results Management page.
-
-   RPC:
-   fca_student_get_assessment_results(
-     p_student_id,
-     p_access_password,
-     p_academic_year,
-     p_term,
-     p_assessment_type
-   )
-
-   Assessment types:
-   - Continuous Assessment
-   - Mid-Term
-   - End-of-Term
-
-   SECURITY:
-   Fee eligibility and result-release permissions must be
-   enforced inside the Supabase RPC, not by this frontend.
-========================================================= */
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
   const db = window.fcaSupabase;
   const $ = id => document.getElementById(id);
-
   const loginView = $("loginView");
   const portalView = $("portalView");
   const form = $("studentLoginForm");
@@ -40,75 +12,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const tbody = resultsTable?.querySelector("tbody");
   const submit = form?.querySelector('button[type="submit"]');
   const togglePassword = $("togglePassword");
-
   const SESSION_KEY = "fca_logged_in_student_id";
   const currentYear = new Date().getFullYear();
-
   const TERMS = [
     "Term 1",
     "Term 2",
     "Term 3"
   ];
-
   const ASSESSMENT_TYPES = [
     "Continuous Assessment",
     "Mid-Term",
     "End-of-Term"
   ];
-
-  /* =========================================================
-     PASSWORD VISIBILITY
-  ========================================================= */
-
+/* PASSWORD VISIBILITY */
   if (togglePassword && passInput) {
     togglePassword.addEventListener("click", () => {
       const show = passInput.type === "password";
-
       passInput.type = show ? "text" : "password";
-
       togglePassword.classList.toggle("is-visible", show);
-
       togglePassword.setAttribute(
         "aria-label",
         show ? "Hide password" : "Show password"
       );
-
       togglePassword.setAttribute(
         "aria-pressed",
         String(show)
       );
     });
   }
-
-  /* =========================================================
-     GENERAL HELPERS
-  ========================================================= */
-
+  /* GENERAL HELPERS */
   function message(text, type = "error") {
     let box = $("fcaMessage");
-
     if (!box) {
       box = document.createElement("div");
       box.id = "fcaMessage";
       box.setAttribute("role", "status");
       box.setAttribute("aria-live", "polite");
-
       (form || loginView || document.body).appendChild(box);
     }
-
     box.className = type;
     box.textContent = text;
   }
-
   function clearMessage() {
     $("fcaMessage")?.remove();
   }
-
   function showPortal(show) {
     loginView?.classList.toggle("hidden", show);
     portalView?.classList.toggle("hidden", !show);
   }
-
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;",
@@ -118,59 +69,48 @@ document.addEventListener("DOMContentLoaded", () => {
       "'": "&#039;"
     })[char]);
   }
-
   function hasValue(value) {
     return value !== undefined &&
       value !== null &&
       value !== "";
   }
-
   function val(object, keys, fallback = "—") {
     for (const key of keys) {
       if (object && hasValue(object[key])) {
         return object[key];
       }
     }
-
     return fallback;
   }
-
   function rowsOf(payload) {
     if (Array.isArray(payload?.results)) {
       return payload.results;
     }
-
     if (Array.isArray(payload?.student_results)) {
       return payload.student_results;
     }
-
     if (Array.isArray(payload?.data)) {
       return payload.data;
     }
-
     return [];
   }
-
   function normaliseAssessment(value) {
     const text = String(value ?? "")
       .trim()
       .toLowerCase()
       .replace(/[_\s]+/g, "-");
-
     if (
       text === "continuous-assessment" ||
       text === "continuous-assessments"
     ) {
       return "Continuous Assessment";
     }
-
     if (
       text === "mid-term" ||
       text === "midterm"
     ) {
       return "Mid-Term";
     }
-
     if (
       text === "end-of-term" ||
       text === "end-term" ||
@@ -178,10 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
       return "End-of-Term";
     }
-
     return String(value ?? "").trim();
   }
-
   function normaliseTerm(value) {
     const match = String(value ?? "")
       .trim()
@@ -189,14 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return match ? `Term ${match[1]}` : "";
   }
-
   function normalisePayload(payload) {
     let value = payload;
-
     if (Array.isArray(value) && value.length === 1) {
       value = value[0];
     }
-
     if (typeof value === "string") {
       try {
         value = JSON.parse(value);
@@ -206,77 +141,54 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     }
-
     if (Array.isArray(value)) {
       throw new Error(
         "The results service returned an unexpected response. " +
         "Please contact the school office."
       );
     }
-
     if (!value || typeof value !== "object") {
       throw new Error(
         "No valid results response was received."
       );
     }
-
     return value;
   }
-
-  /* =========================================================
-     FORM NUMBER — DISPLAY ONLY
-  ========================================================= */
-
+  /* FORM NUMBER — DISPLAY ONLY */
   function formNo(student, rows) {
     const number = Number(
       val(student, ["form_number"], 0)
     );
-
     if (number >= 1 && number <= 4) {
       return number;
     }
-
     const className = String(
       val(student, ["class_name", "class"], "")
     );
-
     const match =
       className.match(/(?:form|f)\s*([1-4])/i) ||
       className.match(/\b([1-4])\b/);
-
     if (match) {
       return Number(match[1]);
     }
-
     const savedForm = Number(
       val(rows[0], ["form_number"], 0)
     );
-
     return savedForm >= 1 && savedForm <= 4
       ? savedForm
       : "—";
   }
-
-  /* =========================================================
-     ASSESSMENT CONTROLS
-     Created automatically when missing from index.html.
-  ========================================================= */
-
+  /* ASSESSMENT CONTROLS */
   function ensureAssessmentControls() {
     if (!form) return;
-
     let host = $("assessmentControls");
-
     if (!host) {
       host = document.createElement("div");
       host.id = "assessmentControls";
       host.className = "assessment-controls";
-
       host.style.cssText =
         "display:grid;gap:10px;margin:12px 0;text-align:left;";
-
       const passwordLabel = passInput?.closest("label");
-
       if (passwordLabel) {
         passwordLabel.insertAdjacentElement("afterend", host);
       } else if (submit) {
@@ -285,13 +197,12 @@ document.addEventListener("DOMContentLoaded", () => {
         form.appendChild(host);
       }
     }
-
     const definitions = [
       {
         id: "academicYear",
         label: "Academic Year",
         values: Array.from(
-          { length: Math.max(1, currentYear - 2000 + 1) },
+          { length: Math.max(1, currentYear - 2020 + 1) },
           (_, index) => String(currentYear - index)
         ),
         defaultValue: String(currentYear)
@@ -309,97 +220,70 @@ document.addEventListener("DOMContentLoaded", () => {
         defaultValue: "Continuous Assessment"
       }
     ];
-
     for (const definition of definitions) {
       let select = $(definition.id);
-
       if (!select) {
         const wrapper = document.createElement("label");
-
         wrapper.style.cssText =
           "display:grid;gap:5px;font-weight:600;";
-
         wrapper.htmlFor = definition.id;
         wrapper.appendChild(
           document.createTextNode(definition.label)
         );
-
         select = document.createElement("select");
         select.id = definition.id;
         select.name = definition.id;
         select.required = true;
-
         select.style.cssText =
           "width:100%;padding:10px;border:1px solid #ccc;" +
           "border-radius:6px;font:inherit;background:white;";
-
         wrapper.appendChild(select);
         host.appendChild(wrapper);
       }
-
       const existingValue = select.value;
-
       select.replaceChildren();
-
       for (const value of definition.values) {
         select.add(new Option(value, value));
       }
-
       const preferredValue = definition.values.includes(existingValue)
         ? existingValue
         : definition.defaultValue;
-
       select.value = preferredValue;
     }
-
     $("academicYear")?.setAttribute(
       "aria-label",
       "Select academic year"
     );
-
     $("assessmentTerm")?.setAttribute(
       "aria-label",
       "Select term"
     );
-
     $("assessmentType")?.setAttribute(
       "aria-label",
       "Select assessment type"
     );
   }
-
   function selectedAssessment() {
     const year = Number($("academicYear")?.value);
     const term = normaliseTerm($("assessmentTerm")?.value);
     const assessmentType = normaliseAssessment(
       $("assessmentType")?.value
     );
-
-    if (!Number.isInteger(year) || year < 2000 || year > currentYear) {
+    if (!Number.isInteger(year) || year < 2020 || year > currentYear) {
       throw new Error("Please select a valid academic year.");
     }
-
     if (!TERMS.includes(term)) {
       throw new Error("Please select a valid term.");
     }
-
     if (!ASSESSMENT_TYPES.includes(assessmentType)) {
       throw new Error("Please select a valid assessment.");
     }
-
     return { year, term, assessmentType };
   }
-
-  /* =========================================================
-     REPORT TABLE
-     Display the official saved values; never derive grades.
-  ========================================================= */
-
+  /* REPORT TABLE */
   function prepareResultsTable() {
     if (!resultsTable) return;
-
     const headRow = resultsTable.querySelector("thead tr");
-
     if (headRow) {
       headRow.innerHTML = `
         <th>Subject</th>
@@ -410,27 +294,22 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
   }
-
   function formatSavedMark(result) {
     const mark = val(
       result,
       ["mark", "percentage", "total", "score"],
       null
     );
-
     if (mark === null || mark === "—") {
       return "—";
     }
-
     // Display the saved mark as provided by the Results Management page.
     return String(mark);
   }
-
   function formatPaperMarks(value) {
     if (value === undefined || value === null) {
       return "—";
     }
-
     if (typeof value === "string") {
       try {
         value = JSON.parse(value);

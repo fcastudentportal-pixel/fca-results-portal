@@ -39,6 +39,13 @@ let editingSubjectId = null;
 let selectedDeleteSubjectId = null;
 
 let paperCounter = 0;
+const ASSESSMENT_TYPES = [
+    "Continuous Assessment",
+    "Mid-Term",
+    "End-of-Term"
+];
+
+const DEFAULT_ASSESSMENT = "End-of-Term";
 
 
 /* =========================================================
@@ -384,13 +391,14 @@ async function loadSubjects(){
                 created_at,
                 updated_at,
                 subject_papers (
-                    id,
-                    paper_number,
-                    paper_name,
-                    max_marks,
-                    created_at,
-                    updated_at
-                )
+    id,
+    assessment_type,
+    paper_number,
+    paper_name,
+    max_marks,
+    created_at,
+    updated_at
+)
             `)
             .order(
                 "form_number",
@@ -687,12 +695,16 @@ function createSubjectCard(
         "subject-card";
 
 
-    const papers =
-        Array.isArray(
-            subject.subject_papers
+    const selectedAssessment =
+    $("assessmentFilter").value;
+
+const papers =
+    Array.isArray(subject.subject_papers)
+        ? subject.subject_papers.filter(
+            paper =>
+                paper.assessment_type === selectedAssessment
         )
-            ? subject.subject_papers
-            : [];
+        : [];
 
 
     const totalMarks =
@@ -756,6 +768,11 @@ function createSubjectCard(
                     subject.section
                 )}
             </span>
+            <span class="section-badge">
+    ${escapeHTML(
+        selectedAssessment
+    )}
+</span>
 
         </div>
 
@@ -932,6 +949,47 @@ function updateFormSectionVisibility(){
 
 }
 
+/* =========================================================
+   LOAD PAPERS INTO EDITOR
+========================================================= */
+
+function loadSubjectPapersIntoEditor(subject){
+
+    $("papersContainer").innerHTML = "";
+
+    paperCounter = 0;
+
+    const assessment =
+        $("subjectAssessmentType").value;
+
+    const papers = subject
+        ? (subject.subject_papers || []).filter(
+            paper =>
+                paper.assessment_type === assessment
+        )
+        : [];
+
+    if(papers.length){
+
+        papers.forEach(paper => {
+
+            addPaper(
+                paper.paper_name,
+                paper.max_marks
+            );
+
+        });
+
+    } else if(!subject){
+
+        addPaper("Paper I", 100);
+
+    }
+
+    calculateModalTotal();
+
+}
+
 
 /* =========================================================
    OPEN ADD MODAL
@@ -952,12 +1010,12 @@ function openAddSubjectModal(){
         .reset();
 
 
-    $("papersContainer")
-        .innerHTML =
-        "";
+    $("subjectAssessmentType").value =
+    $("assessmentFilter").value || DEFAULT_ASSESSMENT;
 
+loadSubjectPapersIntoEditor(null);
 
-    $("subjectMessage")
+$("subjectMessage")
         .className =
         "modal-message";
 
@@ -1036,48 +1094,12 @@ function openEditSubjectModal(
         subject.section;
 
 
-    $("papersContainer")
-        .innerHTML =
-        "";
+    $("subjectAssessmentType").value =
+    $("assessmentFilter").value || DEFAULT_ASSESSMENT;
 
+loadSubjectPapersIntoEditor(null);
 
-    paperCounter = 0;
-
-
-    const papers =
-        Array.isArray(
-            subject.subject_papers
-        )
-            ? subject.subject_papers
-            : [];
-
-
-    if(papers.length){
-
-        papers.forEach(
-            paper => {
-
-                addPaper(
-                    paper.paper_name,
-                    paper.max_marks
-                );
-
-            }
-        );
-
-    }
-
-    else{
-
-        addPaper(
-            "Paper I",
-            100
-        );
-
-    }
-
-
-    clearSubjectMessage();
+clearSubjectMessage();
 
 
     $("subjectModal")
@@ -1425,6 +1447,8 @@ async function saveSubject(
     const section =
         $("subjectSection")
             .value;
+  const assessmentType =
+    $("subjectAssessmentType").value;
 
 
     /* -----------------------------------------------
@@ -1576,6 +1600,16 @@ async function saveSubject(
         });
 
     }
+  if(!ASSESSMENT_TYPES.includes(assessmentType)){
+
+    showSubjectMessage(
+        "Please select a valid assessment type.",
+        "error"
+    );
+
+    return;
+
+  }
 
 
     /* -----------------------------------------------
@@ -1685,16 +1719,20 @@ async function saveSubject(
             --------------------------------------- */
 
             const {
-                error:
-                    deletePapersError
-            } =
-            await db
-                .from("subject_papers")
-                .delete()
-                .eq(
-                    "subject_id",
-                    editingSubjectId
-                );
+    error:
+        deletePapersError
+} =
+await db
+    .from("subject_papers")
+    .delete()
+    .eq(
+        "subject_id",
+        editingSubjectId
+    )
+    .eq(
+        "assessment_type",
+        assessmentType
+    );
 
 
             if(deletePapersError){
@@ -1754,14 +1792,17 @@ async function saveSubject(
         ------------------------------------------- */
 
         const paperRows =
-            papers.map(
-                paper => ({
+    papers.map(
+        paper => ({
 
-                    subject_id:
-                        subjectId,
+            subject_id:
+                subjectId,
 
-                    paper_number:
-                        paper.paper_number,
+            assessment_type:
+                assessmentType,
+
+            paper_number:
+                paper.paper_number,
 
                     paper_name:
                         paper.paper_name,
@@ -2357,14 +2398,17 @@ async function seedDefaultSubjects(){
 
 
         const paperRows =
-            record.papers.map(
-                paper => ({
+    record.papers.map(
+        paper => ({
 
-                    subject_id:
-                        data.id,
+            subject_id:
+                data.id,
 
-                    paper_number:
-                        paper[0],
+            assessment_type:
+                "End-of-Term",
+
+            paper_number:
+                paper[0],
 
                     paper_name:
                         paper[1],
@@ -2483,6 +2527,28 @@ function attachEvents(){
             "change",
             handleSearch
         );
+  $("assessmentFilter")
+    .addEventListener(
+        "change",
+        handleSearch
+    );
+  $("subjectAssessmentType")
+    .addEventListener(
+        "change",
+        function(){
+
+            const subject = editingSubjectId
+                ? subjects.find(
+                    item => item.id === editingSubjectId
+                )
+                : null;
+
+            loadSubjectPapersIntoEditor(subject);
+
+            clearSubjectMessage();
+
+        }
+    );
 
 
     $("subjectModal")

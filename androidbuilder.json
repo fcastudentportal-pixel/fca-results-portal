@@ -4,8 +4,25 @@
   "iconUrl": "",
   "release": false,
   "tv": false,
-  "theme": {},
-  "features": {},
+  "theme": {
+    "primary": "#9c061f",
+    "statusBar": "",
+    "navBar": "",
+    "splashBg": "",
+    "statusStyle": "auto"
+  },
+  "features": {
+    "camera": true,
+    "gallery": true,
+    "uploads": true,
+    "downloads": true,
+    "location": true,
+    "push": true,
+    "share": true,
+    "biometric": true,
+    "statusBar": true,
+    "offline": true
+  },
   "name": "First Class Academy",
   "id": "com.fca.schoolportal",
   "versionName": "1.0.0",

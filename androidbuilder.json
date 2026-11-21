@@ -12,16 +12,16 @@
     "statusStyle": "auto"
   },
   "features": {
-    "camera": true,
-    "gallery": true,
+    "camera": false,
+    "gallery": false,
     "uploads": true,
     "downloads": true,
-    "location": true,
-    "push": true,
-    "share": true,
-    "biometric": true,
-    "statusBar": true,
-    "offline": true
+    "location": false,
+    "push": false,
+    "share": false,
+    "biometric": false,
+    "statusBar": false,
+    "offline": false
   },
   "name": "First Class Academy",
   "id": "com.fca.schoolportal",

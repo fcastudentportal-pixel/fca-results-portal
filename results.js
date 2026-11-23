@@ -1,21 +1,6 @@
 
 "use strict";
 
-/* =========================================================
-   FIRST CLASS ACADEMY — RESULTS MANAGEMENT
-
-   CLASS → STUDENTS → ENTER RESULTS → OVERALL RESULTS
-
-   Forms 1–2: A–F
-   Forms 3–4: Grades 1–9
-
-   RELEASE CONTROL:
-   - Admin releases results through Supabase RPC.
-   - Admin can withdraw released results.
-   - Saving result changes triggers automatic withdrawal
-     through the database trigger.
-========================================================= */
-
 const SUBJECTS_FALLBACK = [
   "Agriculture", "Bible Knowledge", "Biology", "Chemistry",
   "Chichewa", "English", "Geography", "History", "Life Skills",
@@ -227,16 +212,6 @@ function attachEvents() {
 /* =========================================================
    RESULTS RELEASE CONTROL
 ========================================================= */
-
-/*
-  This function calls the existing Supabase RPC.
-
-  p_release = null  → read current status
-  p_release = true  → release results
-  p_release = false → withdraw results
-
-  Authorization is enforced by the database function.
-*/
 
 async function callReleaseFunction(releaseValue) {
   const { data, error } = await db.rpc(
@@ -1261,9 +1236,6 @@ function calculateOverall(resultRows,student) {
    RENDER OVERALL RESULT SUMMARY
 ========================================================= */
 
-
-
-
 function renderOverallSummary(overall) {
   if (!overall) return;
 
@@ -1320,16 +1292,8 @@ function renderOverallSummary(overall) {
     dom.overallResultDetails.textContent = detailsText;
   }
 }
-
-
-
-
-
 /* =========================================================
    RENDER OVERALL RESULTS
-   - Removes the Papers column.
-   - Adds Subject Position after Percentage.
-   - Keeps existing grading and overall calculations.
 ========================================================= */
 
 function renderOverallResults() {
@@ -1477,15 +1441,6 @@ function renderOverallResults() {
 
 /* =========================================================
    SUBJECT POSITION
-   Example: 1/40, 2/40, 3/40
-
-   Ranking rules:
-   - Compare students in the same class.
-   - Only compare students assigned to the subject.
-   - Rank completed subject results by percentage.
-   - Equal percentages receive equal positions.
-   - The denominator is the number of students assigned
-     to that subject in the selected class.
 ========================================================= */
 
 function getSubjectPosition(subject, currentPercentage) {
@@ -2010,6 +1965,7 @@ async function saveResults(showMessage = true) {
   term: selectedTerm,
   assessment_type: selectedAssessmentType
 });
+    }
 
     if (!records.length) {
       if (showMessage) {
